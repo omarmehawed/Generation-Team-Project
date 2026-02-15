@@ -1,17 +1,17 @@
 [phases.setup]
 nixPkgs = [
-    "php83",
-    "php83Extensions.gd",
-    "php83Extensions.zip",
-    "php83Extensions.pdo",
-    "php83Extensions.pdo_mysql",
-    "php83Extensions.fileinfo",
-    "php83Extensions.tokenizer",
-    "php83Extensions.xml",
-    "php83Extensions.mbstring",
-    "php83Extensions.curl",
-    "php83Extensions.openssl",
-    "php83Extensions.calendar",    # <-- أضف ده
+    "php82",
+    "php82Extensions.gd",
+    "php82Extensions.zip",
+    "php82Extensions.pdo",
+    "php82Extensions.pdo_mysql",
+    "php82Extensions.fileinfo",
+    "php82Extensions.tokenizer",
+    "php82Extensions.xml",
+    "php82Extensions.mbstring",
+    "php82Extensions.curl",
+    "php82Extensions.openssl",
+    "php82Extensions.calendar",    # <-- أضف ده
     "composer"
 ]
 
