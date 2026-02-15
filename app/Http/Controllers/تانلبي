@@ -1,0 +1,567 @@
+برضو عند الدكتور مش بيظهر هديك الكواد كلها وشوف الغطة فين
+
+
+
+public function viewTeamAsStudent($id)
+
+    {
+
+        // 1. تحميل التيم (شيلنا tasks.submission عشان هي مش علاقة، هي عمود عادي)
+
+        $team = \App\Models\Team::with([
+
+            'leader',
+
+            'members',
+
+            'tasks.user',        // ✅ مين اللي ماسك التاسك
+
+            // 'tasks.submission', ❌ ده اللي كان عامل المشكلة (شيلناه)
+
+            'reports',
+
+            'memberReports',
+
+            'meetings',
+
+            'expenses.contributions.user'
+
+        ])->findOrFail($id);
+
+
+
+        $project = $team->project;
+
+
+
+        // 2. تفعيل وضع الليدر
+
+        $isViewAs = true;
+
+        $myRole = 'leader';
+
+
+
+        // 3. تجهيز الفلوس يدوياً (عشان نضمن إنها تيجي)
+
+        $fundsHistory = collect([]);
+
+        $activeFund = null;
+
+
+
+        if (class_exists(\App\Models\ProjectExpense::class)) {
+
+            $fundsHistory = \App\Models\ProjectExpense::where('team_id', $team->id)
+
+                ->with('contributions.user')
+
+                ->latest()
+
+                ->get();
+
+
+
+            $activeFund = $fundsHistory->first();
+
+        }
+
+
+
+        // 4. هات كل التاسكات
+
+        // (بيانات التسليم submission_value موجودة جوه التاسك وهتظهر عادي)
+
+        $myTasks = $team->tasks;
+
+
+
+        $canReport = false;
+
+
+
+        return view('final_project.dashboard', compact(
+
+            'team',
+
+            'project',
+
+            'isViewAs',
+
+            'myRole',
+
+            'fundsHistory',
+
+            'activeFund',
+
+            'canReport',
+
+            'myTasks'
+
+        ));
+
+    }
+
+
+
+public function storeFund(Request $request)
+
+    {
+
+        $request->validate([
+
+            'team_id' => 'required|exists:teams,id',
+
+            'title' => 'required|string|max:255',
+
+            'amount_per_member' => 'required|numeric|min:1',
+
+            'deadline' => 'required|date|after:today',
+
+        ]);
+
+
+
+        $team = Team::with('members')->findOrFail($request->team_id);
+
+
+
+        // 1. إنشاء الطلب الأساسي
+
+        $fund = \App\Models\ProjectFund::create([
+
+            'team_id' => $team->id,
+
+            'title' => $request->title,
+
+            'amount_per_member' => $request->amount_per_member,
+
+            'deadline' => $request->deadline,
+
+        ]);
+
+
+
+        // 2. إنشاء سجل لكل عضو في التيم (بما فيهم الليدر)
+
+        foreach ($team->members as $member) {
+
+            \App\Models\FundContribution::create([
+
+                'fund_id' => $fund->id,
+
+                'user_id' => $member->user_id,
+
+                'status' => 'pending'
+
+            ]);
+
+        }
+
+
+
+        return back()->with('success', 'Funding round started! Members notified to pay.');
+
+    }
+
+
+
+
+
+public function markPaid(Request $request)
+    {
+        $request->validate([
+            'contribution_id' => 'required|exists:fund_contributions,id',
+            'payment_method' => 'required|in:cash,transfer',
+            'proof_image' => 'nullable|required_if:payment_method,transfer|image|max:5120' // لو تحويل لازم صورة
+        ]);
+
+        $contrib = \App\Models\FundContribution::findOrFail($request->contribution_id);
+
+        $proofPath = null;
+        if ($request->hasFile('proof_image')) {
+            $proofPath = $request->file('proof_image')->store('payment_proofs', 'public');
+        }
+
+        $contrib->update([
+            'status' => 'paid',
+            'paid_at' => now(),
+            'payment_method' => $request->payment_method,
+            'payment_proof' => $proofPath
+        ]);
+
+        return back()->with('success', 'Payment recorded successfully ✅');
+    }
+
+
+
+public function storeExpense(Request $request)
+    {
+        $request->validate([
+            'team_id' => 'required|exists:teams,id',
+            'item' => 'required|string|max:255',
+            'shop_name' => 'required|string|max:255', // اسم المحل
+            'amount' => 'required|numeric|min:1',
+            'receipt' => 'nullable|image|max:5120' // صورة الوصل (اختياري) بحد أقصى 5MB
+        ]);
+
+        $team = Team::findOrFail($request->team_id);
+
+        // حماية: التأكد إن الطالب في التيم
+        if (!$team->members->contains('user_id', Auth::id())) {
+            return back()->with('error', 'Unauthorized.');
+        }
+
+        // رفع صورة الوصل لو موجودة
+        $receiptPath = null;
+        if ($request->hasFile('receipt')) {
+            $receiptPath = $request->file('receipt')->store('receipts', 'public');
+        }
+
+        // الحفظ في الداتابيز
+        \Illuminate\Support\Facades\DB::table('project_expenses')->insert([
+            'team_id' => $request->team_id,
+            'user_id' => Auth::id(),
+            'item' => $request->item,
+            'shop_name' => $request->shop_name, // حفظنا اسم المحل
+            'amount' => $request->amount,
+            'receipt_path' => $receiptPath, // حفظنا مسار الصورة
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
+
+        // storeExpense بعد الحفظ
+
+        // نجيب كل أعضاء التيم ما عدا
+        $members = $team->members()->where('user_id', '!=', \Illuminate\Support\Facades\Auth::id())->get();
+
+        foreach ($members as $member) {
+            // نجيب بيانات اليوزر عشان نبعتله
+            $userToNotify = \App\Models\User::find($member->user_id);
+
+            if ($userToNotify) {
+                $userToNotify->notify(new \App\Notifications\BatuNotification([
+                    'title'   => 'New Expense 💸',
+                    'body'    => \Illuminate\Support\Facades\Auth::user()->name . ' added ' . $request->amount . ' EGP for: ' . $request->item,
+                    'icon'    => 'fas fa-coins',
+                    'color'   => 'text-yellow-500',
+                    'url'     => route('final_project.dashboard', $team->id), // يروح يشوف الداشبورد
+                    'type'    => 'info'
+                ]));
+            }
+        }
+
+        return back()->with('success', 'Expense recorded successfully! 💸');
+    }
+
+
+    <?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Model;
+
+class ProjectExpense extends Model
+{
+    protected $fillable =
+    ['team_id', 'item_name', 'quantity', 'price', 'receipt_image', 'buyer_name'];
+
+    public function contributions()
+    {
+        // Adjust class name if your model is named differently (e.g., FundContribution)
+        return $this->hasMany(\App\Models\ExpenseContribution::class);
+    }
+    // علاقة التيم
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+}
+
+
+
+
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class ProjectFund extends Model
+{
+    use HasFactory;
+
+    protected $fillable = ['team_id', 'title', 'amount_per_member', 'deadline'];
+    protected $guarded = [];
+    // العلاقة مع المساهمات
+    public function contributions()
+    {
+        return $this->hasMany(FundContribution::class, 'fund_id');
+    }
+    // علاقة التيم
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
+    }
+}
+
+
+
+
+
+{{-- 8. Add Expense Modal --}}
+    <div id="addExpenseModal" class="hidden relative z-50" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('addExpenseModal')"></div>
+            <div class="modal-content">
+                <form action="{{ route('final_project.storeExpense') }}" method="POST"
+                    enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
+
+                    <div class="bg-white px-8 pt-8 pb-6">
+                        <h3 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                            <div class="p-2.5 bg-green-100 rounded-xl text-green-600 shadow-sm"><i
+                                    class="fas fa-receipt"></i></div>
+                            Add New Expense
+                        </h3>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Item
+                                    Name</label>
+                                <input type="text" name="item" required placeholder="e.g. Raspberry Pi 4"
+                                    class="input-classic">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Shop
+                                    Name</label>
+                                <input type="text" name="shop_name" required placeholder="Store Name"
+                                    class="input-classic">
+                            </div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Amount
+                                        (EGP)</label>
+                                    <input type="number" name="amount" required step="0.01"
+                                        class="w-full border-2 border-gray-200 bg-gray-50 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white outline-none transition font-mono text-lg font-bold">
+                                </div>
+                                <div>
+                                    <label
+                                        class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Receipt
+                                        Image</label>
+                                    <input type="file" name="receipt" accept="image/*"
+                                        class="w-full text-xs text-gray-500 border border-dashed border-gray-300 rounded-xl p-3 hover:bg-gray-50 cursor-pointer transition">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                        <button type="submit"
+                            class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-wider py-3 px-6 rounded-xl shadow-md transition ripple-btn">Save
+                            Record</button>
+                        <button type="button" onclick="closeModal('addExpenseModal')"
+                            class="btn-cancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- 9. Create Fund Request Modal --}}
+    <div id="createFundModal" class="hidden relative z-50" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('createFundModal')"></div>
+            <div class="modal-content border border-yellow-500/30">
+                <form action="{{ route('final_project.storeFund') }}" method="POST">
+                    @csrf
+                    <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
+
+                    <div class="modal-header-gradient px-8 py-6 rounded-t-[1.3rem]">
+                        <h3 class="text-xl font-black text-[#FFD700] flex items-center gap-3">
+                            <i class="fas fa-hand-holding-usd shimmer-icon"></i> Request Funds
+                        </h3>
+                        <p class="text-gray-400 text-xs mt-1 pl-8">Set a budget target and track payments from members.
+                        </p>
+                    </div>
+
+                    <div class="bg-white px-8 pt-6 pb-6 space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Title /
+                                Reason</label>
+                            <input type="text" name="title" required placeholder="e.g. Buying Motors & Sensors"
+                                class="input-classic">
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Amount
+                                    Per Member</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-3 text-gray-400 font-bold">EGP</span>
+                                    <input type="number" name="amount_per_member" required step="0.01"
+                                        placeholder="200"
+                                        class="w-full border-2 border-gray-100 bg-gray-50 p-3 pl-12 rounded-xl focus:ring-0 focus:border-[#D4AF37] focus:bg-white transition font-mono text-lg font-black text-gray-800 outline-none">
+                                </div>
+                            </div>
+                            <div>
+                                <label
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Deadline</label>
+                                <input type="date" name="deadline" required
+                                    class="w-full border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-0 focus:border-[#D4AF37] focus:bg-white transition text-sm font-bold text-gray-700 outline-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                        <button type="submit" class="btn-modal-primary ripple-btn">Start Collecting</button>
+                        <button type="button" onclick="closeModal('createFundModal')"
+                            class="btn-cancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- 10. Mark Paid Modal --}}
+    <div id="markPaidModal" class="hidden relative z-50" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('markPaidModal')"></div>
+            <div class="modal-content !max-w-md">
+                <form action="{{ route('final_project.markPaid') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <input type="hidden" name="contribution_id" id="paidContribId">
+
+                    <div class="bg-white px-8 pt-8 pb-6">
+                        <h3 class="text-xl font-black text-gray-900 mb-2">Record Payment</h3>
+                        <p class="text-sm text-gray-500 mb-6 bg-gray-50 p-3 rounded-lg border border-gray-100">
+                            Collecting <span id="paidAmount" class="font-bold text-[#AA8A26] font-mono"></span> from
+                            <span id="paidUserName" class="font-bold text-gray-900"></span>
+                        </p>
+
+                        <div class="mb-4">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Payment
+                                Method</label>
+                            <div class="grid grid-cols-2 gap-3" x-data="{ method: 'cash' }">
+                                {{-- Cash --}}
+                                <label class="cursor-pointer" @click="method = 'cash'">
+                                    <input type="radio" name="payment_method" value="cash" class="peer hidden"
+                                        checked>
+                                    <div
+                                        class="p-4 rounded-xl border-2 border-gray-100 text-center peer-checked:border-green-500 peer-checked:bg-green-50 transition-all hover:bg-gray-50">
+                                        <i class="fas fa-money-bill-wave text-xl mb-1 text-green-600 block"></i>
+                                        <span class="text-xs font-bold text-gray-600">Cash 💵</span>
+                                    </div>
+                                </label>
+                                {{-- Transfer --}}
+                                <label class="cursor-pointer" @click="method = 'transfer'">
+                                    <input type="radio" name="payment_method" value="transfer"
+                                        class="peer hidden">
+                                    <div
+                                        class="p-4 rounded-xl border-2 border-gray-100 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all hover:bg-gray-50">
+                                        <i class="fas fa-mobile-alt text-xl mb-1 text-blue-600 block"></i>
+                                        <span class="text-xs font-bold text-gray-600">Transfer 📱</span>
+                                    </div>
+                                </label>
+
+                                {{-- Proof Upload --}}
+                                <div x-show="method === 'transfer'" class="col-span-2 mt-2" x-transition>
+                                    <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Transfer
+                                        Screenshot</label>
+                                    <input type="file" name="proof_image" accept="image/*"
+                                        class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition cursor-pointer border border-dashed border-blue-200 rounded-lg p-2">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                        <button type="submit"
+                            class="bg-gray-900 text-white py-3 px-6 rounded-xl font-bold shadow-lg hover:bg-black transition ripple-btn text-xs uppercase tracking-wider">Confirm
+                            Paid</button>
+                        <button type="button" onclick="closeModal('markPaidModal')"
+                            class="btn-cancel">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- 11. Funds History Modal --}}
+    <div id="fundsHistoryModal" class="hidden relative z-50" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('fundsHistoryModal')"></div>
+            <div class="modal-content !max-w-2xl flex flex-col max-h-[85vh]">
+                <div class="modal-header-gradient px-8 py-6 rounded-t-[1.3rem] flex-shrink-0">
+                    <h3 class="text-xl font-black text-[#FFD700] flex items-center gap-3"><i
+                            class="fas fa-history"></i> Funds History</h3>
+                </div>
+
+                <div class="bg-white p-6 overflow-y-auto custom-scroll flex-grow">
+                    @if (isset($fundsHistory) && $fundsHistory->count() > 0)
+                        <div class="space-y-6">
+                            @foreach ($fundsHistory as $fund)
+                                <div
+                                    class="border border-gray-200 rounded-2xl p-5 hover:border-yellow-200 transition hover:shadow-md bg-gray-50/30">
+                                    <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-2">
+                                        <div>
+                                            <h4 class="font-bold text-lg text-gray-800">{{ $fund->title }}</h4>
+                                            <span class="text-xs text-gray-400 font-medium"><i
+                                                    class="far fa-clock mr-1"></i>{{ \Carbon\Carbon::parse($fund->created_at)->format('d M, Y') }}</span>
+                                        </div>
+                                        <span
+                                            class="bg-yellow-50 text-[#AA8A26] px-3 py-1 rounded-lg text-xs font-bold font-mono shadow-sm">{{ $fund->amount_per_member }}
+                                            EGP</span>
+                                    </div>
+                                    @if ($fund->contributions && $fund->contributions->count() > 0)
+                                        <div class="grid grid-cols-2 gap-2">
+                                            @foreach ($fund->contributions as $contrib)
+                                                <div
+                                                    class="flex justify-between items-center text-xs p-2.5 rounded-lg {{ $contrib->status == 'paid' ? 'bg-green-50/50 border border-green-100' : 'bg-red-50/50 border border-red-100' }}">
+                                                    <span class="font-bold text-gray-700 flex items-center gap-2">
+                                                        <img src="https://ui-avatars.com/api/?name={{ $contrib->user->name }}&background=random&size=24"
+                                                            class="rounded-full w-5 h-5">
+                                                        {{ $contrib->user->name }}
+                                                    </span>
+                                                    @if ($contrib->status == 'paid')
+                                                        <span
+                                                            class="text-green-600 font-bold bg-white px-2 py-0.5 rounded shadow-sm border border-green-100"><i
+                                                                class="fas fa-check"></i> Paid</span>
+                                                    @else
+                                                        <span
+                                                            class="text-red-500 font-bold bg-white px-2 py-0.5 rounded shadow-sm border border-red-100">Unpaid</span>
+                                                    @endif
+                                                </div>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-12">
+                            <div
+                                class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-wallet text-gray-400 text-2xl"></i>
+                            </div>
+                            <p class="text-gray-400 font-medium">No financial history recorded yet.</p>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="bg-gray-50 px-8 py-4 text-right border-t border-gray-200 flex-shrink-0">
+                    <button type="button" onclick="closeModal('fundsHistoryModal')"
+                        class="bg-white border border-gray-300 text-gray-700 py-2 px-6 rounded-xl font-bold hover:bg-gray-100 transition shadow-sm text-xs uppercase tracking-wide">Close
+                        Log</button>
+                </div>
+            </div>
+        </div>
+    </div>
