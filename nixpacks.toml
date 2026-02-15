@@ -11,8 +11,11 @@ nixPkgs = [
     "php83Extensions.mbstring",
     "php83Extensions.curl",
     "php83Extensions.openssl",
+    "php83Extensions.calendar",    # <-- أضف ده
     "composer"
 ]
 
 [phases.build]
-cmds = ["composer install --optimize-autoloader --no-dev --ignore-platform-reqs"]
+cmds = [
+    "composer install --optimize-autoloader --no-dev"
+]
