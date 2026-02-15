@@ -1,22 +1,28 @@
-# Base image PHP 8.2 FPM
+# استخدم نسخة PHP مناسبة لـ Laravel
 FROM php:8.2-fpm
 
-RUN apt-get update && apt-get install -y libicu-dev libxml2-dev zip unzip git curl \
-    && docker-php-ext-install calendar gd mbstring pdo pdo_mysql xml curl
+# تثبيت الإضافات المطلوبة للـ System
+RUN apt-get update && apt-get install -y \
+    libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
+    zip \
+    unzip \
+    git \
+    curl
 
+# تثبيت الـ PHP extensions
+RUN docker-php-ext-install pdo_mysql gd
+
+# تثبيت Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-WORKDIR /var/www/html
+# نسخ ملفات المشروع
+WORKDIR /var/www
 COPY . .
 
-RUN composer install --optimize-autoloader --no-dev
+# تثبيت الـ Dependencies
+RUN composer install --no-dev --optimize-autoloader
 
-RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
-    && apt-get install -y nodejs \
-    && npm install \
-    && npm run build
-
-RUN mkdir -p storage/framework/{sessions,views,cache,testing} storage/logs bootstrap/cache \
-    && chmod -R a+rw storage bootstrap/cache
-
-CMD ["php-fpm"]
+# تشغيل السيرفر
+CMD php artisan serve --host=0.0.0.1 --port=$PORT
