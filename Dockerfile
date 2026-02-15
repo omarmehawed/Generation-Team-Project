@@ -1,28 +1,35 @@
-# استخدم نسخة PHP مناسبة لـ Laravel
+# 1. بنحدد النسخة اللي هنبني عليها (PHP 8.2)
 FROM php:8.2-fpm
 
-# تثبيت الإضافات المطلوبة للـ System
+# 2. تحديث وتثبيت الأدوات اللازمة لنظام التشغيل
 RUN apt-get update && apt-get install -y \
     libpng-dev \
-    libjpeg-dev \
+    libjpeg62-turbo-dev \
     libfreetype6-dev \
     zip \
     unzip \
     git \
-    curl
+    curl \
+    libonig-dev \
+    libxml2-dev
 
-# تثبيت الـ PHP extensions
-RUN docker-php-ext-install pdo_mysql gd
+# 3. تثبيت إضافات PHP اللي بيحتاجها Laravel (زي الـ MySQL والـ GD)
+RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# تثبيت Composer
+# 4. تثبيت Composer جوه الـ Container
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# نسخ ملفات المشروع
+# 5. تحديد فولدر الشغل جوه السيرفر
 WORKDIR /var/www
+
+# 6. نسخ ملفات المشروع من جهازك للسيرفر
 COPY . .
 
-# تثبيت الـ Dependencies
+# 7. تثبيت مكتبات Laravel (Packages)
 RUN composer install --no-dev --optimize-autoloader
 
-# تشغيل السيرفر
-CMD php artisan serve --host=0.0.0.1 --port=$PORT
+# 8. ضبط الصلاحيات لفولدرات التخزين
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+
+# 9. الأمر اللي بيشغل المشروع على بورت Railway
+CMD php artisan serve --host=0.0.0.0 --port=$PORT
