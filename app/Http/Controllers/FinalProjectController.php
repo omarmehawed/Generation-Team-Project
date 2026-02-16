@@ -924,16 +924,12 @@ class FinalProjectController extends Controller
     // دالة لعرض الملفات المحمية (صور الإيصالات والتحويلات)
     public function viewAttachment($path)
     {
-        // بنجيب المسار الكامل للملف من فولدر التخزين
-        $fullPath = storage_path('app/public/' . $path);
-
-        // لو الملف مش موجود، رجع 404
-        if (!file_exists($fullPath)) {
+        // Use Storage facade for secure serving and correct headers
+        if (!Storage::disk('public')->exists($path)) {
             abort(404);
         }
 
-        // اعرض الملف في المتصفح
-        return response()->file($fullPath);
+        return Storage::disk('public')->response($path);
     }
     // ==========================================
     // 14. رفع تقرير أسبوعي (MCR: Modified for Date/Time)

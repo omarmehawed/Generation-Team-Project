@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Team;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use App\Models\Project;
 use Illuminate\Support\Facades\Auth;
@@ -520,16 +521,12 @@ class StaffController extends Controller
     // دالة لعرض الملفات (التقارير، الإيصالات، إلخ) للستاف
     public function viewAttachment($path)
     {
-        // بنجيب المسار الكامل للملف من السيرفر
-        $fullPath = storage_path('app/public/' . $path);
-
-        // لو الملف مش موجود نرجع 404
-        if (!file_exists($fullPath)) {
+        // Use Storage facade for secure serving and correct headers
+        if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
             abort(404);
         }
 
-        // عرض الملف
-        return response()->file($fullPath);
+        return \Illuminate\Support\Facades\Storage::disk('public')->response($path);
     }
 
     // 11. الرد على الاجتماع

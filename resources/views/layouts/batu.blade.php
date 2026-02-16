@@ -376,7 +376,7 @@
                 <li><a href="https://batechu.com/lms/courses" class="sidebar-link"><i
                             class="fas fa-book"></i><span>Courses</span></a></li>
                 <li><a href="https://batechu.com/lms/profile/students" class="sidebar-link"><i
-                            class="fas fa-user"></i><span>Profile</span></a></li>
+                            class="fas fa-user"></i><span>Profile LMS</span></a></li>
 
                 <li class="pt-4 pb-2">
                     <p class="px-4 text-[10px] font-bold uppercase tracking-widest opacity-60"

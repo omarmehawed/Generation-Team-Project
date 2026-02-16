@@ -643,7 +643,7 @@
 
                 {{-- كارت إنشاء الفريق --}}
                 <div
-                    class="tilt-effect glass-gold p-10 rounded-[2.5rem] hover-card-vip group cursor-pointer relative overflow-hidden bg-white">
+                    class="tilt-effect glass-gold p-10 rounded-[2.5rem] hover-card-vip group cursor-pointer relative overflow-hidden bg-white dark:bg-gray-800/50">
                     <div
                         class="absolute top-0 right-0 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob">
                     </div>
@@ -692,7 +692,7 @@
                             your workspace.
                         </p>
                         <button onclick="openModal('joinTeamModal')"
-                            class="w-full bg-white hover:bg-gray-100 text-black font-black py-5 px-8 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-4 text-lg transform active:scale-95">
+                            class="w-full bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white text-black font-black py-5 px-8 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-4 text-lg transform active:scale-95">
                             Enter Access Code <i
                                 class="fas fa-key text-yellow-600 group-hover:rotate-45 transition-transform"></i>
                         </button>

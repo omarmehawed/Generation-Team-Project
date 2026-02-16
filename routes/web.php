@@ -44,6 +44,7 @@ require __DIR__ . '/auth.php';
 Route::middleware(['auth', 'verified'])->group(function () {
     
     // Join Requests (Restricted by Email)
+    Route::get('/join-requests/export', [JoinRequestController::class, 'export'])->name('join.export');
     Route::get('/join-requests', [JoinRequestController::class, 'adminIndex'])->name('join.admin');
     Route::get('/join-requests/{id}/approve', [JoinRequestController::class, 'approve'])->name('join.approve');
     Route::post('/join-requests/{id}/reject', [JoinRequestController::class, 'reject'])->name('join.reject');

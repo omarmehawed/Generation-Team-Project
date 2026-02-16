@@ -63,8 +63,16 @@
                   document.documentElement.classList.remove('dark');
               }
           }
-      }" :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }"
-    x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); if(!darkMode) document.documentElement.classList.remove('dark');">
+      }" :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }" }"
+    :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }" x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); 
+            if(!darkMode) document.documentElement.classList.remove('dark');
+            
+            // Auto-scroll to first error
+            const firstError = document.querySelector('.text-red-500');
+            if(firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                firstError.previousElementSibling?.focus();
+            }">
 
     <!-- Navbar (Same as Landing) -->
     <nav class="fixed w-full z-50 transition-all duration-300 glass border-b border-gray-700">
@@ -165,7 +173,7 @@
                     <!-- Full Name -->
                     <div class="col-span-2">
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Full Name</label>
+                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(الأسم بالعربي)Full Name</label>
                         <input type="text" name="full_name" required value="{{ old('full_name') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('full_name') border-red-500 @enderror"
                             :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
@@ -177,7 +185,7 @@
                     <!-- National ID -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">National ID</label>
+                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(الرقم القومي)National ID</label>
                         <input type="text" name="national_id" required value="{{ old('national_id') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('national_id') border-red-500 @enderror"
                             :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
@@ -189,7 +197,7 @@
                     <!-- Academic ID -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Academic ID</label>
+                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(الرقم الأكاديمي)Academic ID</label>
                         <input type="text" name="academic_id" required value="{{ old('academic_id') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('academic_id') border-red-500 @enderror"
                             :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
@@ -201,7 +209,7 @@
                     <!-- Date of Birth -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Date of Birth</label>
+                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(تاريخ الميلاد)Date of Birth</label>
                         <input type="date" name="date_of_birth" required value="{{ old('date_of_birth') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('date_of_birth') border-red-500 @enderror"
                             :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">

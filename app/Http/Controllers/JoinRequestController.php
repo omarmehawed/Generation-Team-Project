@@ -106,6 +106,32 @@ class JoinRequestController extends Controller
             
             // 14. Stress
             'answers.stress_handling' => 'required|string',
+        ], [
+            'full_name.required' => 'Full Name is required',
+            'national_id.required' => 'National ID is required',
+            'academic_id.required' => 'Academic ID is required',
+            'date_of_birth.required' => 'Date of Birth is required',
+            'group.required' => 'Please select your Group (G1-G4)',
+            'phone_number.required' => 'Phone Number is required',
+            'whatsapp_number.required' => 'WhatsApp Number is required',
+            'address.required' => 'Address is required',
+            'photo.required' => 'A formal photo is required',
+            'photo.image' => 'The file must be an image',
+            'photo.max' => 'The photo size must not exceed 10MB',
+            'answers.experience_field.required' => 'Please select your Experience Field',
+            'answers.large_team_experience.required' => 'Please answer the Team Experience question',
+            'answers.start_date.required' => 'Please specify when you can start',
+            'answers.weekly_hours.required' => 'Please select your Weekly Hours availability',
+            'answers.best_project.required' => 'Please describe your Best Project',
+            'answers.confidence_scale.required' => 'Please rate your Confidence',
+            'answers.team_skills.required' => 'Please complete the Team Skills matrix',
+            'answers.programming_language.required' => 'Please select your Primary Programming Language',
+            'answers.prototyping_skills.required' => 'Please complete the Prototyping Skills matrix',
+            'answers.funding_experience.required' => 'Please answer the Funding Experience question',
+            'answers.tools_usage.required' => 'Please complete the Tools Usage matrix',
+            'answers.voice_assistants_realtime.required' => 'Please answer the Voice Assistants question',
+            'answers.project_importance.required' => 'Please rate the Project Importance',
+            'answers.stress_handling.required' => 'Please explain how you handle stress',
         ]);
 
         // Handle File Upload
@@ -249,5 +275,89 @@ class JoinRequestController extends Controller
         ]);
 
         return redirect()->route('join.admin')->with('error', 'Request rejected.');
+    }
+
+    /**
+     * Admin: Export Requests to CSV.
+     */
+    public function export(Request $request)
+    {
+        $this->authorizeAdminEmails();
+
+        $status = $request->input('status', 'all'); // all, pending, approved, rejected
+        $columns = $request->input('columns', ['full_name', 'status']); // Default columns
+
+        // Map database columns to human-readable headers
+        $columnMapping = [
+            'full_name' => 'Full Name',
+            'national_id' => 'National ID',
+            'academic_id' => 'Academic ID',
+            'phone_number' => 'Phone Number',
+            'whatsapp_number' => 'WhatsApp Number',
+            'address' => 'Home Address',
+            'group' => 'Group',
+            'date_of_birth' => 'Date of Birth',
+            'is_dorm' => 'Dorm Status',
+            'status' => 'Status',
+            'created_at' => 'Request Date'
+        ];
+
+        // Filter requested columns against allowed mapping
+        $selectedKeys = array_intersect($columns, array_keys($columnMapping));
+        
+        if (empty($selectedKeys)) {
+            $selectedKeys = ['full_name', 'status']; // Default fallback
+        }
+
+        // Build Query
+        $query = JoinRequest::query();
+        
+        if ($status !== 'all') {
+            $query->where('status', $status);
+        }
+
+        $requests = $query->select($selectedKeys)->get();
+
+        // Generate CSV
+        $filename = "join_requests_" . date('Y-m-d_H-i-s') . ".csv";
+        $handle = fopen('php://memory', 'w');
+
+        // Add BOM for Excel compatibility with Arabic
+        fputs($handle, chr(0xEF) . chr(0xBB) . chr(0xBF));
+
+        // Write Headers (Human Readable)
+        $headers = [];
+        foreach ($selectedKeys as $key) {
+            $headers[] = $columnMapping[$key];
+        }
+        fputcsv($handle, $headers);
+
+        // Write Rows with Formatting
+        foreach ($requests as $req) {
+            $row = [];
+            foreach ($selectedKeys as $key) {
+                $value = $req->$key;
+                
+                // Format Specific Columns
+                if ($key === 'is_dorm') {
+                    $value = $value ? 'Yes' : 'No';
+                } elseif ($key === 'status') {
+                    $value = ucfirst($value);
+                } elseif ($key === 'created_at') {
+                    $value = $value ? $value->format('Y-m-d H:i') : '';
+                }
+
+                $row[] = $value;
+            }
+            fputcsv($handle, $row);
+        }
+
+        fseek($handle, 0);
+        $csvData = stream_get_contents($handle);
+        fclose($handle);
+
+        return response($csvData)
+            ->header('Content-Type', 'text/csv; charset=UTF-8')
+            ->header('Content-Disposition', "attachment; filename=\"{$filename}\"");
     }
 }

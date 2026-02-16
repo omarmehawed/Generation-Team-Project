@@ -48,23 +48,27 @@
         }
 
         /* Text Overrides for Dark Mode Compatibility */
-        .text-slate-800 {
+        [data-theme="dark"] .text-slate-800 {
             color: var(--text-main) !important;
         }
 
-        .text-slate-500 {
+        [data-theme="dark"] .text-slate-500,
+        [data-theme="dark"] .text-slate-400,
+        [data-theme="dark"] .text-slate-600 {
             color: var(--text-muted) !important;
         }
 
-        .text-slate-400 {
-            color: var(--text-muted) !important;
-        }
-
-        .bg-slate-50 {
+        [data-theme="dark"] .bg-slate-50 {
             background-color: var(--bg-main) !important;
         }
 
-        .border-slate-100 {
+        [data-theme="dark"] .bg-white {
+            background-color: var(--bg-panel) !important;
+            border-color: var(--border) !important;
+        }
+
+        [data-theme="dark"] .border-slate-100,
+        [data-theme="dark"] .border-slate-200 {
             border-color: var(--border) !important;
         }
     </style>
