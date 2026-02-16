@@ -141,7 +141,7 @@
                                     Select Columns
                                 </label>
                                 <div class="grid grid-cols-2 gap-3">
-                                    @foreach(['full_name' => 'Full Name', 'national_id' => 'National ID', 'academic_id' => 'Academic ID', 'phone_number' => 'Phone', 'address' => 'Address', 'group' => 'Group', 'date_of_birth' => 'Date of Birth', 'status' => 'Status'] as $col => $label)
+                                    @foreach(['full_name' => 'Full Name', 'national_id' => 'National ID', 'academic_id' => 'Academic ID', 'phone_number' => 'Phone', 'whatsapp_number' => 'WhatsApp', 'address' => 'Address', 'group' => 'Group', 'date_of_birth' => 'Date of Birth', 'status' => 'Status'] as $col => $label)
                                         <label class="cursor-pointer group relative">
                                             <input type="checkbox" name="columns[]" value="{{ $col }}" checked class="peer sr-only">
                                             <div class="p-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/50 flex items-center gap-3 transition-all peer-checked:border-blue-500 dark:peer-checked:border-cyan-500 peer-checked:bg-blue-50/50 dark:peer-checked:bg-cyan-500/10 peer-checked:shadow-sm dark:peer-checked:shadow-[0_0_10px_rgba(6,182,212,0.15)] hover:border-gray-300 dark:hover:border-gray-600">
