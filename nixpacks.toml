@@ -5,7 +5,7 @@ nixPkgs = [
     "php83Extensions.pdo_mysql",
     "php83Extensions.gd",
     "php83Extensions.zip",
-    "phpPackages.composer", # دي هي الصح والمهمة
+    "php83Packages.composer", # لاحظ إننا حددنا النسخة هنا (php83Packages)
     "nodejs_18",
     "nginx",
     "libmysqlclient"
