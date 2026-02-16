@@ -1,11 +1,8 @@
 [phases.setup]
 nixPkgs = [
     "php83",
-    "php83Extensions.calendar", # السطر ده هو اللي هيحل المشكلة
-    "php83Extensions.gd",
-    "php83Extensions.zip",
+    "php83Extensions.calendar",
     "php83Extensions.pdo_mysql",
-    "php83Extensions.mbstring",
     "composer"
 ]
 
