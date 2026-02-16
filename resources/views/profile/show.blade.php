@@ -74,7 +74,9 @@
                     <div
                         class="w-32 h-32 rounded-full overflow-hidden border-4 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
                         @if($user->profile_photo_path)
-                            <img src="{{ asset('storage/' . $user->profile_photo_path) }}" class="w-full h-full object-cover">
+                            <img src="{{ asset('storage/' . $user->profile_photo_path) }}" 
+                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128';"
+                                 class="w-full h-full object-cover">
                         @else
                             <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128"
                                 class="w-full h-full object-cover">
