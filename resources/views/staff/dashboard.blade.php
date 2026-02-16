@@ -69,7 +69,7 @@
         }
     </style>
 
-    <div class="premium-bg min-h-screen p-6 md:p-10 animate-fade-up">
+    <div class="premium-bg min-h-screen p-4 md:p-10 animate-fade-up">
 
         {{-- 👑 Header --}}
         <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
@@ -177,7 +177,7 @@
                             New</span>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left">
+                        <table class="w-full text-left min-w-[600px]">
                             <thead class="bg-slate-50 text-[10px] uppercase text-slate-400 font-black tracking-wider">
                                 <tr>
                                     <th class="px-8 py-4">Team Info</th>

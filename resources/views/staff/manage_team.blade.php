@@ -149,15 +149,15 @@
 
     {{-- Global State Management (Alpine) --}}
     <div x-data="{
-        showScrollTop: false,
-        loading: false,
-        activeSection: '',
-        init() {
-            window.addEventListener('scroll', () => {
-                this.showScrollTop = window.pageYOffset > 500;
-            });
-        }
-    }">
+                    showScrollTop: false,
+                    loading: false,
+                    activeSection: '',
+                    init() {
+                        window.addEventListener('scroll', () => {
+                            this.showScrollTop = window.pageYOffset > 500;
+                        });
+                    }
+                }">
 
         {{-- Top Loading Bar --}}
         {{-- <div id="scroll-progress"></div> --}}
@@ -169,7 +169,7 @@
                 <i class="fas fa-circle-notch fa-spin text-5xl text-[#D4AF37] mb-4"></i>
                 <p class="text-white font-bold tracking-widest uppercase text-xs">Processing Request...</p>
             </div> --}}
-        {{--
+            {{--
         </div> --}}
 
         <div class="premium-dashboard-bg p-4 md:p-8 lg:p-12 space-y-12">
@@ -194,7 +194,7 @@
                 </div>
                 <div class="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500 opacity-10 rounded-full blur-[100px]"></div>
 
-                <div class="relative z-10 p-8 md:p-16 text-white">
+                <div class="relative z-10 p-6 md:p-16 text-white">
                     <div class="flex flex-col lg:flex-row justify-between items-center gap-12">
 
                         {{-- Left Side: Project Info --}}
@@ -528,7 +528,7 @@
                                                 <i class="fas fa-check-circle mr-1"></i> Scheduled & Verified
                                             </div>
 
-                                            <div class="py-8 border-b border-white/5 border-t border-white/5">
+                                            <div class="py-8 border-b border-t border-white/5">
                                                 <p
                                                     class="text-7xl font-black text-white font-serif tracking-tighter mb-2 shadow-gold text-shadow scale-100 group-hover:scale-110 transition-transform duration-500">
                                                     {{ \Carbon\Carbon::parse($team->defense_date)->format('d') }}
@@ -542,7 +542,7 @@
                                                 <div
                                                     class="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:border-white/30 transition-colors group/item hover:bg-white/10">
                                                     <i
-                                                        class="far fa-clock text-white mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
+                                                        class="far fa-clock mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
                                                     <span class="text-xs font-mono text-white font-bold">
                                                         {{ \Carbon\Carbon::parse($team->defense_date)->format('h:i A') }}
                                                     </span>
@@ -551,16 +551,14 @@
                                                 <div
                                                     class="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:border-white/30 transition-colors group/item hover:bg-white/10">
                                                     <i
-                                                        class="fas fa-map-marker-alt text-white mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
-                                                    <span
-                                                        class="text-[10px] text-white font-black truncate block uppercase">
+                                                        class="fas fa-map-marker-alt mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
+                                                    <span class="text-[10px] text-white font-black truncate block uppercase">
                                                         {{ $team->defense_location }}
                                                     </span>
                                                 </div>
                                             </div>
 
-                                            <button
-                                                onclick="document.getElementById('defenseForm').classList.toggle('hidden')"
+                                            <button onclick="document.getElementById('defenseForm').classList.toggle('hidden')"
                                                 class="mt-6 text-[10px] font-black text-gray-500 hover:text-white uppercase tracking-widest transition-all hover:bg-white/5 py-3 px-4 rounded-xl w-full border border-transparent hover:border-white/10">
                                                 <i class="fas fa-edit mr-1"></i> Reschedule Event
                                             </button>
@@ -607,8 +605,8 @@
                                             <label
                                                 class="text-[9px] uppercase text-gray-500 font-black mb-2 block ml-2 tracking-widest">Location
                                                 / Hall</label>
-                                            <input type="text" name="defense_location"
-                                                placeholder="ex: Main Hall, Room 303" required
+                                            <input type="text" name="defense_location" placeholder="ex: Main Hall, Room 303"
+                                                required
                                                 class="w-full bg-black/40 border border-slate-700 text-white text-xs rounded-xl p-4 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all hover:bg-black/60 placeholder-gray-600">
                                         </div>
                                         <button type="submit"
@@ -637,21 +635,21 @@
 
                             $reliability =
                                 $totalAttendanceRecords > 0
-                                    ? round(($presentRecords / $totalAttendanceRecords) * 100, 1)
-                                    : 100;
+                                ? round(($presentRecords / $totalAttendanceRecords) * 100, 1)
+                                : 100;
 
                             $reliabilityColor =
                                 $reliability >= 85
-                                    ? 'text-emerald-600'
-                                    : ($reliability >= 60
-                                        ? 'text-yellow-600'
-                                        : 'text-red-600');
+                                ? 'text-emerald-600'
+                                : ($reliability >= 60
+                                    ? 'text-yellow-600'
+                                    : 'text-red-600');
                             $reliabilityBarColor =
                                 $reliability >= 85
-                                    ? 'from-emerald-500 to-teal-500'
-                                    : ($reliability >= 60
-                                        ? 'from-yellow-500 to-orange-500'
-                                        : 'from-red-500 to-pink-500');
+                                ? 'from-emerald-500 to-teal-500'
+                                : ($reliability >= 60
+                                    ? 'from-yellow-500 to-orange-500'
+                                    : 'from-red-500 to-pink-500');
 
                             $phaseMap = [
                                 'planning' => 10,
@@ -676,8 +674,7 @@
                                 <div>
                                     <div class="flex justify-between items-center mb-2">
                                         <span class="text-xs font-bold text-gray-600">Team Reliability</span>
-                                        <span
-                                            class="text-xs font-black {{ $reliabilityColor }}">{{ $reliability }}%</span>
+                                        <span class="text-xs font-black {{ $reliabilityColor }}">{{ $reliability }}%</span>
                                     </div>
                                     <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
                                         <div class="bg-gradient-to-r {{ $reliabilityBarColor }} h-full shadow-lg transition-all duration-1000 ease-out"
@@ -786,8 +783,7 @@
                                         </span>
                                     </div>
 
-                                    <div
-                                        class="bg-white/60 p-5 rounded-2xl border border-orange-100 mb-8 backdrop-blur-sm">
+                                    <div class="bg-white/60 p-5 rounded-2xl border border-orange-100 mb-8 backdrop-blur-sm">
                                         <p class="text-[9px] font-black text-orange-400 uppercase mb-2 tracking-widest">
                                             Student
                                             Narrative:</p>
@@ -801,20 +797,16 @@
                                         @csrf
                                         @if ($meeting->mode == 'online')
                                             <div class="relative group/input">
-                                                <label
-                                                    class="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-2">Secure
+                                                <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-2">Secure
                                                     Meeting URL (Zoom/Teams)</label>
-                                                <input type="url" name="meeting_link" placeholder="https://..."
-                                                    required
+                                                <input type="url" name="meeting_link" placeholder="https://..." required
                                                     class="w-full bg-white border border-slate-200 rounded-xl p-4 text-xs focus:ring-4 focus:ring-orange-100 focus:border-orange-400 outline-none transition-all shadow-sm group-hover/input:border-orange-300">
                                             </div>
                                         @else
                                             <div class="relative group/input">
-                                                <label
-                                                    class="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-2">On-Site
+                                                <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-2">On-Site
                                                     Logistics (Room/Hall)</label>
-                                                <input type="text" name="location"
-                                                    placeholder="e.g. Executive Suite 402" required
+                                                <input type="text" name="location" placeholder="e.g. Executive Suite 402" required
                                                     class="w-full bg-white border border-slate-200 rounded-xl p-4 text-xs focus:ring-4 focus:ring-orange-100 focus:border-orange-400 outline-none transition-all shadow-sm group-hover/input:border-orange-300">
                                             </div>
                                         @endif
@@ -894,15 +886,13 @@
                                                     </div>
                                                     <div class="flex gap-1 bg-slate-100 p-1 rounded-xl">
                                                         <label class="cursor-pointer group/radio">
-                                                            <input type="radio"
-                                                                name="attendance[{{ $member->user_id }}]" value="present"
-                                                                checked class="peer sr-only">
+                                                            <input type="radio" name="attendance[{{ $member->user_id }}]"
+                                                                value="present" checked class="peer sr-only">
                                                             <span
                                                                 class="block px-3 py-1.5 rounded-lg text-[9px] font-black text-slate-400 peer-checked:bg-emerald-600 peer-checked:text-white transition-all shadow-sm">P</span>
                                                         </label>
                                                         <label class="cursor-pointer group/radio">
-                                                            <input type="radio"
-                                                                name="attendance[{{ $member->user_id }}]" value="absent"
+                                                            <input type="radio" name="attendance[{{ $member->user_id }}]" value="absent"
                                                                 class="peer sr-only">
                                                             <span
                                                                 class="block px-3 py-1.5 rounded-lg text-[9px] font-black text-slate-400 peer-checked:bg-red-600 peer-checked:text-white transition-all shadow-sm">A</span>
@@ -914,8 +904,7 @@
 
                                         <button type="submit"
                                             class="w-full bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl hover:shadow-emerald-200 flex items-center justify-center gap-3 group/submit">
-                                            <i
-                                                class="fas fa-shield-check group-hover/submit:scale-110 transition-transform"></i>
+                                            <i class="fas fa-shield-check group-hover/submit:scale-110 transition-transform"></i>
                                             Finalize & Synchronize Records
                                         </button>
                                     </form>
@@ -1088,20 +1077,20 @@
                                 $percentage = ($team->project_score / $team->project_max_score) * 100;
                                 $gradeColor =
                                     $percentage >= 85
-                                        ? 'text-green-600'
-                                        : ($percentage >= 75
-                                            ? 'text-blue-600'
-                                            : ($percentage >= 65
-                                                ? 'text-yellow-600'
-                                                : 'text-red-600'));
+                                    ? 'text-green-600'
+                                    : ($percentage >= 75
+                                        ? 'text-blue-600'
+                                        : ($percentage >= 65
+                                            ? 'text-yellow-600'
+                                            : 'text-red-600'));
                                 $gradeBg =
                                     $percentage >= 85
-                                        ? 'bg-green-100'
-                                        : ($percentage >= 75
-                                            ? 'bg-blue-100'
-                                            : ($percentage >= 65
-                                                ? 'bg-yellow-100'
-                                                : 'bg-red-100'));
+                                    ? 'bg-green-100'
+                                    : ($percentage >= 75
+                                        ? 'bg-blue-100'
+                                        : ($percentage >= 65
+                                            ? 'bg-yellow-100'
+                                            : 'bg-red-100'));
                             @endphp
 
                             <div class="text-center py-4">
@@ -1121,8 +1110,7 @@
                                     <span class="text-3xl font-bold {{ $gradeColor }}">
                                         {{ round($percentage, 1) }}%
                                     </span>
-                                    <span
-                                        class="text-xs text-gray-400 block mt-1 font-bold uppercase tracking-widest">Total
+                                    <span class="text-xs text-gray-400 block mt-1 font-bold uppercase tracking-widest">Total
                                         Efficiency</span>
                                 </div>
 
@@ -1157,15 +1145,15 @@
                                 <div>
                                     <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Score
                                         Obtained</label>
-                                    <input type="number" step="0.5" name="project_score" placeholder="e.g. 120"
-                                        required value="{{ $team->project_score }}"
+                                    <input type="number" step="0.5" name="project_score" placeholder="e.g. 120" required
+                                        value="{{ $team->project_score }}"
                                         class="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm focus:ring-purple-500 focus:border-purple-500 font-bold text-gray-700 outline-none shadow-sm">
                                 </div>
                                 <div>
                                     <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Max
                                         Score</label>
-                                    <input type="number" step="1" name="project_max_score" placeholder="e.g. 150"
-                                        required value="{{ $team->project_max_score ?? 100 }}"
+                                    <input type="number" step="1" name="project_max_score" placeholder="e.g. 150" required
+                                        value="{{ $team->project_max_score ?? 100 }}"
                                         class="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm focus:ring-purple-500 focus:border-purple-500 font-bold text-gray-500 outline-none shadow-sm">
                                 </div>
                             </div>
@@ -1199,7 +1187,7 @@
                 }
 
                 // --- Keyboard Accessibility ---
-                document.onkeydown = function(evt) {
+                document.onkeydown = function (evt) {
                     evt = evt || window.event;
                     if (evt.keyCode == 27) { // Escape key
                         closeModal('endMeetingModal');
@@ -1209,11 +1197,11 @@
                 };
 
                 // --- Scroll Logic for Progress Bar ---
-                window.onscroll = function() {
+                window.onscroll = function () {
                     var winScroll = document.body.scrollTop || document.documentElement.scrollTop;
                     var height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
                     var scrolled = (winScroll / height) * 100;
                     document.getElementById("scroll-progress").style.width = scrolled + "%";
                 };
             </script>
-        @endsection
+@endsection

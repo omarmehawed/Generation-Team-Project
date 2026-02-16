@@ -79,8 +79,8 @@
 
             <div class="p-6">
 
-                <!-- Table Container -->
-                <div class="table-responsive">
+                <!-- Desktop Table (Hidden on Mobile) -->
+                <div class="table-responsive hidden md:block">
                     <table class="w-full text-left border-separate border-spacing-y-3">
                         <thead>
                             <tr class="text-gray-400 text-xs uppercase tracking-wider font-bold">
@@ -211,6 +211,81 @@
                             @endforelse
                         </tbody>
                     </table>
+                </div>
+
+                <!-- Mobile Card View (Visible on Mobile) -->
+                <div class="md:hidden space-y-4">
+                    @forelse($requests as $request)
+                        <div class="bg-gray-800/40 rounded-2xl border border-gray-700 p-4 space-y-4">
+                            <!-- Header: Avatar + Name + Status -->
+                            <div class="flex items-start justify-between">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-600">
+                                        @if($request->photo_path)
+                                            <img src="{{ asset('storage/' . $request->photo_path) }}" class="w-full h-full object-cover">
+                                        @else
+                                            <div class="w-full h-full bg-gray-700 flex items-center justify-center text-sm font-bold text-gray-400">
+                                                {{ substr($request->full_name, 0, 1) }}
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm">{{ $request->full_name }}</h4>
+                                        <p class="text-xs text-gray-500">{{ $request->academic_id }}</p>
+                                    </div>
+                                </div>
+                                <div>
+                                    @if($request->status === 'pending')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-yellow-500/10 text-yellow-500 border border-yellow-500/20">
+                                            Pending
+                                        </span>
+                                    @elseif($request->status === 'approved')
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-green-500/10 text-green-500 border border-green-500/20">
+                                            Approved
+                                        </span>
+                                    @else
+                                        <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-red-500/10 text-red-500 border border-red-500/20">
+                                            Rejected
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            <!-- Context Info -->
+                            <div class="flex items-center justify-between text-xs text-gray-400 border-t border-gray-700/50 pt-3">
+                                <span class="bg-gray-700/50 px-2 py-1 rounded">{{ $request->group }}</span>
+                                <div>
+                                    <i class="far fa-clock mr-1"></i> {{ $request->created_at->diffForHumans() }}
+                                </div>
+                            </div>
+
+                            <!-- Actions -->
+                            <div class="grid grid-cols-3 gap-2 pt-1">
+                                <button @click="openViewModal({{ $request }})"
+                                    class="col-span-1 bg-gray-700 hover:bg-gray-600 text-gray-300 py-2 rounded-lg text-xs font-bold transition-colors">
+                                    View
+                                </button>
+                                @if($request->status === 'pending')
+                                    <button @click="openApproveModal({{ $request }})"
+                                        class="col-span-1 bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/20 py-2 rounded-lg text-xs font-bold transition-colors">
+                                        Approve
+                                    </button>
+                                    <button @click="openRejectModal({{ $request }})"
+                                        class="col-span-1 bg-red-500/10 hover:bg-red-500/20 text-red-500 border border-red-500/20 py-2 rounded-lg text-xs font-bold transition-colors">
+                                        Reject
+                                    </button>
+                                @else
+                                    <div class="col-span-2 text-center text-xs text-gray-500 py-2 italic">
+                                        Action Taken
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    @empty
+                        <div class="text-center py-8 text-gray-500">
+                            No requests found.
+                        </div>
+                    @endforelse
                 </div>
 
                 <!-- Pagination -->

@@ -439,7 +439,7 @@
                 </nav>
             </aside>
 
-            <main class="flex-1 md:ml-64 p-8 relative transition-colors duration-300">
+            <main class="flex-1 md:ml-64 p-4 md:p-8 relative transition-colors duration-300">
                 {{-- Background Grid Effect for Main Content --}}
                 <div class="absolute inset-0 z-0 pointer-events-none opacity-20"
                     style="background-image: radial-gradient(var(--grid-color) 1px, transparent 1px); background-size: 20px 20px;">

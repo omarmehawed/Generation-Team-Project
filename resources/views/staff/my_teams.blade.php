@@ -86,7 +86,7 @@
         ██████████████████████████████████████████████████████████████████████████
         --}}
         <div
-            class="relative bg-[#175c53] rounded-[2.5rem] p-8 md:p-12 mb-10 overflow-hidden shadow-2xl border border-[#175c53]/50 animate-enter group">
+            class="relative bg-[#175c53] rounded-[2.5rem] p-4 md:p-12 mb-10 overflow-hidden shadow-2xl border border-[#175c53]/50 animate-enter group">
 
             {{-- Background Effects --}}
             <div class="absolute inset-0 bg-gradient-to-br from-[#175c53] to-[#0f3f38]"></div>
@@ -149,14 +149,10 @@
                             <select name="year" onchange="this.form.submit()"
                                 class="w-full appearance-none bg-white/5 text-white text-xs font-bold pl-9 pr-10 py-3.5 rounded-xl border border-white/10 focus:ring-0 focus:border-[#D4AF37] cursor-pointer hover:bg-white/10 transition-colors outline-none uppercase tracking-wide">
                                 <option value="all" class="text-slate-900 bg-white">All Levels</option>
-                                <option value="1" class="text-slate-900 bg-white"
-                                    {{ request('year') == '1' ? 'selected' : '' }}>Year 1</option>
-                                <option value="2" class="text-slate-900 bg-white"
-                                    {{ request('year') == '2' ? 'selected' : '' }}>Year 2</option>
-                                <option value="3" class="text-slate-900 bg-white"
-                                    {{ request('year') == '3' ? 'selected' : '' }}>Year 3</option>
-                                <option value="4" class="text-slate-900 bg-white"
-                                    {{ request('year') == '4' ? 'selected' : '' }}>Year 4</option>
+                                <option value="1" class="text-slate-900 bg-white" {{ request('year') == '1' ? 'selected' : '' }}>Year 1</option>
+                                <option value="2" class="text-slate-900 bg-white" {{ request('year') == '2' ? 'selected' : '' }}>Year 2</option>
+                                <option value="3" class="text-slate-900 bg-white" {{ request('year') == '3' ? 'selected' : '' }}>Year 3</option>
+                                <option value="4" class="text-slate-900 bg-white" {{ request('year') == '4' ? 'selected' : '' }}>Year 4</option>
                             </select>
                             <i
                                 class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-[10px] text-white/50 pointer-events-none group-hover:text-white transition-colors"></i>
@@ -185,8 +181,7 @@
 
                     {{-- Text Content --}}
                     <div class="max-w-xl">
-                        <h3
-                            class="text-sm font-black text-purple-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
+                        <h3 class="text-sm font-black text-purple-600 uppercase tracking-[0.2em] flex items-center gap-2 mb-3">
                             <span class="w-2 h-2 rounded-full bg-purple-600 animate-ping"></span>
                             Action Required
                         </h3>
@@ -200,14 +195,13 @@
                     {{-- Form --}}
                     {{-- ملاحظة: تم الحفاظ على المتغيرات كما هي لعدم كسر اللوجيك --}}
                     <div class="w-full md:w-auto bg-slate-50 p-6 rounded-3xl border border-slate-200/60 shadow-inner">
-                        <form action="{{ route('staff.project.deadline', $teams->first()->project->id ?? '') }}"
-                            method="POST" class="flex flex-col sm:flex-row items-end gap-4">
+                        <form action="{{ route('staff.project.deadline', $teams->first()->project->id ?? '') }}" method="POST"
+                            class="flex flex-col sm:flex-row items-end gap-4">
                             @csrf
                             @method('PUT')
 
                             <div class="w-full sm:w-64">
-                                <label
-                                    class="text-[10px] font-bold text-slate-400 uppercase mb-2 block tracking-wider">Select
+                                <label class="text-[10px] font-bold text-slate-400 uppercase mb-2 block tracking-wider">Select
                                     Deadline Date</label>
                                 <div class="relative group/input">
                                     <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
@@ -231,10 +225,10 @@
         @endif
 
         {{--
-    ██████████████████████████████████████████████████████████████████████████
-    📊 TEAMS GRID SECTION
-    ██████████████████████████████████████████████████████████████████████████
-    --}}
+        ██████████████████████████████████████████████████████████████████████████
+        📊 TEAMS GRID SECTION
+        ██████████████████████████████████████████████████████████████████████████
+        --}}
         @if ($teams->count() > 0)
             {{-- 1. شبكة الكروت --}}
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 animate-enter delay-100">
@@ -263,8 +257,7 @@
 
                                     @if ($team->logo)
                                         {{-- ✅ حالة 1: لو فيه لوجو، هاته من الراوت المباشر (زي الداشبورد) --}}
-                                        <img src="{{ route('final_project.logo', $team->id) . '?v=' . time() }}"
-                                            alt="{{ $team->name }}"
+                                        <img src="{{ route('final_project.logo', $team->id) . '?v=' . time() }}" alt="{{ $team->name }}"
                                             class="relative w-16 h-16 rounded-2xl object-cover border-2 border-slate-100 shadow-inner group-hover:shadow-xl group-hover:scale-110 transform transition-all duration-500 bg-white">
                                     @else
                                         {{-- 🅰️ حالة 2: مفيش لوجو اعرض أول حرف (الكود القديم) --}}
@@ -314,14 +307,13 @@
                             {{-- Stats Row --}}
                             <div class="flex items-center gap-6 text-xs font-bold text-slate-400 uppercase tracking-wider">
                                 <div class="flex items-center gap-2 group/stat">
-                                    <i
-                                        class="fas fa-crown text-[#D4AF37] group-hover/stat:scale-125 transition-transform"></i>
+                                    <i class="fas fa-crown text-[#D4AF37] group-hover/stat:scale-125 transition-transform"></i>
                                     <span
                                         class="group-hover:text-slate-700 transition">{{ Str::limit($team->leader->name ?? 'N/A', 12) }}</span>
                                 </div>
                                 <div class="flex items-center gap-2 group/stat">
                                     <i
-                                        class="fas fa-users text-slate-300 group-hover:text-[#175c53] transition-colors group-hover/stat:scale-125 transition-transform"></i>
+                                        class="fas fa-users text-slate-300 group-hover:text-[#175c53] group-hover/stat:scale-125 transition-all"></i>
                                     <span class="group-hover:text-slate-700 transition">{{ $team->members->count() }}
                                         Members</span>
                                 </div>
@@ -337,8 +329,7 @@
                             </a>
                             <a href="{{ route('staff.team.manage', $team->id) }}"
                                 class="flex items-center justify-center gap-2 text-white bg-slate-900 hover:bg-[#175c53] text-[10px] font-black uppercase tracking-wider py-3 rounded-xl transition-all shadow-lg shadow-slate-200 hover:shadow-emerald-200 transform hover:-translate-y-1 group/btn">
-                                Manage <i
-                                    class="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                                Manage <i class="fas fa-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
                             </a>
                         </div>
                     </div>
@@ -385,10 +376,10 @@
             @endif
         @endif
         {{-- 🔥 Floating Action Bar (Dark Style) 🔥 --}}
-        <div x-show="selectedTeams.length > 0" style="display: none;"
-            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="translate-y-full opacity-0"
-            x-transition:enter-end="translate-y-0 opacity-100" x-transition:leave="transition ease-in duration-200"
-            x-transition:leave-start="translate-y-0 opacity-100" x-transition:leave-end="translate-y-full opacity-0"
+        <div x-show="selectedTeams.length > 0" style="display: none;" x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="translate-y-full opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
+            x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0 opacity-100"
+            x-transition:leave-end="translate-y-full opacity-0"
             class="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50 w-auto">
 
             <div
@@ -406,12 +397,12 @@
                 <div class="flex items-center gap-2">
 
                     {{--
-                   ⚡ التركة هنا:
-                   1. شيلنا زرار Submit المباشر.
-                   2. ضيفنا id للفورم عشان نتحكم فيه.
-                   3. ضيفنا input مخفي عشان يشيل الاسم الجديد.
-                   4. عملنا زرار عادي (type="button") بينادي دالة JS.
-                --}}
+                    ⚡ التركة هنا:
+                    1. شيلنا زرار Submit المباشر.
+                    2. ضيفنا id للفورم عشان نتحكم فيه.
+                    3. ضيفنا input مخفي عشان يشيل الاسم الجديد.
+                    4. عملنا زرار عادي (type="button") بينادي دالة JS.
+                    --}}
                     <form id="exportForm" action="{{ route('staff.teams.export') }}" method="POST" class="m-0">
                         @csrf
                         {{-- ده الانبوت المخفي اللي هيشيل الاسم --}}
@@ -483,12 +474,12 @@
                 }
             });
         }
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Enhanced Search Logic with Debounce prevention
             const searchInput = document.getElementById('teamSearchInput');
 
             if (searchInput) {
-                searchInput.addEventListener('keypress', function(e) {
+                searchInput.addEventListener('keypress', function (e) {
                     if (e.key === 'Enter') {
                         e.preventDefault();
 

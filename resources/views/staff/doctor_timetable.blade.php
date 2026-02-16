@@ -136,7 +136,7 @@
         </div>
 
         {{-- Calendar --}}
-        <div class="chic-card p-6 relative">
+        <div class="chic-card p-4 md:p-6 relative">
             <div id='calendar' class="font-sans"></div>
         </div>
     </div>
