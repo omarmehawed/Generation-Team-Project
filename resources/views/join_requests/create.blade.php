@@ -316,6 +316,9 @@
                                         </label>
                                     @endforeach
                                 </div>
+                                @error('answers.experience_field')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 2. Large Team Experience -->
@@ -336,6 +339,9 @@
                                         <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">No</span>
                                     </label>
                                 </div>
+                                @error('answers.large_team_experience')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 3. Start Date -->
@@ -370,6 +376,9 @@
                                         </label>
                                     @endforeach
                                 </div>
+                                @error('answers.weekly_hours')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 5. Best Project -->
@@ -402,6 +411,9 @@
                                         </label>
                                     @endfor
                                 </div>
+                                @error('answers.confidence_scale')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 7. Team Skills Matrix -->
@@ -438,6 +450,14 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @if($errors->has('answers.team_skills'))
+                                <p class="text-red-500 text-xs mt-1">{{ $errors->first('answers.team_skills') }}</p>
+                            @endif
+                            @foreach(['Communication', 'Team Problem Solving', 'Meeting Deadlines'] as $skill)
+                                @error("answers.team_skills.$skill")
+                                    <p class="text-red-500 text-xs mt-1">{{ $skill }}: {{ $message }}</p>
+                                @enderror
+                            @endforeach
 
                             <!-- 8. Programming Language -->
                             <div>
@@ -453,6 +473,9 @@
                                         <option value="{{ $lang }}" {{ old('answers.programming_language') == $lang ? 'selected' : '' }}>{{ $lang }}</option>
                                     @endforeach
                                 </select>
+                                @error('answers.programming_language')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 9. Prototyping Skills Matrix -->
@@ -491,6 +514,14 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @if($errors->has('answers.prototyping_skills'))
+                                <p class="text-red-500 text-xs mt-1">{{ $errors->first('answers.prototyping_skills') }}</p>
+                            @endif
+                            @foreach(['3D Printing', 'Soldering', 'PCB Design', 'Electrical Testing'] as $skill)
+                                @error("answers.prototyping_skills.$skill")
+                                    <p class="text-red-500 text-xs mt-1">{{ $skill }}: {{ $message }}</p>
+                                @enderror
+                            @endforeach
 
                             <!-- 10. Funding Experience -->
                             <div>
@@ -510,6 +541,9 @@
                                         <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">No</span>
                                     </label>
                                 </div>
+                                @error('answers.funding_experience')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 11. Tools Matrix -->
@@ -545,6 +579,14 @@
                                     </tbody>
                                 </table>
                             </div>
+                            @if($errors->has('answers.tools_usage'))
+                                <p class="text-red-500 text-xs mt-1">{{ $errors->first('answers.tools_usage') }}</p>
+                            @endif
+                            @foreach(['SolidWorks / Fusion 360', 'Arduino / Raspberry Pi IDE', 'TensorFlow / PyTorch', 'Altium Designer / Eagle'] as $tool)
+                                @error("answers.tools_usage.$tool")
+                                    <p class="text-red-500 text-xs mt-1">{{ $tool }}: {{ $message }}</p>
+                                @enderror
+                            @endforeach
 
                             <!-- 12. Voice Assistants -->
                             <div>
@@ -565,6 +607,9 @@
                                         <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">No</span>
                                     </label>
                                 </div>
+                                @error('answers.voice_assistants_realtime')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 13. Importance Scale -->
@@ -583,6 +628,9 @@
                                         </label>
                                     @endfor
                                 </div>
+                                @error('answers.project_importance')
+                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
+                                @enderror
                             </div>
 
                             <!-- 14. Stress Handling -->

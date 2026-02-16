@@ -463,4 +463,50 @@ Route::get('/run-magic-seeder', function () {
 //     $ahmed->courses()->syncWithoutDetaching([1, 2, 3, 4]);
 //     return "تم!";
 // });
+
 require __DIR__ . '/test_pdf.php';
+
+Route::get('/fix-images', function () {
+    $path = storage_path('app/public');
+    $link = public_path('storage');
+    
+    // 1. Try to link
+    try {
+        \Illuminate\Support\Facades\Artisan::call('storage:link');
+        $artisan = \Illuminate\Support\Facades\Artisan::output();
+    } catch (\Exception $e) {
+        $artisan = 'Error: ' . $e->getMessage();
+    }
+    
+    // 2. Check files
+    $files = [];
+    if (is_dir($path)) {
+        try {
+            $files = scandir($path); 
+        } catch (\Exception $e) {
+            $files = 'Error scanning ' . $path;
+        }
+        // Check specific folder
+        $photosPath = $path . '/join_requests_photos';
+        if (is_dir($photosPath)) {
+            $photos = scandir($photosPath);
+        } else {
+            $photos = 'Directory not found: ' . $photosPath;
+        }
+    } else {
+        $photos = 'Storage root not found at ' . $path;
+    }
+
+    return [
+        'symlink_exists' => file_exists($link),
+        'symlink_valid' => is_link($link),
+        'symlink_target' => is_link($link) ? readlink($link) : 'N/A',
+        'real_storage_path' => $path,
+        'artisan_output' => $artisan,
+        'root_files' => $files,
+        'join_requests_photos_content' => $photos,
+        'app_url' => env('APP_URL'),
+        'asset_test' => asset('storage/test.jpg'),
+    ];
+});
+
