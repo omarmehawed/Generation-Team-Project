@@ -60,7 +60,7 @@
                         class="bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-500 transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
 
                     <!-- Export Button -->
-                    <button @click="exportModal = true"
+                    <button type="button" @click="exportModal = true"
                         class="px-6 py-3 bg-[#0f172a] text-white rounded-xl hover:bg-[#1e293b] transition-all flex items-center gap-2 border border-blue-500/30 shadow-lg shadow-blue-500/20">
                         <i class="fas fa-file-export"></i>
                         <span class="font-bold">Export</span>
