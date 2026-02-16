@@ -3,7 +3,12 @@ nixPkgs = [
     "php83",
     "php83Extensions.calendar",
     "php83Extensions.pdo_mysql",
-    "composer"
+    "php83Extensions.gd",
+    "php83Extensions.zip",
+    "phpPackages.composer", # دي هي الصح والمهمة
+    "nodejs_18",
+    "nginx",
+    "libmysqlclient"
 ]
 
 [phases.build]
