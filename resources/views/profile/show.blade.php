@@ -71,17 +71,30 @@
             <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
                 {{-- Profile Photo --}}
                 <div class="relative group">
-                    <div
-                        class="w-32 h-32 rounded-full overflow-hidden border-4 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
-                        @if($user->profile_photo_path)
-                            <img src="{{ asset('storage/' . $user->profile_photo_path) }}" 
-                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128';"
-                                 class="w-full h-full object-cover">
-                        @else
-                            <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128"
-                                class="w-full h-full object-cover">
-                        @endif
-                    </div>
+                    <form action="{{ route('profile.update_details') }}" method="POST" enctype="multipart/form-data" id="profile-photo-form">
+                        @csrf
+                        <input type="file" name="profile_photo" id="profile-photo-input" class="hidden" accept="image/*" onchange="document.getElementById('profile-photo-form').submit()">
+                        
+                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)] relative cursor-pointer"
+                             onclick="document.getElementById('profile-photo-input').click()">
+                            
+                            {{-- Image --}}
+                            @if($user->profile_photo_path)
+                                <img src="{{ asset('storage/' . $user->profile_photo_path) }}" 
+                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128';"
+                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            @else
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128"
+                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            @endif
+
+                            {{-- Overlay --}}
+                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white">
+                                <i class="fas fa-camera text-2xl mb-1 text-cyan-400"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-wider">Edit</span>
+                            </div>
+                        </div>
+                    </form>
                 </div>
 
                 {{-- User Details & Form --}}
