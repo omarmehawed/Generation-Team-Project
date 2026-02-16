@@ -194,9 +194,6 @@
                         </thead>
                         <tbody class="text-gray-700 dark:text-gray-300">
                             @forelse($requests as $request)
-                                @php
-                                    $photoExists = $request->photo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($request->photo_path);
-                                @endphp
                                 <tr
                                     class="bg-white/50 dark:bg-gray-800/40 hover:bg-blue-50/50 dark:hover:bg-gray-800/80 transition-all duration-300 group rounded-2xl shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] border border-gray-100 dark:border-gray-800 hover:border-blue-200 dark:hover:border-cyan-500/30 hover:-translate-y-0.5 transform">
 
@@ -321,18 +318,17 @@
                 <!-- Mobile Card View (Visible on Mobile) -->
                 <div class="md:hidden space-y-4">
                     @forelse($requests as $request)
-                        @php
-                            $photoExists = $request->photo_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($request->photo_path);
-                        @endphp
                         <div class="bg-white dark:bg-gray-800/40 rounded-2xl border border-gray-200 dark:border-gray-700 p-4 space-y-4 shadow-sm hover:shadow-lg dark:hover:shadow-[0_0_15px_rgba(6,182,212,0.15)] transition-all duration-300 transform hover:-translate-y-1">
                             <!-- Header: Avatar + Name + Status -->
                             <div class="flex items-start justify-between">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600">
-                                        @if($photoExists)
-                                            <img src="{{ asset('storage/' . $request->photo_path) }}" class="w-full h-full object-cover">
+                                    <div class="w-10 h-10 rounded-full overflow-hidden border border-gray-200 dark:border-gray-600 bg-gray-100 dark:bg-gray-700">
+                                        @if($request->photo_path)
+                                            <img src="{{ asset('storage/' . $request->photo_path) }}" 
+                                                 onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($request->full_name) }}&background=random&color=fff';"
+                                                 class="w-full h-full object-cover">
                                         @else
-                                            <div class="w-full h-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center text-sm font-bold text-gray-500 dark:text-gray-400">
+                                            <div class="w-full h-full flex items-center justify-center text-sm font-bold text-gray-500 dark:text-gray-400">
                                                 {{ substr($request->full_name, 0, 1) }}
                                             </div>
                                         @endif
@@ -369,7 +365,7 @@
 
                             <!-- Actions -->
                             <div class="grid grid-cols-3 gap-2 pt-1">
-                                <button @click="openViewModal({{ json_encode(array_merge($request->toArray(), ['photo_exists' => $photoExists])) }})"
+                                <button @click="openViewModal({{ json_encode($request->toArray()) }})"
                                     class="col-span-1 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-600 dark:text-gray-300 py-2 rounded-lg text-xs font-bold transition-colors">
                                     View
                                 </button>
