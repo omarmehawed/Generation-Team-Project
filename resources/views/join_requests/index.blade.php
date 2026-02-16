@@ -205,9 +205,10 @@
                                             <div class="relative">
                                                 <div
                                                     class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-400 dark:group-hover:border-cyan-400 shadow-md group-hover:shadow-[0_0_10px_rgba(6,182,212,0.4)] transition-all duration-300">
-                                                    @if($photoExists)
-                                                        <img src="{{ asset('storage/' . $request->photo_path) }}"
-                                                            class="w-full h-full object-cover">
+                                                    @if($request->photo_path)
+                                                        <img src="{{ asset('storage/' . $request->photo_path) }}" 
+                                                             onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($request->full_name) }}&background=random&color=fff';"
+                                                             class="w-full h-full object-cover">
                                                     @else
                                                         <div
                                                             class="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-lg font-bold text-gray-500 dark:text-gray-400">
@@ -273,7 +274,7 @@
                                         class="p-4 text-end rounded-r-2xl border-r border-y border-transparent group-hover:border-blue-200 dark:group-hover:border-cyan-500/30 group-hover:border-r-blue-500 dark:group-hover:border-r-cyan-500">
                                         <div class="flex items-center justify-end gap-2">
                                             <!-- View -->
-                                            <button @click="openViewModal({{ json_encode(array_merge($request->toArray(), ['photo_exists' => $photoExists])) }})"
+                                            <button @click="openViewModal({{ json_encode($request->toArray()) }})"
                                                 class="w-8 h-8 rounded-lg flex items-center justify-center bg-gray-100 dark:bg-gray-700/50 hover:bg-blue-100 dark:hover:bg-cyan-500/20 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-cyan-400 transition-all hover:scale-110"
                                                 title="View Details">
                                                 <i class="fas fa-eye text-sm"></i>
@@ -431,14 +432,17 @@
                                         </div>
                                         <div
                                             class="avatar w-full h-full rounded-full border-4 border-gray-100 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 relative z-10 overflow-hidden shadow-lg">
-                                            <template x-if="selectedRequest.photo_path && selectedRequest.photo_exists">
-                                                <img :src="'/storage/' + selectedRequest.photo_path"
-                                                    class="w-full h-full object-cover">
-                                            </template>
-                                            <template x-if="!selectedRequest.photo_path || !selectedRequest.photo_exists">
-                                                <div class="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-400 dark:text-gray-500"
-                                                    x-text="selectedRequest.full_name.charAt(0)"></div>
-                                            </template>
+                                            <div class="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
+                                                <template x-if="selectedRequest.photo_path">
+                                                    <img :src="'/storage/' + selectedRequest.photo_path"
+                                                         x-on:error="$el.style.display='none'; $el.nextElementSibling.style.display='flex'"
+                                                         class="w-full h-full object-cover">
+                                                </template>
+                                                <div class="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-400 dark:text-gray-500 absolute inset-0 bg-gray-100 dark:bg-gray-800"
+                                                     :style="selectedRequest.photo_path ? 'display: none' : 'display: flex'"
+                                                     x-text="selectedRequest.full_name.charAt(0)">
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
 
