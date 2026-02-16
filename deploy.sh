@@ -25,6 +25,7 @@ php artisan view:cache
 
 # Run any database migrations
 php artisan migrate --force
+php artisan storage:link
 
 composer install --no-dev --optimize-autoloader
 npm install

@@ -14,5 +14,6 @@ nixPkgs = [
 [phases.build]
 cmds = [
     "composer install --optimize-autoloader --no-dev --ignore-platform-reqs",
-    "php artisan config:clear"
+    "php artisan config:clear",
+    "php artisan storage:link"
 ]
