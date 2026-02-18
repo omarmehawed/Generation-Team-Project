@@ -112,6 +112,15 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
+        }
+
+        /* Responsive Images */
+        img,
+        video {
+            max-width: 100%;
+            height: auto;
         }
 
         .font-tech {
@@ -229,22 +238,23 @@
 
                 <div class="flex items-center justify-start">
                     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" type="button"
-                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 transition-colors">
+                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 transition-colors z-50">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
 
-                    <a href="#" class="flex ms-2 md:me-24 items-center gap-3 group">
+                    <a href="#" class="flex ms-2 md:me-24 items-center gap-2 md:gap-3 group shrink-0">
                         <div
-                            class="relative w-10 h-10 rounded-lg overflow-hidden border border-transparent group-hover:border-[var(--primary)] transition-colors duration-300 shadow-md">
+                            class="relative w-8 h-8 md:w-10 md:h-10 rounded-lg overflow-hidden border border-transparent group-hover:border-[var(--primary)] transition-colors duration-300 shadow-md">
                             <img src="{{ asset('assets/gt_logo.jpg') }}"
                                 class="w-full h-full object-cover transform group-hover:scale-110 transition-transform duration-500"
                                 alt="GT Logo">
                         </div>
                         <div class="flex flex-col">
                             <span
-                                class="self-center text-xl font-tech font-bold whitespace-nowrap tracking-widest transition-colors duration-300"
+                                class="self-center text-lg md:text-xl font-tech font-bold whitespace-nowrap tracking-widest transition-colors duration-300"
                                 style="color: var(--text-main)">
-                                GENERATION <span style="color: var(--primary)">TEAM</span>
+                                GEN<span class="hidden xs:inline">ERATION</span> <span
+                                    style="color: var(--primary)">TEAM</span>
                             </span>
                         </div>
                     </a>

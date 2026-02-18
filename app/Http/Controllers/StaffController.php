@@ -522,17 +522,17 @@ class StaffController extends Controller
     public function viewAttachment($path)
     {
         // Use Storage facade for secure serving and correct headers
-        if (!\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+        if (!Storage::disk('public')->exists($path)) {
             abort(404);
         }
 
-        return \Illuminate\Support\Facades\Storage::disk('public')->response($path);
+        return Storage::disk('public')->response($path);
     }
 
     // 11. الرد على الاجتماع
     public function respondMeeting(Request $request, $id)
     {
-        $meeting = \App\Models\Meeting::findOrFail($id);
+        $meeting = Meeting::findOrFail($id);
 
         $request->validate([
             'status' => 'required|in:confirmed,rejected',
@@ -557,14 +557,14 @@ class StaffController extends Controller
         $meeting->save();
 
         // نجيب الليدر بتاع التيم صاحب الاجتماع
-        $leader = \App\Models\User::find(\App\Models\Team::find($meeting->team_id)->leader_id);
+        $leader = \App\Models\User::find(Team::find($meeting->team_id)->leader_id);
 
         if ($leader) {
             // نحدد لون ونص الرسالة حسب الحالة
             $statusMsg = $request->status == 'confirmed' ? 'Confirmed ✅' : 'Rejected ❌';
             $color = $request->status == 'confirmed' ? 'text-green-500' : 'text-red-500';
 
-            $leader->notify(new \App\Notifications\BatuNotification([
+            $leader->notify(new BatuNotification([
                 'title'   => 'Meeting Update 📢',
                 'body'    => 'Your meeting request regarding "' . $meeting->topic . '" has been ' . $statusMsg,
                 'icon'    => 'fas fa-envelope-open-text',
@@ -579,7 +579,7 @@ class StaffController extends Controller
 
     public function confirmMeeting(Request $request, $id)
     {
-        $meeting = \App\Models\Meeting::findOrFail($id);
+        $meeting = Meeting::findOrFail($id);
         $meeting->meeting_link = $request->link; // احفظ اللينك
         $meeting->status = 'scheduled';
         $meeting->save();
@@ -590,14 +590,14 @@ class StaffController extends Controller
     // 1. إنهاء الاجتماع لأول مرة
     public function endMeeting(Request $request, $id)
     {
-        $meeting = \App\Models\Meeting::findOrFail($id);
+        $meeting = Meeting::findOrFail($id);
 
         if ($request->has('attendance')) {
             foreach ($request->attendance as $userId => $statusValue) {
                 // تحويل 'present' إلى true (1) و 'absent' إلى false (0)
                 $isPresent = ($statusValue === 'present' || $statusValue == '1') ? true : false;
 
-                \App\Models\MeetingAttendance::updateOrCreate(
+                MeetingAttendance::updateOrCreate(
                     [
                         'meeting_id' => $meeting->id,
                         'user_id'    => $userId
@@ -621,7 +621,7 @@ class StaffController extends Controller
     // 2. تحديث الحضور من الأرشيف (Log)
     public function updateAttendance(Request $request, $id)
     {
-        $meeting = \App\Models\Meeting::findOrFail($id);
+        $meeting = Meeting::findOrFail($id);
 
         if ($request->has('attendance')) {
             foreach ($request->attendance as $userId => $statusValue) {
@@ -629,7 +629,7 @@ class StaffController extends Controller
                 // في الأرشيف القيمة بتيجي 1 أو 0 من الـ x-model
                 $isPresent = ($statusValue == '1' || $statusValue == 1 || $statusValue === 'present') ? true : false;
 
-                \App\Models\MeetingAttendance::updateOrCreate(
+                MeetingAttendance::updateOrCreate(
                     [
                         'meeting_id' => $meeting->id,
                         'user_id'    => $userId
@@ -652,7 +652,7 @@ class StaffController extends Controller
         ]);
 
         // بنجيب المشروع ونحدث الديدلاين
-        $project = \App\Models\Project::findOrFail($id);
+        $project = Project::findOrFail($id);
         $project->update([
             'deadline' => $request->deadline
         ]);
@@ -679,7 +679,7 @@ class StaffController extends Controller
             '#64748b', // Slate
         ];
 
-        $scheduledTeams = \App\Models\Team::whereNotNull('defense_date')
+        $scheduledTeams = Team::whereNotNull('defense_date')
             ->with('project') // 1. لازم نجيب المشروع عشان نعرف نوعه (type)
             ->get()
             ->map(function ($team) use ($palette) {
@@ -740,6 +740,6 @@ class StaffController extends Controller
         }
 
 
-        return \Maatwebsite\Excel\Facades\Excel::download(new \App\Exports\TeamsExport($teamIds), $fileName);
+        return Excel::download(new TeamsExport($teamIds), $fileName);
     }
 }

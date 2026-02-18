@@ -67,12 +67,15 @@
     :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }" x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); 
             if(!darkMode) document.documentElement.classList.remove('dark');
             
-            // Auto-scroll to first error
-            const firstError = document.querySelector('.text-red-500');
             if(firstError) {
                 firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 firstError.previousElementSibling?.focus();
             }">
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+    </style>
 
     <!-- Navbar (Same as Landing) -->
     <nav class="fixed w-full z-50 transition-all duration-300 glass border-b border-gray-700">
@@ -85,7 +88,7 @@
                     <div>
                         <h1 class="text-xl font-bold font-tech tracking-wider"
                             :class="{ 'text-gray-900': !darkMode, 'text-white': darkMode }">
-                            GENERATION <span class="text-blue-500">TEAM</span>
+                            GEN<span class="hidden xs:inline">ERATION</span> <span class="text-blue-500">TEAM</span>
                         </h1>
                     </div>
                 </div>
@@ -95,7 +98,7 @@
                     </button>
                     <a href="/" class="text-sm font-bold hover:text-blue-500 transition-colors"
                         :class="{ 'text-gray-600': !darkMode, 'text-gray-300': darkMode }">
-                        <i class="fas fa-arrow-right ml-2"></i> Back to Home
+                        <i class="fas fa-arrow-right ml-2"></i> <span class="hidden sm:inline">Back to Home</span>
                     </a>
                 </div>
             </div>

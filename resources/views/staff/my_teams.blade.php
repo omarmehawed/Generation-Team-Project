@@ -380,7 +380,7 @@
             x-transition:enter-start="translate-y-full opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
             x-transition:leave="transition ease-in duration-200" x-transition:leave-start="translate-y-0 opacity-100"
             x-transition:leave-end="translate-y-full opacity-0"
-            class="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50 w-auto">
+            class="fixed bottom-10 left-1/2 transform -translate-x-1/2 z-50 w-[90%] md:w-auto max-w-lg">
 
             <div
                 class="bg-[#1e293b] text-white px-6 py-3 rounded-full shadow-2xl flex items-center gap-6 border border-slate-700/50 backdrop-blur-xl">

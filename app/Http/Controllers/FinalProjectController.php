@@ -1171,7 +1171,7 @@ class FinalProjectController extends Controller
             'category' => $request->category,
             'created_at' => now(),
             'updated_at' => now(),
-            'updated_at' => now(),
+
         ]);
 
         // 🔍 LOG ACTIVITY

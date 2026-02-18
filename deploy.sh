@@ -25,7 +25,16 @@ php artisan view:cache
 
 # Run any database migrations
 php artisan migrate --force
-php artisan storage:link
+# Robust Storage Linking for Railway
+if [ -d "storage/app/public" ]; then
+    rm -rf public/storage
+    php artisan storage:link
+    echo "✅ Storage linked successfully."
+else
+    echo "⚠️ Storage directory not found, creating..."
+    mkdir -p storage/app/public
+    php artisan storage:link
+fi
 
 composer install --no-dev --optimize-autoloader
 npm install

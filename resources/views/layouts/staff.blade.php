@@ -70,6 +70,13 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             transition: background-color 0.3s ease, color 0.3s ease;
+            overflow-x: hidden; /* Prevent horizontal scroll */
+        }
+
+        /* Responsive Images */
+        img, video {
+            max-width: 100%;
+            height: auto;
         }
 
         h1,
@@ -165,10 +172,10 @@
                     style="border-color: var(--primary)">
                     <img src="{{ asset('assets/gt_logo.jpg') }}" class="w-full h-full object-cover">
                 </div>
-                <h1 class="text-xl font-bold tracking-widest uppercase transition-colors duration-300"
+                <h1 class="text-lg md:text-xl font-bold tracking-widest uppercase transition-colors duration-300"
                     style="color: var(--text-main)">
-                    GENERATION <span style="color: var(--primary)">TEAM</span> <span
-                        class="text-[10px] tracking-normal block normal-case font-thin"
+                    GEN<span class="hidden xs:inline">ERATION</span> <span style="color: var(--primary)">TEAM</span> <span
+                        class="text-[10px] tracking-normal hidden sm:block normal-case font-thin"
                         style="color: var(--text-muted)">Admin Portal</span>
                 </h1>
             </div>
