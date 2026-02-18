@@ -6,8 +6,8 @@
         {{-- Page Header --}}
         <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8 gap-6">
             <div>
-                <h1 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white font-tech flex items-center">
-                    <i class="fas fa-wallet text-blue-600 dark:text-cyan-400 mr-2"></i> Wallet System
+                <h1 class="text-2xl md:text-3xl font-bold text-ramadan-night dark:text-white font-amiri flex items-center">
+                    <i class="fas fa-wallet text-amber-500 dark:text-amber-400 mr-2"></i> Wallet System
                 </h1>
                 <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-1">Manage student deposits and withdrawals.
                 </p>
@@ -16,13 +16,13 @@
             {{-- Search Box --}}
             <div class="relative w-full lg:w-96">
                 <input type="text" x-model="searchQuery" @keydown.enter="searchUser()"
-                    class="w-full pl-10 pr-24 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:ring-2 focus:ring-blue-500 shadow-sm transition-all placeholder-gray-400"
+                    class="w-full pl-10 pr-24 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:ring-2 focus:ring-amber-500 shadow-sm transition-all placeholder-gray-400"
                     placeholder="Search Academic ID..." :disabled="loading">
                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <i class="fas fa-search text-gray-400"></i>
                 </div>
                 <button @click="searchUser()"
-                    class="absolute inset-y-1 right-1 px-5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="absolute inset-y-1 right-1 px-5 btn-gold text-white rounded-lg text-sm font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="loading">
                     <i class="fas fa-spinner fa-spin" x-show="loading"></i>
                     <span x-show="!loading">Find</span>
@@ -42,7 +42,7 @@
 
         {{-- User Card (Result) --}}
         <div x-show="user"
-            class="mb-8 bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 transform transition-all duration-500"
+            class="mb-8 ramadan-card transform transition-all duration-500"
             x-transition:enter="translate-y-4 opacity-0" x-transition:enter-end="translate-y-0 opacity-100"
             style="display: none;">
 
@@ -52,7 +52,7 @@
                 {{-- Avatar --}}
                 <div class="flex-shrink-0">
                     <div
-                        class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-blue-100 dark:bg-gray-700 flex items-center justify-center text-3xl md:text-4xl font-bold text-blue-600 dark:text-cyan-400 shadow-inner ring-4 ring-white dark:ring-gray-800">
+                        class="w-20 h-20 md:w-24 md:h-24 rounded-full bg-amber-100 dark:bg-gray-700 flex items-center justify-center text-3xl md:text-4xl font-bold text-amber-600 dark:text-amber-400 shadow-inner ring-4 ring-white dark:ring-gray-800">
                         <span x-text="user?.academic_id?.substring(0, 2)"></span>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
 
                     <div class="flex flex-wrap justify-center md:justify-start gap-2">
                         <span
-                            class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-blue-50 text-blue-600 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-100 dark:border-blue-800">
+                            class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-100 dark:border-amber-800">
                             Student
                         </span>
                         <span

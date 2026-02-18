@@ -25,8 +25,8 @@
         <!-- Page Header -->
         <div class="row align-items-center mb-6">
             <div class="col-lg-6 col-12">
-                <h2 class="text-3xl font-bold text-gray-900 dark:text-white font-tech tracking-wide mb-1">
-                    Join Requests <span class="text-blue-600 dark:text-cyan-400">Database</span>
+                <h2 class="text-3xl font-bold text-ramadan-night dark:text-white font-amiri tracking-wide mb-1">
+                    Join Requests <span class="text-amber-500 dark:text-amber-400">Database</span>
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Manage and review incoming team applications.</p>
             </div>
@@ -40,7 +40,7 @@
                             <i class="fas fa-search text-gray-400 group-focus-within:text-blue-500 dark:group-focus-within:text-cyan-400 transition-colors"></i>
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}"
-                            class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-800 focus:border-blue-500/50 dark:focus:border-cyan-500/50 focus:ring-1 focus:ring-blue-500/50 dark:focus:ring-cyan-500/50 sm:text-sm transition-all shadow-sm dark:shadow-lg"
+                            class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-800 focus:border-amber-500/50 dark:focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 dark:focus:ring-amber-500/50 sm:text-sm transition-all shadow-sm dark:shadow-lg"
                             placeholder="ID, Name, Phone...">
                     </div>
 
@@ -61,7 +61,7 @@
 
                     <!-- Export Button -->
                     <button type="button" @click="exportModal = true"
-                        class="px-6 py-3 bg-[#0f172a] text-white rounded-xl hover:bg-[#1e293b] transition-all flex items-center gap-2 border border-blue-500/30 shadow-lg shadow-blue-500/20">
+                        class="px-6 py-3 bg-ramadan-night text-white rounded-xl hover:bg-ramadan-light transition-all flex items-center gap-2 border border-amber-500/30 shadow-lg shadow-amber-500/20">
                         <i class="fas fa-file-export"></i>
                         <span class="font-bold">Export</span>
                     </button>
@@ -80,12 +80,12 @@
                 
                 <div class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity" @click="exportModal = false"></div>
                 
-                <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-gray-200 dark:border-cyan-500/30 dark:shadow-[0_0_30px_rgba(6,182,212,0.15)] flex flex-col max-h-[90vh]">
+                <div class="glass-panel rounded-2xl shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-gray-200 dark:border-amber-500/30 dark:shadow-[0_0_30px_rgba(251,191,36,0.15)] flex flex-col max-h-[90vh]">
                         
                         <!-- Header -->
                         <div class="px-6 py-5 border-b border-gray-100 dark:border-gray-700/50 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/50 backdrop-blur-xl">
                             <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-3 font-tech tracking-wide">
-                                <div class="w-10 h-10 rounded-lg bg-blue-100 dark:bg-cyan-500/10 flex items-center justify-center text-blue-600 dark:text-cyan-400">
+                                <div class="w-10 h-10 rounded-lg bg-amber-100 dark:bg-amber-500/10 flex items-center justify-center text-amber-600 dark:text-amber-400">
                                     <i class="fas fa-file-export text-lg"></i>
                                 </div>
                                 Export Data

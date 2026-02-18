@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'dark' }" :class="{ 'dark': theme === 'dark' }">
+<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'light' }" :class="{ 'dark': theme === 'dark' }">
 
 <head>
     <meta charset="utf-8">
@@ -11,58 +11,50 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
-        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;600;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;600;700&family=Figtree:wght@300;400;500;600;700&family=Amiri:wght@400;700&display=swap"
         rel="stylesheet">
 
 
     <style>
         :root {
-            /* Light Mode (Generation Team - Clean Tech) */
-            --bg-main: #f0f4f8;
-            /* Cool Grey/Blue tint */
+            /* Light Mode (Ramadan Morning) */
+            --bg-main: #f8fafc;
             --bg-panel: #ffffff;
             --bg-sidebar: #ffffff;
             --text-main: #1e293b;
-            /* Slate 800 */
             --text-muted: #64748b;
-            /* Slate 500 */
-            --primary: #2563eb;
-            /* Royal Blue */
-            --primary-hover: #1d4ed8;
-            --accent: #3b82f6;
+            --primary: #1e1b4b;
+            /* Ramadan Night */
+            --primary-hover: #312e81;
+            --accent: #fbbf24;
+            /* Gold */
             --border: #e2e8f0;
-            --shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.1);
-            --glow: 0 0 10px rgba(37, 99, 235, 0.1);
-            /* Subtle Blue Glow */
-            --nav-bg: rgba(255, 255, 255, 0.95);
+            --shadow: 0 4px 20px -2px rgba(30, 27, 75, 0.1);
+            --glow: 0 0 15px rgba(251, 191, 36, 0.2);
+            /* Gold Glow */
+            --nav-bg: rgba(255, 255, 255, 0.90);
             --grid-color: #e2e8f0;
         }
 
         [data-theme="dark"] {
-            /* Dark Mode (Refined Slate - Softer & High Contrast) */
+            /* Dark Mode (Ramadan Night) */
             --bg-main: #0f172a;
-            /* Slate 900 - Deep Blue-Grey */
-            --bg-panel: #1e293b;
-            /* Slate 800 - Lighter Surface */
+            --bg-panel: #1e1b4b;
+            /* Deep Indigo Panel */
             --bg-sidebar: #0f172a;
-            /* Slate 900 */
             --text-main: #f8fafc;
-            /* Slate 50 - Bright White */
             --text-muted: #94a3b8;
-            /* Slate 400 */
-            --primary: #06b6d4;
-            /* Cyan 500 - Vibrant but Readable */
-            --primary-hover: #0891b2;
-            /* Cyan 600 */
-            --accent: #38bdf8;
-            /* Sky 400 */
-            --border: #334155;
-            /* Slate 700 */
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            --glow: 0 0 15px rgba(6, 182, 212, 0.15);
-            /* Subtle Cyan Glow */
-            --nav-bg: rgba(15, 23, 42, 0.95);
-            --grid-color: #334155;
+            --primary: #fbbf24;
+            /* Gold */
+            --primary-hover: #d97706;
+            --accent: #818cf8;
+            /* Soft Indigo */
+            --border: #312e81;
+            /* Indigo Border */
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            --glow: 0 0 20px rgba(251, 191, 36, 0.15);
+            --nav-bg: rgba(15, 23, 42, 0.90);
+            --grid-color: #1e293b;
         }
 
         /* 
@@ -98,6 +90,7 @@
             border-color: var(--border) !important;
         }
 
+
         [data-theme="dark"] input,
         [data-theme="dark"] select,
         [data-theme="dark"] textarea {
@@ -108,7 +101,7 @@
 
         /* Apply Variables */
         body {
-            font-family: 'Rajdhani', sans-serif;
+            font-family: 'Figtree', 'Rajdhani', sans-serif;
             background-color: var(--bg-main);
             color: var(--text-main);
             transition: background-color 0.3s ease, color 0.3s ease;
@@ -125,6 +118,10 @@
 
         .font-tech {
             font-family: 'Orbitron', sans-serif;
+        }
+
+        .font-amiri {
+            font-family: 'Amiri', serif;
         }
 
         /* Responsive Scrollbar */
@@ -162,8 +159,8 @@
         }
 
         .sidebar-link:hover {
-            background-color: rgba(0, 243, 255, 0.05);
-            /* Subtle tint */
+            background-color: rgba(251, 191, 36, 0.1);
+            /* Gold tint */
             color: var(--primary);
             border-color: var(--border);
             box-shadow: var(--shadow);
@@ -172,22 +169,24 @@
 
         /* Light mode specific hover fix */
         :not([data-theme="dark"]) .sidebar-link:hover {
-            background-color: #eff6ff;
-            color: var(--primary);
-            border-color: #dbeafe;
+            background-color: #fffbeb;
+            /* Amber 50 */
+            color: #b45309;
+            /* Amber 700 */
+            border-color: #fcd34d;
         }
 
         .sidebar-link.active {
-            background-color: rgba(0, 243, 255, 0.08);
+            background: linear-gradient(90deg, rgba(251, 191, 36, 0.15) 0%, transparent 100%);
             color: var(--primary);
-            border-left: 3px solid var(--primary);
+            border-left: 3px solid var(--accent);
             box-shadow: var(--glow);
         }
 
         :not([data-theme="dark"]) .sidebar-link.active {
-            background-color: #eff6ff;
-            color: var(--primary);
-            border-left: 3px solid var(--primary);
+            background: linear-gradient(90deg, #fffbeb 0%, transparent 100%);
+            color: #b45309;
+            border-left: 3px solid #d97706;
             box-shadow: none;
         }
 
