@@ -166,7 +166,7 @@ class JoinRequestController extends Controller
     {
         $this->authorizeAdminEmails();
 
-        $query = JoinRequest::with('user');
+        $query = JoinRequest::with(['user', 'approver']);
 
         // 1. Search
         if ($request->has('search') && $request->filled('search')) {
@@ -254,6 +254,7 @@ class JoinRequestController extends Controller
         $joinRequest->update([
             'status' => 'approved',
             'user_id' => $user->id,
+            'approved_by' => Auth::id(),
         ]);
 
         // Move photo if needed? 

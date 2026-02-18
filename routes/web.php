@@ -234,7 +234,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Wallet System
-    Route::post('/wallet/transaction', [App\Http\Controllers\WalletController::class, 'transaction'])->name('wallet.transaction');
+    Route::get('/wallet', [App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+    Route::get('/wallet/search', [App\Http\Controllers\WalletController::class, 'search'])->name('wallet.search');
+    Route::post('/wallet/transaction', [App\Http\Controllers\WalletController::class, 'transact'])->name('wallet.transact');
 
 });
 

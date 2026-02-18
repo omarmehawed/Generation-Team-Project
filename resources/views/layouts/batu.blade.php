@@ -277,6 +277,14 @@
                             style="display: none;"></i>
                     </button>
 
+                    <!-- Wallet (Restricted) -->
+                    @if(in_array(auth()->user()->email, ['2420823@batechu.com', '2420324@batechu.com']))
+                        <a href="{{ route('wallet.index') }}" class="relative group p-2 mx-1" title="Wallet">
+                            <i class="fas fa-wallet text-xl hover:text-blue-500 transition-colors"
+                                style="color: var(--text-muted)"></i>
+                        </a>
+                    @endif
+
                     <!-- Notifications -->
                     <div class="relative ml-auto" x-data="{ open: false }">
                         <button @click="open = !open" class="relative group p-2">

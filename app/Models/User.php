@@ -107,6 +107,16 @@ class User extends Authenticatable
         return $this->hasOne(JoinRequest::class, 'user_id');
     }
 
+    public function walletTransactions()
+    {
+        return $this->hasMany(WalletTransaction::class);
+    }
+
+    public function approvedRequests()
+    {
+        return $this->hasMany(JoinRequest::class, 'approved_by');
+    }
+
     // ✅ علاقة مين اللي مسح اليوزر
     public function deleter()
     {

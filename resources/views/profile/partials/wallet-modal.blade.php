@@ -11,7 +11,7 @@
         {{-- Modal Content --}}
         <div
             class="relative w-full max-w-md transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-green-500">
-            <form action="{{ route('wallet.transaction') }}" method="POST">
+            <form action="{{ route('wallet.transact') }}" method="POST">
                 @csrf
                 <input type="hidden" name="user_id" value="{{ $user->id }}">
 

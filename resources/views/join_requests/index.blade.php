@@ -257,10 +257,17 @@
                                                 <span class="w-1.5 h-1.5 rounded-full bg-yellow-500 animate-pulse box-shadow-[0_0_5px_rgba(234,179,8,0.8)]"></span> Pending
                                             </span>
                                         @elseif($request->status === 'approved')
-                                            <span
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-500/20 shadow-sm dark:shadow-[0_0_10px_rgba(34,197,94,0.2)]">
-                                                <span class="w-1.5 h-1.5 rounded-full bg-green-500 box-shadow-[0_0_5px_rgba(34,197,94,0.8)]"></span> Approved
-                                            </span>
+                                            <div class="flex flex-col items-center">
+                                                <span
+                                                    class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 border border-green-200 dark:border-green-500/20 shadow-sm dark:shadow-[0_0_10px_rgba(34,197,94,0.2)]">
+                                                    <span class="w-1.5 h-1.5 rounded-full bg-green-500 box-shadow-[0_0_5px_rgba(34,197,94,0.8)]"></span> Approved
+                                                </span>
+                                                @if($request->approver)
+                                                    <span class="text-[10px] text-gray-500 dark:text-gray-400 mt-1 font-medium flex items-center gap-1">
+                                                        <i class="fas fa-user-check text-[9px]"></i> {{ explode(' ', $request->approver->name)[0] }}
+                                                    </span>
+                                                @endif
+                                            </div>
                                         @else
                                             <span
                                                 class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 border border-red-200 dark:border-red-500/20 shadow-sm dark:shadow-[0_0_10px_rgba(239,68,68,0.2)]">

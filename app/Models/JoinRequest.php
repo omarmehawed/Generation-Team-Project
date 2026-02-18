@@ -24,6 +24,7 @@ class JoinRequest extends Model
         'answers',
         'status',
         'user_id',
+        'approved_by',
     ];
 
     protected $casts = [
@@ -34,5 +35,10 @@ class JoinRequest extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function approver()
+    {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }
