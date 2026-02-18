@@ -251,10 +251,16 @@
                         </div>
                         <div class="flex flex-col">
                             <span
-                                class="self-center text-lg md:text-xl font-tech font-bold whitespace-nowrap tracking-widest transition-colors duration-300"
+                                class="self-center font-tech font-bold whitespace-nowrap tracking-widest transition-colors duration-300"
                                 style="color: var(--text-main)">
-                                GEN<span class="hidden xs:inline">ERATION</span> <span
-                                    style="color: var(--primary)">TEAM</span>
+                                <!-- Desktop -->
+                                <span class="hidden md:inline text-xl">
+                                    GENERATION <span style="color: var(--primary)">TEAM</span>
+                                </span>
+                                <!-- Mobile -->
+                                <span class="md:hidden text-lg">
+                                    GT <span style="color: var(--primary)">.</span>
+                                </span>
                             </span>
                         </div>
                     </a>
@@ -336,7 +342,7 @@
                     </div>
 
                     <!-- User Profile -->
-                    <div class="flex items-center ms-3 pl-4 relative group"
+                    <div class="flex items-center ms-1 pl-2 md:ms-3 md:pl-4 relative group"
                         style="border-left: 1px solid var(--border)">
 
                         {{-- Hover Dropdown / Tooltip --}}

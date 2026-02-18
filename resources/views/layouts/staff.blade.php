@@ -168,14 +168,23 @@
             </button>
 
             <div class="flex items-center gap-4 group">
-                <div class="w-10 h-10 rounded-lg overflow-hidden border transition-all duration-300 shadow-md group-hover:scale-105"
+                <div class="w-8 h-8 md:w-10 md:h-10 rounded-lg overflow-hidden border transition-all duration-300 shadow-md group-hover:scale-105 shrink-0"
                     style="border-color: var(--primary)">
                     <img src="{{ asset('assets/gt_logo.jpg') }}" class="w-full h-full object-cover">
                 </div>
-                <h1 class="text-lg md:text-xl font-bold tracking-widest uppercase transition-colors duration-300"
+                <h1 class="text-lg md:text-xl font-bold tracking-widest uppercase transition-colors duration-300 flex flex-col"
                     style="color: var(--text-main)">
-                    GEN<span class="hidden xs:inline">ERATION</span> <span style="color: var(--primary)">TEAM</span> <span
-                        class="text-[10px] tracking-normal hidden sm:block normal-case font-thin"
+                    <!-- Desktop Text -->
+                    <span class="hidden md:block">
+                        GENERATION <span style="color: var(--primary)">TEAM</span>
+                    </span>
+                    <!-- Mobile Text -->
+                    <span class="md:hidden text-xl">
+                        GT <span style="color: var(--primary)">.</span>
+                    </span>
+                    
+                    <span
+                        class="text-[10px] tracking-normal hidden md:block normal-case font-thin"
                         style="color: var(--text-muted)">Admin Portal</span>
                 </h1>
             </div>
@@ -250,9 +259,9 @@
                     </div>
                 </div>
 
-                {{-- User Profile --}}
-                <div class="flex items-center gap-3 border-l pl-6" style="border-color: var(--border)">
-                    <div class="text-right hidden md:block">
+                {{-- User Profile (Hidden on Mobile) --}}
+                <div class="hidden md:flex items-center gap-3 border-l pl-6" style="border-color: var(--border)">
+                    <div class="text-right">
                         <p class="text-sm font-bold leading-tight font-tech" style="color: var(--text-main)">Leader
                             {{ auth()->user()->name }}</p>
                         <p class="text-[9px] uppercase tracking-widest font-bold" style="color: var(--accent)">Team
@@ -433,7 +442,14 @@
 
                     <div class="my-6 border-t mx-4" style="border-color: var(--border)"></div>
 
-                    <div class="mt-auto px-4">
+                    <div class="mt-auto px-4 space-y-2">
+                        {{-- Mobile Profile Link (since hidden in header) --}}
+                        <a href="{{ route('profile.show') }}"
+                           class="md:hidden flex items-center justify-center gap-2 text-gray-500 hover:bg-gray-500/10 font-bold text-sm w-full py-3 rounded-xl transition border border-transparent hover:border-gray-500/50">
+                            <i class="fas fa-user-circle"></i>
+                            <span>My Profile</span>
+                        </a>
+
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
