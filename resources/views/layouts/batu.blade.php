@@ -381,7 +381,6 @@
                             <x-user-avatar :user="auth()->user()" size="w-9 h-9" />
                         </a>
                     </div>
-
                 </div>
             </div>
         </div>
