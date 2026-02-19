@@ -229,6 +229,7 @@
 </head>
 
 <body class="antialiased" :data-theme="theme">
+    <x-ramadan-theme />
 
     <!-- Header -->
     <nav class="fixed top-0 z-50 w-full tech-header">

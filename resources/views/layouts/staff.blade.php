@@ -153,6 +153,7 @@
 </head>
 
 <body class="antialiased" :data-theme="theme">
+    <x-ramadan-theme />
 
     <div class="min-h-screen flex flex-col" x-data="{ mobileMenuOpen: false }">
 

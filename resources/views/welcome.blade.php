@@ -150,6 +150,7 @@
           }
       }" :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }"
     x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); if(!darkMode) document.documentElement.classList.remove('dark');">
+    <x-ramadan-theme />
 
     <!-- Navigation -->
     <nav class="fixed w-full z-50 transition-all duration-300 glass-nav"
