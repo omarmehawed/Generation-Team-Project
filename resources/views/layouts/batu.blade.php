@@ -422,6 +422,8 @@
 
                 <li><a href="https://batechu.com/lms/attendance/token" class="sidebar-link"><i
                             class="fas fa-user-check"></i><span>Attendance</span></a></li>
+                <li><a href="https://batu-service.vercel.app/token/verify" class="sidebar-link"><i
+                            class="fas fa-server"></i><span>Services</span></a></li>
 
                 @if(auth()->check() && in_array(auth()->user()->email, ['2420823@batechu.com', '2420324@batechu.com']))
                     <li>
