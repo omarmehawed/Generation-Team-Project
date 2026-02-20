@@ -11,6 +11,7 @@ use App\Notifications\BatuNotification; // استدعاء الإشعارات
 use App\Models\Task;
 // لا تنسى تعمل import فوق للمكتبة دي
 use Illuminate\Support\Facades\Storage;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 
 class TeamController extends Controller
@@ -229,7 +230,7 @@ class TeamController extends Controller
 
         $path = null;
         if ($request->hasFile('file')) {
-            $path = $request->file('file')->store('reports', 'public');
+            $path = Cloudinary::upload($request->file('file')->getRealPath(), ['folder' => 'reports'])->getSecurePath();
         }
 
         // تأكد إن موديل Report موجود ومستدعى فوق
@@ -290,8 +291,7 @@ class TeamController extends Controller
 
         // رفع الملف (لو موجود)
         if ($request->hasFile('project_file')) {
-            $fileName = time() . '_' . $request->file('project_file')->getClientOriginalName();
-            $path = $request->file('project_file')->storeAs('project_submissions', $fileName, 'public');
+            $path = Cloudinary::upload($request->file('project_file')->getRealPath(), ['folder' => 'project_submissions'])->getSecurePath();
         }
 
         // 2. التعديل التاني: خرجنا التحديث برة الـ if عشان يحفظ اللينك حتى لو مفيش ملف
@@ -348,15 +348,10 @@ class TeamController extends Controller
     {
         $team = Team::findOrFail($id);
 
-        // 1. هنجيب المسار الكامل للملف على الهارد (عشان نتفادى مشاكل الـ Storage Facade مع الـ Editor)
-        $filePath = storage_path('app/public/' . $team->submission_path);
-
-        // 2. نتأكد إنه موجود
-        if (!file_exists($filePath)) {
+        if (!$team->submission_path) {
             return back()->withErrors(['msg' => 'File not found on server.']);
         }
 
-        // 3. نأمر المتصفح بتحميله
-        return response()->download($filePath);
+        return redirect($team->submission_path);
     }
 }

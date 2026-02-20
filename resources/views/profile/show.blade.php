@@ -80,7 +80,7 @@
                             
                             {{-- Image --}}
                             @if($user->profile_photo_path)
-                                <img src="{{ asset('storage/' . $user->profile_photo_path) }}" 
+                                <img src="{{ Str::startsWith($user->profile_photo_path, ['http://', 'https://']) ? $user->profile_photo_path : asset('storage/' . $user->profile_photo_path) }}" 
                                      onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128';"
                                      class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
                             @else

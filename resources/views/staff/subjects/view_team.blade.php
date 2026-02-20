@@ -140,7 +140,7 @@
                                 @endif
 
                                 @if($team->submission_path)
-                                    <a href="{{ asset('storage/' . $team->submission_path) }}" target="_blank" 
+                                    <a href="{{ Str::startsWith($team->submission_path, ['http://', 'https://']) ? $team->submission_path : asset('storage/' . $team->submission_path) }}" target="_blank" 
                                     class="flex-1 px-4 py-4 bg-[#D4AF37] hover:bg-[#c5a028] text-black rounded-2xl text-sm font-black uppercase tracking-wider transition-all shadow-[0_10px_30px_-10px_rgba(212,175,55,0.5)] hover:shadow-[0_20px_40px_-10px_rgba(212,175,55,0.6)] transform hover:-translate-y-1 flex items-center justify-center gap-3">
                                         <i class="fas fa-cloud-download-alt text-xl"></i> Download Files
                                     </a>
@@ -217,7 +217,7 @@
 
                                 {{-- File Download Button --}}
                                 @if($task->submission_value && ($task->status == 'reviewing' || $task->status == 'completed'))
-                                    <a href="{{ $task->submission_type == 'link' ? $task->submission_value : asset('storage/' . $task->submission_value) }}"
+                                    <a href="{{ $task->submission_type == 'link' ? $task->submission_value : (Str::startsWith($task->submission_value, ['http://', 'https://']) ? $task->submission_value : asset('storage/' . $task->submission_value)) }}"
                                         target="_blank"
                                         class="mt-2 sm:mt-0 px-3 py-1.5 bg-white border border-gray-200 text-blue-600 rounded-lg text-xs font-bold hover:bg-blue-600 hover:text-white transition shadow-sm flex items-center gap-2">
                                         <i class="{{ $task->submission_type == 'link' ? 'fas fa-link' : 'fas fa-file-download' }}"></i>

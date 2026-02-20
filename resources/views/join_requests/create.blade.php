@@ -122,6 +122,18 @@
                 </div>
             @endif
 
+            <!-- Error Message (Duplicate Registration) -->
+            @if(session('error'))
+                <div
+                    class="bg-red-500/20 border border-red-500 text-red-500 px-6 py-4 rounded-xl mb-8 flex items-center gap-3">
+                    <i class="fas fa-exclamation-triangle text-2xl"></i>
+                    <div>
+                        <h4 class="font-bold text-lg">{{ session('error_title', 'عفواً! لقد قمت بالتسجيل مسبقاً.') }}</h4>
+                        <p class="text-sm font-medium">{{ session('error') }}</p>
+                    </div>
+                </div>
+            @endif
+
             <div class="bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-gray-700"
                 :class="{ 'bg-white/90 border-gray-200 shadow-xl': !darkMode, 'bg-gray-800/80 border-gray-700': darkMode }">
 
@@ -186,12 +198,41 @@
                     </div>
 
                     <!-- National ID -->
-                    <div>
+                    <div x-data="{ 
+                            nationalId: '{{ old('national_id') }}', 
+                            isChecking: false, 
+                            errorMsg: '', 
+                            checkDuplicate() {
+                                if(this.nationalId.length < 5) { this.errorMsg = ''; return; }
+                                this.isChecking = true;
+                                fetch('/join/check-duplicate?nid=' + this.nationalId)
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        this.isChecking = false;
+                                        if(data.exists) {
+                                            this.errorMsg = 'هذا الرقم القومي مستخدم من قبل.';
+                                        } else {
+                                            this.errorMsg = '';
+                                        }
+                                    });
+                            }
+                        }" x-init="if(nationalId) checkDuplicate()">
                         <label class="block text-sm font-bold mb-2"
                             :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(الرقم القومي)National ID</label>
-                        <input type="text" name="national_id" required value="{{ old('national_id') }}"
+                        <input type="text" name="national_id" required x-model="nationalId"
+                            @input.debounce.500ms="checkDuplicate"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('national_id') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="[
+                                darkMode ? 'text-white focus:border-blue-500' : 'text-gray-900 focus:border-blue-500 bg-gray-50',
+                                errorMsg ? 'border-red-500' : (darkMode ? 'border-gray-600' : 'border-gray-300')
+                            ]">
+                        <template x-if="isChecking">
+                            <p class="text-blue-500 text-xs mt-1 animate-pulse"><i
+                                    class="fas fa-spinner fa-spin mr-1"></i>جاري التحقق...</p>
+                        </template>
+                        <template x-if="errorMsg">
+                            <p class="text-red-500 text-xs mt-1 font-bold" x-text="errorMsg"></p>
+                        </template>
                         @error('national_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror

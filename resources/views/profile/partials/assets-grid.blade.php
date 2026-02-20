@@ -102,7 +102,7 @@
                                 </div>
                             </div>
                             @if($report->file_path)
-                                <a href="{{ asset('storage/' . $report->file_path) }}" target="_blank" class="text-gray-400 hover:text-white transition-colors">
+                                <a href="{{ Str::startsWith($report->file_path, ['http://', 'https://']) ? $report->file_path : asset('storage/' . $report->file_path) }}" target="_blank" class="text-gray-400 hover:text-white transition-colors">
                                     <i class="fas fa-download"></i>
                                 </a>
                             @endif
@@ -149,7 +149,7 @@
                     @foreach($assets['gallery'] as $item)
                         <div class="group relative rounded-xl overflow-hidden aspect-square bg-gray-800 border border-gray-700">
                             @if($item->type == 'image')
-                                <img src="{{ asset('storage/' . $item->file_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <img src="{{ Str::startsWith($item->file_path, ['http://', 'https://']) ? $item->file_path : asset('storage/' . $item->file_path) }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gray-900">
                                     <i class="fas fa-video text-3xl text-gray-600"></i>
@@ -172,7 +172,7 @@
              @if(count($assets['docs']) > 0)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach($assets['docs'] as $doc)
-                        <a href="{{ asset('storage/' . $doc['path']) }}" target="_blank" 
+                        <a href="{{ Str::startsWith($doc['path'], ['http://', 'https://']) ? $doc['path'] : asset('storage/' . $doc['path']) }}" target="_blank" 
                            class="bg-gray-800 p-4 rounded-xl border border-gray-700 flex items-center gap-4 hover:bg-gray-750 transition-colors group">
                             <div class="w-12 h-12 rounded-lg bg-cyan-500/20 flex items-center justify-center text-cyan-400 text-xl group-hover:scale-110 transition-transform">
                                 <i class="{{ $doc['icon'] }}"></i>

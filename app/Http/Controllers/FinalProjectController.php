@@ -14,6 +14,9 @@ use App\Models\ProjectFund;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\BatuNotification;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as Pdf;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 use App\Services\ActivityLogger;
 
@@ -260,13 +263,7 @@ class FinalProjectController extends Controller
             abort(404);
         }
 
-        $path = storage_path('app/public/' . $team->logo);
-
-        if (!file_exists($path)) {
-            abort(404);
-        }
-
-        return response()->file($path);
+        return redirect($team->logo);
     }
     public function dashboard($teamId)
     {
@@ -560,7 +557,7 @@ class FinalProjectController extends Controller
         $filePath = null;
         if ($request->hasFile('proposal_file')) {
             // هيحفظ الملف ويرجع المسار بتاعه في المتغير $filePath
-            $filePath = $request->file('proposal_file')->store('proposals', 'public');
+            $filePath = Cloudinary::upload($request->file('proposal_file')->getRealPath(), ['folder' => 'proposals'])->getSecurePath();
         }
 
         // 3. التحديث (Update) - الحفظ في الداتا بيز
@@ -621,19 +618,11 @@ class FinalProjectController extends Controller
         // لو رافعه عادي استخدم: storage_path('app/' . $team->proposal_file)
 
 
-        $path = storage_path('app/' . $team->proposal_file);
-
-        // لو الملف مش موجود في المسار ده، نجرب المسار البابليك (احتياطي)
-        if (!file_exists($path)) {
-            $path = storage_path('app/public/' . $team->proposal_file);
+        if (!$team->proposal_file) {
+            abort(404, 'No proposal file found');
         }
 
-        if (!file_exists($path)) {
-            abort(404, 'File not found on server');
-        }
-
-        // عرض الملف في المتصفح
-        return response()->file($path);
+        return redirect($team->proposal_file);
     }
 
     // 10. تعديل أدوار وتخصصات العضو (Updated)
@@ -780,7 +769,7 @@ class FinalProjectController extends Controller
         // رفع صورة الوصل لو موجودة
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
-            $receiptPath = $request->file('receipt')->store('receipts', 'public');
+            $receiptPath = Cloudinary::upload($request->file('receipt')->getRealPath(), ['folder' => 'receipts'])->getSecurePath();
         }
 
         // الحفظ في الداتابيز
@@ -889,7 +878,7 @@ class FinalProjectController extends Controller
         if ($request->payment_method == 'transfer') {
             // Upload Proof
             if ($request->hasFile('proof_image')) {
-                $path = $request->file('proof_image')->store('payment_proofs', 'public');
+                $path = Cloudinary::upload($request->file('proof_image')->getRealPath(), ['folder' => 'payment_proofs'])->getSecurePath();
                 $updateData['payment_proof'] = $path;
             }
             $updateData['amount'] = $request->amount_transferred; // Assuming column is 'amount' (it is in schema)
@@ -1034,7 +1023,7 @@ class FinalProjectController extends Controller
         // Handle File Upload
         $filePath = null;
         if ($request->hasFile('report_file')) {
-            $filePath = $request->file('report_file')->store('weekly_reports', 'public');
+            $filePath = Cloudinary::upload($request->file('report_file')->getRealPath(), ['folder' => 'weekly_reports'])->getSecurePath();
         }
 
         // Insert into Database
@@ -1230,7 +1219,7 @@ class FinalProjectController extends Controller
         // رفع الصورة
         $filePath = null;
         if ($request->type == 'image' && $request->hasFile('image')) {
-            $filePath = $request->file('image')->store('gallery', 'public');
+            $filePath = Cloudinary::upload($request->file('image')->getRealPath(), ['folder' => 'gallery'])->getSecurePath();
         }
 
         DB::table('project_galleries')->insert([
@@ -1412,13 +1401,7 @@ class FinalProjectController extends Controller
             abort(404, 'No submission file found');
         }
 
-        $filePath = storage_path('app/public/' . $task->submission_file);
-
-        if (!file_exists($filePath)) {
-            abort(404, 'File not found');
-        }
-
-        return response()->file($filePath);
+        return redirect($task->submission_file);
     }
 
     /**
@@ -1432,15 +1415,7 @@ class FinalProjectController extends Controller
             abort(404, 'No submission file found');
         }
 
-        $filePath = storage_path('app/public/' . $task->submission_file);
-
-        if (!file_exists($filePath)) {
-            abort(404, 'File not found');
-        }
-
-        $originalName = basename($task->submission_file);
-
-        return response()->download($filePath, $originalName);
+        return redirect($task->submission_file);
     }
 
     /**
@@ -1494,12 +1469,12 @@ class FinalProjectController extends Controller
 
         // 3. رفع الملفات (لو موجودة)
         if ($request->hasFile('final_book')) {
-            $bookPath = $request->file('final_book')->store('final_books', 'public');
+            $bookPath = Cloudinary::upload($request->file('final_book')->getRealPath(), ['folder' => 'final_books'])->getSecurePath();
             $team->final_book_file = $bookPath; // بنسجل في جدول teams
         }
 
         if ($request->hasFile('presentation')) {
-            $pptPath = $request->file('presentation')->store('presentations', 'public');
+            $pptPath = Cloudinary::upload($request->file('presentation')->getRealPath(), ['folder' => 'presentations'])->getSecurePath();
             $team->presentation_file = $pptPath; // بنسجل في جدول teams
         }
 

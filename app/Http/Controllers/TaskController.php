@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\TeamMember;
 use App\Notifications\BatuNotification;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 use App\Services\ActivityLogger;
 
@@ -151,11 +152,7 @@ class TaskController extends Controller
                     }
 
                     $file = $request->file('submission_file');
-                    $originalName = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
-                    $extension = $file->getClientOriginalExtension();
-                    $fileName = time() . '_' . \Illuminate\Support\Str::slug($originalName) . '.' . $extension;
-
-                    $path = $file->storeAs('submissions', $fileName, 'public');
+                    $path = Cloudinary::upload($file->getRealPath(), ['folder' => 'submissions'])->getSecurePath();
 
                     $updateData['submission_file'] = $path;
                     $updateData['submission_value'] = null; // بنصفر اللينك عشان ده ملف
@@ -291,12 +288,8 @@ class TaskController extends Controller
             return back()->withErrors(['msg' => 'No file attached to this task.']);
         }
 
-        // التأكد إن الملف موجود في السيرفر
-        if (!Storage::disk('public')->exists($task->submission_value)) {
-            return back()->withErrors(['msg' => 'File not found on server.']);
-        }
-
-        // أمر التحميل المباشر
-        return response()->download(public_path('storage/' . $task->submission_value));
+        // التأكد إن الملف موجود (طالما هو رابط Cloudinary يعتبر موجود)
+        // أمر التحميل المباشر للرابط الخارجي
+        return redirect($task->submission_value);
     }
 }

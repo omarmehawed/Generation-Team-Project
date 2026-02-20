@@ -9,6 +9,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\DB;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class JoinRequestController extends Controller
 {
@@ -38,6 +41,24 @@ class JoinRequestController extends Controller
         if (!Auth::check() || !in_array(Auth::user()->email, $allowedEmails)) {
             abort(403, 'Unauthorized.');
         }
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function checkDuplicate(Request $request)
+    {
+        $nid = $request->query('nid');
+        if (!$nid) {
+            return response()->json(['exists' => false]);
+        }
+        
+        $existsInRequests = JoinRequest::where('national_id', $nid)->exists();
+        $existsInUsers = User::where('national_id', $nid)->exists();
+        
+        return response()->json([
+            'exists' => $existsInRequests || $existsInUsers
+        ]);
     }
 
     /**
@@ -134,10 +155,29 @@ class JoinRequestController extends Controller
             'answers.stress_handling.required' => 'Please explain how you handle stress',
         ]);
 
+        // Custom Duplicate Check
+        $existingRequest = JoinRequest::where('national_id', $validated['national_id'])
+                                        ->orWhere('academic_id', $validated['academic_id'])
+                                        ->first();
+
+        $existingUser = User::where('national_id', $validated['national_id'])
+                            ->orWhere('academic_id', $validated['academic_id'])
+                            ->first();
+
+        if ($existingRequest) {
+            $msg = 'تم تسجيل طلبك بالفعل بالرقم الأكاديمي: ' . $existingRequest->academic_id . '. يرجى انتظار المراجعة.';
+            return back()->withInput()->with('error', $msg)->with('error_title', 'عفواً! لقد قمت بالتسجيل مسبقاً.');
+        }
+
+        if ($existingUser) {
+            $msg = 'لديك حساب فعال بالفعل في النظام.';
+            return back()->withInput()->with('error', $msg)->with('error_title', 'عفواً! لقد قمت بالتسجيل مسبقاً.');
+        }
+
         // Handle File Upload
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = $request->file('photo')->store('join_requests_photos', 'public');
+            $photoPath = Cloudinary::upload($request->file('photo')->getRealPath(), ['folder' => 'join_requests_photos'])->getSecurePath();
         }
 
         // Create Join Request

@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as Pdf;
 use Illuminate\Support\Str;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class WeeklyEvaluationController extends Controller
 {
@@ -125,7 +126,7 @@ class WeeklyEvaluationController extends Controller
         $pdfPath = $this->generatePdfInternal($evaluation);
         $evaluation->update(['pdf_path' => $pdfPath]);
 
-        return response()->json(['success' => true, 'pdf_url' => asset('storage/' . $pdfPath)]);
+        return response()->json(['success' => true, 'pdf_url' => $pdfPath]);
     }
 
     public function downloadPdf($id)
@@ -133,23 +134,24 @@ class WeeklyEvaluationController extends Controller
         $evaluation = WeeklyEvaluation::findOrFail($id);
         // Auth check...
 
-        $path = storage_path('app/public/' . $evaluation->pdf_path);
-        if (!file_exists($path)) abort(404);
+        if (!$evaluation->pdf_path) abort(404);
 
-        return response()->download($path);
+        return redirect($evaluation->pdf_path);
     }
 
     private function generatePdfInternal(WeeklyEvaluation $evaluation)
     {
         $pdf = Pdf::loadView('pdf.weekly_evaluation', compact('evaluation'));
-        $filename = 'evaluations/' . $evaluation->student_id . '/week_' . $evaluation->week_number . '.pdf';
+        $tempPath = storage_path('app/temp_eval_' . time() . '.pdf');
         
-        $path = storage_path('app/public/' . dirname($filename));
-        if (!file_exists($path)) {
-            mkdir($path, 0755, true);
-        }
+        $pdf->save($tempPath);
         
-        $pdf->save(storage_path('app/public/' . $filename));
-        return $filename;
+        $result = Cloudinary::upload($tempPath, [
+            'folder' => 'evaluations/' . $evaluation->student_id,
+            'public_id' => 'week_' . $evaluation->week_number
+        ]);
+        
+        @unlink($tempPath);
+        return $result->getSecurePath();
     }
 }

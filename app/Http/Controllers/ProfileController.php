@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 use App\Notifications\BatuNotification;
 use App\Models\ActivityLog;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
+use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 class ProfileController extends Controller
 {
@@ -238,12 +241,7 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('profile_photo')) {
-            // Delete old photo if exists
-            if ($user->profile_photo_path) {
-                \Illuminate\Support\Facades\Storage::disk('public')->delete($user->profile_photo_path);
-            }
-
-            $path = $request->file('profile_photo')->store('profile-photos', 'public');
+            $path = Cloudinary::upload($request->file('profile_photo')->getRealPath(), ['folder' => 'profile-photos'])->getSecurePath();
             $user->profile_photo_path = $path;
         }
 

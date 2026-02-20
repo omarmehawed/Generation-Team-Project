@@ -32,6 +32,7 @@ Route::get('/', [JoinRequestController::class, 'index'])->name('welcome');
 // Join Request Form Routes
 Route::get('/join', [JoinRequestController::class, 'create'])->name('join.create');
 Route::post('/join', [JoinRequestController::class, 'store'])->name('join.store');
+Route::get('/join/check-duplicate', [JoinRequestController::class, 'checkDuplicate'])->name('join.checkDuplicate');
 Route::get('/join/success', function () {
     return view('join_requests.success');
 })->name('join.success');
