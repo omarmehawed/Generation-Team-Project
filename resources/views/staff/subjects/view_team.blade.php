@@ -262,7 +262,7 @@
                                             <i class="fas fa-check-circle mr-1"></i> Scheduled & Verified
                                         </div>
 
-                                        <div class="py-8 border-b border-white/5 border-t border-white/5">
+                                        <div class="py-8 border-b border-t border-white/5">
                                             <p class="text-7xl font-black text-white font-serif tracking-tighter mb-2 shadow-gold text-shadow scale-100 group-hover:scale-110 transition-transform duration-500">
                                                 {{ \Carbon\Carbon::parse($team->defense_date)->format('d') }}
                                             </p>
@@ -273,14 +273,14 @@
 
                                         <div class="grid grid-cols-2 gap-4">
                                             <div class="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:border-white/30 transition-colors group/item hover:bg-white/10">
-                                                <i class="far fa-clock text-white mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
+                                                <i class="far fa-clock mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
                                                 <span class="text-xs font-mono text-white font-bold">
                                                     {{ \Carbon\Carbon::parse($team->defense_date)->format('h:i A') }}
                                                 </span>
                                             </div>
 
                                             <div class="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:border-white/30 transition-colors group/item hover:bg-white/10">
-                                                <i class="fas fa-map-marker-alt text-white mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
+                                                <i class="fas fa-map-marker-alt mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
                                                 <span class="text-[10px] text-white font-black truncate block uppercase">
                                                     {{ $team->defense_location }}
                                                 </span>
@@ -405,8 +405,15 @@
                                                 <img src="https://ui-avatars.com/api/?name={{ $member->user->name }}&background=random" 
                                                      class="w-8 h-8 rounded-full shadow-sm">
                                                 <div class="overflow-hidden">
-                                                    <p class="text-xs font-bold text-gray-800 truncate w-24">{{ $member->user->name }}</p>
-                                                    <p class="text-[9px] text-gray-400 font-bold uppercase">{{ $member->role }}</p>
+                                                    <p class="text-xs font-bold text-gray-800 w-28 flex flex-col gap-1 items-start">
+                                                        <span class="truncate w-full">{{ $member->user->name }}</span>
+                                                        @if($member->auto_group)
+                                                            <span class="text-[8px] px-1.5 py-0.5 rounded border {{ $member->auto_group == 'A' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200' }}">
+                                                                Grp {{ $member->auto_group }}
+                                                            </span>
+                                                        @endif
+                                                    </p>
+                                                    <p class="text-[9px] text-gray-400 font-bold uppercase mt-1">{{ $member->role }}</p>
                                                 </div>
                                             </div>
                                             @if(!is_null($indScore))
@@ -484,7 +491,14 @@
                                             @endif
                                         </div>
                                         <div>
-                                            <h4 class="font-bold text-gray-800 text-sm">{{ $member->user->name }}</h4>
+                                            <h4 class="font-bold text-gray-800 text-sm flex items-center gap-2">
+                                                {{ $member->user->name }}
+                                                @if($member->auto_group)
+                                                <span class="text-[9px] px-2 py-0.5 rounded border uppercase tracking-wider {{ $member->auto_group == 'A' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200' }}">
+                                                    Group {{ $member->auto_group }}
+                                                </span>
+                                                @endif
+                                            </h4>
                                             <p class="text-xs text-gray-500 font-mono mt-0.5">
                                                 <i class="far fa-envelope text-[#D4AF37] mr-1"></i>{{ $member->user->email }}
                                             </p>

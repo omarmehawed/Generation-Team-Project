@@ -25,8 +25,12 @@ class TeamMember extends Model
         'team_id',
         'user_id',
         'role',
+        'rank',
+        'is_group_a',
+        'is_group_b',
         'sub_team',
         'is_vice_leader',
         'status', // Added status
     ];
+
 }

@@ -30,18 +30,40 @@
                         <label
                             class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Administrative
                             Role</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="role" value="member" class="peer hidden" checked>
+                        @php
+                            $isMainLeader = isset($team) && $user->id == $team->leader_id;
+                            $currentRole = isset($team) ? $team->members->where('user_id', $user->id)->first()?->role : 'member';
+                        @endphp
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="role" value="leader" class="peer hidden" {{ $isMainLeader ? 'checked' : 'disabled' }}>
                                 <div
-                                    class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-[#D4AF37] peer-checked:bg-[#FFF8E1] transition-all hover:bg-gray-50">
+                                    class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-yellow-500 peer-checked:bg-yellow-50 transition-all hover:bg-gray-50 {{ !$isMainLeader ? 'bg-gray-50 opacity-50 cursor-not-allowed' : '' }}">
+                                    <p class="text-sm font-bold text-gray-600 peer-checked:text-yellow-700">Leader Group
+                                        A 👑</p>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="role" value="leader_b" class="peer hidden" {{ $currentRole === 'leader_b' ? 'checked' : '' }} {{ $isMainLeader ? 'disabled' : '' }}>
+                                <div
+                                    class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-blue-500 peer-checked:bg-blue-50 transition-all hover:bg-gray-50 {{ $isMainLeader ? 'bg-gray-50 opacity-50 cursor-not-allowed' : '' }}">
+                                    <p class="text-sm font-bold text-gray-600 peer-checked:text-blue-700">Leader Group B
+                                        🛡️</p>
+                                </div>
+                            </label>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="role" value="member" class="peer hidden" {{ $currentRole === 'member' || (!$isMainLeader && !in_array($currentRole, ['leader', 'leader_b', 'vice_leader'])) ? 'checked' : '' }} {{ $isMainLeader ? 'disabled' : '' }}>
+                                <div
+                                    class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-[#D4AF37] peer-checked:bg-[#FFF8E1] transition-all hover:bg-gray-50 {{ $isMainLeader ? 'bg-gray-50 opacity-50 cursor-not-allowed' : '' }}">
                                     <p class="text-sm font-bold text-gray-600 peer-checked:text-[#AA8A26]">Member 👤</p>
                                 </div>
                             </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="role" value="vice_leader" class="peer hidden">
+                            <label class="cursor-pointer relative">
+                                <input type="radio" name="role" value="vice_leader" class="peer hidden" {{ $currentRole === 'vice_leader' ? 'checked' : '' }} {{ $isMainLeader ? 'disabled' : '' }}>
                                 <div
-                                    class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:bg-gray-50">
+                                    class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:bg-gray-50 {{ $isMainLeader ? 'bg-gray-50 opacity-50 cursor-not-allowed' : '' }}">
                                     <p class="text-sm font-bold text-gray-600 peer-checked:text-purple-700">Vice Head
                                         🎖️</p>
                                 </div>

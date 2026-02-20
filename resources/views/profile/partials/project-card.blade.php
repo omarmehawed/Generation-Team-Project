@@ -24,9 +24,16 @@
             </div>
             <div>
                 <h2 class="text-xl font-bold text-white font-tech">{{ $project->title ?? $project->name }}</h2>
-                <p class="{{ $textColor }} text-sm opacity-80">
+                <p class="{{ $textColor }} text-sm opacity-80 mt-1">
                     {{ $type === 'subject' ? 'Course: ' . ($project->course->name ?? 'N/A') . ' | ' : '' }}
                     Team: {{ $team->name }}
+                    @php $myRoleInTeam = $team->members->where('user_id', $user->id)->first()?->role; @endphp
+                    | Role: <span class="font-bold">
+                        @if($myRoleInTeam === 'leader') Leader (Group A)
+                        @elseif($myRoleInTeam === 'leader_b') Leader (Group B)
+                        @elseif($myRoleInTeam === 'vice_leader') Vice Leader
+                        @else Member @endif
+                    </span>
                 </p>
             </div>
         </div>

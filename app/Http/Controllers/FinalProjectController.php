@@ -642,7 +642,7 @@ class FinalProjectController extends Controller
         $request->validate([
             'team_id' => 'required|exists:teams,id',
             'user_id' => 'required|exists:users,id',
-            'role' => 'required|in:member,vice_leader', // الدور الإداري
+            'role' => 'required|in:member,vice_leader,leader_b', // الدور الإداري
             'technical_role' => 'required|in:general,software,hardware', // التخصص التقني
             'extra_role' => 'nullable|in:none,presentation,reports,marketing' // المسؤولية الإضافية
         ]);
@@ -667,23 +667,95 @@ class FinalProjectController extends Controller
         if (! $isLeader && ! $isViceLeader) {
             abort(403, 'Unauthorized action.');
         }
-
         if ($request->user_id == $leader->id) {
             return back()->with('error', 'You cannot change your own role.');
         }
 
+        $updateData = [
+            'role' => $request->role,
+            'technical_role' => $request->technical_role,
+            'extra_role' => ($request->extra_role == 'none') ? null : $request->extra_role
+        ];
+
+        if ($request->role === 'leader_b') {
+            $updateData['is_group_b'] = true;
+            $updateData['is_group_a'] = false;
+        }
+
         TeamMember::where('team_id', $request->team_id)
             ->where('user_id', $request->user_id)
-            ->update([
-                'role' => $request->role,
-                'technical_role' => $request->technical_role,
-                'extra_role' => ($request->extra_role == 'none') ? null : $request->extra_role
-            ]);
+            ->update($updateData);
 
         return back()->with('success', 'Member roles updated successfully ✨');
     }
 
 
+
+    // ==========================================
+    // 10b. Assign/Toggle Group A/B (For members)
+    // ==========================================
+    public function toggleGroup(Request $request)
+    {
+        $request->validate([
+            'team_id' => 'required|exists:teams,id',
+            'user_id' => 'required|exists:users,id',
+            'group'   => 'required|in:A,B',
+        ]);
+
+        $team = Team::findOrFail($request->team_id);
+        
+        $myMemberRecord = TeamMember::where('team_id', $team->id)->where('user_id', Auth::id())->first();
+        $isLeaderManaging = $myMemberRecord && $myMemberRecord->role == 'leader';
+        $isViceManaging = $myMemberRecord && $myMemberRecord->role == 'vice_leader';
+
+        if (!$isLeaderManaging && !$isViceManaging && Auth::id() != $request->user_id) {
+            return back()->with('error', 'Unauthorized to assign this member.');
+        }
+
+        $memberRecord = TeamMember::where('team_id', $team->id)
+            ->where('user_id', $request->user_id)
+            ->first();
+
+        if (!$memberRecord) {
+            return back()->with('error', 'Member is not in this team.');
+        }
+
+        // Leader locks
+        if ($memberRecord->role === 'leader' && $request->group === 'B') {
+            return back()->with('error', 'The Main Leader must be in Group A.');
+        }
+        if ($memberRecord->role === 'leader' && $request->group === 'A' && $memberRecord->is_group_a) {
+            return back()->with('error', 'The Main Leader cannot leave Group A.');
+        }
+        if ($memberRecord->role === 'leader_b' && $request->group === 'A') {
+            return back()->with('error', 'Leader Group B must be in Group B.');
+        }
+        if ($memberRecord->role === 'leader_b' && $request->group === 'B' && $memberRecord->is_group_b) {
+            return back()->with('error', 'Leader Group B cannot leave Group B.');
+        }
+
+        $groupField = 'is_group_' . strtolower($request->group);
+        $isCurrentlyInGroup = $memberRecord->$groupField;
+
+        // If adding to group, check limit
+        if (!$isCurrentlyInGroup) {
+            $currentCount = TeamMember::where('team_id', $team->id)
+                ->where($groupField, true)
+                ->count();
+
+            if ($currentCount >= 30) {
+                return back()->with('error', 'Group ' . $request->group . ' is already full (Max 30 members).');
+            }
+            $memberRecord->update([$groupField => true]);
+            
+            $msg = Auth::id() == $request->user_id ? 'You successfully joined Group ' . $request->group . '!' : 'Assigned member to Group ' . $request->group . '!';
+            return back()->with('success', $msg);
+        } else {
+            $memberRecord->update([$groupField => false]);
+            $msg = Auth::id() == $request->user_id ? 'You left Group ' . $request->group . '!' : 'Removed member from Group ' . $request->group . '!';
+            return back()->with('success', $msg);
+        }
+    }
 
     // ==========================================
     // 11. إضافة مصروفات

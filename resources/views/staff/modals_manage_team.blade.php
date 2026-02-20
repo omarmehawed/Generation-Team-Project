@@ -53,9 +53,17 @@
                                             {{ substr($member->user->name, 0, 1) }}
                                         </div>
                                         <div>
-                                            <p
-                                                class="font-black text-slate-800 text-lg tracking-tight group-hover:text-white transition-colors">
+                                            <p class="font-black text-slate-800 text-lg tracking-tight group-hover:text-white transition-colors flex items-center gap-3">
                                                 {{ $member->user->name }}
+                                                @if($member->auto_group)
+                                                <span class="text-[9px] px-2 py-0.5 rounded border font-bold uppercase tracking-wider
+                                                    {{ $member->auto_group == 'A' ? 'bg-blue-50 text-blue-600 border-blue-200 group-hover:bg-blue-900 group-hover:border-blue-700' : 'bg-purple-50 text-purple-600 border-purple-200 group-hover:bg-purple-900 group-hover:border-purple-700' }}">
+                                                    Group {{ $member->auto_group }}
+                                                </span>
+                                                @endif
+                                            </p>
+                                            <p class="text-[10px] text-slate-500 font-black uppercase mt-1 group-hover:text-slate-400">
+                                                {{ $member->role ?? 'Member' }}
                                             </p>
                                             <p class="text-xs text-slate-400 font-mono mt-1 group-hover:text-slate-500">
                                                 {{ $member->user->email }}
@@ -63,6 +71,65 @@
                                         </div>
                                     </div>
                                 @endforeach
+
+                                {{-- Auto-Assigned Groups View --}}
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                                    {{-- Card 1: Group A --}}
+                                    <div class="bg-blue-50/50 rounded-[2rem] p-6 border border-blue-100 shadow-sm">
+                                        <h4 class="font-black text-blue-800 mb-4 flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                            Group A
+                                            <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded-lg ml-auto">
+                                                {{ $team->members->where('auto_group', 'A')->count() }}
+                                            </span>
+                                        </h4>
+                                        <div class="space-y-3 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
+                                            @forelse($team->members->where('auto_group', 'A') as $memberA)
+                                                <div class="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-blue-50 hover:shadow-md transition-shadow">
+                                                    <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-sm">
+                                                        {{ substr($memberA->user->name, 0, 1) }}
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-sm font-bold text-slate-700">{{ $memberA->user->name }}</div>
+                                                        <div class="text-[10px] text-slate-400 uppercase font-bold">{{ $memberA->user->email }}</div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-xs text-slate-400 text-center py-4">No members assigned to Group A</p>
+                                            @endforelse
+                                        </div>
+                                    </div>
+
+                                    {{-- Card 2: Group B --}}
+                                    <div class="bg-purple-50/50 rounded-[2rem] p-6 border border-purple-100 shadow-sm">
+                                        <h4 class="font-black text-purple-800 mb-4 flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                                                <i class="fas fa-users"></i>
+                                            </div>
+                                            Group B
+                                            <span class="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-lg ml-auto">
+                                                {{ $team->members->where('auto_group', 'B')->count() }}
+                                            </span>
+                                        </h4>
+                                        <div class="space-y-3 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
+                                            @forelse($team->members->where('auto_group', 'B') as $memberB)
+                                                <div class="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-purple-50 hover:shadow-md transition-shadow">
+                                                    <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 font-bold flex items-center justify-center text-sm">
+                                                        {{ substr($memberB->user->name, 0, 1) }}
+                                                    </div>
+                                                    <div>
+                                                        <div class="text-sm font-bold text-slate-700">{{ $memberB->user->name }}</div>
+                                                        <div class="text-[10px] text-slate-400 uppercase font-bold">{{ $memberB->user->email }}</div>
+                                                    </div>
+                                                </div>
+                                            @empty
+                                                <p class="text-xs text-slate-400 text-center py-4">No members assigned to Group B</p>
+                                            @endforelse
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -218,7 +285,7 @@
             </div>
 
             {{-- 4.3 End Meeting Modal (Legacy Support) --}}
-            <div id="endMeetingModal" class="hidden fixed inset-0 z-[110] flex items-center justify-center p-6"
+            <div id="endMeetingModal" class="hidden fixed inset-0 z-[110] items-center justify-center p-6"
                 aria-modal="true">
                 <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-md" onclick="closeModal('endMeetingModal')">
                 </div>

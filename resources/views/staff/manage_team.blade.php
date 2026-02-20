@@ -149,15 +149,15 @@
 
     {{-- Global State Management (Alpine) --}}
     <div x-data="{
-                    showScrollTop: false,
-                    loading: false,
-                    activeSection: '',
-                    init() {
-                        window.addEventListener('scroll', () => {
-                            this.showScrollTop = window.pageYOffset > 500;
-                        });
-                    }
-                }">
+                        showScrollTop: false,
+                        loading: false,
+                        activeSection: '',
+                        init() {
+                            window.addEventListener('scroll', () => {
+                                this.showScrollTop = window.pageYOffset > 500;
+                            });
+                        }
+                    }">
 
         {{-- Top Loading Bar --}}
         {{-- <div id="scroll-progress"></div> --}}
@@ -881,8 +881,15 @@
                                                             class="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-[10px] font-black shadow-md">
                                                             {{ substr($member->user->name, 0, 1) }}
                                                         </div>
-                                                        <span
-                                                            class="text-[11px] font-black text-slate-700">{{ $member->user->name }}</span>
+                                                        <span class="text-[11px] font-black text-slate-700 flex items-center gap-2">
+                                                            {{ $member->user->name }}
+                                                            @if($member->auto_group)
+                                                                <span
+                                                                    class="text-[8px] px-1.5 py-0.5 rounded border {{ $member->auto_group == 'A' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200' }}">
+                                                                    Grp {{ $member->auto_group }}
+                                                                </span>
+                                                            @endif
+                                                        </span>
                                                     </div>
                                                     <div class="flex gap-1 bg-slate-100 p-1 rounded-xl">
                                                         <label class="cursor-pointer group/radio">

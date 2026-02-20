@@ -945,7 +945,7 @@
                             <div class="flex items-center gap-4">
                                 <span
                                     class="bg-black text-yellow-400 text-xs font-bold py-2 px-4 rounded-full shadow-lg border border-gray-700">
-                                    {{ $team->members->count() }} / 30 Active
+                                    {{ $team->members->count() }} / 60 Total
                                 </span>
                                 @if ($myRole == 'leader')
                                     <button onclick="openModal('inviteMemberModal')"
@@ -955,7 +955,7 @@
                                 @endif
                             </div>
                         </div>
-                        <div class="overflow-x-auto p-4 custom-scroll">
+                        <div class="overflow-x-auto px-8 pt-4 pb-6 custom-scroll">
                             <table class="w-full text-left border-separate border-spacing-y-3">
                                 <thead>
                                     <tr class="text-xs text-gray-400 uppercase tracking-wider">
@@ -967,21 +967,18 @@
                                 <tbody>
                                     @foreach ($team->members as $member)
                                         <tr class="group transition-all duration-300 hover:-translate-y-1">
-                                            <td
-                                                class="bg-white group-hover:bg-yellow-50/30 rounded-l-2xl border-y border-l border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
+                                            <td class="bg-white group-hover:bg-yellow-50/30 rounded-l-2xl border-y border-l border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
                                                 <div class="flex items-center gap-4">
                                                     <div class="relative">
                                                         <x-user-avatar :user="$member->user" size="w-12 h-12" classes="border-2 border-white shadow-md" />
                                                         @if ($member->role == 'leader')
-                                                            <div
-                                                                class="absolute -top-2 -right-2 bg-yellow-500 text-white w-5 h-5 rounded-full flex items-center justify-center shadow-sm text-[10px]">
+                                                            <div class="absolute -top-2 -right-2 bg-yellow-500 text-white w-5 h-5 rounded-full flex items-center justify-center shadow-sm text-[10px]">
                                                                 <i class="fas fa-crown"></i>
                                                             </div>
                                                         @endif
                                                     </div>
                                                     <div>
-                                                        <div
-                                                            class="text-base font-bold text-gray-800 group-hover:text-yellow-800 transition-colors">
+                                                        <div class="text-base font-bold text-gray-800 group-hover:text-yellow-800 transition-colors">
                                                             {{ $member->user->name }}
                                                         </div>
                                                         <div class="text-xs text-gray-400">
@@ -990,63 +987,47 @@
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td
-                                                class="bg-white group-hover:bg-yellow-50/30 border-y border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
+                                            <td class="bg-white group-hover:bg-yellow-50/30 border-y border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
                                                 @if ($member->role == 'leader')
-                                                    <span
-                                                        class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-xs font-black shadow-sm border border-yellow-300">
-                                                        <i class="fas fa-star text-[10px] animate-spin-slow"></i> TEAM
-                                                        LEADER
+                                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-xs font-black shadow-sm border border-yellow-300">
+                                                        <i class="fas fa-star text-[10px] animate-spin-slow"></i> TEAM LEADER
                                                     </span>
                                                 @else
-                                                    <span
-                                                        class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gray-50 text-gray-500 text-xs font-bold border border-gray-200">
+                                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gray-50 text-gray-500 text-xs font-bold border border-gray-200">
                                                         <span class="w-2 h-2 rounded-full bg-gray-400"></span> Member
                                                     </span>
                                                 @endif
                                             </td>
-                                            <td
-                                                class="px-8 py-4 text-right bg-white group-hover:bg-yellow-50/30 rounded-r-2xl border-y border-r border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md">
-                                                <div
-                                                    class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                                                    {{-- 🛠️ التعديل: السماح لليدر والنائب بإدارة الأعضاء --}}
+                                            <td class="px-8 py-4 text-right bg-white group-hover:bg-yellow-50/30 rounded-r-2xl border-y border-r border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md">
+                                                <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
                                                     @php
-                                                        // الليدر يتحكم في أي حد ماعدا ليدر زيه
-                                                        $isLeaderManaging =
-                                                            $myRole == 'leader' && $member->role != 'leader';
-                                                        // النائب يتحكم في الأعضاء العاديين فقط
-                                                        $isViceManaging =
-                                                            $myRole == 'vice_leader' && $member->role == 'member';
+                                                        $isLeaderManaging = $myRole == 'leader' && $member->role != 'leader';
+                                                        $isViceManaging = $myRole == 'vice_leader' && $member->role == 'member';
                                                     @endphp
 
                                                     @if ($isLeaderManaging || $isViceManaging)
-                                                        {{-- زرار عرض البروفايل (View Profile) --}}
                                                         <a href="{{ route('profile.show', $member->user->id) }}"
                                                             class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
                                                             title="View Profile">
                                                             <i class="fas fa-user-circle text-xs"></i>
                                                         </a>
                                                     @endif
+                                                    
                                                     @if ($myRole == 'leader' && $member->role != 'leader')
-                                                        {{-- زرار الحذف (خيه لليدر بس لو حابب، أو سيبه للاثنين) --}}
                                                         <form action="{{ route('final_project.remove_member') }}"
                                                             method="POST" class="inline-block"
                                                             onsubmit="return confirmAction(event, 'Remove this member?')">
                                                             @csrf
-                                                            <input type="hidden" name="team_id"
-                                                                value="{{ $team->id }}">
-                                                            <input type="hidden" name="user_id"
-                                                                value="{{ $member->user_id }}">
-                                                            <button
-                                                                class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
+                                                            <input type="hidden" name="team_id" value="{{ $team->id }}">
+                                                            <input type="hidden" name="user_id" value="{{ $member->user_id }}">
+                                                            <button class="w-8 h-8 rounded-full bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
                                                                 title="Remove">
                                                                 <i class="fas fa-trash-alt text-xs"></i>
                                                             </button>
                                                         </form>
                                                     @endif
-                                                    {{-- 3. زرار الريبورت --}}
-                                                    <button
-                                                        onclick="openReportModal('{{ $member->user_id }}', '{{ $member->user->name }}')"
+                                                    
+                                                    <button onclick="openReportModal('{{ $member->user_id }}', '{{ $member->user->name }}')"
                                                         class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-800 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
                                                         title="Report">
                                                         <i class="fas fa-flag text-xs"></i>
@@ -1057,6 +1038,155 @@
                                     @endforeach
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    {{-- 1.1 Group Cards (Sub-groups) --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+                        {{-- Group A Card --}}
+                        <div class="bg-white rounded-[2rem] border border-blue-100 shadow-xl overflow-hidden relative group transition-all duration-300 flex flex-col">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[100%] z-0"></div>
+                            <div class="px-8 py-6 border-b border-blue-50 relative z-10 flex justify-between items-center">
+                                <h4 class="font-black text-blue-800 flex items-center gap-3 text-lg">
+                                    <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                                        <i class="fas fa-users text-base"></i>
+                                    </div>
+                                    Group A
+                                </h4>
+                                <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-blue-200">
+                                    {{ $team->members->where('is_group_a', true)->count() }} / 30 Active
+                                </span>
+                            </div>
+                            <div class="p-6 flex-grow">
+                                <ul class="space-y-3">
+                                    @php
+                                        $groupAMembers = $team->members->where('is_group_a', true)->sortByDesc(function($m) {
+                                            return $m->role === 'leader' ? 1 : 0;
+                                        });
+                                    @endphp
+                                    @forelse($groupAMembers as $gm)
+                                        <li class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                                            <x-user-avatar :user="$gm->user" size="w-8 h-8" classes="shadow-sm border-2 border-white" />
+                                            <span class="font-bold text-sm text-gray-700">{{ $gm->user->name }}</span>
+                                            @if($gm->role === 'leader')
+                                                <div class="ml-auto flex items-center gap-2">
+                                                    <span class="text-[10px] font-bold text-yellow-600 bg-yellow-100 px-2 py-0.5 rounded-full border border-yellow-200 uppercase tracking-wider hidden group-hover:block transition-all">Leader</span>
+                                                    <i class="fas fa-crown text-yellow-500" title="Leader Group A"></i>
+                                                </div>
+                                            @endif
+                                        </li>
+                                    @empty
+                                        <p class="text-center text-xs text-gray-400 py-4 italic">No members assigned to Group A</p>
+                                    @endforelse
+                                </ul>
+                            </div>
+                            <div class="p-6 border-t border-blue-50 mt-auto bg-gray-50/50">
+                                @php
+                                    $groupACount = $team->members->where('is_group_a', true)->count();
+                                    $isFullA = $groupACount >= 30;
+                                    $inGroupA = $team->members->where('user_id', auth()->id())->first()?->is_group_a;
+                                @endphp
+                                @if(!$inGroupA)
+                                    <form action="{{ route('final_project.toggle_group') }}" method="POST" class="w-full">
+                                        @csrf
+                                        <input type="hidden" name="team_id" value="{{ $team->id }}">
+                                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                                        <input type="hidden" name="group" value="A">
+                                        @if($isFullA)
+                                            <button disabled type="button" class="w-full bg-gray-200 text-gray-500 px-4 py-3 rounded-xl text-sm font-bold shadow-sm cursor-not-allowed border border-gray-300">
+                                                <i class="fas fa-ban mr-1"></i> Group Full
+                                            </button>
+                                        @else
+                                            <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white px-4 py-3 rounded-xl text-sm font-bold shadow-lg transition transform hover:scale-[1.02] border border-blue-800">
+                                                <i class="fas fa-sign-in-alt mr-2"></i> Join Group A
+                                            </button>
+                                        @endif
+                                    </form>
+                                @else
+                                    <form action="{{ route('final_project.toggle_group') }}" method="POST" class="w-full">
+                                        @csrf
+                                        <input type="hidden" name="team_id" value="{{ $team->id }}">
+                                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                                        <input type="hidden" name="group" value="A">
+                                        <button type="submit" class="w-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 px-4 py-3 rounded-xl text-sm font-bold shadow-sm transition border border-red-200">
+                                            <i class="fas fa-sign-out-alt mr-2"></i> Leave Group A
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- Group B Card --}}
+                        <div class="bg-white rounded-[2rem] border border-purple-100 shadow-xl overflow-hidden relative group transition-all duration-300 flex flex-col">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-[100%] z-0"></div>
+                            <div class="px-8 py-6 border-b border-purple-50 relative z-10 flex justify-between items-center">
+                                <h4 class="font-black text-purple-800 flex items-center gap-3 text-lg">
+                                    <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
+                                        <i class="fas fa-users text-base"></i>
+                                    </div>
+                                    Group B
+                                </h4>
+                                <span class="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-purple-200">
+                                    {{ $team->members->where('is_group_b', true)->count() }} / 30 Active
+                                </span>
+                            </div>
+                            <div class="p-6 flex-grow">
+                                <ul class="space-y-3">
+                                    @php
+                                        $groupBMembers = $team->members->where('is_group_b', true)->sortByDesc(function($m) {
+                                            return $m->role === 'leader_b' ? 1 : 0;
+                                        });
+                                    @endphp
+                                    @forelse($groupBMembers as $gm)
+                                        <li class="flex items-center gap-3 p-3 rounded-xl bg-gray-50 border border-gray-100 relative group">
+                                            <x-user-avatar :user="$gm->user" size="w-8 h-8" classes="shadow-sm border-2 border-white" />
+                                            <span class="font-bold text-sm text-gray-700">{{ $gm->user->name }}</span>
+                                            @if($gm->role === 'leader_b')
+                                                <div class="ml-auto flex items-center gap-2">
+                                                    <span class="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full border border-blue-200 uppercase tracking-wider hidden group-hover:block transition-all">Leader</span>
+                                                    <i class="fas fa-shield-alt text-blue-500" title="Leader Group B"></i>
+                                                </div>
+                                            @endif
+                                        </li>
+                                    @empty
+                                        <p class="text-center text-xs text-gray-400 py-4 italic">No members assigned to Group B</p>
+                                    @endforelse
+                                </ul>
+                            </div>
+                            <div class="p-6 border-t border-purple-50 mt-auto bg-gray-50/50">
+                                @php
+                                    $groupBCount = $team->members->where('is_group_b', true)->count();
+                                    $isFullB = $groupBCount >= 30;
+                                    $inGroupB = $team->members->where('user_id', auth()->id())->first()?->is_group_b;
+                                @endphp
+                                @if(!$inGroupB)
+                                    <form action="{{ route('final_project.toggle_group') }}" method="POST" class="w-full">
+                                        @csrf
+                                        <input type="hidden" name="team_id" value="{{ $team->id }}">
+                                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                                        <input type="hidden" name="group" value="B">
+                                        @if($isFullB)
+                                            <button disabled type="button" class="w-full bg-gray-200 text-gray-500 px-4 py-3 rounded-xl text-sm font-bold shadow-sm cursor-not-allowed border border-gray-300">
+                                                <i class="fas fa-ban mr-1"></i> Group Full
+                                            </button>
+                                        @else
+                                            <button type="submit" class="w-full bg-gradient-to-r from-purple-500 to-purple-700 hover:from-purple-600 hover:to-purple-800 text-white px-4 py-3 rounded-xl text-sm font-bold shadow-lg transition transform hover:scale-[1.02] border border-purple-800">
+                                                <i class="fas fa-sign-in-alt mr-2"></i> Join Group B
+                                            </button>
+                                        @endif
+                                    </form>
+                                @else
+                                    <form action="{{ route('final_project.toggle_group') }}" method="POST" class="w-full">
+                                        @csrf
+                                        <input type="hidden" name="team_id" value="{{ $team->id }}">
+                                        <input type="hidden" name="user_id" value="{{ auth()->id() }}">
+                                        <input type="hidden" name="group" value="B">
+                                        <button type="submit" class="w-full bg-red-50 text-red-500 hover:bg-red-100 hover:text-red-700 px-4 py-3 rounded-xl text-sm font-bold shadow-sm transition border border-red-200">
+                                            <i class="fas fa-sign-out-alt mr-2"></i> Leave Group B
+                                        </button>
+                                    </form>
+                                @endif
+                            </div>
                         </div>
                     </div>
 

@@ -154,6 +154,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             // 2. الأكشنز الأساسية (POST)
             Route::post('/final-project/store', [FinalProjectController::class, 'storeTeam'])->name('final_project.store');
             Route::post('/final-project/join', [FinalProjectController::class, 'joinTeam'])->name('final_project.join');
+            Route::post('/final-project/toggle-group', [FinalProjectController::class, 'toggleGroup'])->name('final_project.toggle_group');
             Route::post('/final-project/leave', [FinalProjectController::class, 'leaveTeam'])->name('final_project.leave');
 
             // 3. الأكشنز الخاصة بالأعضاء (Invite, Remove, Report, Approve, Reject)
