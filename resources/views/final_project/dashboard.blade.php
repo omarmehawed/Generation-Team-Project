@@ -931,13 +931,14 @@
 
 
                     {{-- 1. جدول الأعضاء (The Team Members) --}}
-                    <div class="bg-white rounded-[2rem] border border-gray-100 shadow-2xl overflow-hidden relative">
+                    <div x-data="{ expanded: false }" class="bg-white rounded-[2rem] border border-gray-100 shadow-2xl overflow-hidden relative">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-50 rounded-bl-[100%] -mr-10 -mt-10 z-0">
                         </div>
-                        <div class="px-8 py-8 border-b border-gray-100 flex justify-between items-center relative z-10">
+                        <div @click="expanded = !expanded" class="px-8 py-8 border-b border-gray-100 flex justify-between items-center relative z-10 cursor-pointer hover:bg-gray-50 transition-colors">
                             <div>
                                 <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3">
                                     The Team Members
+                                    <i class="fas fa-chevron-down text-lg text-gray-300 transition-transform duration-300 ml-2" :class="expanded ? 'rotate-180' : ''"></i>
                                 </h3>
                                 <p class="text-sm text-gray-400 mt-1">Manage your elite team members</p>
                             </div>
@@ -948,14 +949,17 @@
                                     {{ $team->members->count() }} / 60 Total
                                 </span>
                                 @if ($myRole == 'leader')
-                                    <button onclick="openModal('inviteMemberModal')"
+                                    <button @click.stop onclick="openModal('inviteMemberModal')"
                                         class="btn-royal-gold px-6 py-2.5 rounded-xl shadow-lg flex items-center gap-2 hover:-translate-y-1 transform font-bold text-sm">
                                         <i class="fas fa-plus"></i> Add Member
                                     </button>
                                 @endif
                             </div>
                         </div>
-                        <div class="overflow-x-auto px-8 pt-4 pb-6 custom-scroll">
+                        
+                        {{-- Collapsible Body --}}
+                        <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;">
+                            <div class="overflow-x-auto px-8 pt-4 pb-6 custom-scroll max-h-[500px] overflow-y-auto">
                             <table class="w-full text-left border-separate border-spacing-y-3">
                                 <thead>
                                     <tr class="text-xs text-gray-400 uppercase tracking-wider">
@@ -1039,27 +1043,32 @@
                                 </tbody>
                             </table>
                         </div>
+                        </div> {{-- End Collapsible Body --}}
                     </div>
 
                     {{-- 1.1 Group Cards (Sub-groups) --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
                         {{-- Group A Card --}}
-                        <div class="bg-white rounded-[2rem] border border-blue-100 shadow-xl overflow-hidden relative group transition-all duration-300 flex flex-col">
+                        <div x-data="{ expanded: false }" class="bg-white rounded-[2rem] border border-blue-100 shadow-xl overflow-hidden relative group flex flex-col">
                             <div class="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-bl-[100%] z-0"></div>
-                            <div class="px-8 py-6 border-b border-blue-50 relative z-10 flex justify-between items-center">
+                            <div @click="expanded = !expanded" class="px-8 py-6 border-b border-blue-50 relative z-10 flex justify-between items-center cursor-pointer hover:bg-blue-50/50 transition-colors">
                                 <h4 class="font-black text-blue-800 flex items-center gap-3 text-lg">
                                     <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
                                         <i class="fas fa-users text-base"></i>
                                     </div>
                                     Group A
+                                    <i class="fas fa-chevron-down text-sm text-blue-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                                 </h4>
                                 <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-blue-200">
                                     {{ $team->members->where('is_group_a', true)->count() }} / 30 Active
                                 </span>
                             </div>
-                            <div class="p-6 flex-grow">
-                                <ul class="space-y-3">
-                                    @php
+                            
+                            {{-- Collapsible Area --}}
+                            <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
+                                <div class="p-6 flex-grow max-h-[400px] overflow-y-auto custom-scroll">
+                                    <ul class="space-y-3">
+                                        @php
                                         $groupAMembers = $team->members->where('is_group_a', true)->sortByDesc(function($m) {
                                             return $m->role === 'leader' ? 1 : 0;
                                         });
@@ -1114,25 +1123,30 @@
                                     </form>
                                 @endif
                             </div>
+                            </div> {{-- End Group A Collapsible Area --}}
                         </div>
 
                         {{-- Group B Card --}}
-                        <div class="bg-white rounded-[2rem] border border-purple-100 shadow-xl overflow-hidden relative group transition-all duration-300 flex flex-col">
+                        <div x-data="{ expanded: false }" class="bg-white rounded-[2rem] border border-purple-100 shadow-xl overflow-hidden relative group flex flex-col">
                             <div class="absolute top-0 right-0 w-32 h-32 bg-purple-50 rounded-bl-[100%] z-0"></div>
-                            <div class="px-8 py-6 border-b border-purple-50 relative z-10 flex justify-between items-center">
+                            <div @click="expanded = !expanded" class="px-8 py-6 border-b border-purple-50 relative z-10 flex justify-between items-center cursor-pointer hover:bg-purple-50/50 transition-colors">
                                 <h4 class="font-black text-purple-800 flex items-center gap-3 text-lg">
                                     <div class="w-10 h-10 rounded-xl bg-purple-100 flex items-center justify-center text-purple-600">
                                         <i class="fas fa-users text-base"></i>
                                     </div>
                                     Group B
+                                    <i class="fas fa-chevron-down text-sm text-purple-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                                 </h4>
                                 <span class="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-purple-200">
                                     {{ $team->members->where('is_group_b', true)->count() }} / 30 Active
                                 </span>
                             </div>
-                            <div class="p-6 flex-grow">
-                                <ul class="space-y-3">
-                                    @php
+                            
+                            {{-- Collapsible Area --}}
+                            <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
+                                <div class="p-6 flex-grow max-h-[400px] overflow-y-auto custom-scroll">
+                                    <ul class="space-y-3">
+                                        @php
                                         $groupBMembers = $team->members->where('is_group_b', true)->sortByDesc(function($m) {
                                             return $m->role === 'leader_b' ? 1 : 0;
                                         });
@@ -1187,6 +1201,7 @@
                                     </form>
                                 @endif
                             </div>
+                            </div> {{-- End Group B Collapsible Area --}}
                         </div>
                     </div>
 
