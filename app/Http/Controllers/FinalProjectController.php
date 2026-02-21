@@ -632,7 +632,8 @@ class FinalProjectController extends Controller
             'user_id' => 'required|exists:users,id',
             'role' => 'required|in:member,vice_leader,leader_b', // الدور الإداري
             'technical_role' => 'required|in:general,software,hardware', // التخصص التقني
-            'extra_role' => 'nullable|in:none,presentation,reports,marketing' // المسؤولية الإضافية
+            'extra_role' => 'nullable|in:none,presentation,reports,marketing', // المسؤولية الإضافية
+            'is_dorm' => 'nullable|boolean' // الإقامة
         ]);
 
         $leader = Auth::user();
@@ -673,6 +674,10 @@ class FinalProjectController extends Controller
         TeamMember::where('team_id', $request->team_id)
             ->where('user_id', $request->user_id)
             ->update($updateData);
+
+        if ($request->has('is_dorm')) {
+            \App\Models\User::where('id', $request->user_id)->update(['is_dorm' => $request->is_dorm]);
+        }
 
         return back()->with('success', 'Member roles updated successfully ✨');
     }

@@ -69,7 +69,7 @@ class JoinRequestController extends Controller
         $validated = $request->validate([
             // Section 1: Basic Info
             'full_name' => 'required|string|max:255',
-            'date_of_birth' => 'required|date',
+            'date_of_birth' => 'required|date|before_or_equal:-17 years',
             'national_id' => 'required|string|max:20',
             'academic_id' => 'required|string|max:20',
             'group' => 'required|in:G1,G2,G3,G4',
@@ -77,7 +77,7 @@ class JoinRequestController extends Controller
             'whatsapp_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
             'is_dorm' => 'required|boolean',
-            'photo' => 'required|image|max:10240', // 10MB Max
+            'photo' => 'required|image|max:102400', // 100MB Max
 
             // Section 2: Questions (Answers array)
             // Section 2: Questions (Answers array)
@@ -132,13 +132,14 @@ class JoinRequestController extends Controller
             'national_id.required' => 'National ID is required',
             'academic_id.required' => 'Academic ID is required',
             'date_of_birth.required' => 'Date of Birth is required',
+            'date_of_birth.before_or_equal' => 'يجب أن لا يقل العمر عن 17 عاماً للتسجيل',
             'group.required' => 'Please select your Group (G1-G4)',
             'phone_number.required' => 'Phone Number is required',
             'whatsapp_number.required' => 'WhatsApp Number is required',
             'address.required' => 'Address is required',
             'photo.required' => 'A formal photo is required',
             'photo.image' => 'The file must be an image',
-            'photo.max' => 'The photo size must not exceed 10MB',
+            'photo.max' => 'The photo size must not exceed 100MB',
             'answers.experience_field.required' => 'Please select your Experience Field',
             'answers.large_team_experience.required' => 'Please answer the Team Experience question',
             'answers.start_date.required' => 'Please specify when you can start',
@@ -160,9 +161,7 @@ class JoinRequestController extends Controller
                                         ->orWhere('academic_id', $validated['academic_id'])
                                         ->first();
 
-        $existingUser = User::where('national_id', $validated['national_id'])
-                            ->orWhere('academic_id', $validated['academic_id'])
-                            ->first();
+        $existingUser = User::where('national_id', $validated['national_id'])->first();
 
         if ($existingRequest) {
             $msg = 'تم تسجيل طلبك بالفعل بالرقم الأكاديمي: ' . $existingRequest->academic_id . '. يرجى انتظار المراجعة.';

@@ -97,6 +97,28 @@
                         </div>
                     </div>
 
+                    {{-- Residence Status --}}
+                    <div class="mb-5">
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Residence
+                            Status (Dorm)</label>
+                        <div class="grid grid-cols-2 gap-3">
+                            <label class="cursor-pointer">
+                                <input type="radio" name="is_dorm" value="0" class="peer hidden" {{ !$user->is_dorm ? 'checked' : '' }}>
+                                <div
+                                    class="p-2.5 rounded-xl border border-gray-200 text-center peer-checked:bg-blue-500 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-blue-500">
+                                    <i class="fas fa-home mr-1"></i> Local / Home
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="is_dorm" value="1" class="peer hidden" {{ $user->is_dorm ? 'checked' : '' }}>
+                                <div
+                                    class="p-2.5 rounded-xl border border-gray-200 text-center peer-checked:bg-orange-500 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-orange-500">
+                                    <i class="fas fa-building mr-1"></i> Resident / Dorm
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
                     {{-- Extra --}}
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Extra

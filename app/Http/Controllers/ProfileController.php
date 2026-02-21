@@ -225,7 +225,7 @@ class ProfileController extends Controller
             'phone_number' => 'nullable|string|max:20',
             'national_id' => 'nullable|string|size:14|unique:users,national_id,' . $user->id,
             'address' => 'nullable|string|max:255',
-            'profile_photo' => 'nullable|image|max:2048', 
+            'profile_photo' => 'nullable|image|max:102400', // 100MB Max
         ]);
 
         if ($request->has('phone_number')) {

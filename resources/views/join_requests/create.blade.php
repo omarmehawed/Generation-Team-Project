@@ -179,7 +179,7 @@
                                             <input type="file" name="photo" class="hidden" accept="image/*"
                                                 @change="preview = URL.createObjectURL($event.target.files[0])">
                                         </label>
-                                        <p class="mt-2 text-xs text-gray-500">JPG, PNG or GIF. Max size 10MB.</p>
+                                        <p class="mt-2 text-xs text-gray-500">JPG, PNG or GIF. Max size 100MB.</p>
                                     </div>
                                 </div>
                             </div>

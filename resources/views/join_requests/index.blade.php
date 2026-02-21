@@ -496,12 +496,7 @@
 
                                         <!-- Dorm Status -->
                                         <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                            <div
-                                                class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-transparent shrink-0 flex items-center justify-center text-orange-500 dark:text-orange-400 shadow-sm">
-                                                <i class="fas fa-bed"></i>
-                                            </div>
-                                            <span
-                                                x-text="selectedRequest.is_dorm == 1 ? 'Dorm Resident (مغترب)' : 'Commuter (غير مغترب)'"></span>
+                                            <span x-text="selectedRequest.is_dorm == 1 ? 'مغترب' : 'غير مغترب'"></span>
                                         </div>
 
                                         <!-- University Email (Synced from User) -->

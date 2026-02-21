@@ -192,6 +192,18 @@
                             </div>
                         </div>
 
+                        {{-- Residence Status --}}
+                        <div>
+                            <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Residence Status</label>
+                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                                @if($user->is_dorm)
+                                    مغترب
+                                @else
+                                    غير مغترب
+                                @endif
+                            </div>
+                        </div>
+
                         {{-- Address --}}
                         <div class="md:col-span-2">
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Home Address</label>
