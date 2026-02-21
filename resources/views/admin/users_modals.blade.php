@@ -136,7 +136,6 @@
                                         </div>
                                     </div>
                                 </div>
-
                                 {{-- National ID --}}
                                 <div class="col-span-1 md:col-span-2 group">
                                     <label
