@@ -1449,16 +1449,20 @@
             </div>
 
             {{-- 2. لوحة المهام المقسمة (Split Tasks Board) --}}
-            <div
+            <div x-data="{ expanded: false }"
                 class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift relative mt-10">
-                <div class="px-8 py-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center">
+                <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition-colors">
                     <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
                         <div class="p-2 bg-orange-50 rounded-xl text-orange-500 shadow-sm"><i
                                 class="fas fa-layer-group"></i>
                         </div>
                         Tasks Distribution
+                        <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                     </h3>
                 </div>
+                
+                {{-- Collapsible Body --}}
+                <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;">
 
                 {{-- تجهيز المتغيرات عشان نتفادى مشاكل الحروف الكابيتال والسمول --}}
                 @php
@@ -1576,31 +1580,37 @@
                         </div>
                     </div>
                 </div>
+                </div> {{-- End Collapsible Body --}}
             </div>
             {{-- 3. قسم الميزانية والتمويل (Split View) --}}
-            <div class="mt-12">
+            <div x-data="{ expandedParent: false }" class="mt-12">
                 {{-- العنوان الرئيسي للقسم --}}
-                <div class="flex items-center gap-3 mb-6">
-                    <div class="p-3 bg-green-100 rounded-xl text-green-600 shadow-sm"><i
+                <div @click="expandedParent = !expandedParent" class="flex items-center gap-3 mb-6 cursor-pointer group w-max">
+                    <div class="p-3 bg-green-100 rounded-xl text-green-600 shadow-sm group-hover:scale-110 transition-transform"><i
                             class="fas fa-wallet text-xl"></i>
                     </div>
-                    <h3 class="text-2xl font-black text-gray-800">Expenses & Budget</h3>
+                    <h3 class="text-2xl font-black text-gray-800 flex items-center gap-2">
+                        Expenses & Budget
+                        <i class="fas fa-chevron-down text-lg text-gray-400 transition-transform duration-300 ml-2 group-hover:text-gray-600" :class="expandedParent ? 'rotate-180' : ''"></i>
+                    </h3>
                 </div>
-                <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-10">
+                <div x-show="expandedParent" x-transition.opacity.duration.300ms style="display: none;" class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-10">
                     {{-- 🟢 الجزء الأول: المصروفات (Expenses - Outgoing) --}}
-                    <div class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift">
-                        <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift flex flex-col">
+                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
                             <h3 class="font-bold text-gray-800 flex items-center gap-2">
                                 <div class="p-2 bg-red-50 rounded-lg text-red-500 shadow-sm"><i
                                         class="fas fa-shopping-cart"></i></div>
                                 Expenses
+                                <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                             </h3>
-                            <button onclick="openModal('addExpenseModal')"
+                            <button @click.stop onclick="openModal('addExpenseModal')"
                                 class="text-xs btn-gold px-4 py-2 rounded-xl font-bold shadow-md"><i
                                     class="fas fa-plus"></i>
                                 Add Item</button>
                         </div>
 
+                        <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
                         <div class="p-6">
                             @php $totalSpent = $team->expenses->sum('amount'); @endphp
                             <div
@@ -1666,31 +1676,34 @@
                                 </table>
                             </div>
                         </div>
+                        </div> {{-- End Expenses Collapsible Area --}}
                     </div>
                     {{-- 🟡 الجزء الثاني: التمويل واللمّ (Funds Collection) --}}
-                    <div class="bg-white rounded-[2.5rem] border border-yellow-100 shadow-xl overflow-hidden hover-lift">
-                        <div class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-[#FFF8E1]/50">
+                    <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-yellow-100 shadow-xl overflow-hidden hover-lift flex flex-col">
+                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-[#FFF8E1]/50 cursor-pointer hover:bg-yellow-50 transition-colors">
                             <h3 class="font-bold text-gray-800 flex items-center gap-2">
                                 <div class="p-2 bg-yellow-100 rounded-lg text-[#AA8A26] shadow-sm"><i
                                         class="fas fa-hand-holding-usd"></i></div>
                                 Fund Collection
+                                <i class="fas fa-chevron-down text-sm text-[#AA8A26] transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                             </h3>
                             <div class="flex gap-2">
                                 {{-- زرار الهستوري --}}
                                 @if ($fundsHistory->count() > 0)
-                                    <button onclick="openModal('fundsHistoryModal')"
+                                    <button @click.stop onclick="openModal('fundsHistoryModal')"
                                         class="text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition"><i
                                             class="fas fa-history"></i> History</button>
                                 @endif
 
                                 @if ($myRole == 'leader')
-                                    <button onclick="openModal('createFundModal')"
+                                    <button @click.stop onclick="openModal('createFundModal')"
                                         class="text-xs bg-black text-[#FFD700] px-4 py-2 rounded-xl font-bold shadow-md hover:gray-900 transition"><i
                                             class="fas fa-bullhorn"></i> Request</button>
                                 @endif
                             </div>
                         </div>
-                        <div class="p-6">
+                        <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
+                        <div class="p-6 flex-grow">
                             @if ($activeFund)
                                 {{-- Active Request Header --}}
                                 <div class="mb-4">
@@ -1857,26 +1870,31 @@
                                 </div>
                             @endif
                         </div>
+                        </div> {{-- End Fund Collection Collapsible Area --}}
                     </div>
                 </div>
+                </div> {{-- End Expenses & Budget Expanded Parent --}}
             </div>
 
             {{-- 4. معرض المشروع (Project Showroom) --}}
-            <div class="mt-12 mb-20">
-                <div class="flex items-center justify-between mb-6">
+            <div x-data="{ expanded: false }" class="mt-12 mb-20">
+                <div @click="expanded = !expanded" class="flex items-center justify-between mb-6 cursor-pointer group">
                     <div class="flex items-center gap-3">
-                        <div class="p-3 bg-purple-100 rounded-xl text-purple-600 shadow-sm">
+                        <div class="p-3 bg-purple-100 rounded-xl text-purple-600 shadow-sm group-hover:scale-110 transition-transform">
                             <i class="fas fa-photo-video text-xl"></i>
                         </div>
-                        <h3 class="text-2xl font-black text-gray-800">Project Showroom</h3>
+                        <h3 class="text-2xl font-black text-gray-800 flex items-center gap-2">
+                            Project Showroom
+                            <i class="fas fa-chevron-down text-lg text-gray-400 transition-transform duration-300 ml-2 group-hover:text-gray-600" :class="expanded ? 'rotate-180' : ''"></i>
+                        </h3>
                     </div>
-                    <button onclick="openModal('uploadGalleryModal')"
+                    <button @click.stop onclick="openModal('uploadGalleryModal')"
                         class="bg-gray-900 text-white px-5 py-2.5 rounded-xl font-bold shadow-lg hover:bg-black transition transform hover:-translate-y-0.5 text-xs flex items-center gap-2">
                         <i class="fas fa-cloud-upload-alt"></i> Add Media
                     </button>
                 </div>
 
-                <div
+                <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;"
                     class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl p-8 transition-all hover:shadow-2xl">
                     @php
                         $galleryItems = \Illuminate\Support\Facades\DB::table('project_galleries')
@@ -1998,7 +2016,7 @@
                             </button>
                         </div>
                     @endif
-                </div>
+                </div> {{-- End Showroom Body --}}
             </div>
 
             {{-- ستايل الأنيميشن الخاص بالفيديو --}}
@@ -2033,25 +2051,27 @@
             {{-- الحاوية الرئيسية للـ Grid --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 items-start">
                 {{-- العمود الأول: قسم التقارير الأسبوعية --}}
-                <div
-                    class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift transition-all">
-                    <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                <div x-data="{ expanded: false }"
+                    class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift transition-all flex flex-col">
+                    <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
                         <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
                             <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm"><i class="fas fa-stream"></i>
                             </div>
                             Progress Timeline
+                            <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                         </h3>
                         @if (
                             $team &&
                                 ($team->leader_id == auth()->id() ||
                                     $team->members->where('user_id', auth()->id())->first()?->extra_role == 'reports'))
-                            <button onclick="openModal('addReportModal')"
+                            <button @click.stop onclick="openModal('addReportModal')"
                                 class="text-xs btn-royal-gold px-5 py-2.5 rounded-xl transition shadow-lg flex items-center gap-2 hover:-translate-y-0.5 transform font-bold">
                                 <i class="fas fa-plus"></i> Weekly Report
                             </button>
                         @endif
                     </div>
-                    <div class="p-8 relative">
+                    <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
+                    <div class="p-8 relative custom-scroll max-h-[500px] overflow-y-auto">
                         <div class="absolute left-12 top-8 bottom-8 w-0.5 bg-gray-100"></div>
                         @php
                             $reports = \Illuminate\Support\Facades\DB::table('weekly_reports')
@@ -2126,6 +2146,7 @@
                             </div>
                         @endforelse
                     </div>
+                    </div> {{-- End Progress Timeline Body --}}
                 </div>
 
                 {{-- العمود الثاني: منطقة التسليم النهائي --}}
