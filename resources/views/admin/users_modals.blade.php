@@ -12,7 +12,8 @@
             <div class="bg-white px-8 py-6 border-b border-gray-100 flex justify-between items-center flex-shrink-0">
                 <div>
                     <h3 class="text-2xl font-black text-gray-800 tracking-tight" id="modalTitle">User Profile</h3>
-                    <p class="text-sm text-gray-400 font-medium mt-1">Manage account details, roles, and permissions.</p>
+                    <p class="text-sm text-gray-400 font-medium mt-1">Manage account details, roles, and permissions.
+                    </p>
                 </div>
                 <button onclick="closeUserModal()"
                     class="w-10 h-10 rounded-full bg-gray-50 text-gray-400 hover:bg-red-50 hover:text-red-500 flex items-center justify-center transition-all duration-300">
@@ -109,8 +110,7 @@
                                         </select>
                                         <div
                                             class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M19 9l-7 7-7-7"></path>
                                             </svg>
@@ -129,13 +129,27 @@
                                         </select>
                                         <div
                                             class="absolute inset-y-0 right-0 flex items-center px-4 pointer-events-none text-gray-500">
-                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                viewBox="0 0 24 24">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                     d="M19 9l-7 7-7-7"></path>
                                             </svg>
                                         </div>
                                     </div>
+                                </div>
+
+                                {{-- National ID --}}
+                                <div class="col-span-1 md:col-span-2 group">
+                                    <label
+                                        class="text-xs font-bold text-gray-500 uppercase mb-2 ml-1 flex items-center gap-1">
+                                        National ID <span class="text-gray-400 text-[10px] lowercase font-medium">(الرقم
+                                            القومي)</span>
+                                    </label>
+                                    <input type="text" name="national_id" id="national_id" maxlength="14"
+                                        pattern="\d{14}"
+                                        class="w-full px-5 py-3.5 rounded-xl bg-white border-2 border-gray-100 text-gray-700 font-bold focus:border-green-500 focus:ring-4 focus:ring-green-500/10 transition-all outline-none placeholder-gray-300"
+                                        placeholder="Enter exactly 14 digits">
+                                    <p class="text-[10px] text-gray-400 font-medium mt-1 ml-1">Must be exactly 14 digits
+                                        and unique to each student.</p>
                                 </div>
                             </div>
                         </div>
@@ -325,8 +339,7 @@
                                                 <i class="fas fa-cogs"></i>
                                             </div>
                                             <div>
-                                                <span
-                                                    class="block font-bold text-gray-600 peer-checked:text-white">Academic
+                                                <span class="block font-bold text-gray-600 peer-checked:text-white">Academic
                                                     Control</span>
                                                 <span
                                                     class="text-[10px] text-gray-400 font-medium peer-checked:text-gray-300">Change
@@ -338,8 +351,7 @@
                                 {{-- DataBase --}}
                                 @if (Auth::user()->hasPermission('backup_db'))
                                     <label class="cursor-pointer group relative">
-                                        <input type="checkbox" name="permissions[]" value="backup_db"
-                                            class="peer sr-only">
+                                        <input type="checkbox" name="permissions[]" value="backup_db" class="peer sr-only">
                                         <div
                                             class="p-4 rounded-xl bg-red-50 border-2 border-red-100 peer-checked:border-red-500 peer-checked:bg-red-50 hover:shadow-md transition-all duration-200 flex items-center gap-3">
                                             <div
@@ -378,8 +390,8 @@
                                                     class="text-[10px] font-black text-gray-400 uppercase tracking-wider peer-checked:text-indigo-400">{{ $course->code }}</span>
                                                 <div
                                                     class="w-4 h-4 rounded-full border border-gray-300 peer-checked:bg-indigo-500 peer-checked:border-indigo-500 flex items-center justify-center">
-                                                    <svg class="w-2 h-2 text-white hidden peer-checked:block"
-                                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <svg class="w-2 h-2 text-white hidden peer-checked:block" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
                                                             stroke-width="4" d="M5 13l4 4L19 7"></path>
                                                     </svg>
@@ -387,7 +399,8 @@
                                             </div>
                                             <h5
                                                 class="text-xs font-bold text-gray-700 mt-1 peer-checked:text-indigo-800 truncate">
-                                                {{ $course->name }}</h5>
+                                                {{ $course->name }}
+                                            </h5>
                                         </div>
                                     </label>
                                 @endforeach
@@ -418,7 +431,7 @@
 {{-- Import Modal --}}
 {{-- ================= IMPORT MODAL ================= --}}
 <div id="importModal"
-    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm transition-opacity">
+    class="hidden fixed inset-0 z-50 {{'flex'}} items-center justify-center bg-gray-900/60 backdrop-blur-sm transition-opacity">
     <div class="bg-white p-8 rounded-2xl w-full max-w-md shadow-2xl border border-gray-100 text-center">
 
         <div class="w-16 h-16 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -464,7 +477,7 @@
 
 {{-- Delete Modal --}}
 <div id="deleteModal"
-    class="hidden fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 backdrop-blur-sm">
+    class="hidden fixed inset-0 z-50 {{'flex'}} items-center justify-center bg-gray-900/60 backdrop-blur-sm">
     <div class="bg-white p-6 rounded-xl w-full max-w-sm text-center shadow-2xl border border-gray-100">
         <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100 mb-4">
             <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -492,12 +505,11 @@
 <div id="bulkEditModal" class="fixed inset-0 z-50 hidden">
     <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm" onclick="closeBulkEditModal()"></div>
 
-    {{--  هنا التعديل: ضيفنا flex لتوسيط المودال وحجم أقصى --}}
+    {{-- هنا التعديل: ضيفنا flex لتوسيط المودال وحجم أقصى --}}
     <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
 
-        {{--  هنا التعديل: flex-col و max-h-[90vh] عشان المودال ميخرجش بره الشاشة --}}
-        <div
-            class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border border-gray-100 flex flex-col max-h-[90vh]">
+        {{-- هنا التعديل: flex-col و max-h-[90vh] عشان المودال ميخرجش بره الشاشة --}}
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border border-gray-100 flex flex-col max-h-[90vh]">
 
             {{-- 1. Header (Fixed) --}}
             <div
@@ -692,8 +704,7 @@
                                             class="rounded text-indigo-600 focus:ring-indigo-500">
                                         <div class="flex flex-col">
                                             <span class="text-xs font-bold text-gray-700">{{ $course->code }}</span>
-                                            <span
-                                                class="text-[10px] text-gray-500 truncate w-20">{{ $course->name }}</span>
+                                            <span class="text-[10px] text-gray-500 truncate w-20">{{ $course->name }}</span>
                                         </div>
                                     </label>
                                 @endforeach
@@ -769,15 +780,13 @@
                 <div class="mb-4">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Users to be
                         deleted:</label>
-                    <div id="deleteUsersList"
-                        class="flex flex-col gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1">
+                    <div id="deleteUsersList" class="flex flex-col gap-2 max-h-40 overflow-y-auto custom-scrollbar p-1">
                         {{-- الأسماء هتتحط هنا بالجافاسكريبت --}}
                     </div>
                 </div>
 
                 <div class="flex gap-3 mt-6">
-                    <button type="button"
-                        onclick="document.getElementById('bulkDeleteModal').classList.add('hidden')"
+                    <button type="button" onclick="document.getElementById('bulkDeleteModal').classList.add('hidden')"
                         class="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl font-bold hover:bg-gray-200 transition">
                         Cancel
                     </button>
@@ -794,8 +803,8 @@
 {{-- 💀 Bulk Force Delete Modal (Danger Zone) --}}
 <div id="bulkForceDeleteModal" class="fixed inset-0 z-50 hidden">
     {{-- الخلفية الغامقة --}}
-    <div class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity"
-        onclick="closeBulkForceDeleteModal()"></div>
+    <div class="fixed inset-0 bg-gray-900/80 backdrop-blur-sm transition-opacity" onclick="closeBulkForceDeleteModal()">
+    </div>
 
     <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
         <div

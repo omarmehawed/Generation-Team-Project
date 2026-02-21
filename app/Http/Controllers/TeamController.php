@@ -230,7 +230,15 @@ class TeamController extends Controller
 
         $path = null;
         if ($request->hasFile('file')) {
-            $path = Cloudinary::upload($request->file('file')->getRealPath(), ['folder' => 'reports'])->getSecurePath();
+            $file = $request->file('file');
+            $ext = strtolower($file->getClientOriginalExtension());
+            $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
+            $resourceType = $isImage ? 'image' : 'raw';
+
+            $path = Cloudinary::uploadApi()->upload($file->getRealPath(), [
+                'folder' => 'reports',
+                'resource_type' => $resourceType
+            ])['secure_url'];
         }
 
         // تأكد إن موديل Report موجود ومستدعى فوق
@@ -291,7 +299,15 @@ class TeamController extends Controller
 
         // رفع الملف (لو موجود)
         if ($request->hasFile('project_file')) {
-            $path = Cloudinary::upload($request->file('project_file')->getRealPath(), ['folder' => 'project_submissions'])->getSecurePath();
+            $file = $request->file('project_file');
+            $ext = strtolower($file->getClientOriginalExtension());
+            $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
+            $resourceType = $isImage ? 'image' : 'raw';
+
+            $path = Cloudinary::uploadApi()->upload($file->getRealPath(), [
+                'folder' => 'project_submissions',
+                'resource_type' => $resourceType
+            ])['secure_url'];
         }
 
         // 2. التعديل التاني: خرجنا التحديث برة الـ if عشان يحفظ اللينك حتى لو مفيش ملف

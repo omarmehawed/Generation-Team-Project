@@ -5,7 +5,7 @@
     {{-- PDF Download Button (If exists) --}}
     @if($evaluation->exists && $evaluation->pdf_path)
         <div class="mb-6 flex justify-end">
-             <a href="{{ route('weekly_evaluation.download', $evaluation->id) }}" target="_blank"
+             <a href="{{ $evaluation->pdf_path }}" target="_blank"
                 class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-xl text-sm font-bold shadow-lg flex items-center gap-2 transition hover:-translate-y-1">
                  <i class="fas fa-file-pdf"></i> Download Official PDF
              </a>

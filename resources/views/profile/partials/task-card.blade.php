@@ -17,7 +17,7 @@
                 <i class="fas fa-file-alt text-gray-500"></i>
                 <span class="text-xs text-gray-300 truncate">{{ basename($task->submission_file) }}</span>
             </div>
-            <a href="{{ route('tasks.download', $task->id) }}" class="text-cyan-400 hover:text-cyan-300 text-xs">
+            <a href="{{ $task->submission_file }}" target="_blank" class="text-cyan-400 hover:text-cyan-300 text-xs">
                 <i class="fas fa-download"></i>
             </a>
         </div>

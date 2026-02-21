@@ -149,15 +149,15 @@
 
     {{-- Global State Management (Alpine) --}}
     <div x-data="{
-                        showScrollTop: false,
-                        loading: false,
-                        activeSection: '',
-                        init() {
-                            window.addEventListener('scroll', () => {
-                                this.showScrollTop = window.pageYOffset > 500;
-                            });
-                        }
-                    }">
+                            showScrollTop: false,
+                            loading: false,
+                            activeSection: '',
+                            init() {
+                                window.addEventListener('scroll', () => {
+                                    this.showScrollTop = window.pageYOffset > 500;
+                                });
+                            }
+                        }">
 
         {{-- Top Loading Bar --}}
         {{-- <div id="scroll-progress"></div> --}}
@@ -465,8 +465,7 @@
                                             <td class="px-8 py-5 text-center">
                                                 @if ($report->file_path)
                                                     {{-- ✅ هنا استخدمنا راوت الستاف الجديد --}}
-                                                    <a href="{{ route('staff.view_attachment', ['path' => $report->file_path]) }}"
-                                                        target="_blank"
+                                                    <a href="{{ $report->file_path }}" target="_blank"
                                                         class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-red-50 text-red-600 hover:bg-red-600 hover:text-white transition-all shadow-sm hover:shadow-lg transform hover:scale-110"
                                                         title="Download PDF Report">
                                                         <i class="fas fa-file-pdf"></i>
@@ -974,8 +973,7 @@
                                     {{-- Book --}}
                                     @if ($team->final_book_file)
                                         {{-- ✅✅✅ التعديل هنا: استخدام راوت الستاف --}}
-                                        <a href="{{ route('staff.view_attachment', ['path' => $team->final_book_file]) }}"
-                                            target="_blank"
+                                        <a href="{{ $team->final_book_file }}" target="_blank"
                                             class="group flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-emerald-100 transition-all duration-500 hover:-translate-y-1">
                                             <div class="flex items-center gap-6">
                                                 <div
@@ -1001,8 +999,7 @@
                                     {{-- PPT --}}
                                     @if ($team->presentation_file)
                                         {{-- ✅✅✅ التعديل هنا: استخدام راوت الستاف --}}
-                                        <a href="{{ route('staff.view_attachment', ['path' => $team->presentation_file]) }}"
-                                            target="_blank"
+                                        <a href="{{ $team->presentation_file }}" target="_blank"
                                             class="group flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-orange-100 transition-all duration-500 hover:-translate-y-1">
                                             <div class="flex items-center gap-6">
                                                 <div

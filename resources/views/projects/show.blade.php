@@ -8,8 +8,8 @@
     {{-- ========================================== --}}
     <style>
         /* =========================================
-                                   1. شاشة التحميل (Preloader) - مقتبس من Graduation
-                                   ========================================= */
+                                           1. شاشة التحميل (Preloader) - مقتبس من Graduation
+                                           ========================================= */
         #royal-preloader {
             position: fixed;
             top: 0;
@@ -67,8 +67,8 @@
         }
 
         /* =========================================
-                                   2. الأنيميشن المحسن (Updated Animations)
-                                   ========================================= */
+                                           2. الأنيميشن المحسن (Updated Animations)
+                                           ========================================= */
 
         /* تحديث حركة الظهور لتكون أنعم زي الجراديواشن */
         .fade-in-up {
@@ -98,8 +98,8 @@
         }
 
         /* =========================================
-                                   3. كلاسات Subject Project الأصلية (تم الاحتفاظ بها)
-                                   ========================================= */
+                                           3. كلاسات Subject Project الأصلية (تم الاحتفاظ بها)
+                                           ========================================= */
 
         /* تأثير الزجاج (Glass Effect) */
         .glass-effect {
@@ -204,7 +204,7 @@
                     </div>
                 @else
                     <div
-                        class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-2xl text-center min-w-[140px] shadow-lg border-red-400/30">
+                        class="bg-white/10 backdrop-blur-md border p-4 rounded-2xl text-center min-w-[140px] shadow-lg border-red-400/30">
                         <p class="text-[10px] text-red-200 font-bold uppercase tracking-wider mb-1">Your Status</p>
                         <div class="flex items-center justify-center gap-2 text-xl font-bold text-white">
                             <i class="fas fa-exclamation-circle text-red-300"></i> No Team
@@ -574,7 +574,7 @@
 
                                                 <div
                                                     class="group relative flex flex-col sm:flex-row sm:items-center justify-between p-5 rounded-2xl border transition-all duration-300 hover:-translate-y-1 hover:shadow-lg
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $task->status == 'completed' ? 'bg-green-50/50 border-green-100' :
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            {{ $task->status == 'completed' ? 'bg-green-50/50 border-green-100' :
                                     ($task->status == 'reviewing' ? 'bg-yellow-50/50 border-yellow-100' :
                                         ($task->status == 'rejected' || $isOverdue ? 'bg-red-50/50 border-red-100' : 'bg-white border-gray-100')) }}">
 
@@ -634,7 +634,7 @@
                                                         {{-- لو فيه ملف مرفوع --}}
                                                         @if(($task->submission_value || $task->submission_file) && ($task->status == 'reviewing' || $task->status == 'completed'))
 
-                                                            <a href="{{ $task->submission_type == 'link' ? $task->submission_value : (Str::startsWith($task->submission_file, ['http://', 'https://']) ? $task->submission_file : asset('storage/' . $task->submission_file)) }}"
+                                                            <a href="{{ $task->submission_type == 'link' ? $task->submission_value : $task->submission_file }}"
                                                                 target="_blank"
                                                                 class="w-8 h-8 rounded-full bg-white border border-gray-200 text-[#266963] flex items-center justify-center hover:bg-[#266963] hover:text-white transition shadow-sm"
                                                                 title="{{ $task->submission_type == 'link' ? 'Open Link' : 'Download File' }}">
@@ -718,7 +718,7 @@
                                                     class="fab fa-github mr-2"></i> Repo</a>
                                         @endif
                                         @if($myTeam->submission_path)
-                                            <a href="{{ route('teams.download', $myTeam->id) }}"
+                                            <a href="{{ $myTeam->submission_path }}" target="_blank"
                                                 class="px-5 py-2.5 bg-white text-[#266963] border border-[#266963] rounded-xl text-sm font-bold hover:bg-[#266963] hover:text-white transition shadow-lg"><i
                                                     class="fas fa-download mr-2"></i> File</a>
                                         @endif

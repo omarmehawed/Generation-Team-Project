@@ -16,15 +16,14 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
         class="p-5 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-hidden">
 
         {{-- Decorative Left Border based on status --}}
-        <div
-            class="absolute left-0 top-0 bottom-0 w-1.5
+        <div class="absolute left-0 top-0 bottom-0 w-1.5
             {{ $task->status == 'completed'
-                ? 'bg-green-500'
-                : ($task->status == 'reviewing'
-                    ? 'bg-yellow-500'
-                    : ($task->status == 'rejected'
-                        ? 'bg-red-500'
-                        : 'bg-gray-200')) }}">
+    ? 'bg-green-500'
+    : ($task->status == 'reviewing'
+        ? 'bg-yellow-500'
+        : ($task->status == 'rejected'
+            ? 'bg-red-500'
+            : 'bg-gray-200')) }}">
         </div>
 
         <div class="flex justify-between items-start pl-3">
@@ -112,8 +111,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                         {{-- 1. View File --}}
                         @if ($task->submission_file)
                             {{-- ✅✅✅ التعديل هنا: استخدام الراوت الجوكر --}}
-                            <a href="{{ route('final_project.view_attachment', ['path' => $task->submission_file]) }}"
-                                target="_blank"
+                            <a href="{{ $task->submission_file }}" target="_blank"
                                 class="w-8 h-8 flex items-center justify-center rounded-full text-blue-600 hover:bg-blue-600 hover:text-white hover:shadow-md transition-all duration-200"
                                 title="View Submitted File">
                                 <i class="fas fa-eye text-xs"></i>
@@ -150,8 +148,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
 
                     {{-- [CASE C]: Completed State --}}
                 @elseif($task->status == 'completed')
-                    <div
-                        class="w-8 h-8 flex items-center justify-center bg-green-50 rounded-full border border-green-100">
+                    <div class="w-8 h-8 flex items-center justify-center bg-green-50 rounded-full border border-green-100">
                         <i class="fas fa-check text-green-600 text-sm"></i>
                     </div>
                 @endif

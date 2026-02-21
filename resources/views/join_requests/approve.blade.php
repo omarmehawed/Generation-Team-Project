@@ -12,8 +12,7 @@
                     <div class="card-body">
                         <div class="row mb-4">
                             <div class="col-md-3">
-                                @if($joinRequest->photo_path)
-                                    <img src="{{ Str::startsWith($joinRequest->photo_path, ['http://', 'https://']) ? $joinRequest->photo_path : asset('storage/' . $joinRequest->photo_path) }}"
+                                    <img src="{{ $joinRequest->photo_path }}"
                                         class="img-fluid rounded border shadow-sm" style="max-height: 150px;">
                                 @else
                                     <div class="bg-gray-200 rounded text-center py-4">No Photo</div>

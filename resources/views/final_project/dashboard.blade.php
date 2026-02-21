@@ -1605,13 +1605,13 @@
                                                     <div class="flex items-center gap-3">
                                                         {{-- التأكد إن المسار موجود --}}
                                                         @if ($expense->receipt_path)
-                                                            {{-- ✅ التعديل هنا: استخدام راوت final_project.view_attachment للرابط --}}
-                                                            <a href="{{ route('final_project.view_attachment', ['path' => $expense->receipt_path]) }}"
+                                                            {{-- ✅ التعديل هنا: استخدام الرابط المباشر كلاوديناري --}}
+                                                            <a href="{{ $expense->receipt_path }}"
                                                                 target="_blank"
                                                                 class="group relative block w-10 h-10 rounded-lg overflow-hidden border border-gray-200 hover:border-blue-400 transition">
 
                                                                 {{-- ✅ التعديل هنا: استخدام نفس الراوت لعرض الصورة المصغرة --}}
-                                                                <img src="{{ route('final_project.view_attachment', ['path' => $expense->receipt_path]) }}"
+                                                                <img src="{{ $expense->receipt_path }}"
                                                                     alt="Receipt"
                                                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
 
@@ -1749,7 +1749,7 @@
                                                             class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-lg font-bold block mb-0.5"><i
                                                                 class="fas fa-check-circle"></i> Paid</span>
                                                         @if ($contrib->payment_method == 'transfer' && $contrib->payment_proof)
-                                                            <a href="{{ route('final_project.view_attachment', ['path' => $contrib->payment_proof]) }}"
+                                                            <a href="{{ $contrib->payment_proof }}"
                                                                 target="_blank"
                                                                 class="text-[9px] text-blue-500 underline">View Proof</a>
                                                         @elseif($contrib->payment_method == 'cash')
@@ -1770,7 +1770,7 @@
                                                                 'from_number' => $contrib->from_number,
                                                                 'transaction_date' => $contrib->transaction_date,
                                                                 'transaction_time' => $contrib->transaction_time,
-                                                                'proof_url' => $contrib->payment_proof ? route('final_project.view_attachment', ['path' => $contrib->payment_proof]) : '#',
+                                                                'proof_url' => $contrib->payment_proof ? $contrib->payment_proof : '#',
                                                                 'notes' => $contrib->notes
                                                             ]) }})"
                                                             class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-bold shadow-md animate-pulse">
@@ -1905,11 +1905,11 @@
                                         {{-- 🟢 حالة 2: لو العنصر صورة --}}
                                     @else
                                         {{-- ✅ التعديل الأول: استخدام الراوت في Lightbox --}}
-                                        <a href="{{ route('final_project.view_attachment', ['path' => $item->file_path]) }}"
+                                        <a href="{{ $item->file_path }}"
                                             data-lightbox="gallery" data-title="{{ $item->caption }}">
 
                                             {{-- ✅ التعديل الثاني: استخدام الراوت في src الصورة --}}
-                                            <img src="{{ route('final_project.view_attachment', ['path' => $item->file_path]) }}"
+                                            <img src="{{ $item->file_path }}"
                                                 class="w-full h-full object-cover transform group-hover:scale-110 transition duration-700">
                                         </a>
                                     @endif
@@ -1941,7 +1941,7 @@
                                                     </a>
                                                 @else
                                                     {{-- ✅ التعديل الثالث: استخدام الراوت في زرار التحميل --}}
-                                                    <a href="{{ route('final_project.view_attachment', ['path' => $item->file_path]) }}"
+                                                    <a href="{{ $item->file_path }}"
                                                         download
                                                         class="text-white hover:text-green-400 bg-white/10 p-2 rounded-full backdrop-blur-md transition hover:bg-white/20"
                                                         title="Download">
@@ -2065,7 +2065,7 @@
 
                                         {{-- ✅✅✅ التعديل هنا: استخدام الراوت الجوكر لعرض الملف --}}
                                         @if ($report->file_path)
-                                            <a href="{{ route('final_project.view_attachment', ['path' => $report->file_path]) }}"
+                                            <a href="{{ $report->file_path }}"
                                                 target="_blank"
                                                 class="text-xs text-blue-500 bg-blue-50 px-2 py-1 rounded-lg hover:bg-blue-100 transition border border-blue-100">
                                                 <i class="fas fa-paperclip"></i> View File
@@ -2150,7 +2150,7 @@
                                                 <span class="text-sm font-bold text-gray-700">Project_Book.pdf</span>
                                             </div>
                                             {{-- ✅✅✅ التعديل الأول: استخدام الراوت الجوكر --}}
-                                            <a href="{{ route('final_project.view_attachment', ['path' => $team->final_book_file]) }}"
+                                            <a href="{{ $team->final_book_file }}"
                                                 target="_blank"
                                                 class="text-green-600 hover:text-green-800 text-xs font-bold underline">Download</a>
                                         </div>
@@ -2177,7 +2177,7 @@
                                                 <span class="text-sm font-bold text-gray-700">Presentation.pptx</span>
                                             </div>
                                             {{-- ✅✅✅ التعديل الثاني: استخدام الراوت الجوكر --}}
-                                            <a href="{{ route('final_project.view_attachment', ['path' => $team->presentation_file]) }}"
+                                            <a href="{{ $team->presentation_file }}"
                                                 target="_blank"
                                                 class="text-green-600 hover:text-green-800 text-xs font-bold underline">Download</a>
                                         </div>

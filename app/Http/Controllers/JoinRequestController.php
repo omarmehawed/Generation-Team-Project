@@ -177,7 +177,7 @@ class JoinRequestController extends Controller
         // Handle File Upload
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $photoPath = Cloudinary::upload($request->file('photo')->getRealPath(), ['folder' => 'join_requests_photos'])->getSecurePath();
+            $photoPath = Cloudinary::uploadApi()->upload($request->file('photo')->getRealPath(), ['folder' => 'join_requests_photos'])['secure_url'];
         }
 
         // Create Join Request

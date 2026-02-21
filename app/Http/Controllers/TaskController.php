@@ -152,7 +152,16 @@ class TaskController extends Controller
                     }
 
                     $file = $request->file('submission_file');
-                    $path = Cloudinary::upload($file->getRealPath(), ['folder' => 'submissions'])->getSecurePath();
+                    
+                    // Determine resource type based on extension
+                    $ext = strtolower($file->getClientOriginalExtension());
+                    $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
+                    $resourceType = $isImage ? 'image' : 'raw';
+
+                    $path = Cloudinary::uploadApi()->upload($file->getRealPath(), [
+                        'folder' => 'submissions',
+                        'resource_type' => $resourceType
+                    ])['secure_url'];
 
                     $updateData['submission_file'] = $path;
                     $updateData['submission_value'] = null; // بنصفر اللينك عشان ده ملف

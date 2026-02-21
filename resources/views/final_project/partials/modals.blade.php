@@ -966,8 +966,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                             {{-- 2. تفاصيل الطريقة (كاش ولا وصل) --}}
                                                             @if ($contrib->payment_method == 'transfer' && $contrib->payment_proof)
                                                                 {{-- ✅ التعديل: استخدام راوت final_project --}}
-                                                                <a href="{{ route('final_project.view_attachment', ['path' => $contrib->payment_proof]) }}"
-                                                                    target="_blank"
+                                                                <a href="{{ $contrib->payment_proof }}" target="_blank"
                                                                     class="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded hover:bg-blue-100 transition flex items-center gap-1 border border-blue-100 group"
                                                                     title="View Receipt">
                                                                     <i class="fas fa-file-invoice group-hover:text-blue-700"></i>

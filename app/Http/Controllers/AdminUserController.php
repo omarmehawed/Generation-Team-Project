@@ -97,9 +97,14 @@ class AdminUserController extends Controller
 
         // لو طالب
         if ($request->role === 'student') {
-            $request->validate(['academic_year' => 'required', 'department' => 'required']);
+            $request->validate([
+                'academic_year' => 'required', 
+                'department' => 'required',
+                'national_id' => 'required|digits:14|unique:users,national_id'
+            ]);
             $data['academic_year'] = $request->academic_year;
             $data['department'] = $request->department;
+            $data['national_id'] = $request->national_id;
             $data['permissions'] = null;
         }
         // لو دكتور/معيد/أدمن
@@ -153,8 +158,15 @@ class AdminUserController extends Controller
 
         // 3️⃣ لو تحول لطالب أو هو طالب واتعدلت بياناته
         if ($request->role === 'student') {
+            $request->validate([
+                'academic_year' => 'required', 
+                'department' => 'required',
+                'national_id' => 'required|digits:14|unique:users,national_id,' . $id
+            ]);
+            
             $data['academic_year'] = $request->academic_year;
             $data['department'] = $request->department;
+            $data['national_id'] = $request->national_id;
             $data['permissions'] = null;
 
             // تحديث البيانات الأول
@@ -166,6 +178,7 @@ class AdminUserController extends Controller
         } else {
             // 4️⃣ لو ستاف (Staff)
             $data['academic_year'] = 0;
+            $data['national_id'] = null; // Clear National ID for non-students
 
             // ناخد الصلاحيات اللي جاية من الفورم
             $submittedPermissions = $request->permissions ?? [];

@@ -206,7 +206,7 @@
                                                 <div
                                                     class="w-12 h-12 rounded-full overflow-hidden border-2 border-gray-200 dark:border-gray-700 group-hover:border-blue-400 dark:group-hover:border-cyan-400 shadow-md group-hover:shadow-[0_0_10px_rgba(6,182,212,0.4)] transition-all duration-300">
                                                     @if($request->photo_path)
-                                                        <img src="{{ Str::startsWith($request->photo_path, ['http://', 'https://']) ? $request->photo_path : asset('storage/' . $request->photo_path) }}" 
+                                                        <img src="{{ $request->photo_path }}" 
                                                              onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($request->full_name) }}&background=random&color=fff';"
                                                              class="w-full h-full object-cover">
                                                     @else

@@ -241,7 +241,7 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('profile_photo')) {
-            $path = Cloudinary::upload($request->file('profile_photo')->getRealPath(), ['folder' => 'profile-photos'])->getSecurePath();
+            $path = Cloudinary::uploadApi()->upload($request->file('profile_photo')->getRealPath(), ['folder' => 'profile-photos'])['secure_url'];
             $user->profile_photo_path = $path;
         }
 

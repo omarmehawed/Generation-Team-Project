@@ -190,11 +190,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/funds/submit', [FinalProjectController::class, 'submitPayment'])->name('final_project.submitPayment');
             Route::post('/final-project/funds/review', [FinalProjectController::class, 'reviewPayment'])->name('final_project.reviewPayment');
             // Route::post('/final-project/funds/pay', [FinalProjectController::class, 'markPaid'])->name('final_project.markPaid'); // Deprecated
-            // راوت عرض المرفقات (الإيصالات)
-            Route::get('/final-project/attachment/{path}', [FinalProjectController::class, 'viewAttachment'])
-                ->where('path', '.*') // عشان يقبل السلاش "/" في المسار
-                ->name('final_project.view_attachment')
-                ->middleware(['auth']); // تأكد إن اليوزر مسجل دخول
+
 
             Route::post('/final-project/reports', [FinalProjectController::class, 'storeReport'])->name('final_project.storeReport');
 
@@ -308,12 +304,8 @@ Route::middleware(['auth', 'role:admin,ta'])->prefix('staff')->group(function ()
         Route::prefix('staff')->name('staff.')->middleware(['auth'])->group(function () {
 
             // ... راوتات الستاف التانية ...
-
-            // ✅ ده الراوت الجديد الخاص بالستاف
-            Route::get('/attachment/{path}', [StaffController::class, 'viewAttachment'])
-                ->where('path', '.*') // عشان يقبل المسارات اللي فيها سلاش "/"
-                ->name('view_attachment');
         });
+
         // راوت تحديث الديدلاين
         Route::put('/staff/project/{id}/deadline', [App\Http\Controllers\StaffController::class, 'updateDeadline'])->name('staff.project.deadline');
 
