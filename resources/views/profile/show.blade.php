@@ -70,31 +70,36 @@
 
             <div class="relative z-10 flex flex-col md:flex-row items-center gap-8">
                 {{-- Profile Photo --}}
-                <div class="relative group">
+                <div class="relative group w-32 h-32 rounded-full overflow-hidden border-4 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)]">
+                    
+                    {{-- Form is NO LONGER wrapping the entire div, so we can split click zones --}}
                     <form action="{{ route('profile.update_details') }}" method="POST" enctype="multipart/form-data" id="profile-photo-form">
                         @csrf
                         <input type="file" name="profile_photo" id="profile-photo-input" class="hidden" accept="image/*" onchange="document.getElementById('profile-photo-form').submit()">
-                        
-                        <div class="w-32 h-32 rounded-full overflow-hidden border-4 border-cyan-500/30 shadow-[0_0_20px_rgba(6,182,212,0.3)] relative cursor-pointer"
-                             onclick="document.getElementById('profile-photo-input').click()">
-                            
-                            {{-- Image --}}
-                            @if($user->profile_photo_path)
-                                <img src="{{ $user->profile_photo_path }}" 
-                                     onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128';"
-                                     class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                            @else
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=128"
-                                    class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
-                            @endif
-
-                            {{-- Overlay --}}
-                            <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col items-center justify-center text-white">
-                                <i class="fas fa-camera text-2xl mb-1 text-cyan-400"></i>
-                                <span class="text-[10px] font-bold uppercase tracking-wider">Edit</span>
-                            </div>
-                        </div>
                     </form>
+
+                    {{-- Image Display --}}
+                    @php
+                        $avatarUrl = $user->profile_photo_path ?: "https://ui-avatars.com/api/?name=" . urlencode($user->name) . "&background=000&color=00f3ff&bold=true&size=512";
+                    @endphp
+                    <img id="profile-img-preview" src="{{ $avatarUrl }}" 
+                         onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($user->name) }}&background=000&color=00f3ff&bold=true&size=512';"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+
+                    {{-- Split Overlay Content --}}
+                    <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex text-white divide-x divide-white/20">
+                        {{-- 1. View Button (Left Half) --}}
+                        <div onclick="openPhotoLightbox()" class="flex-1 flex flex-col items-center justify-center hover:bg-white/10 cursor-pointer transition-colors backdrop-blur-sm" title="View Full Photo">
+                            <i class="fas fa-search-plus text-xl mb-1 text-white group-hover:animate-pulse"></i>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-white/90">View</span>
+                        </div>
+                        
+                        {{-- 2. Edit Button (Right Half) --}}
+                        <div onclick="document.getElementById('profile-photo-input').click()" class="flex-1 flex flex-col items-center justify-center hover:bg-cyan-500/20 cursor-pointer transition-colors backdrop-blur-sm" title="Upload New Photo">
+                            <i class="fas fa-camera text-xl mb-1 text-cyan-400 group-hover:animate-bounce"></i>
+                            <span class="text-[9px] font-bold uppercase tracking-widest text-cyan-300">Edit</span>
+                        </div>
+                    </div>
                 </div>
 
                 {{-- User Details & Form --}}
@@ -257,4 +262,70 @@
         </div>
 
     </div>
+
+    {{-- 📸 Profile Photo Lightbox Modal --}}
+    <div id="photoLightboxModal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/90 backdrop-blur-md transition-opacity opacity-0">
+        {{-- Close Button --}}
+        <button onclick="closePhotoLightbox()" class="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/10 hover:bg-white/20 p-3 rounded-full flex items-center justify-center backdrop-blur-sm shadow-xl z-50">
+            <i class="fas fa-times text-2xl"></i>
+        </button>
+
+        {{-- Image Container --}}
+        <div class="relative max-w-4xl max-h-[90vh] mx-4 overflow-hidden rounded-2xl shadow-2xl shadow-cyan-500/20 transform scale-95 transition-transform duration-300" id="lightboxContent">
+            <img src="{{ $avatarUrl }}" alt="Profile Photo" id="lightboxImage" class="max-w-full max-h-[90vh] object-contain cursor-zoom-out" onclick="closePhotoLightbox()">
+            
+            {{-- Name Banner --}}
+            <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 text-center pointer-events-none">
+                <h3 class="text-white font-tech tracking-wider text-xl">{{ $user->name }}</h3>
+                <p class="text-cyan-400 font-mono text-xs">{{ $user->email }}</p>
+            </div>
+        </div>
+    </div>
+
+@endsection
+
+@section('scripts')
+<script>
+    function openPhotoLightbox() {
+        const modal = document.getElementById('photoLightboxModal');
+        const content = document.getElementById('lightboxContent');
+        
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        
+        // Trigger reflow for animation
+        void modal.offsetWidth;
+        
+        modal.classList.remove('opacity-0');
+        content.classList.remove('scale-95');
+        content.classList.add('scale-100');
+        
+        // Prevent body scroll
+        document.body.style.overflow = 'hidden';
+    }
+
+    function closePhotoLightbox() {
+        const modal = document.getElementById('photoLightboxModal');
+        const content = document.getElementById('lightboxContent');
+        
+        modal.classList.add('opacity-0');
+        content.classList.remove('scale-100');
+        content.classList.add('scale-95');
+        
+        // Restore body scroll
+        document.body.style.overflow = 'auto';
+        
+        setTimeout(() => {
+            modal.classList.remove('flex');
+            modal.classList.add('hidden');
+        }, 300); // Wait for transition
+    }
+
+    // Close on escape key
+    document.addEventListener('keydown', function(event) {
+        if (event.key === "Escape" && !document.getElementById('photoLightboxModal').classList.contains('hidden')) {
+            closePhotoLightbox();
+        }
+    });
+</script>
 @endsection
