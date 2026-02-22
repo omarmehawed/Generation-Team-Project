@@ -218,6 +218,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             });
             Route::post('/final-project/{id}/submit-final', [FinalProjectController::class, 'submitFinalProject'])
                 ->name('final_project.submit_final');
+
+            Route::post('/final-project/export-members', [FinalProjectController::class, 'exportMembers'])
+                ->name('final_project.export_members');
         });
     });
 

@@ -1520,4 +1520,29 @@ class FinalProjectController extends Controller
 
         return back()->with('success', 'Final submission updated successfully.');
     }
+
+    public function exportMembers(\Illuminate\Http\Request $request)
+    {
+        if (\Illuminate\Support\Facades\Auth::user()->email !== '2420823@batechu.com') {
+            abort(403, 'Unauthorized access to export feature.');
+        }
+
+        $request->validate([
+            'team_id' => 'required|exists:teams,id',
+            'group_id' => 'required|in:all,A,B',
+            'columns' => 'required|array|min:1'
+        ]);
+
+        $fileName = 'team_members.xlsx';
+        if ($request->group_id === 'A') {
+            $fileName = 'group_A_members.xlsx';
+        } elseif ($request->group_id === 'B') {
+            $fileName = 'group_B_members.xlsx';
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\MembersExport($request->columns, $request->group_id, $request->team_id),
+            $fileName
+        );
+    }
 }

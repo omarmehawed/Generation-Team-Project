@@ -944,6 +944,11 @@
                             </div>
 
                             <div class="flex items-center gap-4">
+                                @if(auth()->user()->email === '2420823@batechu.com')
+                                    <button @click.stop onclick="openExportModal('all')" class="bg-green-50 text-green-600 border border-green-200 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-green-500 hover:text-white transition flex items-center gap-2">
+                                        <i class="fas fa-file-excel text-base"></i> Export Excel
+                                    </button>
+                                @endif
                                 <span
                                     class="bg-black text-yellow-400 text-xs font-bold py-2 px-4 rounded-full shadow-lg border border-gray-700">
                                     {{ $team->members->count() }} / 60 Total
@@ -964,6 +969,7 @@
                                 <thead>
                                     <tr class="text-xs text-gray-400 uppercase tracking-wider">
                                         <th class="px-6 py-2 font-light">Member Profile</th>
+                                        <th class="px-6 py-2 font-light">Academic Number</th>
                                         <th class="px-6 py-2 font-light">Rank</th>
                                         <th class="px-6 py-2 text-right font-light">Controls</th>
                                     </tr>
@@ -989,6 +995,11 @@
                                                             {{ $member->user->email ?? 'Dev Team' }}
                                                         </div>
                                                     </div>
+                                                </div>
+                                            </td>
+                                            <td class="bg-white group-hover:bg-yellow-50/30 border-y border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
+                                                <div class="text-sm font-bold text-gray-700 font-mono bg-gray-50 px-3 py-1.5 rounded-lg inline-block border border-gray-200 shadow-sm">
+                                                    {{ $member->user->email ? explode('@', $member->user->email)[0] : 'N/A' }}
                                                 </div>
                                             </td>
                                             <td class="bg-white group-hover:bg-yellow-50/30 border-y border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
@@ -1059,9 +1070,16 @@
                                     Group A
                                     <i class="fas fa-chevron-down text-sm text-blue-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                                 </h4>
-                                <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-blue-200">
-                                    {{ $team->members->where('is_group_a', true)->count() }} / 30 Active
-                                </span>
+                                <div class="flex items-center gap-3">
+                                    @if(auth()->user()->email === '2420823@batechu.com')
+                                        <button @click.stop onclick="openExportModal('A')" class="bg-green-50 text-green-600 border border-green-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm hover:bg-green-500 hover:text-white transition flex items-center gap-1.5">
+                                            <i class="fas fa-file-excel"></i> Export Excel
+                                        </button>
+                                    @endif
+                                    <span class="bg-blue-50 text-blue-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-blue-200">
+                                        {{ $team->members->where('is_group_a', true)->count() }} / 30 Active
+                                    </span>
+                                </div>
                             </div>
                             
                             {{-- Collapsible Area --}}
@@ -1137,9 +1155,16 @@
                                     Group B
                                     <i class="fas fa-chevron-down text-sm text-purple-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                                 </h4>
-                                <span class="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-purple-200">
-                                    {{ $team->members->where('is_group_b', true)->count() }} / 30 Active
-                                </span>
+                                <div class="flex items-center gap-3">
+                                    @if(auth()->user()->email === '2420823@batechu.com')
+                                        <button @click.stop onclick="openExportModal('B')" class="bg-green-50 text-green-600 border border-green-200 px-3 py-1.5 rounded-lg text-xs font-bold shadow-sm hover:bg-green-500 hover:text-white transition flex items-center gap-1.5">
+                                            <i class="fas fa-file-excel"></i> Export Excel
+                                        </button>
+                                    @endif
+                                    <span class="bg-purple-50 text-purple-600 px-4 py-1.5 rounded-full text-xs font-bold shadow-sm border border-purple-200">
+                                        {{ $team->members->where('is_group_b', true)->count() }} / 30 Active
+                                    </span>
+                                </div>
                             </div>
                             
                             {{-- Collapsible Area --}}
@@ -2895,6 +2920,67 @@
         });
     @endif
 </script>
+
+{{-- Export Excel Modal (Team Leader Only) --}}
+@if(auth()->user()->email === '2420823@batechu.com')
+<div id="exportMembersModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('exportMembersModal')"></div>
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md mx-4 relative z-10 overflow-hidden transform transition-all p-8" x-data="{
+        exporting: false,
+        columns: ['name', 'academic_number', 'national_id', 'email', 'phone_number', 'whatsapp_number', 'address', 'role']
+    }">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3">
+                <i class="fas fa-file-excel text-green-500"></i> Export Excel
+            </h3>
+            <button onclick="closeModal('exportMembersModal')" class="text-gray-400 hover:text-red-500 transition">
+                <i class="fas fa-times text-xl"></i>
+            </button>
+        </div>
+
+        <form action="{{ route('final_project.export_members') }}" method="POST" @submit="exporting = true; setTimeout(() => exporting = false, 3000)">
+            @csrf
+            <input type="hidden" name="team_id" value="{{ $team->id }}">
+            <input type="hidden" name="group_id" value="all" id="exportGroupId">
+
+            <p class="text-sm border-l-4 border-green-500 bg-green-50 p-3 rounded text-green-800 mb-6 font-semibold" id="exportGroupText">Exporting entire team.</p>
+
+            <div class="space-y-3 mb-8">
+                <label class="font-bold text-gray-700 block mb-2">Select Columns to Export:</label>
+                <div class="grid grid-cols-2 gap-3">
+                    <template x-for="item in [{id: 'name', label: 'Name'}, {id: 'academic_number', label: 'Academic Number'}, {id: 'national_id', label: 'National ID'}, {id: 'email', label: 'Email'}, {id: 'phone_number', label: 'Phone Number'}, {id: 'whatsapp_number', label: 'WhatsApp Number'}, {id: 'address', label: 'Address'}, {id: 'role', label: 'Role'}]">
+                        <label class="flex items-center gap-2 cursor-pointer group bg-gray-50 p-2 rounded-lg border border-gray-100 hover:border-green-200 transition-colors">
+                            <input type="checkbox" name="columns[]" :value="item.id" x-model="columns" class="w-4 h-4 text-green-500 bg-white border-gray-300 rounded focus:ring-green-500">
+                            <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition truncate" x-text="item.label" :title="item.label"></span>
+                        </label>
+                    </template>
+                </div>
+            </div>
+
+            <div class="flex gap-4">
+                <button type="button" onclick="closeModal('exportMembersModal')" class="flex-1 px-4 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
+                    Cancel
+                </button>
+                <button type="submit" class="flex-1 px-4 py-3 bg-green-500 text-white rounded-xl font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 transition flex items-center justify-center gap-2" :disabled="exporting || columns.length === 0" :class="exporting || columns.length === 0 ? 'opacity-70 cursor-not-allowed' : ''">
+                    <i class="fas fa-spinner fa-spin" x-show="exporting"></i>
+                    <i class="fas fa-download" x-show="!exporting"></i>
+                    <span x-text="exporting ? 'Exporting...' : 'Export'"></span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function openExportModal(groupId) {
+        document.getElementById('exportGroupId').value = groupId;
+        document.getElementById('exportGroupText').innerText = 
+            groupId === 'all' ? 'Exporting ALL Team Members.' : 'Exporting Group ' + groupId + ' Members ONLY.';
+        openModal('exportMembersModal');
+    }
+</script>
+@endif
+
 <script>
     function openMarkPaidModal(contribId, amount, userName) {
         // 1. نحط البيانات في المودال
