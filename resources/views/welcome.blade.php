@@ -179,6 +179,10 @@
                         :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">الرئيسية</a>
                     <a href="#team" class="text-lg font-bold hover:text-amber-500 transition-colors"
                         :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">عن الفريق</a>
+                    <a href="#itclub" class="text-lg font-bold hover:text-amber-500 transition-colors"
+                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">التعاون مع IT</a>
+                    <a href="#leadership" class="text-lg font-bold hover:text-amber-500 transition-colors"
+                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">القيادة والإشراف</a>
                     <a href="#project" class="text-lg font-bold hover:text-amber-500 transition-colors"
                         :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">عن المشروع</a>
                     <a href="{{ route('join.create') }}"
@@ -320,6 +324,389 @@
                     <div class="absolute -bottom-10 -left-10 w-40 h-40 bg-indigo-500/10 rounded-full blur-3xl"></div>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <!-- IT Club Collaboration Section (Slider) -->
+    <section id="itclub" class="py-24 relative overflow-hidden"
+        :class="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}" x-data="{ 
+            activeSlide: 1, 
+            maxSlides: 2, 
+            interval: null, 
+            startSlideShow() { 
+                this.interval = setInterval(() => { this.next() }, 40000) 
+            }, 
+            stopSlideShow() { 
+                clearInterval(this.interval) 
+            }, 
+            next() { 
+                this.activeSlide = this.activeSlide === this.maxSlides ? 1 : this.activeSlide + 1; 
+            }, 
+            goTo(slide) { 
+                this.activeSlide = slide; 
+            } 
+        }" x-init="startSlideShow()" @mouseenter="stopSlideShow()" @mouseleave="startSlideShow()">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 font-amiri">
+                <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">التعاون مع <span
+                        class="text-amber-500">IT Club</span></h2>
+                <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
+            </div>
+
+            <!-- Slider Container -->
+            <div class="relative min-h-[700px] lg:min-h-[500px]">
+
+                <!-- Slide 1: Collaboration with IT Club -->
+                <div x-show="activeSlide === 1" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
+                    style="display: none;" :style="activeSlide === 1 ? 'display: block;' : 'display: none;'">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="relative order-1 lg:order-2 flex justify-center">
+                            <div
+                                class="relative w-full h-auto rounded-3xl overflow-hidden border-4 border-amber-500 shadow-[0_0_50px_rgba(251,191,36,0.2)] bg-[#1e293b]">
+                                <img src="{{ asset('storage/itclub/generation-team_x_itclub.png') }}"
+                                    class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
+                                    alt="Generation Team x IT Club Collaboration">
+                            </div>
+                            <div class="absolute -top-10 -left-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl">
+                            </div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl">
+                            </div>
+                        </div>
+
+                        <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
+                            <div>
+                                <h3 class="text-3xl font-bold text-amber-500 mb-2">Collaboration with IT Club</h3>
+                            </div>
+
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
+                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                                <p>Our collaboration with the IT Club at Borg El Arab Technological University has
+                                    played a vital role in the success and development of the Generation Team project.
+                                    The club provided continuous technical support, professional mentorship, and a
+                                    productive environment that helped transform the project from an idea into a real,
+                                    working system.</p>
+                                <p>Through this collaboration, the team benefited from expert guidance in software
+                                    development, system architecture, and project planning. The IT Club also helped
+                                    organize the workflow, divide the project into clear phases, and improve the overall
+                                    quality and professionalism of the final product.</p>
+                                <p>This partnership represents a strong example of student collaboration, innovation,
+                                    and real-world project development.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: About IT Club -->
+                <div x-show="activeSlide === 2" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
+                    style="display: none;" :style="activeSlide === 2 ? 'display: block;' : 'display: none;'">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="relative order-1 lg:order-2 flex justify-center">
+                            <div
+                                class="relative w-80 h-auto md:w-[400px] bg-white rounded-3xl overflow-hidden border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)] p-6 flex flex-col items-center justify-center">
+                                <img src="{{ asset('storage/itclub/it_club.png') }}"
+                                    class="w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500"
+                                    alt="IT Club Logo">
+                            </div>
+                            <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl">
+                            </div>
+                        </div>
+
+                        <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
+                            <div>
+                                <h3 class="text-3xl font-bold text-blue-500 mb-2">About IT Club</h3>
+                                <p class="text-xl font-semibold opacity-90"
+                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Borg El Arab
+                                    Technological University (BATU)</p>
+                            </div>
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
+                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                                <p>The IT Club is a dynamic, student-led organization at Borg El Arab Technological
+                                    University (BATU). It focuses on developing students’ technical skills, encouraging
+                                    innovation, and building a strong technology community.</p>
+                                <p>The club organizes workshops, hackathons, and real-world projects to help students
+                                    gain practical experience and connect with industry standards. It operates under the
+                                    supervision of Prof. Dr. Osama Al-Nahhas, Head of the IT Department and Program
+                                    Coordinator.</p>
+                                <p>The IT Club plays an important role in supporting student projects and preparing
+                                    future technology leaders.</p>
+                            </div>
+
+                            <!-- Social Links -->
+                            <div class="flex flex-wrap items-center gap-4 mt-8">
+                                <a href="https://www.facebook.com/profile.php?id=100092738074559" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    title="Facebook">
+                                    <i class="fab fa-facebook-f text-2xl"></i>
+                                </a>
+                                <a href="https://www.instagram.com/information.technology_club" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-pink-500/10 text-pink-500 hover:bg-pink-500 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-pink-500/20"
+                                    title="Instagram">
+                                    <i class="fab fa-instagram text-2xl"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/company/itclub-1/posts/?feedView=all" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-700/10 text-blue-700 dark:text-blue-400 hover:bg-blue-700 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-700/20"
+                                    title="LinkedIn">
+                                    <i class="fab fa-linkedin-in text-2xl"></i>
+                                </a>
+                                <a href="https://www.tiktok.com/@information.techn92" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-900/10 text-gray-900 dark:text-gray-200 hover:bg-gray-900 dark:hover:bg-gray-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-900/20 dark:border-gray-600/50"
+                                    title="TikTok">
+                                    <i class="fab fa-tiktok text-2xl"></i>
+                                </a>
+                                <a href="https://itclub.sherifhamdy.tech/" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-emerald-500/20"
+                                    title="Website">
+                                    <i class="fas fa-globe text-2xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center justify-center gap-3 mt-16 relative z-20" dir="ltr">
+                <template x-for="i in maxSlides" :key="i">
+                    <button :aria-label="'Go to slide ' + i" @click="goTo(i)"
+                        class="h-2 rounded-full transition-all duration-300"
+                        :class="activeSlide === i ? 'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
+                    </button>
+                </template>
+            </div>
+        </div>
+    </section>
+
+    <!-- Leadership & Supervision Section (Slider) -->
+    <section id="leadership" class="py-24 relative overflow-hidden"
+        :class="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}" x-data="{ 
+            activeSlide: 1, 
+            maxSlides: 4, 
+            interval: null, 
+            startSlideShow() { 
+                this.interval = setInterval(() => { this.next() }, 120000) 
+            }, 
+            stopSlideShow() { 
+                clearInterval(this.interval) 
+            }, 
+            next() { 
+                this.activeSlide = this.activeSlide === this.maxSlides ? 1 : this.activeSlide + 1; 
+            }, 
+            prev() { 
+                this.activeSlide = this.activeSlide === 1 ? this.maxSlides : this.activeSlide - 1; 
+            }, 
+            goTo(slide) { 
+                this.activeSlide = slide; 
+            } 
+        }" x-init="startSlideShow()" @mouseenter="stopSlideShow()" @mouseleave="startSlideShow()">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="text-center mb-16 font-amiri">
+                <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">القيادة <span
+                        class="text-amber-500">والإشراف</span></h2>
+                <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
+            </div>
+
+            <!-- Slider Container -->
+            <div class="relative min-h-[700px] lg:min-h-[500px]">
+
+                <!-- Slide 1: Project Leader -->
+                <div x-show="activeSlide === 1" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
+                    style="display: none;" :style="activeSlide === 1 ? 'display: block;' : 'display: none;'">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="relative order-1 lg:order-2 flex justify-center">
+                            <div
+                                class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-amber-500 shadow-[0_0_50px_rgba(251,191,36,0.2)]">
+                                <img src="{{ asset('storage/team_leaders_photos/leader.png') }}"
+                                    class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
+                                    alt="Omar Mehawed - Project Leader">
+                            </div>
+                            <div class="absolute -top-10 -left-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl">
+                            </div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl">
+                            </div>
+                        </div>
+
+                        <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
+                            <div>
+                                <h3 class="text-3xl font-bold text-amber-500 mb-2">Omar Mehawed</h3>
+                                <p class="text-xl font-semibold opacity-90"
+                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Project Leader</p>
+                            </div>
+
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
+                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                                <p>Omar Mehawed is an Information Technology student and Project Leader with a strong
+                                    passion for software development, cybersecurity, and emerging technologies.</p>
+                                <p>He is an active Head of the IT Club in the PR department and has participated in
+                                    multiple technology workshops, including Artificial Intelligence, Internet of Things
+                                    (IoT), and 3D Printing.</p>
+                                <p>Omar is also working on innovative technology projects, including AI-powered smart
+                                    glasses and advanced digital platforms, and has experience in full-stack web
+                                    development and managing real-world technical projects.</p>
+                                <p>His goal is to build impactful technology solutions and lead teams to create
+                                    professional and scalable systems.</p>
+                            </div>
+
+                            <div class="flex items-center gap-4 mt-8">
+                                <a href="https://wa.me/01009489979" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-green-500/10 text-green-500 hover:bg-green-500 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-green-500/20"
+                                    title="WhatsApp">
+                                    <i class="fab fa-whatsapp text-2xl"></i>
+                                </a>
+                                <a href="https://www.linkedin.com/in/omar-mehawed-861098249/" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    title="LinkedIn">
+                                    <i class="fab fa-linkedin-in text-2xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 2: Vice Leader -->
+                <div x-show="activeSlide === 2" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
+                    style="display: none;" :style="activeSlide === 2 ? 'display: block;' : 'display: none;'">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="relative order-1 lg:order-2 flex justify-center">
+                            <div
+                                class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.2)]">
+                                <img src="{{ asset('storage/team_leaders_photos/Vice_Leader.jpeg') }}"
+                                    class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
+                                    alt="Jana Tarek - Vice Leader">
+                            </div>
+                            <div class="absolute -top-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl">
+                            </div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl">
+                            </div>
+                        </div>
+                        <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
+                            <div>
+                                <h3 class="text-3xl font-bold text-purple-500 mb-2">Jana Tarek</h3>
+                                <p class="text-xl font-semibold opacity-90"
+                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Vice Leader</p>
+                            </div>
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
+                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                                <p>Jana Tarek is the Vice Leader of the project, supporting team management,
+                                    coordination, and internal operations. She plays a key role in organizing the
+                                    workflow, ensuring smooth communication, and helping achieve the project goals
+                                    efficiently.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 3: Project Supervisor -->
+                <div x-show="activeSlide === 3" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
+                    style="display: none;" :style="activeSlide === 3 ? 'display: block;' : 'display: none;'">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="relative order-1 lg:order-2 flex justify-center">
+                            <div
+                                class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
+                                <img src="{{ asset('storage/team_leaders_photos/Eng.Mo7amed_elfayoumi.jpg') }}"
+                                    class="w-full h-auto object-cover object-top transform hover:scale-105 transition-transform duration-500"
+                                    alt="Mohamed El-Fayoumi - Project Supervisor">
+                            </div>
+                            <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl">
+                            </div>
+                        </div>
+                        <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
+                            <div>
+                                <h3 class="text-3xl font-bold text-blue-500 mb-2">Mohamed El-Fayoumi</h3>
+                                <p class="text-xl font-semibold opacity-90"
+                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Project Supervisor
+                                </p>
+                            </div>
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
+                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                                <p>Mohamed El-Fayoumi is a Mechatronics Engineering student with strong interests in
+                                    autonomous vehicles and machine learning, aiming to become a Self-Driving Car
+                                    Engineer. He has developed professional and leadership experience through his
+                                    volunteer work at Bibliotheca Alexandrina, his role as Head of Finance at TEDx
+                                    AASTMT, and his work as an events organizer and part-time mathematics teacher. He
+                                    supervises and guides the technical direction of the project.</p>
+                            </div>
+                            <!-- Social Links -->
+                            <div class="flex items-center gap-4 mt-8">
+                                <a href="https://www.linkedin.com/in/mohamedelfayoumi/" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    title="LinkedIn">
+                                    <i class="fab fa-linkedin-in text-2xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Slide 4: Academic Supervisor -->
+                <div x-show="activeSlide === 4" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
+                    style="display: none;" :style="activeSlide === 4 ? 'display: block;' : 'display: none;'">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                        <div class="relative order-1 lg:order-2 flex justify-center">
+                            <div
+                                class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
+                                <img src="{{ asset('storage/team_leaders_photos/Osama_Eln7as.png') }}"
+                                    class="w-full h-auto object-cover object-top transform hover:scale-105 transition-transform duration-500"
+                                    alt="Dr. Osama El-Nahhas - Academic Supervisor">
+                            </div>
+                            <div class="absolute -top-10 -left-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl">
+                            </div>
+                            <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-green-500/10 rounded-full blur-3xl">
+                            </div>
+                        </div>
+                        <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
+                            <div>
+                                <h3 class="text-3xl font-bold text-emerald-500 mb-2">Dr. Osama El-Nahhas</h3>
+                                <p class="text-xl font-semibold opacity-90"
+                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Dean of the Faculty
+                                    of Information Technology</p>
+                            </div>
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
+                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                                <p>Dr. Osama El-Nahhas is the Dean of the Faculty of Information Technology and provides
+                                    academic supervision and official support for the project. His leadership ensures
+                                    the project aligns with academic standards and institutional excellence.</p>
+                            </div>
+                            <!-- Social Links -->
+                            <div class="flex items-center gap-4 mt-8">
+                                <a href="https://www.linkedin.com/in/osama-elnahas-37666b127/" target="_blank"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    title="LinkedIn">
+                                    <i class="fab fa-linkedin-in text-2xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Navigation Controls -->
+            <div class="flex items-center justify-center gap-6 mt-16 relative z-20">
+                <button aria-label="Next slide" @click="next()"
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
+                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+
+                <div class="flex items-center gap-3" dir="ltr">
+                    <template x-for="i in maxSlides" :key="i">
+                        <button :aria-label="'Go to slide ' + i" @click="goTo(i)"
+                            class="h-2 rounded-full transition-all duration-300"
+                            :class="activeSlide === i ? 'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
+                        </button>
+                    </template>
+                </div>
+
+                <button aria-label="Previous slide" @click="prev()"
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
+                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+            </div>
+
         </div>
     </section>
 
