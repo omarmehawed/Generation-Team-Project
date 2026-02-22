@@ -139,6 +139,7 @@
 
 <body class="font-cairo text-gray-100 bg-dark antialiased transition-colors duration-300" x-data="{ 
           darkMode: localStorage.getItem('theme') === 'dark',
+          mobileMenuOpen: false,
           toggleTheme() {
               this.darkMode = !this.darkMode;
               localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
@@ -203,7 +204,55 @@
                         :class="{'text-amber-600 hover:bg-amber-50': !darkMode, 'text-amber-400 hover:bg-amber-500/10': darkMode}">
                         تسجيل الدخول
                     </a>
+
+                    <!-- Mobile Menu Toggle -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-lg transition-colors"
+                        :class="{'hover:bg-gray-100 text-gray-900': !darkMode, 'hover:bg-gray-800 text-white': darkMode}">
+                        <i class="fas fa-bars text-xl" x-show="!mobileMenuOpen"></i>
+                        <i class="fas fa-times text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
+                    </button>
                 </div>
+            </div>
+        </div>
+
+        <!-- Mobile Menu Dropdown -->
+        <div x-show="mobileMenuOpen" style="display: none;"
+            class="md:hidden absolute top-20 left-0 w-full border-t shadow-2xl backdrop-blur-md transition-all duration-300"
+            :class="{'bg-white/95 border-gray-200': !darkMode, 'bg-dark/95 border-gray-800': darkMode}"
+            x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-4"
+            x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4">
+            <div class="flex flex-col px-6 py-8 space-y-6 font-amiri border-b-4 border-amber-500">
+                <a href="#home" @click="mobileMenuOpen = false"
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
+                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    <span>الرئيسية</span> <i class="fas fa-home text-sm opacity-50"></i>
+                </a>
+                <a href="#team" @click="mobileMenuOpen = false"
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
+                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    <span>عن الفريق</span> <i class="fas fa-users text-sm opacity-50"></i>
+                </a>
+                <a href="#itclub" @click="mobileMenuOpen = false"
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
+                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    <span>التعاون مع IT</span> <i class="fas fa-handshake text-sm opacity-50"></i>
+                </a>
+                <a href="#leadership" @click="mobileMenuOpen = false"
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
+                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    <span>القيادة والإشراف</span> <i class="fas fa-user-tie text-sm opacity-50"></i>
+                </a>
+                <a href="#project" @click="mobileMenuOpen = false"
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
+                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    <span>عن المشروع</span> <i class="fas fa-robot text-sm opacity-50"></i>
+                </a>
+                <hr class="border-gray-200 dark:border-gray-800 mb-2">
+                <a href="{{ route('join.create') }}"
+                    class="text-xl font-bold flex items-center justify-between text-amber-500 hover:text-amber-400 transition-colors">
+                    <span>انضم إلينا</span> <i class="fas fa-arrow-left text-sm"></i>
+                </a>
             </div>
         </div>
     </nav>
