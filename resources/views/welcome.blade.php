@@ -328,24 +328,57 @@
     </section>
 
     <!-- IT Club Collaboration Section (Slider) -->
-    <section id="itclub" class="py-24 relative overflow-hidden"
+    <section id="itclub" class="py-24 relative overflow-hidden select-none"
         :class="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}" x-data="{ 
             activeSlide: 1, 
             maxSlides: 2, 
-            interval: null, 
+            autoInterval: null, 
+            inactivityTimeout: null,
+            startX: 0,
+            currentX: 0,
+            isDragging: false,
             startSlideShow() { 
-                this.interval = setInterval(() => { this.next() }, 40000) 
+                clearInterval(this.autoInterval);
+                this.autoInterval = setInterval(() => { this.activeSlide = this.activeSlide === this.maxSlides ? 1 : this.activeSlide + 1; }, 40000); 
             }, 
-            stopSlideShow() { 
-                clearInterval(this.interval) 
+            interact() { 
+                clearInterval(this.autoInterval);
+                clearTimeout(this.inactivityTimeout);
+                this.inactivityTimeout = setTimeout(() => { this.startSlideShow(); }, 20000);
             }, 
             next() { 
                 this.activeSlide = this.activeSlide === this.maxSlides ? 1 : this.activeSlide + 1; 
+                this.interact();
+            }, 
+            prev() { 
+                this.activeSlide = this.activeSlide === 1 ? this.maxSlides : this.activeSlide - 1; 
+                this.interact();
             }, 
             goTo(slide) { 
                 this.activeSlide = slide; 
-            } 
-        }" x-init="startSlideShow()" @mouseenter="stopSlideShow()" @mouseleave="startSlideShow()">
+                this.interact();
+            },
+            dragStart(e) {
+                this.isDragging = true;
+                this.startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                this.currentX = this.startX;
+                this.interact();
+            },
+            dragMove(e) {
+                if (!this.isDragging) return;
+                this.currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            },
+            dragEnd() {
+                if (!this.isDragging) return;
+                this.isDragging = false;
+                const diffX = this.startX - this.currentX;
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0) this.next();
+                    else this.prev();
+                }
+            }
+        }" x-init="startSlideShow()" @mousedown="dragStart" @mousemove="dragMove" @mouseup="dragEnd"
+        @mouseleave="dragEnd" @touchstart="dragStart" @touchmove="dragMove" @touchend="dragEnd">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16 font-amiri">
                 <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">التعاون مع <span
@@ -363,7 +396,7 @@
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
                                 class="relative w-full h-auto rounded-3xl overflow-hidden border-4 border-amber-500 shadow-[0_0_50px_rgba(251,191,36,0.2)] bg-[#1e293b]">
-                                <img src="{{ asset('storage/itclub/generation-team_x_itclub.png') }}"
+                                <img src="{{ asset('assets/itclub/generation-team_x_itclub.png') }}"
                                     class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
                                     alt="Generation Team x IT Club Collaboration">
                             </div>
@@ -403,7 +436,7 @@
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
                                 class="relative w-80 h-auto md:w-[400px] bg-white rounded-3xl overflow-hidden border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)] p-6 flex flex-col items-center justify-center">
-                                <img src="{{ asset('storage/itclub/it_club.png') }}"
+                                <img src="{{ asset('assets/itclub/it_club.png') }}"
                                     class="w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500"
                                     alt="IT Club Logo">
                             </div>
@@ -467,39 +500,81 @@
             </div>
 
             <!-- Navigation Controls -->
-            <div class="flex items-center justify-center gap-3 mt-16 relative z-20" dir="ltr">
-                <template x-for="i in maxSlides" :key="i">
-                    <button :aria-label="'Go to slide ' + i" @click="goTo(i)"
-                        class="h-2 rounded-full transition-all duration-300"
-                        :class="activeSlide === i ? 'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
-                    </button>
-                </template>
+            <div class="flex items-center justify-center gap-6 mt-16 relative z-20" dir="ltr">
+                <button aria-label="Next slide" @click="next()"
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
+                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                <div class="flex items-center gap-3">
+                    <template x-for="i in maxSlides" :key="i">
+                        <button :aria-label="'Go to slide ' + i" @click="goTo(i)"
+                            class="h-2 rounded-full transition-all duration-300"
+                            :class="activeSlide === i ? 'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
+                        </button>
+                    </template>
+                </div>
+                <button aria-label="Previous slide" @click="prev()"
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
+                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
             </div>
         </div>
     </section>
 
     <!-- Leadership & Supervision Section (Slider) -->
-    <section id="leadership" class="py-24 relative overflow-hidden"
+    <section id="leadership" class="py-24 relative overflow-hidden select-none"
         :class="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}" x-data="{ 
             activeSlide: 1, 
             maxSlides: 4, 
-            interval: null, 
+            autoInterval: null, 
+            inactivityTimeout: null,
+            startX: 0,
+            currentX: 0,
+            isDragging: false,
             startSlideShow() { 
-                this.interval = setInterval(() => { this.next() }, 120000) 
+                clearInterval(this.autoInterval);
+                this.autoInterval = setInterval(() => { this.activeSlide = this.activeSlide === this.maxSlides ? 1 : this.activeSlide + 1; }, 40000); 
             }, 
-            stopSlideShow() { 
-                clearInterval(this.interval) 
+            interact() { 
+                clearInterval(this.autoInterval);
+                clearTimeout(this.inactivityTimeout);
+                this.inactivityTimeout = setTimeout(() => { this.startSlideShow(); }, 20000);
             }, 
             next() { 
                 this.activeSlide = this.activeSlide === this.maxSlides ? 1 : this.activeSlide + 1; 
+                this.interact();
             }, 
             prev() { 
                 this.activeSlide = this.activeSlide === 1 ? this.maxSlides : this.activeSlide - 1; 
+                this.interact();
             }, 
             goTo(slide) { 
                 this.activeSlide = slide; 
-            } 
-        }" x-init="startSlideShow()" @mouseenter="stopSlideShow()" @mouseleave="startSlideShow()">
+                this.interact();
+            },
+            dragStart(e) {
+                this.isDragging = true;
+                this.startX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+                this.currentX = this.startX;
+                this.interact();
+            },
+            dragMove(e) {
+                if (!this.isDragging) return;
+                this.currentX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+            },
+            dragEnd() {
+                if (!this.isDragging) return;
+                this.isDragging = false;
+                const diffX = this.startX - this.currentX;
+                if (Math.abs(diffX) > 50) {
+                    if (diffX > 0) this.next();
+                    else this.prev();
+                }
+            }
+        }" x-init="startSlideShow()" @mousedown="dragStart" @mousemove="dragMove" @mouseup="dragEnd"
+        @mouseleave="dragEnd" @touchstart="dragStart" @touchmove="dragMove" @touchend="dragEnd">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16 font-amiri">
                 <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">القيادة <span
@@ -517,7 +592,7 @@
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
                                 class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-amber-500 shadow-[0_0_50px_rgba(251,191,36,0.2)]">
-                                <img src="{{ asset('storage/team_leaders_photos/leader.png') }}"
+                                <img src="{{ asset('assets/team_leaders_photos/leader.png') }}"
                                     class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
                                     alt="Omar Mehawed - Project Leader">
                             </div>
@@ -571,7 +646,7 @@
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
                                 class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.2)]">
-                                <img src="{{ asset('storage/team_leaders_photos/Vice_Leader.jpeg') }}"
+                                <img src="{{ asset('assets/team_leaders_photos/Vice_Leader.jpeg') }}"
                                     class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
                                     alt="Jana Tarek - Vice Leader">
                             </div>
@@ -604,7 +679,7 @@
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
                                 class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
-                                <img src="{{ asset('storage/team_leaders_photos/Eng.Mo7amed_elfayoumi.jpg') }}"
+                                <img src="{{ asset('assets/team_leaders_photos/Eng.Mo7amed_elfayoumi.jpg') }}"
                                     class="w-full h-auto object-cover object-top transform hover:scale-105 transition-transform duration-500"
                                     alt="Mohamed El-Fayoumi - Project Supervisor">
                             </div>
@@ -647,7 +722,7 @@
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
                                 class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
-                                <img src="{{ asset('storage/team_leaders_photos/Osama_Eln7as.png') }}"
+                                <img src="{{ asset('assets/team_leaders_photos/Osama_Eln7as.png') }}"
                                     class="w-full h-auto object-cover object-top transform hover:scale-105 transition-transform duration-500"
                                     alt="Dr. Osama El-Nahhas - Academic Supervisor">
                             </div>
