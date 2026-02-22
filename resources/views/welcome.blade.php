@@ -436,11 +436,11 @@
             </div>
 
             <!-- Slider Container -->
-            <div class="relative min-h-[700px] lg:min-h-[500px]">
+            <div class="grid relative items-center">
 
                 <!-- Slide 1: Collaboration with IT Club -->
-                <div x-show="activeSlide === 1" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
-                    style="display: none;" :style="activeSlide === 1 ? 'display: block;' : 'display: none;'">
+                <div :class="activeSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                    class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
@@ -479,8 +479,8 @@
                 </div>
 
                 <!-- Slide 2: About IT Club -->
-                <div x-show="activeSlide === 2" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
-                    style="display: none;" :style="activeSlide === 2 ? 'display: block;' : 'display: none;'">
+                <div :class="activeSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                    class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
@@ -632,11 +632,11 @@
             </div>
 
             <!-- Slider Container -->
-            <div class="relative min-h-[700px] lg:min-h-[500px]">
+            <div class="grid relative items-center">
 
                 <!-- Slide 1: Project Leader -->
-                <div x-show="activeSlide === 1" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
-                    style="display: none;" :style="activeSlide === 1 ? 'display: block;' : 'display: none;'">
+                <div :class="activeSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                    class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
@@ -689,8 +689,8 @@
                 </div>
 
                 <!-- Slide 2: Vice Leader -->
-                <div x-show="activeSlide === 2" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
-                    style="display: none;" :style="activeSlide === 2 ? 'display: block;' : 'display: none;'">
+                <div :class="activeSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                    class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
@@ -722,8 +722,8 @@
                 </div>
 
                 <!-- Slide 3: Project Supervisor -->
-                <div x-show="activeSlide === 3" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
-                    style="display: none;" :style="activeSlide === 3 ? 'display: block;' : 'display: none;'">
+                <div :class="activeSlide === 3 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                    class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
@@ -765,8 +765,8 @@
                 </div>
 
                 <!-- Slide 4: Academic Supervisor -->
-                <div x-show="activeSlide === 4" x-transition.opacity.duration.700ms class="absolute inset-0 w-full"
-                    style="display: none;" :style="activeSlide === 4 ? 'display: block;' : 'display: none;'">
+                <div :class="activeSlide === 4 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                    class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
