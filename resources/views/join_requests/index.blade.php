@@ -89,6 +89,7 @@
                             <i class="fas fa-search text-gray-400 group-focus-within:text-blue-500 dark:group-focus-within:text-cyan-400 transition-colors"></i>
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}"
+                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
                             class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-800 focus:border-amber-500/50 dark:focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 dark:focus:ring-amber-500/50 sm:text-sm transition-all shadow-sm dark:shadow-lg"
                             placeholder="ID, Name, Phone...">
                     </div>

@@ -108,6 +108,7 @@
                             </svg>
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
+                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
                             class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-transparent rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 outline-none font-medium">
                     </div>
 
@@ -201,7 +202,7 @@
             {{-- 📋 Deleted Checkbox --}}
             <div class="flex items-center gap-2 ml-4">
                 <a href="{{ request('trash') ? route('admin.users') : route('admin.users', ['trash' => 1]) }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-300 font-bold
-               {{ request('trash')
+                   {{ request('trash')
         ? 'bg-red-100 text-red-700 border-red-300 shadow-inner'
         : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50' }}">
 
@@ -243,212 +244,212 @@
                         </thead>
                         <tbody class="divide-y divide-gray-50">
                             @forelse($users as $user)
-                                                    <tr class="hover:bg-blue-50/30 transition duration-150 group">
-                                                        <td class="px-6 py-4 text-center">
-                                                            <div class="flex items-center justify-center">
-                                                                <input type="checkbox" name="selected_users[]" value="{{ $user->id }}"
-                                                                    onclick="updateBulkAction()" data-role="{{ $user->role }}"
-                                                                    data-name="{{ $user->name }}" {{-- 👈 لازم السطر ده يكون موجود --}}
-                                                                    data-email="{{ $user->email }}" {{-- 👈 والسطر ده كمان --}}
-                                                                    class="user-checkbox w-4 h-4 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 cursor-pointer transition-all duration-200 checked:bg-blue-600 checked:border-blue-600">
-                                                            </div>
-                                                        </td>
-                                                        {{-- Name & Avatar --}}
-                                                        <td class="px-6 py-4">
-                                                            <div class="flex items-center">
-                                                                <div
-                                                                    class="flex-shrink-0 h-11 w-11 rounded-full bg-gradient-to-br from-indigo-50 to-blue-100 border border-blue-100 flex items-center justify-center text-blue-600 font-extrabold text-lg shadow-sm">
-                                                                    {{ strtoupper(substr($user->name, 0, 1)) }}
-                                                                </div>
-                                                                <div class="ml-4">
-                                                                    <div class="text-sm font-bold text-gray-900">{{ $user->name }}</div>
-                                                                    <div class="text-xs text-gray-500">{{ $user->email }}</div>
-                                                                </div>
-                                                            </div>
-                                                        </td>
+                                <tr class="hover:bg-blue-50/30 transition duration-150 group">
+                                    <td class="px-6 py-4 text-center">
+                                        <div class="flex items-center justify-center">
+                                            <input type="checkbox" name="selected_users[]" value="{{ $user->id }}"
+                                                onclick="updateBulkAction()" data-role="{{ $user->role }}"
+                                                data-name="{{ $user->name }}" {{-- 👈 لازم السطر ده يكون موجود --}}
+                                                data-email="{{ $user->email }}" {{-- 👈 والسطر ده كمان --}}
+                                                class="user-checkbox w-4 h-4 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 cursor-pointer transition-all duration-200 checked:bg-blue-600 checked:border-blue-600">
+                                        </div>
+                                    </td>
+                                    {{-- Name & Avatar --}}
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div
+                                                class="flex-shrink-0 h-11 w-11 rounded-full bg-gradient-to-br from-indigo-50 to-blue-100 border border-blue-100 flex items-center justify-center text-blue-600 font-extrabold text-lg shadow-sm">
+                                                {{ strtoupper(substr($user->name, 0, 1)) }}
+                                            </div>
+                                            <div class="ml-4">
+                                                <div class="text-sm font-bold text-gray-900">{{ $user->name }}</div>
+                                                <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                                            </div>
+                                        </div>
+                                    </td>
 
-                                                        {{-- Role Pill --}}
-                                                        <td class="px-6 py-4">
-                                                            <div class="flex items-center">
-                                                                @php
-                                                                    $roleConfig = match ($user->role) {
-                                                                        'doctor' => ['bg' => 'bg-red-50', 'text' => 'text-red-700', 'border' => 'border-red-100', 'dot' => 'bg-red-500'],
-                                                                        'ta' => ['bg' => 'bg-orange-50', 'text' => 'text-orange-700', 'border' => 'border-orange-100', 'dot' => 'bg-orange-500'],
-                                                                        'admin' => ['bg' => 'bg-indigo-50', 'text' => 'text-indigo-700', 'border' => 'border-indigo-100', 'dot' => 'bg-indigo-500'],
-                                                                        default => ['bg' => 'bg-green-50', 'text' => 'text-green-700', 'border' => 'border-green-100', 'dot' => 'bg-green-500'],
-                                                                    };
-                                                                @endphp
-                                 <span
-                                                                    class="px-3 py-1.5 inline-flex items-center text-xs font-bold rounded-full border shadow-sm {{ $roleConfig['bg'] }} {{ $roleConfig['text'] }} {{ $roleConfig['border'] }}">
-                                                                    <span class="w-1.5 h-1.5 rounded-full mr-2 {{ $roleConfig['dot'] }}"></span>
-                                                                    {{ strtoupper($user->role) }}
-                                                                </span>
-                                                            </div>
-                                                        </td>
+                                    {{-- Role Pill --}}
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            @php
+                                                $roleConfig = match ($user->role) {
+                                                    'doctor' => ['bg' => 'bg-red-50', 'text' => 'text-red-700', 'border' => 'border-red-100', 'dot' => 'bg-red-500'],
+                                                    'ta' => ['bg' => 'bg-orange-50', 'text' => 'text-orange-700', 'border' => 'border-orange-100', 'dot' => 'bg-orange-500'],
+                                                    'admin' => ['bg' => 'bg-indigo-50', 'text' => 'text-indigo-700', 'border' => 'border-indigo-100', 'dot' => 'bg-indigo-500'],
+                                                    default => ['bg' => 'bg-green-50', 'text' => 'text-green-700', 'border' => 'border-green-100', 'dot' => 'bg-green-500'],
+                                                };
+                                            @endphp
+                                            <span
+                                                class="px-3 py-1.5 inline-flex items-center text-xs font-bold rounded-full border shadow-sm {{ $roleConfig['bg'] }} {{ $roleConfig['text'] }} {{ $roleConfig['border'] }}">
+                                                <span class="w-1.5 h-1.5 rounded-full mr-2 {{ $roleConfig['dot'] }}"></span>
+                                                {{ strtoupper($user->role) }}
+                                            </span>
+                                        </div>
+                                    </td>
 
-                                                        {{-- Context Info --}}
-                                                        <td class="px-6 py-4 text-center">
-                                                            @if ($user->role == 'student')
-                                                                <div class="inline-flex flex-col items-center">
-                                                                    <span
-                                                                        class="text-xs font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">Year
-                                                                        {{ $user->academic_year }}</span>
-                                                                    <span
-                                                                        class="text-[10px] text-gray-400 mt-1 uppercase tracking-wide">{{ $user->department }}
-                                                                        Dept</span>
-                                                                </div>
-                                                            @else
-                                                                @if ($user->role == 'admin')
-                                                                    <span
-                                                                        class="text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded border border-indigo-100">🔥
-                                                                        Full Access</span>
-                                                                @else
-                                                                    <span class="text-xs text-gray-500 flex items-center justify-center gap-1">
-                                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
-                                                                            </path>
-                                                                        </svg>
-                                                                        {{ count($user->permissions ?? []) }} Privileges
-                                                                    </span>
-                                                                @endif
-                                                            @endif
-                                                        </td>
-                                                        {{-- created by // deleted by --}}
-                                                        <td class="px-6 py-4 text-center">
-                                                            @if (request('trash'))
-                                                                {{-- عرض مين اللي حذف --}}
-                                                                @if ($user->deleter)
-                                                                    <div class="flex flex-col items-center">
-                                                                        <span class="text-xs font-bold text-red-600">{{ $user->deleter->name }}</span>
-                                                                        <span
-                                                                            class="text-[10px] text-gray-400">{{ $user->deleted_at->diffForHumans() }}</span>
-                                                                    </div>
-                                                                @else
-                                                                    <span class="text-xs text-gray-400">Unknown</span>
-                                                                @endif
-                                                            @else
-                                                                {{-- عرض مين اللي أنشأ (الكود القديم) --}}
-                                                                @if ($user->creator)
-                                                                    <div class="flex flex-col items-center">
-                                                                        <span class="text-xs font-bold text-gray-700">{{ $user->creator->name }}</span>
-                                                                        <span
-                                                                            class="text-[10px] text-gray-400">{{ $user->created_at->format('d M, Y') }}</span>
-                                                                    </div>
-                                                                @endif
-                                                            @endif
-                                                        </td>
-                                                        {{-- Actions --}}
-                                                        <td class="px-6 py-4 text-center">
-                                                            <div
-                                                                class="flex justify-center items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                                                                <div class="flex justify-center items-center gap-2">
-                                                                    @if (request('trash'))
-                                                                        {{-- ♻️ زرار الاسترجاع --}}
-                                                                        <a href="{{ route('admin.users.restore', $user->id) }}"
-                                                                            class="p-2 bg-green-50 text-green-600 rounded-lg border border-green-200 hover:bg-green-100 transition"
-                                                                            title="Restore">
-                                                                            <i class="fas fa-undo"></i>
-                                                                        </a>
+                                    {{-- Context Info --}}
+                                    <td class="px-6 py-4 text-center">
+                                        @if ($user->role == 'student')
+                                            <div class="inline-flex flex-col items-center">
+                                                <span
+                                                    class="text-xs font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">Year
+                                                    {{ $user->academic_year }}</span>
+                                                <span
+                                                    class="text-[10px] text-gray-400 mt-1 uppercase tracking-wide">{{ $user->department }}
+                                                    Dept</span>
+                                            </div>
+                                        @else
+                                            @if ($user->role == 'admin')
+                                                <span
+                                                    class="text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded border border-indigo-100">🔥
+                                                    Full Access</span>
+                                            @else
+                                                <span class="text-xs text-gray-500 flex items-center justify-center gap-1">
+                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                            d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
+                                                        </path>
+                                                    </svg>
+                                                    {{ count($user->permissions ?? []) }} Privileges
+                                                </span>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    {{-- created by // deleted by --}}
+                                    <td class="px-6 py-4 text-center">
+                                        @if (request('trash'))
+                                            {{-- عرض مين اللي حذف --}}
+                                            @if ($user->deleter)
+                                                <div class="flex flex-col items-center">
+                                                    <span class="text-xs font-bold text-red-600">{{ $user->deleter->name }}</span>
+                                                    <span
+                                                        class="text-[10px] text-gray-400">{{ $user->deleted_at->diffForHumans() }}</span>
+                                                </div>
+                                            @else
+                                                <span class="text-xs text-gray-400">Unknown</span>
+                                            @endif
+                                        @else
+                                            {{-- عرض مين اللي أنشأ (الكود القديم) --}}
+                                            @if ($user->creator)
+                                                <div class="flex flex-col items-center">
+                                                    <span class="text-xs font-bold text-gray-700">{{ $user->creator->name }}</span>
+                                                    <span
+                                                        class="text-[10px] text-gray-400">{{ $user->created_at->format('d M, Y') }}</span>
+                                                </div>
+                                            @endif
+                                        @endif
+                                    </td>
+                                    {{-- Actions --}}
+                                    <td class="px-6 py-4 text-center">
+                                        <div
+                                            class="flex justify-center items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+                                            <div class="flex justify-center items-center gap-2">
+                                                @if (request('trash'))
+                                                    {{-- ♻️ زرار الاسترجاع --}}
+                                                    <a href="{{ route('admin.users.restore', $user->id) }}"
+                                                        class="p-2 bg-green-50 text-green-600 rounded-lg border border-green-200 hover:bg-green-100 transition"
+                                                        title="Restore">
+                                                        <i class="fas fa-undo"></i>
+                                                    </a>
 
-                                                                        {{-- 🚫 زرار الحذف النهائي --}}
+                                                    {{-- 🚫 زرار الحذف النهائي --}}
 
-                                                                        <button onclick="openDeleteModal({{ $user->id }}, '{{ $user->name }}')"
-                                                                            class="p-2 bg-red-50 text-red-600 rounded-lg border border-red-200 hover:bg-red-100 transition"
-                                                                            title="Permanent Delete">
-                                                                            <i class="fas fa-times"></i>
-                                                                        </button>
-                                                                    @else
-                                                                        <button onclick="openEditModal({{ $user }})"
-                                                                            class="p-2 bg-white text-yellow-600 rounded-lg border border-gray-200 hover:border-yellow-400 hover:text-yellow-700 hover:shadow-md transition"
-                                                                            title="Edit User">
-                                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                                                    d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
-                                                                                </path>
-                                                                            </svg>
-                                                                        </button>
-                                                                        {{-- زرار النقل للسلة (بقى مباشر Direct) --}}
-                                                                        <form action="{{ route('admin.users.delete', $user->id) }}" method="POST"
-                                                                            class="inline-block">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button type="submit"
-                                                                                class="p-2 bg-white text-red-600 rounded-lg border border-gray-200 hover:border-red-400 hover:text-red-700 hover:shadow-md transition"
-                                                                                title="Move to Trash">
-                                                                                <svg class="w-4 h-4" fill="none" stroke="currentColor"
-                                                                                    viewBox="0 0 24 24">
-                                                                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                                                                        stroke-width="2"
-                                                                                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
-                                                                                    </path>
-                                                                                </svg>
-                                                                            </button>
-                                                                        </form>
-                                                                    @endif
-                                                                </div>
-                                                                {{-- 🔥 Smart Floating Bulk Action Bar --}}
-                                                                <div id="bulkActionBar"
-                                                                    class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-4 rounded-full shadow-2xl z-50 flex items-center gap-6 transition-all duration-300 translate-y-32 opacity-0">
-                                                                    <div class="flex items-center gap-2">
-                                                                        <span
-                                                                            class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full"
-                                                                            id="selectedCount">0</span>
-                                                                        <span class="font-medium text-sm">Users Selected</span>
-                                                                    </div>
+                                                    <button onclick="openDeleteModal({{ $user->id }}, '{{ $user->name }}')"
+                                                        class="p-2 bg-red-50 text-red-600 rounded-lg border border-red-200 hover:bg-red-100 transition"
+                                                        title="Permanent Delete">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                @else
+                                                    <button onclick="openEditModal({{ $user }})"
+                                                        class="p-2 bg-white text-yellow-600 rounded-lg border border-gray-200 hover:border-yellow-400 hover:text-yellow-700 hover:shadow-md transition"
+                                                        title="Edit User">
+                                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z">
+                                                            </path>
+                                                        </svg>
+                                                    </button>
+                                                    {{-- زرار النقل للسلة (بقى مباشر Direct) --}}
+                                                    <form action="{{ route('admin.users.delete', $user->id) }}" method="POST"
+                                                        class="inline-block">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="submit"
+                                                            class="p-2 bg-white text-red-600 rounded-lg border border-gray-200 hover:border-red-400 hover:text-red-700 hover:shadow-md transition"
+                                                            title="Move to Trash">
+                                                            <svg class="w-4 h-4" fill="none" stroke="currentColor"
+                                                                viewBox="0 0 24 24">
+                                                                <path stroke-linecap="round" stroke-linejoin="round"
+                                                                    stroke-width="2"
+                                                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16">
+                                                                </path>
+                                                            </svg>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+                                            {{-- 🔥 Smart Floating Bulk Action Bar --}}
+                                            <div id="bulkActionBar"
+                                                class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-4 rounded-full shadow-2xl z-50 flex items-center gap-6 transition-all duration-300 translate-y-32 opacity-0">
+                                                <div class="flex items-center gap-2">
+                                                    <span
+                                                        class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full"
+                                                        id="selectedCount">0</span>
+                                                    <span class="font-medium text-sm">Users Selected</span>
+                                                </div>
 
-                                                                    <div class="h-6 w-px bg-gray-700"></div>
+                                                <div class="h-6 w-px bg-gray-700"></div>
 
-                                                                    {{-- 🅰️ أزرار صفحة الـ Active Users --}}
-                                                                    @if (!request('trash'))
-                                                                        <button onclick="openBulkEditModal()"
-                                                                            class="flex items-center gap-2 text-sm font-bold hover:text-blue-400 transition">
-                                                                            <i class="fas fa-edit"></i> Edit Permissions & Courses
-                                                                        </button>
-                                                                        {{-- 🔥 زرار الحذف الجديد --}}
-                                                                        <button onclick="openBulkDeleteModal()"
-                                                                            class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
-                                                                            <i class="fas fa-trash-alt"></i> Move to Trash
-                                                                        </button>
-                                                                    @else
-                                                                        {{-- 🅱️ أزرار صفحة الـ Trash Users (جديد) --}}
-                                                                        {{-- زرار الاسترجاع الجماعي --}}
-                                                                        <form action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
-                                                                            class="flex items-center">
-                                                                            @csrf
-                                                                            <input type="hidden" name="selected_ids" id="restoreIds">
-                                                                            <input type="hidden" name="action" value="restore">
-                                                                            <button type="submit"
-                                                                                class="flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition">
-                                                                                <i class="fas fa-undo"></i> Restore All
-                                                                            </button>
-                                                                        </form>
+                                                {{-- 🅰️ أزرار صفحة الـ Active Users --}}
+                                                @if (!request('trash'))
+                                                    <button onclick="openBulkEditModal()"
+                                                        class="flex items-center gap-2 text-sm font-bold hover:text-blue-400 transition">
+                                                        <i class="fas fa-edit"></i> Edit Permissions & Courses
+                                                    </button>
+                                                    {{-- 🔥 زرار الحذف الجديد --}}
+                                                    <button onclick="openBulkDeleteModal()"
+                                                        class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
+                                                        <i class="fas fa-trash-alt"></i> Move to Trash
+                                                    </button>
+                                                @else
+                                                    {{-- 🅱️ أزرار صفحة الـ Trash Users (جديد) --}}
+                                                    {{-- زرار الاسترجاع الجماعي --}}
+                                                    <form action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
+                                                        class="flex items-center">
+                                                        @csrf
+                                                        <input type="hidden" name="selected_ids" id="restoreIds">
+                                                        <input type="hidden" name="action" value="restore">
+                                                        <button type="submit"
+                                                            class="flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition">
+                                                            <i class="fas fa-undo"></i> Restore All
+                                                        </button>
+                                                    </form>
 
-                                                                        <div class="h-6 w-px bg-gray-700 mx-2"></div>
+                                                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
 
-                                                                        {{-- زرار الحذف النهائي الجماعي --}}
-                                                                        <button onclick="confirmBulkForceDelete()"
-                                                                            class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
-                                                                            <i class="fas fa-times"></i> Delete Forever
-                                                                        </button>
+                                                    {{-- زرار الحذف النهائي الجماعي --}}
+                                                    <button onclick="confirmBulkForceDelete()"
+                                                        class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
+                                                        <i class="fas fa-times"></i> Delete Forever
+                                                    </button>
 
-                                                                        {{-- فورم مخفية للحذف النهائي عشان نبعتها بالـ JS --}}
-                                                                        <form id="bulkForceDeleteForm"
-                                                                            action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
-                                                                            class="hidden">
-                                                                            @csrf
-                                                                            <input type="hidden" name="selected_ids" id="forceDeleteIds">
-                                                                            <input type="hidden" name="action" value="force_delete">
-                                                                        </form>
-                                                                    @endif
+                                                    {{-- فورم مخفية للحذف النهائي عشان نبعتها بالـ JS --}}
+                                                    <form id="bulkForceDeleteForm"
+                                                        action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
+                                                        class="hidden">
+                                                        @csrf
+                                                        <input type="hidden" name="selected_ids" id="forceDeleteIds">
+                                                        <input type="hidden" name="action" value="force_delete">
+                                                    </form>
+                                                @endif
 
-                                                                    {{-- زرار الإغلاق --}}
-                                                                    <button onclick="clearSelection()" class="ml-4 text-gray-500 hover:text-white">
-                                                                        <i class="fas fa-times"></i>
-                                                                    </button>
-                                                                </div>
-                                                        </td>
-                                                    </tr>
+                                                {{-- زرار الإغلاق --}}
+                                                <button onclick="clearSelection()" class="ml-4 text-gray-500 hover:text-white">
+                                                    <i class="fas fa-times"></i>
+                                                </button>
+                                            </div>
+                                    </td>
+                                </tr>
                             @empty
                                 <tr>
                                     <td colspan="4" class="px-6 py-12 text-center">
@@ -715,13 +716,13 @@
                 let displayName = user.name ? user.name : 'Unknown';
                 let displayEmail = user.email ? user.email : 'No Email';
                 listContainer.innerHTML += `
-                    <div class="flex items-start gap-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
-                        <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold uppercase shrink-0">${displayName.charAt(0)}</div>
-                        <div class="overflow-hidden">
-                            <p class="text-xs font-bold text-gray-800 truncate">${displayName}</p>
-                            <p class="text-[10px] text-gray-500 truncate font-mono">${displayEmail}</p>
-                        </div>
-                    </div>`;
+                        <div class="flex items-start gap-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
+                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold uppercase shrink-0">${displayName.charAt(0)}</div>
+                            <div class="overflow-hidden">
+                                <p class="text-xs font-bold text-gray-800 truncate">${displayName}</p>
+                                <p class="text-[10px] text-gray-500 truncate font-mono">${displayEmail}</p>
+                            </div>
+                        </div>`;
             });
 
             // 4. 🔥🔥 التبديل الذكي بين الحقول (ده التعديل المهم) 🔥🔥
@@ -772,19 +773,19 @@
 
                 // تصميم الكارت الصغير جوه قائمة الحذف
                 htmlList += `
-                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-                            <div class="flex items-center gap-3 overflow-hidden">
-                                <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-bold">
-                                    ${name.charAt(0)}
+                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                                <div class="flex items-center gap-3 overflow-hidden">
+                                    <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-bold">
+                                        ${name.charAt(0)}
+                                    </div>
+                                    <div class="truncate">
+                                        <p class="text-xs font-bold text-gray-800 truncate w-32">${name}</p>
+                                        <p class="text-[9px] text-gray-500 truncate">${email}</p>
+                                    </div>
                                 </div>
-                                <div class="truncate">
-                                    <p class="text-xs font-bold text-gray-800 truncate w-32">${name}</p>
-                                    <p class="text-[9px] text-gray-500 truncate">${email}</p>
-                                </div>
+                                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600">${role}</span>
                             </div>
-                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600">${role}</span>
-                        </div>
-                    `;
+                        `;
             });
 
             // ملء المودال بالبيانات

@@ -131,6 +131,7 @@
                             <i class="fas fa-search text-white/40 group-focus-within:text-[#D4AF37] transition-colors"></i>
                         </div>
                         <input type="text" name="search" id="teamSearchInput" value="{{ request('search') }}"
+                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
                             class="block w-full py-3.5 pl-12 pr-4 text-sm text-white bg-white/5 border border-white/10 rounded-xl placeholder-white/40 focus:ring-0 focus:border-[#D4AF37]/50 focus:bg-white/10 outline-none transition-all duration-300"
                             placeholder="Find Team, Project, or Leader..." autocomplete="off">
                     </div>

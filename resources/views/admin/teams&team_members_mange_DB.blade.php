@@ -32,6 +32,7 @@
                         <div class="relative mt-1">
                             <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
                             <input type="text" name="search" value="{{ request('search') }}"
+                                onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
                                 placeholder="Team Name, Leader, or Member Name..."
                                 class="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:ring-2 focus:ring-[#175c53] focus:bg-white transition outline-none font-bold text-gray-700">
                         </div>
@@ -128,8 +129,7 @@
                                                 </span>
 
                                                 @if ($team->proposal_title)
-                                                    <span
-                                                        class="font-bold text-gray-800 text-sm mt-2 flex items-center gap-2"
+                                                    <span class="font-bold text-gray-800 text-sm mt-2 flex items-center gap-2"
                                                         title="Project Title">
                                                         <i class="fas fa-lightbulb text-yellow-500 text-xs"></i>
                                                         {{ Str::limit($team->proposal_title, 30) }}
@@ -151,10 +151,8 @@
                                                 </span>
                                                 {{-- اسم المادة --}}
                                                 @if ($team->project && $team->project->course)
-                                                    <span
-                                                        class="font-bold text-[#175c53] text-sm mt-2 flex items-center gap-2">
-                                                        <i
-                                                            class="{{ $team->project->course->icon_class ?? 'fas fa-book' }}"></i>
+                                                    <span class="font-bold text-[#175c53] text-sm mt-2 flex items-center gap-2">
+                                                        <i class="{{ $team->project->course->icon_class ?? 'fas fa-book' }}"></i>
                                                         {{ $team->project->course->name }}
                                                     </span>
                                                     {{-- كود المادة --}}
@@ -178,8 +176,7 @@
                                             <div class="flex flex-col">
                                                 <span
                                                     class="text-sm font-bold text-gray-800">{{ $team->leader->name ?? 'Deleted User' }}</span>
-                                                <span
-                                                    class="text-[10px] text-gray-500">{{ $team->leader->email ?? '' }}</span>
+                                                <span class="text-[10px] text-gray-500">{{ $team->leader->email ?? '' }}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -294,45 +291,45 @@
                     // رابط الحذف
                     let deleteUrl =
                         "{{ route('admin.teams.remove_member', ['team_id' => ':team_id', 'user_id' => ':user_id']) }}"
-                        .replace(':team_id', teamId)
-                        .replace(':user_id', user.id);
+                            .replace(':team_id', teamId)
+                            .replace(':user_id', user.id);
 
                     let deleteBtn = '';
                     // ممنوع حذف الليدر من هنا (عشان السيستم ميبوظش)، لازم يغير الليدر الأول
                     if (member.role !== 'leader') {
                         // استخدام data-username لتجنب مشاكل علامات التنصيص في الاسم
                         deleteBtn = `
-                            <form id="remove-member-form-${user.id}" action="${deleteUrl}" method="POST">
-                                <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.content || ''}">
-                                <input type="hidden" name="_method" value="DELETE">
+                                <form id="remove-member-form-${user.id}" action="${deleteUrl}" method="POST">
+                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.content || ''}">
+                                    <input type="hidden" name="_method" value="DELETE">
 
-                                <button type="button"
-                                    onclick="confirmRemoveMember('${user.id}', this.getAttribute('data-username'))"
-                                    data-username="${user.name}"
-                                    class="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition"
-                                    title="Kick Member">
-                                    <i class="fas fa-user-times"></i>
-                                </button>
-                            </form>
-                        `;
+                                    <button type="button"
+                                        onclick="confirmRemoveMember('${user.id}', this.getAttribute('data-username'))"
+                                        data-username="${user.name}"
+                                        class="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition"
+                                        title="Kick Member">
+                                        <i class="fas fa-user-times"></i>
+                                    </button>
+                                </form>
+                            `;
                     }
 
                     contentHtml += `
-                        <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
-                            <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 font-bold shadow-sm">
-                                    ${user.name.charAt(0).toUpperCase()}
+                            <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 font-bold shadow-sm">
+                                        ${user.name.charAt(0).toUpperCase()}
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-bold text-gray-800 flex items-center">
+                                            ${user.name} ${roleBadge}
+                                        </p>
+                                        <p class="text-xs text-gray-500">${user.email}</p>
+                                    </div>
                                 </div>
-                                <div>
-                                    <p class="text-sm font-bold text-gray-800 flex items-center">
-                                        ${user.name} ${roleBadge}
-                                    </p>
-                                    <p class="text-xs text-gray-500">${user.email}</p>
-                                </div>
+                                ${deleteBtn}
                             </div>
-                            ${deleteBtn}
-                        </div>
-                    `;
+                        `;
                 });
 
                 listContainer.innerHTML = contentHtml;

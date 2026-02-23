@@ -84,6 +84,7 @@
                             <i class="fas fa-search text-gray-400 group-focus-within:text-[#175c53] transition-colors"></i>
                         </div>
                         <input type="text" name="search" value="{{ request('search') }}"
+                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
                             class="block w-full p-4 pl-12 text-sm text-gray-700 bg-gray-50 border-none rounded-xl ring-1 ring-gray-200 focus:ring-2 focus:ring-[#175c53] focus:bg-white transition-all duration-300"
                             placeholder="Search by project title, team name or leader..." autocomplete="off">
                     </div>
@@ -249,8 +250,7 @@
                         <input type="hidden" name="action" value="approve">
 
                         <div class="mb-8">
-                            <label
-                                class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Assign
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Assign
                                 Supervisor (TA)</label>
                             <div class="relative">
                                 <select name="ta_id" required
@@ -304,8 +304,7 @@
                         <input type="hidden" name="action" value="reject">
 
                         <div class="mb-8">
-                            <label
-                                class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Reason
+                            <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Reason
                                 for Rejection</label>
                             <textarea name="rejection_reason" required rows="4"
                                 class="w-full bg-red-50/30 border-none ring-1 ring-red-100 rounded-2xl p-4 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-red-500 transition-all placeholder:text-gray-300 custom-scrollbar"
@@ -348,10 +347,10 @@
             }
 
             // إغلاق المودال عند الضغط خارج الصندوق
-            window.onclick = function(event) {
+            window.onclick = function (event) {
                 if (event.target.classList.contains('bg-gray-900/60') || event.target.classList.contains('bg-red-900/20')) {
                     event.target.parentElement.classList.add('hidden');
                 }
             }
         </script>
-    @endsection
+@endsection
