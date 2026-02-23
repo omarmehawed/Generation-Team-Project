@@ -242,7 +242,13 @@ class JoinRequestController extends Controller
         // 4. Pagination
         $requests = $query->paginate(10)->withQueryString();
 
-        return view('join_requests.index', compact('requests'));
+        // 5. Analytics Dashboard Metrics
+        $totalCount = JoinRequest::count();
+        $pendingCount = JoinRequest::where('status', 'pending')->count();
+        $approvedCount = JoinRequest::where('status', 'approved')->count();
+        $rejectedCount = JoinRequest::where('status', 'rejected')->count();
+
+        return view('join_requests.index', compact('requests', 'totalCount', 'pendingCount', 'approvedCount', 'rejectedCount'));
     }
 
     /**

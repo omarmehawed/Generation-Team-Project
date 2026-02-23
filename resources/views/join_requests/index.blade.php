@@ -22,6 +22,8 @@
                 }
             }">
 
+       
+
         <!-- Page Header -->
         <div class="row align-items-center mb-6">
             <div class="col-lg-6 col-12">
@@ -30,6 +32,52 @@
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Manage and review incoming team applications.</p>
             </div>
+             <!-- Analytics Dashboard -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <!-- Total Requests -->
+            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800/50 rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-transform hover:scale-105">
+                <div class="w-14 h-14 rounded-xl bg-blue-100 dark:bg-blue-800/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                    <i class="fas fa-users text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1">Total</p>
+                    <h4 class="text-3xl font-black text-blue-700 dark:text-blue-300 leading-none">{{ $totalCount }}</h4>
+                </div>
+            </div>
+
+            <!-- Pending Requests -->
+            <div class="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-100 dark:border-yellow-800/50 rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-transform hover:scale-105">
+                <div class="w-14 h-14 rounded-xl bg-yellow-100 dark:bg-yellow-800/40 flex items-center justify-center text-yellow-600 dark:text-yellow-400">
+                    <i class="fas fa-clock text-2xl mb-1"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1">Pending</p>
+                    <h4 class="text-3xl font-black text-yellow-700 dark:text-yellow-300 leading-none">{{ $pendingCount }}</h4>
+                </div>
+            </div>
+
+            <!-- Approved Requests -->
+            <div class="bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800/50 rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-transform hover:scale-105">
+                <div class="w-14 h-14 rounded-xl bg-green-100 dark:bg-green-800/40 flex items-center justify-center text-green-600 dark:text-green-400">
+                    <i class="fas fa-check-circle text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1">Approved</p>
+                    <h4 class="text-3xl font-black text-green-700 dark:text-green-300 leading-none">{{ $approvedCount }}</h4>
+                </div>
+            </div>
+
+            <!-- Rejected Requests -->
+            <div class="bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-800/50 rounded-2xl p-6 shadow-sm flex items-center gap-4 transition-transform hover:scale-105">
+                <div class="w-14 h-14 rounded-xl bg-red-100 dark:bg-red-800/40 flex items-center justify-center text-red-600 dark:text-red-400">
+                    <i class="fas fa-times-circle text-2xl"></i>
+                </div>
+                <div>
+                    <p class="text-sm font-bold text-gray-500 dark:text-gray-400 mb-1">Rejected</p>
+                    <h4 class="text-3xl font-black text-red-700 dark:text-red-300 leading-none">{{ $rejectedCount }}</h4>
+                </div>
+            </div>
+        </div>
             <div class="col-lg-6 col-12 text-end mt-4 mt-lg-0">
                 <form method="GET" action="{{ route('join.admin') }}"
                     class="d-flex flex-wrap justify-content-lg-end gap-3 items-center">
