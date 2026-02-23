@@ -14,20 +14,20 @@
             </div>
 
             {{-- Search Box --}}
-            <div class="relative w-full lg:w-96">
-                <input type="text" x-model="searchQuery" @keydown.enter="searchUser()"
+            <form @submit.prevent="searchUser()" class="relative w-full lg:w-96">
+                <input type="search" enterkeyhint="search" x-model="searchQuery"
                     class="w-full pl-10 pr-24 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:ring-2 focus:ring-amber-500 shadow-sm transition-all placeholder-gray-400"
                     placeholder="Search Academic ID..." :disabled="loading">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fas fa-search text-gray-400"></i>
-                </div>
-                <button @click="searchUser()"
+                <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                    <i class="fas fa-search text-gray-400 hover:text-amber-500 transition-colors cursor-pointer"></i>
+                </button>
+                <button type="submit"
                     class="absolute inset-y-1 right-1 px-5 btn-gold text-white rounded-lg text-sm font-bold transition-transform active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                     :disabled="loading">
                     <i class="fas fa-spinner fa-spin" x-show="loading"></i>
                     <span x-show="!loading">Find</span>
                 </button>
-            </div>
+            </form>
         </div>
 
         {{-- Error Message --}}

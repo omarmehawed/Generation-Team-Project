@@ -127,11 +127,12 @@
 
                     {{-- 1. Search Bar Section --}}
                     <div class="relative flex-grow w-full md:w-auto group">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                            <i class="fas fa-search text-white/40 group-focus-within:text-[#D4AF37] transition-colors"></i>
-                        </div>
-                        <input type="text" name="search" id="teamSearchInput" value="{{ request('search') }}"
-                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
+                        <button type="submit" class="absolute inset-y-0 left-0 flex items-center pl-4 z-10">
+                            <i
+                                class="fas fa-search text-white/40 group-focus-within:text-[#D4AF37] hover:text-[#D4AF37] transition-colors cursor-pointer"></i>
+                        </button>
+                        <input type="search" enterkeyhint="search" name="search" id="teamSearchInput"
+                            value="{{ request('search') }}"
                             class="block w-full py-3.5 pl-12 pr-4 text-sm text-white bg-white/5 border border-white/10 rounded-xl placeholder-white/40 focus:ring-0 focus:border-[#D4AF37]/50 focus:bg-white/10 outline-none transition-all duration-300"
                             placeholder="Find Team, Project, or Leader..." autocomplete="off">
                     </div>

@@ -100,15 +100,15 @@
 
                     {{-- Search --}}
                     <div class="relative w-full md:flex-grow-[2] group">
-                        <div
-                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400 group-focus-within:text-blue-500 transition">
+                        <button type="submit"
+                            class="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-400 hover:text-blue-500 group-focus-within:text-blue-500 transition cursor-pointer z-10">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                             </svg>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}" placeholder="Search..."
-                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
+                        </button>
+                        <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
+                            placeholder="Search..."
                             class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-transparent rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 outline-none font-medium">
                     </div>
 
@@ -202,7 +202,7 @@
             {{-- 📋 Deleted Checkbox --}}
             <div class="flex items-center gap-2 ml-4">
                 <a href="{{ request('trash') ? route('admin.users') : route('admin.users', ['trash' => 1]) }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-300 font-bold
-                   {{ request('trash')
+                       {{ request('trash')
         ? 'bg-red-100 text-red-700 border-red-300 shadow-inner'
         : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50' }}">
 
@@ -716,13 +716,13 @@
                 let displayName = user.name ? user.name : 'Unknown';
                 let displayEmail = user.email ? user.email : 'No Email';
                 listContainer.innerHTML += `
-                        <div class="flex items-start gap-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
-                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold uppercase shrink-0">${displayName.charAt(0)}</div>
-                            <div class="overflow-hidden">
-                                <p class="text-xs font-bold text-gray-800 truncate">${displayName}</p>
-                                <p class="text-[10px] text-gray-500 truncate font-mono">${displayEmail}</p>
-                            </div>
-                        </div>`;
+                            <div class="flex items-start gap-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
+                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold uppercase shrink-0">${displayName.charAt(0)}</div>
+                                <div class="overflow-hidden">
+                                    <p class="text-xs font-bold text-gray-800 truncate">${displayName}</p>
+                                    <p class="text-[10px] text-gray-500 truncate font-mono">${displayEmail}</p>
+                                </div>
+                            </div>`;
             });
 
             // 4. 🔥🔥 التبديل الذكي بين الحقول (ده التعديل المهم) 🔥🔥
@@ -773,19 +773,19 @@
 
                 // تصميم الكارت الصغير جوه قائمة الحذف
                 htmlList += `
-                            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-                                <div class="flex items-center gap-3 overflow-hidden">
-                                    <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-bold">
-                                        ${name.charAt(0)}
+                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                                    <div class="flex items-center gap-3 overflow-hidden">
+                                        <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-bold">
+                                            ${name.charAt(0)}
+                                        </div>
+                                        <div class="truncate">
+                                            <p class="text-xs font-bold text-gray-800 truncate w-32">${name}</p>
+                                            <p class="text-[9px] text-gray-500 truncate">${email}</p>
+                                        </div>
                                     </div>
-                                    <div class="truncate">
-                                        <p class="text-xs font-bold text-gray-800 truncate w-32">${name}</p>
-                                        <p class="text-[9px] text-gray-500 truncate">${email}</p>
-                                    </div>
+                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600">${role}</span>
                                 </div>
-                                <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600">${role}</span>
-                            </div>
-                        `;
+                            `;
             });
 
             // ملء المودال بالبيانات

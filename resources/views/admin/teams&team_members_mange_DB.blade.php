@@ -30,9 +30,11 @@
                     <div class="w-full xl:flex-1">
                         <label class="text-xs font-bold text-gray-500 uppercase ml-1">Search</label>
                         <div class="relative mt-1">
-                            <i class="fas fa-search absolute left-3 top-3.5 text-gray-400"></i>
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
+                            <button type="submit" class="absolute left-3 top-[14px] z-10 flex items-center justify-center">
+                                <i
+                                    class="fas fa-search text-gray-400 hover:text-[#175c53] cursor-pointer transition-colors"></i>
+                            </button>
+                            <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
                                 placeholder="Team Name, Leader, or Member Name..."
                                 class="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:ring-2 focus:ring-[#175c53] focus:bg-white transition outline-none font-bold text-gray-700">
                         </div>
@@ -299,37 +301,37 @@
                     if (member.role !== 'leader') {
                         // استخدام data-username لتجنب مشاكل علامات التنصيص في الاسم
                         deleteBtn = `
-                                <form id="remove-member-form-${user.id}" action="${deleteUrl}" method="POST">
-                                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.content || ''}">
-                                    <input type="hidden" name="_method" value="DELETE">
+                                    <form id="remove-member-form-${user.id}" action="${deleteUrl}" method="POST">
+                                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.content || ''}">
+                                        <input type="hidden" name="_method" value="DELETE">
 
-                                    <button type="button"
-                                        onclick="confirmRemoveMember('${user.id}', this.getAttribute('data-username'))"
-                                        data-username="${user.name}"
-                                        class="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition"
-                                        title="Kick Member">
-                                        <i class="fas fa-user-times"></i>
-                                    </button>
-                                </form>
-                            `;
+                                        <button type="button"
+                                            onclick="confirmRemoveMember('${user.id}', this.getAttribute('data-username'))"
+                                            data-username="${user.name}"
+                                            class="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition"
+                                            title="Kick Member">
+                                            <i class="fas fa-user-times"></i>
+                                        </button>
+                                    </form>
+                                `;
                     }
 
                     contentHtml += `
-                            <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
-                                <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 font-bold shadow-sm">
-                                        ${user.name.charAt(0).toUpperCase()}
+                                <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 font-bold shadow-sm">
+                                            ${user.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-800 flex items-center">
+                                                ${user.name} ${roleBadge}
+                                            </p>
+                                            <p class="text-xs text-gray-500">${user.email}</p>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <p class="text-sm font-bold text-gray-800 flex items-center">
-                                            ${user.name} ${roleBadge}
-                                        </p>
-                                        <p class="text-xs text-gray-500">${user.email}</p>
-                                    </div>
+                                    ${deleteBtn}
                                 </div>
-                                ${deleteBtn}
-                            </div>
-                        `;
+                            `;
                 });
 
                 listContainer.innerHTML = contentHtml;

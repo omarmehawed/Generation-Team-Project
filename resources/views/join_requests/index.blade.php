@@ -85,11 +85,10 @@
 
                     <!-- Search Box -->
                     <div class="relative group flex-grow lg:flex-grow-0 lg:w-64">
-                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                            <i class="fas fa-search text-gray-400 group-focus-within:text-blue-500 dark:group-focus-within:text-cyan-400 transition-colors"></i>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
+                        <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
+                            <i class="fas fa-search text-gray-400 group-focus-within:text-blue-500 dark:group-focus-within:text-cyan-400 transition-colors hover:text-blue-600 cursor-pointer"></i>
+                        </button>
+                        <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
                             class="block w-full pl-10 pr-3 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl leading-5 bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-300 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:bg-gray-50 dark:focus:bg-gray-800 focus:border-amber-500/50 dark:focus:border-amber-500/50 focus:ring-1 focus:ring-amber-500/50 dark:focus:ring-amber-500/50 sm:text-sm transition-all shadow-sm dark:shadow-lg"
                             placeholder="ID, Name, Phone...">
                     </div>

@@ -80,11 +80,11 @@
                 {{-- Form البحث - حافظت عليه زي ما هو بس شيكته --}}
                 <form action="{{ route('staff.proposals') }}" method="GET" class="flex-grow w-full lg:max-w-2xl">
                     <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                            <i class="fas fa-search text-gray-400 group-focus-within:text-[#175c53] transition-colors"></i>
-                        </div>
-                        <input type="text" name="search" value="{{ request('search') }}"
-                            onkeydown="if(event.key === 'Enter' || event.keyCode === 13) { event.preventDefault(); this.form.submit(); }"
+                        <button type="submit" class="absolute inset-y-0 left-0 flex items-center pl-4 z-10">
+                            <i
+                                class="fas fa-search text-gray-400 group-focus-within:text-[#175c53] hover:text-[#175c53] transition-colors cursor-pointer"></i>
+                        </button>
+                        <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
                             class="block w-full p-4 pl-12 text-sm text-gray-700 bg-gray-50 border-none rounded-xl ring-1 ring-gray-200 focus:ring-2 focus:ring-[#175c53] focus:bg-white transition-all duration-300"
                             placeholder="Search by project title, team name or leader..." autocomplete="off">
                     </div>

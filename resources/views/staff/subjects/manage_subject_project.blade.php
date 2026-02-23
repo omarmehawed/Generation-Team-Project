@@ -186,12 +186,15 @@
             </div>
 
             {{-- Search Input --}}
-            <div class="relative group">
-                <input type="text" placeholder="Search team..."
+            <form action="{{ route('staff.subject.teams.manage', $project->id) }}" method="GET" class="relative group">
+                <button type="submit" class="absolute left-4 top-3.5 z-10">
+                    <i
+                        class="fas fa-search text-gray-400 group-focus-within:text-[#D4AF37] hover:text-[#D4AF37] transition-colors cursor-pointer"></i>
+                </button>
+                <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
+                    placeholder="Search team..."
                     class="pl-11 pr-4 py-3 bg-white border border-gray-200 rounded-xl text-sm font-bold focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent shadow-sm w-72 transition-all group-hover:shadow-md">
-                <i
-                    class="fas fa-search absolute left-4 top-3.5 text-gray-400 group-focus-within:text-[#D4AF37] transition-colors"></i>
-            </div>
+            </form>
         </div>
 
         {{-- Grid Container --}}
@@ -208,7 +211,7 @@
                     {{-- شريط الحالة الملون --}}
                     <div
                         class="absolute top-0 left-8 right-8 h-1 rounded-b-lg transition-colors duration-300
-                                {{ $team->project_score ? 'bg-blue-500' : ($team->submission_path || $team->submission_link ? 'bg-green-500' : 'bg-gray-200') }}">
+                                        {{ $team->project_score ? 'bg-blue-500' : ($team->submission_path || $team->submission_link ? 'bg-green-500' : 'bg-gray-200') }}">
                     </div>
 
                     {{-- الهيدر: الاسم والكود --}}
@@ -225,8 +228,7 @@
                         {{-- حالة التسليم --}}
                         @if ($team->project_score)
                             <div class="text-right">
-                                <span
-                                    class="block text-3xl font-black text-blue-600 leading-none">{{ $team->project_score }}</span>
+                                <span class="block text-3xl font-black text-blue-600 leading-none">{{ $team->project_score }}</span>
                                 <span
                                     class="text-[9px] text-gray-400 font-bold uppercase tracking-wider">/{{ $project->max_score ?? 100 }}
                                     Score</span>
@@ -269,10 +271,8 @@
                     </div>
                 </div>
             @empty
-                <div
-                    class="col-span-full text-center py-24 bg-white/50 rounded-[3rem] border-2 border-dashed border-gray-300">
-                    <div
-                        class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                <div class="col-span-full text-center py-24 bg-white/50 rounded-[3rem] border-2 border-dashed border-gray-300">
+                    <div class="w-24 h-24 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
                         <i class="fas fa-users-slash text-4xl text-gray-300"></i>
                     </div>
                     <h3 class="text-gray-900 font-black text-xl mb-2">No Teams Registered Yet</h3>
@@ -426,17 +426,17 @@
                                         <i class="fas fa-info-circle"></i> Students cannot leave teams after this date.
                                     </p>
                                 </div> --}}
-                            {{--
+                                {{--
                             </div>
                         </div> --}}
 
-                            {{-- Footer --}}
-                            <div class="bg-gray-50 px-8 py-5 flex justify-end">
-                                <button type="submit"
-                                    class="bg-gray-900 text-[#D4AF37] py-3 px-8 rounded-xl font-bold text-sm uppercase tracking-wider shadow-lg hover:bg-black hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
-                                    <span>Save Changes</span> <i class="fas fa-check-circle"></i>
-                                </button>
-                            </div>
+                        {{-- Footer --}}
+                        <div class="bg-gray-50 px-8 py-5 flex justify-end">
+                            <button type="submit"
+                                class="bg-gray-900 text-[#D4AF37] py-3 px-8 rounded-xl font-bold text-sm uppercase tracking-wider shadow-lg hover:bg-black hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex items-center gap-2">
+                                <span>Save Changes</span> <i class="fas fa-check-circle"></i>
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -455,8 +455,7 @@
                     class="staff-modal-content relative w-full max-w-lg transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-2xl border border-gray-100">
 
                     {{-- Header --}}
-                    <div
-                        class="bg-gradient-to-r from-gray-900 to-gray-800 px-8 py-10 text-center relative overflow-hidden">
+                    <div class="bg-gradient-to-r from-gray-900 to-gray-800 px-8 py-10 text-center relative overflow-hidden">
                         {{-- Decor --}}
                         <div class="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/10 rounded-full blur-3xl -mr-10 -mt-10">
                         </div>
@@ -521,8 +520,7 @@
 
                                 <button type="submit"
                                     class="w-full bg-green-600 hover:bg-green-700 text-white py-4 rounded-xl font-bold uppercase tracking-widest shadow-xl shadow-green-200 hover:shadow-green-400 transition-all transform hover:-translate-y-1 flex items-center justify-center gap-3">
-                                    <span class="text-lg">Confirm Grade</span> <i
-                                        class="fas fa-check-circle text-2xl"></i>
+                                    <span class="text-lg">Confirm Grade</span> <i class="fas fa-check-circle text-2xl"></i>
                                 </button>
                             </div>
                         </form>
@@ -559,7 +557,7 @@
         }
 
         // إغلاق المودال عند الضغط على زر ESC
-        document.addEventListener('keydown', function(event) {
+        document.addEventListener('keydown', function (event) {
             if (event.key === "Escape") {
                 closeModal('settingsModal');
                 closeModal('gradeModal');
