@@ -32,6 +32,7 @@
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Manage and review incoming team applications.</p>
             </div>
+            <br>
              <!-- Analytics Dashboard -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <!-- Total Requests -->
