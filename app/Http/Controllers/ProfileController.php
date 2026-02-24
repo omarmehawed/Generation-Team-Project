@@ -221,6 +221,23 @@ class ProfileController extends Controller
     public function updateDetails(Request $request)
     {
         $user = Auth::user();
+        
+        // Ensure a Leader can update a member's photo
+        if ($request->has('user_id') && $request->user_id != Auth::id()) {
+            $targetUser = \App\Models\User::findOrFail($request->user_id);
+            // Verify the current user is a leader of the target user
+            $isLeader = \App\Models\Team::where('leader_id', Auth::id())
+                ->whereHas('members', function($q) use ($targetUser) {
+                    $q->where('user_id', $targetUser->id);
+                })->exists();
+                
+            if ($isLeader || Auth::user()->role === 'admin') {
+                $user = $targetUser;
+            } else {
+                abort(403, 'Unauthorized action.');
+            }
+        }
+
         $request->validate([
             'phone_number' => 'nullable|string|max:20',
             'national_id' => 'nullable|string|size:14|unique:users,national_id,' . $user->id,

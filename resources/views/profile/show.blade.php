@@ -75,6 +75,7 @@
                     {{-- Form is NO LONGER wrapping the entire div, so we can split click zones --}}
                     <form action="{{ route('profile.update_details') }}" method="POST" enctype="multipart/form-data" id="profile-photo-form">
                         @csrf
+                        <input type="hidden" name="user_id" value="{{ $user->id }}">
                         <input type="file" name="profile_photo" id="profile-photo-input" class="hidden" accept="image/*" onchange="document.getElementById('profile-photo-form').submit()">
                     </form>
 
