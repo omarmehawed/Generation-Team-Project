@@ -140,6 +140,35 @@
 <body class="font-cairo text-gray-100 bg-dark antialiased transition-colors duration-300" x-data="{ 
           darkMode: localStorage.getItem('theme') === 'dark',
           mobileMenuOpen: false,
+          statusModalOpen: false,
+          statusResult: null,
+          statusMessage: '',
+          isChecking: false,
+          academicId: '',
+          checkStatus() {
+              if(!this.academicId) return;
+              this.isChecking = true;
+              fetch('{{ route('join.status') }}', {
+                  method: 'POST',
+                  headers: {
+                      'Content-Type': 'application/json',
+                      'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                      'Accept': 'application/json'
+                  },
+                  body: JSON.stringify({ academic_id: this.academicId })
+              })
+              .then(res => res.json())
+              .then(data => {
+                  this.statusResult = data.status;
+                  this.statusMessage = data.message;
+                  this.isChecking = false;
+              })
+              .catch(err => {
+                  this.statusResult = 'error';
+                  this.statusMessage = 'حدث خطأ. يرجى المحاولة لاحقاً.';
+                  this.isChecking = false;
+              });
+          },
           toggleTheme() {
               this.darkMode = !this.darkMode;
               localStorage.setItem('theme', this.darkMode ? 'dark' : 'light');
@@ -186,9 +215,9 @@
                         :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">القيادة والإشراف</a>
                     <a href="#project" class="text-lg font-bold hover:text-amber-500 transition-colors"
                         :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">عن المشروع</a>
-                    <a href="{{ route('join.create') }}"
+                    <button @click="statusModalOpen = true"
                         class="text-lg font-bold hover:text-amber-500 transition-colors"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">انضم إلينا</a>
+                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">متابعة الطلب</button>
                 </div>
 
                 <!-- Actions -->
@@ -249,10 +278,10 @@
                     <span>عن المشروع</span> <i class="fas fa-robot text-sm opacity-50"></i>
                 </a>
                 <hr class="border-gray-200 dark:border-gray-800 mb-2">
-                <a href="{{ route('join.create') }}"
-                    class="text-xl font-bold flex items-center justify-between text-amber-500 hover:text-amber-400 transition-colors">
-                    <span>انضم إلينا</span> <i class="fas fa-arrow-left text-sm"></i>
-                </a>
+                <button @click="statusModalOpen = true; mobileMenuOpen = false"
+                    class="w-full text-right text-xl font-bold flex items-center justify-between text-amber-500 hover:text-amber-400 transition-colors">
+                    <span>متابعة الطلب</span> <i class="fas fa-search text-sm"></i>
+                </button>
             </div>
         </div>
     </nav>
@@ -294,13 +323,13 @@
                 <!-- CTAs -->
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-slide-up"
                     style="animation-delay: 0.6s">
-                    <a href="{{ route('join.create') }}"
-                        class="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-full font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(245,158,11,0.5)] font-amiri">
+                    <button @click="statusModalOpen = true"
+                        class="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-full font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(245,158,11,0.5)] font-amiri border-0 cursor-pointer">
                         <span class="relative z-10 flex items-center gap-3">
-                            قدم طلب انضمام الآن
-                            <i class="fas fa-arrow-left group-hover:-translate-x-1 transition-transform"></i>
+                            استعلام عن حالة الطلب
+                            <i class="fas fa-search group-hover:rotate-12 transition-transform"></i>
                         </span>
-                    </a>
+                    </button>
                     <a href="#project"
                         class="px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 glass"
                         :class="{'border-gray-800 text-gray-800 hover:bg-gray-100': !darkMode, 'border-white/30 text-white hover:bg-white/10': darkMode}">
@@ -907,16 +936,84 @@
                     <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-rocket text-3xl text-amber-400"></i>
                     </div>
-                    <h3 class="text-xl font-bold mb-4 font-amiri">انضم للمستقبل</h3>
-                    <p class="opacity-90 text-sm mb-6 font-amiri">هل أنت مستعد لتكون جزءاً من هذا التحدي؟ انضم إلينا
-                        الآن.</p>
-                    <a href="{{ route('join.create') }}"
-                        class="inline-block px-6 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold rounded-full hover:bg-amber-600 transition-colors font-amiri">
-                        قدم الآن
-                    </a>
+                    <h3 class="text-xl font-bold mb-4 font-amiri">متابعة الانضمام</h3>
+                    <p class="opacity-90 text-sm mb-6 font-amiri">يمكنك الآن الاستعلام عن حالة طلب الانضمام الخاص بك بكل
+                        سهولة.</p>
+                    <button @click="statusModalOpen = true"
+                        class="inline-block px-6 py-2 bg-gradient-to-r from-amber-500 to-amber-600 text-white font-bold rounded-full hover:bg-amber-600 transition-colors font-amiri border-0 cursor-pointer">
+                        الاستعلام عن طلبك
+                    </button>
                 </div>
 
             </div>
+        </div>
+
+        <!-- Status Modal -->
+        <div x-show="statusModalOpen"
+            class="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm px-4"
+            x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+            x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;">
+
+            <div @click.away="statusModalOpen = false"
+                class="relative w-full max-w-md p-8 rounded-3xl border shadow-2xl transition-all duration-300"
+                :class="{'bg-white border-gray-200': !darkMode, 'bg-gray-900 border-gray-700': darkMode}"
+                x-transition:enter="transition ease-out duration-300 transform"
+                x-transition:enter-start="opacity-0 translate-y-8 scale-95"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-200 transform"
+                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                x-transition:leave-end="opacity-0 translate-y-8 scale-95">
+
+                <button @click="statusModalOpen = false"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+
+                <div class="text-center mb-6">
+                    <div
+                        class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
+                        <i class="fas fa-search text-2xl text-amber-500"></i>
+                    </div>
+                    <h2 class="text-2xl font-bold mb-2 font-amiri"
+                        :class="{'text-gray-900': !darkMode, 'text-white': darkMode}">متابعة حالة الطلب</h2>
+                    <p class="text-sm opacity-70">أدخل رقمك الأكاديمي للاستعلام عن حالة طلب الانضمام</p>
+                </div>
+
+                <div class="space-y-4">
+                    <div>
+                        <input type="text" x-model="academicId" placeholder="الرقم الأكاديمي"
+                            class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-tech text-center text-lg tracking-widest"
+                            :class="{'bg-gray-50 border-gray-200 text-gray-900': !darkMode, 'bg-gray-800 border-gray-700 text-white': darkMode}">
+                    </div>
+
+                    <button @click="checkStatus()" :disabled="isChecking || !academicId"
+                        class="w-full py-3 rounded-xl font-bold text-white transition-all duration-300 flex justify-center items-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                        :class="isChecking ? 'bg-gray-500' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500'">
+                        <span x-show="!isChecking" class="font-amiri text-lg">تحقق من الحالة</span>
+                        <i x-show="isChecking" class="fas fa-spinner fa-spin text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Result Message -->
+                <div x-show="statusResult" class="mt-6 p-4 rounded-xl border text-center transition-all animate-fade-in"
+                    :class="{
+                        'bg-green-500/10 border-green-500 text-green-500': statusResult === 'approved',
+                        'bg-red-500/10 border-red-500 text-red-500': statusResult === 'rejected',
+                        'bg-yellow-500/10 border-yellow-500 text-yellow-500': statusResult === 'pending',
+                        'bg-gray-500/10 border-gray-500 text-gray-500': statusResult === 'not_found' || statusResult === 'error'
+                    }" style="display: none;">
+
+                    <i class="fas text-3xl mb-3" :class="{
+                        'fa-check-circle': statusResult === 'approved',
+                        'fa-times-circle': statusResult === 'rejected',
+                        'fa-hourglass-half': statusResult === 'pending',
+                        'fa-question-circle': statusResult === 'not_found' || statusResult === 'error'
+                    }"></i>
+                    <p class="font-bold text-sm" x-text="statusMessage"></p>
+                </div>
+            </div>
+        </div>
         </div>
     </section>
 

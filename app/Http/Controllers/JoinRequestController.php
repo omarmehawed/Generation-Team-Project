@@ -62,6 +62,42 @@ class JoinRequestController extends Controller
     }
 
     /**
+     * Check Join Request status remotely.
+     */
+    public function checkStatus(Request $request)
+    {
+        $request->validate([
+            'academic_id' => 'required|string|max:20'
+        ]);
+
+        $joinRequest = JoinRequest::where('academic_id', $request->academic_id)->first();
+
+        if (!$joinRequest) {
+            return response()->json([
+                'status' => 'not_found', 
+                'message' => 'لم يتم العثور على طلب بهذا الرقم الأكاديمي.'
+            ]);
+        }
+
+        if ($joinRequest->status === 'approved') {
+            return response()->json([
+                'status' => 'approved', 
+                'message' => 'تمت الموافقة على طلبك. مرحباً بك!'
+            ]);
+        } elseif ($joinRequest->status === 'rejected') {
+            return response()->json([
+                'status' => 'rejected', 
+                'message' => 'نعتذر، لم يتم قبول طلبك. يرجى التواصل مع الإدارة عند الحاجة.'
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'pending', 
+                'message' => 'طلبك لا يزال قيد المراجعة. يرجى الانتظار لحين الموافقة.'
+            ]);
+        }
+    }
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)

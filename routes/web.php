@@ -33,6 +33,7 @@ Route::get('/', [JoinRequestController::class, 'index'])->name('welcome');
 Route::get('/join', [JoinRequestController::class, 'create'])->name('join.create');
 Route::post('/join', [JoinRequestController::class, 'store'])->name('join.store');
 Route::get('/join/check-duplicate', [JoinRequestController::class, 'checkDuplicate'])->name('join.checkDuplicate');
+Route::post('/join/status', [JoinRequestController::class, 'checkStatus'])->name('join.status');
 Route::get('/join/success', function () {
     return view('join_requests.success');
 })->name('join.success');
