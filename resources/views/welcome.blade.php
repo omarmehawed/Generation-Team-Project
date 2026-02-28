@@ -89,12 +89,6 @@
             border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        .glass-nav {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(20px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
         /* Text Gradients */
         .text-gradient {
             background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
@@ -137,7 +131,9 @@
     </style>
 </head>
 
-<body class="font-cairo text-gray-100 bg-dark antialiased transition-colors duration-300" x-data="{ 
+<body
+    class="font-cairo antialiased transition-colors duration-300 bg-gray-50 text-gray-900 dark:bg-dark dark:text-white"
+    x-data="{ 
           darkMode: localStorage.getItem('theme') === 'dark',
           mobileMenuOpen: false,
           statusModalOpen: false,
@@ -178,7 +174,7 @@
                   document.documentElement.classList.remove('dark');
               }
           }
-      }" class="bg-gray-50 text-gray-900 dark:bg-dark dark:text-white"
+      }"
     x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); if(!darkMode) document.documentElement.classList.remove('dark');">
     <script>
             (function () {
@@ -197,7 +193,8 @@
     <x-ramadan-theme />
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-300 glass-nav bg-white/90 text-gray-900 border-gray-200">
+    <nav
+        class="fixed w-full z-50 transition-all duration-300 bg-white/95 dark:bg-dark/95 backdrop-blur-md text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
 
@@ -239,7 +236,8 @@
                 <!-- Actions -->
                 <div class="flex items-center gap-4">
                     <!-- Theme Toggle -->
-                    <button @click="toggleTheme()" class="p-2 rounded-full hover:bg-gray-700/20 transition-colors">
+                    <button @click="toggleTheme()"
+                        class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
                         <i class="fas fa-sun text-yellow-500" x-show="!darkMode"></i>
                         <i class="fas fa-moon text-blue-400" x-show="darkMode"></i>
                     </button>
@@ -298,8 +296,7 @@
     <!-- Hero Section -->
     <section id="home" class="relative min-h-screen flex items-center justify-center overflow-hidden">
         <!-- Video Background -->
-        <video autoplay loop muted playsinline class="video-bg">
-            <source src="{{ asset('assets/videos/login_bg.mp4') }}" type="video/mp4">
+        <video autoplay loop muted playsinline class="video-bg" data-src="{{ asset('assets/videos/login_bg.mp4') }}">
         </video>
         <div class="overlay" style="background: rgba(30, 27, 75, 0.7);"></div>
 
@@ -320,9 +317,8 @@
                 </h1>
 
                 <!-- Quote -->
-                <div class="max-w-3xl mx-auto bg-black/30 backdrop-blur-sm p-6 rounded-2xl border-r-4 border-amber-500 mb-8 animate-slide-up font-amiri"
-                    style="animation-delay: 0.4s"
-                    class="bg-white/60 text-gray-900 shadow-lg dark:bg-black/40 dark:text-gray-100">
+                <div class="max-w-3xl mx-auto backdrop-blur-sm p-6 rounded-2xl border-r-4 border-amber-500 mb-8 animate-slide-up font-amiri bg-white/60 text-gray-900 shadow-lg dark:bg-black/40 dark:text-gray-100"
+                    style="animation-delay: 0.4s">
                     <p class="text-xl md:text-3xl font-bold leading-relaxed">
                         "لو نفسك تشتغل على روبوت شبه بني آدم… بس مش أي روبوت 👀 <br>
                         روبوت بفكرة مختلفة تمامًا… الفكرة دي هتفهمها لما تنضم معانا في التيم 🤫🤖"
@@ -1014,6 +1010,19 @@
             reserved.</p>
     </footer>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const videos = document.querySelectorAll('video[data-src]');
+            videos.forEach(function (video) {
+                const source = document.createElement('source');
+                source.setAttribute('src', video.getAttribute('data-src'));
+                source.setAttribute('type', 'video/mp4');
+                video.appendChild(source);
+                video.load();
+                video.play().catch(e => console.log('Autoplay prevented', e));
+            });
+        });
+    </script>
 </body>
 
 </html>

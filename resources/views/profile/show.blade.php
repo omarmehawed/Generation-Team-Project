@@ -121,6 +121,23 @@
                         
                         {{-- Edit/Cancel Buttons REMOVED --}}
 
+                        {{-- User Actions --}}
+                        @if(auth()->id() === $user->id)
+                            <div class="flex gap-2 mb-2">
+                                @if($user->google_id)
+                                    <div class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 shadow-sm">
+                                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5">
+                                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Linked to Google</span>
+                                    </div>
+                                @else
+                                    <a href="{{ route('auth.google') }}" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 shadow-sm transition-colors cursor-pointer">
+                                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5">
+                                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Link with Google</span>
+                                    </a>
+                                @endif
+                            </div>
+                        @endif
+
                         {{-- Leader Actions --}}
                         @if($isLeaderOfStudent)
                             <div class="flex gap-2">

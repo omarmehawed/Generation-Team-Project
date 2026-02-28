@@ -94,8 +94,8 @@
 
         .ramadan-curtain {
             animation: curtainSweep 2.5s cubic-bezier(0.4, 0.0, 0.2, 1) forwards;
-            background: linear-gradient(180deg, rgba(212, 175, 55, 0.4) 0%, rgba(244, 196, 48, 0.1) 50%, transparent 100%);
-            backdrop-filter: blur(2px);
+            background: linear-gradient(180deg, rgba(212, 175, 55, 0.2) 0%, rgba(244, 196, 48, 0.05) 50%, transparent 100%);
+            backdrop-filter: blur(1px);
         }
 
         .animate-pulse-slow {
@@ -108,9 +108,9 @@
         }
 
         /* 
-               Global Theme Overrides for Ramadan 
-               Should work in both Dark and Light modes
-            */
+                   Global Theme Overrides for Ramadan 
+                   Should work in both Dark and Light modes
+                */
         :root {
             /* Override Accents with Gold */
             --primary: #D4AF37 !important;

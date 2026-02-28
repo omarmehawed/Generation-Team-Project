@@ -48,22 +48,22 @@ class SystemController extends Controller
     // دالة مساعدة: بتلف على الطلبة وتوزع المواد
     private function syncAllStudentsCourses($term)
     {
+        $allCourses = Course::where('term', $term)->get();
+        $courseMap = [];
+
         $students = User::where('role', 'student')->get();
 
         foreach ($students as $student) {
-            // هات مواد سنة الطالب + الترم المحدد + القسم بتاعه
-            $courses = Course::where('year_level', $student->academic_year)
-                ->where('term', $term)
-                ->where(function ($q) use ($student) {
-                    $q->where('department', 'general')
-                        ->orWhere('department', $student->department);
-                })
-                ->get();
+            $key = $student->academic_year . '-' . $student->department;
+            
+            if (!isset($courseMap[$key])) {
+                $courseMap[$key] = $allCourses->filter(function ($course) use ($student) {
+                    return $course->year_level == $student->academic_year && 
+                           ($course->department == 'general' || $course->department == $student->department);
+                })->pluck('id')->toArray();
+            }
 
-            // سجل المواد دي في جدول course_user
-            // (sync) بتمسح القديم وتحط الجديد، وده اللي إحنا عايزينه عشان مواد الترم اللي فات تختفي ويظهر الجديد
-            // لو عايز تحتفظ بالقديم استخدم syncWithoutDetaching
-            $student->courses()->sync($courses->pluck('id'));
+            $student->courses()->sync($courseMap[$key]);
         }
     }
 }

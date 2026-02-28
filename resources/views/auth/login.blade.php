@@ -75,8 +75,7 @@
 
     {{-- 🎥 LIVE VIDEO WALLPAPER 🎥 --}}
     <div class="video-container">
-        <video autoplay muted loop playsinline class="video-bg">
-            <source src="{{ asset('assets/videos/login_bg.mp4') }}" type="video/mp4">
+        <video autoplay muted loop playsinline class="video-bg" data-src="{{ asset('assets/videos/login_bg.mp4') }}">
             Your browser does not support the video tag.
         </video>
         <div class="video-overlay"></div>
@@ -181,6 +180,19 @@
                         <i class="fas fa-chevron-right text-xs"></i>
                     </button>
 
+                    <div class="relative flex items-center justify-center w-full mt-6 mb-4">
+                        <div class="absolute inset-0 flex items-center">
+                            <div class="w-full border-t border-slate-700"></div>
+                        </div>
+                        <div class="relative px-4 text-xs font-mono text-cyan-200/50 bg-[#000]">OR</div>
+                    </div>
+
+                    <a href="{{ route('auth.google') }}"
+                        class="w-full flex items-center justify-center gap-3 py-3 text-sm font-bold bg-white text-gray-900 rounded-lg hover:bg-gray-100 transition-all hover:scale-[1.02] active:scale-[0.98] shadow-lg">
+                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" class="w-5 h-5">
+                        <span>Sign in with Google</span>
+                    </a>
+
                 </form>
             </div>
 
@@ -205,6 +217,19 @@
         }
     </style>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const videos = document.querySelectorAll('video[data-src]');
+            videos.forEach(function (video) {
+                const source = document.createElement('source');
+                source.setAttribute('src', video.getAttribute('data-src'));
+                source.setAttribute('type', 'video/mp4');
+                video.appendChild(source);
+                video.load();
+                video.play().catch(e => console.log('Autoplay prevented', e));
+            });
+        });
+    </script>
 </body>
 
 </html>

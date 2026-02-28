@@ -19,6 +19,7 @@ use App\Http\Controllers\FinalProjectController;
 use App\Http\Controllers\StaffController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\JoinRequestController;
+use App\Http\Controllers\Auth\GoogleLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +38,10 @@ Route::post('/join/status', [JoinRequestController::class, 'checkStatus'])->name
 Route::get('/join/success', function () {
     return view('join_requests.success');
 })->name('join.success');
+
+// Google Login / OAuth Linking Routes
+Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
 
 require __DIR__ . '/auth.php';
 

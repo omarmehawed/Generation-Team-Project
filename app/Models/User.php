@@ -45,6 +45,7 @@ class User extends Authenticatable
         'is_dorm',
         'profile_photo_path',
         'wallet_balance', // [NEW] Wallet System
+        'google_id', // [NEW] Google OAuth
     ];
 
     protected $hidden = [
