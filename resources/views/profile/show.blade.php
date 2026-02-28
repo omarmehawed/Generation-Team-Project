@@ -123,17 +123,41 @@
 
                         {{-- User Actions --}}
                         @if(auth()->id() === $user->id)
-                            <div class="flex gap-2 mb-2">
+                            <div class="flex flex-col gap-2 mb-2 w-full max-w-sm mt-4">
                                 @if($user->google_id)
-                                    <div class="inline-flex items-center gap-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 shadow-sm">
-                                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5">
-                                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Linked to Google</span>
+                                    <div class="flex flex-col bg-white dark:bg-gray-800 border-l-4 border-green-500 border-y border-r border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 rounded-lg p-4 shadow-sm w-full">
+                                        <div class="flex items-center justify-between mb-3">
+                                            <div class="flex items-center gap-3">
+                                                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6">
+                                                <div>
+                                                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">Google Account</p>
+                                                    <p class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $user->google_email ?? 'Linked' }}</p>
+                                                </div>
+                                            </div>
+                                            <span class="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 text-[10px] font-bold px-2 py-1 rounded-full border border-green-200 dark:border-green-500/30">Connected</span>
+                                        </div>
+                                        
+                                        <form action="{{ route('auth.google.unlink') }}" method="POST" class="w-full flex justify-end m-0" onsubmit="return confirm('Are you sure you want to unlink your Google account? You will no longer be able to log in with it.');">
+                                            @csrf
+                                            <button type="submit" class="text-xs font-bold text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 transition-colors flex items-center gap-1">
+                                                <i class="fas fa-unlink"></i> Unlink Google Account
+                                            </button>
+                                        </form>
                                     </div>
                                 @else
-                                    <a href="{{ route('auth.google') }}" class="inline-flex items-center gap-2 bg-white hover:bg-gray-50 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700 rounded-lg px-4 py-2 shadow-sm transition-colors cursor-pointer">
-                                        <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5">
-                                        <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Link with Google</span>
-                                    </a>
+                                    <div class="flex items-center justify-between bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg p-4 shadow-sm w-full">
+                                        <div class="flex items-center gap-3">
+                                            <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6 opacity-50 grayscale">
+                                            <div>
+                                                <p class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">Google Account</p>
+                                                <span class="bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 text-[10px] font-bold px-2 py-1 rounded-full border border-gray-200 dark:border-gray-600">Not connected</span>
+                                            </div>
+                                        </div>
+                                        
+                                        <a href="{{ route('auth.google') }}" class="inline-flex items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 rounded-lg px-4 py-2 shadow-sm transition-colors cursor-pointer text-sm font-bold">
+                                            <i class="fas fa-link"></i> Link with Google
+                                        </a>
+                                    </div>
                                 @endif
                             </div>
                         @endif

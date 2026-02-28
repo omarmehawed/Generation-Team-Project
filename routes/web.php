@@ -42,6 +42,7 @@ Route::get('/join/success', function () {
 // Google Login / OAuth Linking Routes
 Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
 Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
+Route::post('/auth/google/unlink', [GoogleLoginController::class, 'unlinkGoogle'])->name('auth.google.unlink')->middleware('auth');
 
 require __DIR__ . '/auth.php';
 

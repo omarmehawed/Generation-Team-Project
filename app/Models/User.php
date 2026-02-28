@@ -46,6 +46,7 @@ class User extends Authenticatable
         'profile_photo_path',
         'wallet_balance', // [NEW] Wallet System
         'google_id', // [NEW] Google OAuth
+        'google_email', // [NEW] Track Google Account
     ];
 
     protected $hidden = [

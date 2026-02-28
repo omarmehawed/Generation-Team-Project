@@ -34,6 +34,7 @@ class GoogleLoginController extends Controller
                 }
                 
                 $user->google_id = $googleUser->getId();
+                $user->google_email = $googleUser->getEmail();
                 $user->save();
 
                 return redirect()->route('profile.show')->with('success', 'Google account linked successfully.');
@@ -52,5 +53,21 @@ class GoogleLoginController extends Controller
             $redirectRoute = Auth::check() ? 'profile.show' : 'login';
             return redirect()->route($redirectRoute)->with('error', 'An error occurred during Google authentication. Please try again.');
         }
+    }
+
+    public function unlinkGoogle(Request $request)
+    {
+        /** @var \App\Models\User $user */
+        $user = Auth::user();
+
+        if ($user && $user->google_id) {
+            $user->google_id = null;
+            $user->google_email = null;
+            $user->save();
+
+            return redirect()->route('profile.show')->with('success', 'Google account unlinked successfully.');
+        }
+
+        return redirect()->route('profile.show')->with('error', 'No Google account is currently linked.');
     }
 }
