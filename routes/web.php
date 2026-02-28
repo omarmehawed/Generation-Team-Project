@@ -253,9 +253,7 @@ Route::middleware(['auth', 'role:admin,ta'])->prefix('staff')->group(function ()
     // ====================================================
     // 1. راوتات عامة (متاحة لكل الطاقم)
     // ====================================================
-    // Route للداشبورد الرئيسية
-    Route::get('/staff/dashboard', [StaffController::class, 'index'])->name('staff.dashboard');
-    // 1. الداشبورد الرئيسية (مكرر)
+    // 1. الداشبورد الرئيسية
     Route::get('/dashboard', [StaffController::class, 'index'])->name('staff.dashboard');
 
     Route::get('/defense-calendar', [StaffController::class, 'defenseCalendar'])->name('staff.doctor_timetable');
@@ -268,7 +266,6 @@ Route::middleware(['auth', 'role:admin,ta'])->prefix('staff')->group(function ()
         // 2. إدارة المقترحات (Proposals)
         Route::get('/proposals', [StaffController::class, 'proposals'])->name('staff.proposals');
         Route::post('/proposals/{id}/decide', [StaffController::class, 'decideProposal'])->name('staff.proposals.decide');
-        Route::get('/staff/proposals', [StaffController::class, 'proposals'])->name('staff.proposals');
         Route::get('/proposal/view/{team_id}', [FinalProjectController::class, 'viewProposalFile'])
             ->name('proposal.view_file');
     });
@@ -279,7 +276,6 @@ Route::middleware(['auth', 'role:admin,ta'])->prefix('staff')->group(function ()
     // ====================================================
     Route::middleware('permission:manage_teams')->group(function () {
         // Route لصفحة التيمات
-        Route::get('/staff/my-teams', [StaffController::class, 'my_teams'])->name('staff.my_teams');
         Route::get('/my-teams', [StaffController::class, 'myTeams'])->name('staff.my_teams');
         Route::post('/staff/teams/export', [App\Http\Controllers\StaffController::class, 'exportTeams'])->name('staff.teams.export');
         // 3. إدارة تيم محدد

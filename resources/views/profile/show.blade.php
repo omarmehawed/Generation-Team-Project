@@ -5,12 +5,12 @@
 
         {{-- Join Request Answers (Specific Emails Only) --}}
         @if(auth()->check() && in_array(auth()->user()->email, ['2420823@batechu.com', '2420324@batechu.com']) && $user->joinRequest)
-            <div x-data="{ open: false }" class="mt-8 bg-gray-900 rounded-3xl p-6 border border-gray-800 shadow-2xl">
+            <div x-data="{ open: false }" class="mt-8 bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-xl dark:shadow-2xl">
                 <button @click="open = !open" class="w-full flex justify-between items-center text-left focus:outline-none">
-                    <h3 class="text-xl font-bold text-white font-tech flex items-center gap-3">
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white font-tech flex items-center gap-3">
                         <i class="fas fa-file-contract text-cyan-400"></i> Join Request Answers
                     </h3>
-                    <i class="fas" :class="open ? 'fa-chevron-up' : 'fa-chevron-down'" style="color: var(--text-muted)"></i>
+                    <i class="fas transition-transform duration-300 text-gray-500 dark:text-gray-400" :class="open ? 'fa-chevron-up rotate-180' : 'fa-chevron-down'"></i>
                 </button>
                 
                 <div x-show="open" x-collapse class="mt-6 text-gray-300 space-y-4 border-t border-gray-800 pt-6">
@@ -62,7 +62,7 @@
         @endphp
 
         {{-- 1. User Info Section --}}
-        <div class="bg-gray-900 rounded-3xl p-8 mb-12 relative overflow-hidden shadow-2xl border border-gray-800">
+        <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 mb-12 relative overflow-hidden shadow-xl dark:shadow-2xl border border-gray-200 dark:border-gray-800">
             {{-- Background Pattern --}}
             <div class="absolute inset-0 opacity-20 pointer-events-none"
                 style="background-image: radial-gradient(rgba(0, 243, 255, 0.2) 1px, transparent 1px); background-size: 30px 30px;">
@@ -107,8 +107,8 @@
                 <div class="flex-1 w-full">
                     <div class="flex justify-between items-start mb-4">
                         <div>
-                            <h1 class="text-4xl font-bold text-white font-tech mb-1 tracking-wider">{{ $user->name }}</h1>
-                            <p class="text-cyan-400 font-mono text-sm mb-2">{{ $user->email }}</p>
+                            <h1 class="text-4xl font-bold text-gray-900 dark:text-white font-tech mb-1 tracking-wider">{{ $user->name }}</h1>
+                            <p class="text-cyan-600 dark:text-cyan-400 font-mono text-sm mb-2">{{ $user->email }}</p>
                             
                             {{-- Wallet Balance Badge --}}
                             <div class="inline-flex items-center gap-2 bg-gray-800/50 border border-gray-700 rounded-full px-3 py-1">
@@ -137,12 +137,12 @@
                     </div>
 
                     {{-- Static Read-Only Data Grid --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 bg-gray-800/30 p-6 rounded-2xl border border-gray-700/50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 bg-gray-50 dark:bg-gray-800/30 p-6 rounded-2xl border border-gray-200 dark:border-gray-700/50">
                         
                         {{-- Phone --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Phone Number</label>
-                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 <i class="fas fa-phone text-blue-500 text-sm"></i>
                                 {{ $user->phone_number ?? 'Not set' }}
                             </div>
@@ -151,7 +151,7 @@
                         {{-- WhatsApp --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">WhatsApp</label>
-                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 <i class="fab fa-whatsapp text-green-500 text-sm"></i>
                                 {{ $user->whatsapp_number ?? 'Not set' }}
                             </div>
@@ -160,7 +160,7 @@
                         {{-- National ID --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">National ID</label>
-                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 <i class="fas fa-id-card text-purple-500 text-sm"></i>
                                 {{ $user->national_id ?? 'Not set' }}
                             </div>
@@ -169,7 +169,7 @@
                         {{-- Date of Birth --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Date of Birth</label>
-                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 <i class="fas fa-birthday-cake text-pink-500 text-sm"></i>
                                 {{ $user->date_of_birth ? \Carbon\Carbon::parse($user->date_of_birth)->format('d M, Y') : 'Not set' }}
                             </div>
@@ -178,7 +178,7 @@
                         {{-- Academic Year --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Academic Year</label>
-                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 <i class="fas fa-university text-yellow-500 text-sm"></i>
                                 {{ 'Level ' . ($user->academic_year ?? '1') }}
                             </div>
@@ -187,7 +187,7 @@
                         {{-- Department --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Department</label>
-                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 <i class="fas fa-laptop-code text-cyan-500 text-sm"></i>
                                 {{ ucfirst($user->department ?? 'General') }}
                             </div>
@@ -196,7 +196,7 @@
                         {{-- Residence Status --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Residence Status</label>
-                            <div class="flex items-center gap-2 text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 @if($user->is_dorm)
                                     مغترب
                                 @else
@@ -208,7 +208,7 @@
                         {{-- Address --}}
                         <div class="md:col-span-2">
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Home Address</label>
-                            <div class="flex items-start gap-2 text-gray-300 font-medium">
+                            <div class="flex items-start gap-2 text-gray-800 dark:text-gray-300 font-medium">
                                 <i class="fas fa-map-marker-alt text-red-500 text-sm mt-1"></i>
                                 {{ $user->address ?? 'Not set' }}
                             </div>
@@ -249,10 +249,10 @@
                 'color' => 'purple'
             ])
         @else
-            <div class="mb-12 p-6 bg-gray-900/50 rounded-2xl border border-gray-800 text-center">
-                <i class="fas fa-graduation-cap text-4xl text-gray-700 mb-2"></i>
-                <h3 class="text-gray-400 font-bold">No Graduation Project</h3>
-                <p class="text-gray-600 text-sm">Join a team to start your journey.</p>
+            <div class="mb-12 p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-800 text-center">
+                <i class="fas fa-graduation-cap text-4xl text-gray-400 dark:text-gray-700 mb-2"></i>
+                <h3 class="text-gray-700 dark:text-gray-400 font-bold">No Graduation Project</h3>
+                <p class="text-gray-500 dark:text-gray-600 text-sm">Join a team to start your journey.</p>
             </div>
         @endif
 

@@ -178,13 +178,26 @@
                   document.documentElement.classList.remove('dark');
               }
           }
-      }" :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }"
+      }" class="bg-gray-50 text-gray-900 dark:bg-dark dark:text-white"
     x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); if(!darkMode) document.documentElement.classList.remove('dark');">
+    <script>
+            (function () {
+                try {
+                    var theme = localStorage.getItem('theme');
+                    if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        document.documentElement.classList.add('dark');
+                        document.body.setAttribute('data-theme', 'dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        document.body.setAttribute('data-theme', 'light');
+                    }
+                } catch (e) { }
+            })();
+    </script>
     <x-ramadan-theme />
 
     <!-- Navigation -->
-    <nav class="fixed w-full z-50 transition-all duration-300 glass-nav"
-        :class="{'bg-white/90 text-gray-900 border-gray-200': !darkMode}">
+    <nav class="fixed w-full z-50 transition-all duration-300 glass-nav bg-white/90 text-gray-900 border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
 
@@ -195,8 +208,7 @@
                             alt="Generation Team">
                     </div>
                     <div class="hidden md:block">
-                        <h1 class="text-2xl font-bold font-tech tracking-wider"
-                            :class="{'text-gray-900': !darkMode, 'text-white': darkMode}">
+                        <h1 class="text-2xl font-bold font-tech tracking-wider text-gray-900 dark:text-white">
                             GENERATION <span class="text-amber-500">TEAM</span>
                             <span class="text-xs text-amber-500 block font-amiri -mt-1">رمضان كريم 🌙</span>
                         </h1>
@@ -205,19 +217,23 @@
 
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-8 font-amiri">
-                    <a href="#home" class="text-lg font-bold hover:text-amber-500 transition-colors"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">الرئيسية</a>
-                    <a href="#team" class="text-lg font-bold hover:text-amber-500 transition-colors"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">عن الفريق</a>
-                    <a href="#itclub" class="text-lg font-bold hover:text-amber-500 transition-colors"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">التعاون مع IT</a>
-                    <a href="#leadership" class="text-lg font-bold hover:text-amber-500 transition-colors"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">القيادة والإشراف</a>
-                    <a href="#project" class="text-lg font-bold hover:text-amber-500 transition-colors"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">عن المشروع</a>
+                    <a href="#home"
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">الرئيسية</a>
+                    <a href="#team"
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">عن
+                        الفريق</a>
+                    <a href="#itclub"
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">التعاون
+                        مع IT</a>
+                    <a href="#leadership"
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">القيادة
+                        والإشراف</a>
+                    <a href="#project"
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">عن
+                        المشروع</a>
                     <button @click="statusModalOpen = true"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">متابعة الطلب</button>
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">متابعة
+                        الطلب</button>
                 </div>
 
                 <!-- Actions -->
@@ -229,14 +245,13 @@
                     </button>
 
                     <a href="{{ route('login') }}"
-                        class="px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 border border-amber-500 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] font-amiri"
-                        :class="{'text-amber-600 hover:bg-amber-50': !darkMode, 'text-amber-400 hover:bg-amber-500/10': darkMode}">
+                        class="px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 border border-amber-500 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] font-amiri text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-500/10">
                         تسجيل الدخول
                     </a>
 
                     <!-- Mobile Menu Toggle -->
-                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-lg transition-colors"
-                        :class="{'hover:bg-gray-100 text-gray-900': !darkMode, 'hover:bg-gray-800 text-white': darkMode}">
+                    <button @click="mobileMenuOpen = !mobileMenuOpen"
+                        class="md:hidden p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-800 dark:text-white">
                         <i class="fas fa-bars text-xl" x-show="!mobileMenuOpen"></i>
                         <i class="fas fa-times text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
                     </button>
@@ -246,35 +261,29 @@
 
         <!-- Mobile Menu Dropdown -->
         <div x-show="mobileMenuOpen" style="display: none;"
-            class="md:hidden absolute top-20 left-0 w-full border-t shadow-2xl backdrop-blur-md transition-all duration-300"
-            :class="{'bg-white/95 border-gray-200': !darkMode, 'bg-dark/95 border-gray-800': darkMode}"
+            class="md:hidden absolute top-20 left-0 w-full border-t shadow-2xl backdrop-blur-md transition-all duration-300 bg-white/95 border-gray-200 dark:bg-dark/95 dark:border-gray-800"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-4"
             x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4">
             <div class="flex flex-col px-6 py-8 space-y-6 font-amiri border-b-4 border-amber-500">
                 <a href="#home" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
-                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>الرئيسية</span> <i class="fas fa-home text-sm opacity-50"></i>
                 </a>
                 <a href="#team" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
-                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>عن الفريق</span> <i class="fas fa-users text-sm opacity-50"></i>
                 </a>
                 <a href="#itclub" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
-                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>التعاون مع IT</span> <i class="fas fa-handshake text-sm opacity-50"></i>
                 </a>
                 <a href="#leadership" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
-                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>القيادة والإشراف</span> <i class="fas fa-user-tie text-sm opacity-50"></i>
                 </a>
                 <a href="#project" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors"
-                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>عن المشروع</span> <i class="fas fa-robot text-sm opacity-50"></i>
                 </a>
                 <hr class="border-gray-200 dark:border-gray-800 mb-2">
@@ -313,7 +322,7 @@
                 <!-- Quote -->
                 <div class="max-w-3xl mx-auto bg-black/30 backdrop-blur-sm p-6 rounded-2xl border-r-4 border-amber-500 mb-8 animate-slide-up font-amiri"
                     style="animation-delay: 0.4s"
-                    :class="{'bg-white/60 text-gray-900 shadow-lg': !darkMode, 'bg-black/40 text-gray-100': darkMode}">
+                    class="bg-white/60 text-gray-900 shadow-lg dark:bg-black/40 dark:text-gray-100">
                     <p class="text-xl md:text-3xl font-bold leading-relaxed">
                         "لو نفسك تشتغل على روبوت شبه بني آدم… بس مش أي روبوت 👀 <br>
                         روبوت بفكرة مختلفة تمامًا… الفكرة دي هتفهمها لما تنضم معانا في التيم 🤫🤖"
@@ -326,13 +335,12 @@
                     <button @click="statusModalOpen = true"
                         class="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-full font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(245,158,11,0.5)] font-amiri border-0 cursor-pointer">
                         <span class="relative z-10 flex items-center gap-3">
-                            استعلام عن حالة الطلب
+                            استعلام عن حالة طلب الانضمام
                             <i class="fas fa-search group-hover:rotate-12 transition-transform"></i>
                         </span>
                     </button>
                     <a href="#project"
-                        class="px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 glass"
-                        :class="{'border-gray-800 text-gray-800 hover:bg-gray-100': !darkMode, 'border-white/30 text-white hover:bg-white/10': darkMode}">
+                        class="px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 glass border-gray-800 text-gray-800 hover:bg-gray-100 dark:border-white/30 dark:text-white dark:hover:bg-white/10">
                         اكتشف المزيد
                     </a>
                 </div>
@@ -348,7 +356,7 @@
     </section>
 
     <!-- About Team Section -->
-    <section id="team" class="py-24 relative overflow-hidden" :class="{'bg-white': !darkMode, 'bg-dark': darkMode}">
+    <section id="team" class="py-24 relative overflow-hidden bg-white dark:bg-dark">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="text-center mb-16 font-amiri">
@@ -361,27 +369,25 @@
                 <!-- Text Content -->
                 <div class="space-y-6 text-right order-2 lg:order-1 font-amiri">
                     <h3 class="text-2xl font-bold text-amber-500">Generation Team</h3>
-                    <p class="text-lg leading-loose opacity-80"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                    <p class="text-lg leading-loose opacity-80 text-gray-700 dark:text-gray-300">
                         "نحن فريق Generation Team، مجموعة من الطلاب الشغوفين بالتكنولوجيا والابتكار.
                         هدفنا ليس مجرد بناء روبوت، بل خلق تجربة هندسية متكاملة تجمع بين التصميم الميكانيكي،
                         الأنظمة المدمجة، والذكاء الاصطناعي."
                     </p>
-                    <p class="text-lg leading-loose opacity-80"
-                        :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                    <p class="text-lg leading-loose opacity-80 text-gray-700 dark:text-gray-300">
                         نؤمن بأن العمل الجماعي هو سر النجاح، ونبحث دائمًا عن العقول المبدعة
                         لتكون جزءًا من رحلتنا نحو المستقبل.
                     </p>
 
                     <div class="grid grid-cols-2 gap-6 mt-8">
-                        <div class="p-4 rounded-xl border hover-card glass-panel"
-                            :class="{'bg-white border-amber-200': !darkMode, 'bg-ramadan-night border-amber-500/30': darkMode}">
+                        <div
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-ramadan-night dark:border-amber-500/30">
                             <i class="fas fa-users text-3xl text-amber-500 mb-3"></i>
                             <h4 class="font-bold text-xl text-ramadan-night dark:text-gray-200">عمل جماعي</h4>
                             <p class="text-sm opacity-70">بيئة تعاونية محفزة</p>
                         </div>
-                        <div class="p-4 rounded-xl border hover-card glass-panel"
-                            :class="{'bg-white border-amber-200': !darkMode, 'bg-ramadan-night border-amber-500/30': darkMode}">
+                        <div
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-ramadan-night dark:border-amber-500/30">
                             <i class="fas fa-lightbulb text-3xl text-amber-500 mb-3"></i>
                             <h4 class="font-bold text-xl text-ramadan-night dark:text-gray-200">ابتكار</h4>
                             <p class="text-sm opacity-70">أفكار خارج الصندوق</p>
@@ -406,8 +412,7 @@
     </section>
 
     <!-- IT Club Collaboration Section (Slider) -->
-    <section id="itclub" class="py-24 relative overflow-hidden select-none"
-        :class="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}" x-data="{ 
+    <section id="itclub" class="py-24 relative overflow-hidden select-none bg-gray-50 dark:bg-gray-900" x-data="{ 
             activeSlide: 1, 
             maxSlides: 2, 
             autoInterval: null, 
@@ -476,7 +481,7 @@
                                 class="relative w-full h-auto rounded-3xl overflow-hidden border-4 border-amber-500 shadow-[0_0_50px_rgba(251,191,36,0.2)] bg-[#1e293b]">
                                 <img src="{{ asset('assets/itclub/generation-team_x_itclub.png') }}"
                                     class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
-                                    alt="Generation Team x IT Club Collaboration">
+                                    alt="Generation Team x IT Club Collaboration" loading="lazy">
                             </div>
                             <div class="absolute -top-10 -left-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl">
                             </div>
@@ -489,8 +494,7 @@
                                 <h3 class="text-3xl font-bold text-amber-500 mb-2">Collaboration with IT Club</h3>
                             </div>
 
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
-                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Our collaboration with the IT Club at Borg El Arab Technological University has
                                     played a vital role in the success and development of the Generation Team project.
                                     The club provided continuous technical support, professional mentorship, and a
@@ -526,12 +530,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-blue-500 mb-2">About IT Club</h3>
-                                <p class="text-xl font-semibold opacity-90"
-                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Borg El Arab
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Borg El
+                                    Arab
                                     Technological University (BATU)</p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
-                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>The IT Club is a dynamic, student-led organization at Borg El Arab Technological
                                     University (BATU). It focuses on developing students’ technical skills, encouraging
                                     innovation, and building a strong technology community.</p>
@@ -580,8 +583,7 @@
             <!-- Navigation Controls -->
             <div class="flex items-center justify-center gap-6 mt-16 relative z-20" dir="ltr">
                 <button aria-label="Next slide" @click="next()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
-                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
                     <i class="fas fa-chevron-right"></i>
                 </button>
                 <div class="flex items-center gap-3">
@@ -593,8 +595,7 @@
                     </template>
                 </div>
                 <button aria-label="Previous slide" @click="prev()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
-                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
@@ -602,8 +603,7 @@
     </section>
 
     <!-- Leadership & Supervision Section (Slider) -->
-    <section id="leadership" class="py-24 relative overflow-hidden select-none"
-        :class="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}" x-data="{ 
+    <section id="leadership" class="py-24 relative overflow-hidden select-none bg-gray-50 dark:bg-gray-900" x-data="{ 
             activeSlide: 1, 
             maxSlides: 4, 
             autoInterval: null, 
@@ -683,12 +683,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-amber-500 mb-2">Omar Mehawed</h3>
-                                <p class="text-xl font-semibold opacity-90"
-                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Project Leader</p>
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Project
+                                    Leader</p>
                             </div>
 
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
-                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Omar Mehawed is an Information Technology student and Project Leader with a strong
                                     passion for software development, cybersecurity, and emerging technologies.</p>
                                 <p>He is an active Head of the IT Club in the PR department and has participated in
@@ -726,7 +725,7 @@
                                 class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-purple-500 shadow-[0_0_50px_rgba(168,85,247,0.2)]">
                                 <img src="{{ asset('assets/team_leaders_photos/Vice_Leader.jpeg') }}"
                                     class="w-full h-auto object-cover transform hover:scale-105 transition-transform duration-500"
-                                    alt="Jana Tarek - Vice Leader">
+                                    alt="Jana Tarek - Vice Leader" loading="lazy">
                             </div>
                             <div class="absolute -top-10 -left-10 w-40 h-40 bg-purple-500/10 rounded-full blur-3xl">
                             </div>
@@ -736,11 +735,10 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-purple-500 mb-2">Jana Tarek</h3>
-                                <p class="text-xl font-semibold opacity-90"
-                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Vice Leader</p>
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Vice Leader
+                                </p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
-                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Jana Tarek is the Vice Leader of the project, supporting team management,
                                     coordination, and internal operations. She plays a key role in organizing the
                                     workflow, ensuring smooth communication, and helping achieve the project goals
@@ -759,7 +757,7 @@
                                 class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)]">
                                 <img src="{{ asset('assets/team_leaders_photos/Eng.Mo7amed_elfayoumi.jpg') }}"
                                     class="w-full h-auto object-cover object-top transform hover:scale-105 transition-transform duration-500"
-                                    alt="Mohamed El-Fayoumi - Project Supervisor">
+                                    alt="Mohamed El-Fayoumi - Project Supervisor" loading="lazy">
                             </div>
                             <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
                             <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-cyan-500/10 rounded-full blur-3xl">
@@ -768,12 +766,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-blue-500 mb-2">Mohamed El-Fayoumi</h3>
-                                <p class="text-xl font-semibold opacity-90"
-                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Project Supervisor
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Project
+                                    Supervisor
                                 </p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
-                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Mohamed El-Fayoumi is a Mechatronics Engineering student with strong interests in
                                     autonomous vehicles and machine learning, aiming to become a Self-Driving Car
                                     Engineer. He has developed professional and leadership experience through his
@@ -802,7 +799,7 @@
                                 class="relative w-80 h-auto md:w-[400px] rounded-3xl overflow-hidden border-4 border-emerald-500 shadow-[0_0_50px_rgba(16,185,129,0.2)]">
                                 <img src="{{ asset('assets/team_leaders_photos/Osama_Eln7as.png') }}"
                                     class="w-full h-auto object-cover object-top transform hover:scale-105 transition-transform duration-500"
-                                    alt="Dr. Osama El-Nahhas - Academic Supervisor">
+                                    alt="Dr. Osama El-Nahhas - Academic Supervisor" loading="lazy">
                             </div>
                             <div class="absolute -top-10 -left-10 w-40 h-40 bg-emerald-500/10 rounded-full blur-3xl">
                             </div>
@@ -812,12 +809,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-emerald-500 mb-2">Dr. Osama El-Nahhas</h3>
-                                <p class="text-xl font-semibold opacity-90"
-                                    :class="{'text-gray-800': !darkMode, 'text-gray-200': darkMode}">Dean of the Faculty
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Dean of the
+                                    Faculty
                                     of Information Technology</p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80"
-                                :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Dr. Osama El-Nahhas is the Dean of the Faculty of Information Technology and provides
                                     academic supervision and official support for the project. His leadership ensures
                                     the project aligns with academic standards and institutional excellence.</p>
@@ -839,8 +835,7 @@
             <!-- Navigation Controls -->
             <div class="flex items-center justify-center gap-6 mt-16 relative z-20">
                 <button aria-label="Next slide" @click="next()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
-                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
                     <i class="fas fa-chevron-right"></i>
                 </button>
 
@@ -854,8 +849,7 @@
                 </div>
 
                 <button aria-label="Previous slide" @click="prev()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500"
-                    :class="{'border-gray-300 text-gray-600': !darkMode, 'border-gray-700 text-gray-400': darkMode}">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
@@ -864,14 +858,13 @@
     </section>
 
     <!-- About Project Section -->
-    <section id="project" class="py-24" :class="{'bg-gray-50': !darkMode, 'bg-gray-900': darkMode}">
+    <section id="project" class="py-24 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 font-amiri">
                 <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">عن <span
                         class="text-amber-500">المشروع</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
-                <p class="mt-6 text-xl max-w-2xl mx-auto opacity-80"
-                    :class="{'text-gray-700': !darkMode, 'text-gray-300': darkMode}">
+                <p class="mt-6 text-xl max-w-2xl mx-auto opacity-80 text-gray-700 dark:text-gray-300">
                     "إحنا شغالين على مشروع ضخم، ومحتاجين ناس جاهزة تتحرك بعد الميد تِرم مباشرة"
                 </p>
             </div>
@@ -956,8 +949,7 @@
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;">
 
             <div @click.away="statusModalOpen = false"
-                class="relative w-full max-w-md p-8 rounded-3xl border shadow-2xl transition-all duration-300"
-                :class="{'bg-white border-gray-200': !darkMode, 'bg-gray-900 border-gray-700': darkMode}"
+                class="relative w-full max-w-md p-8 rounded-3xl border shadow-2xl transition-all duration-300 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700"
                 x-transition:enter="transition ease-out duration-300 transform"
                 x-transition:enter-start="opacity-0 translate-y-8 scale-95"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -975,16 +967,14 @@
                         class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
                         <i class="fas fa-search text-2xl text-amber-500"></i>
                     </div>
-                    <h2 class="text-2xl font-bold mb-2 font-amiri"
-                        :class="{'text-gray-900': !darkMode, 'text-white': darkMode}">متابعة حالة الطلب</h2>
+                    <h2 class="text-2xl font-bold mb-2 font-amiri text-gray-900 dark:text-white">متابعة حالة الطلب</h2>
                     <p class="text-sm opacity-70">أدخل رقمك الأكاديمي للاستعلام عن حالة طلب الانضمام</p>
                 </div>
 
                 <div class="space-y-4">
                     <div>
                         <input type="text" x-model="academicId" placeholder="الرقم الأكاديمي"
-                            class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-tech text-center text-lg tracking-widest"
-                            :class="{'bg-gray-50 border-gray-200 text-gray-900': !darkMode, 'bg-gray-800 border-gray-700 text-white': darkMode}">
+                            class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-tech text-center text-lg tracking-widest bg-gray-50 border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
                     </div>
 
                     <button @click="checkStatus()" :disabled="isChecking || !academicId"
@@ -1018,8 +1008,8 @@
     </section>
 
     <!-- Footer -->
-    <footer class="py-8 text-center text-sm border-t"
-        :class="{'bg-white border-amber-100 text-gray-600': !darkMode, 'bg-dark border-gray-800 text-gray-400': darkMode}">
+    <footer
+        class="py-8 text-center text-sm border-t bg-white border-amber-100 text-gray-600 dark:bg-dark dark:border-gray-800 dark:text-gray-400">
         <p class="font-amiri">Copyright © 2026 <span class="text-amber-500 font-bold">Generation Team</span>. All rights
             reserved.</p>
     </footer>

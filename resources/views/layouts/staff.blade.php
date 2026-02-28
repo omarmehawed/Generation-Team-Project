@@ -36,17 +36,26 @@
 
         [data-theme="dark"] {
             /* Dark Mode (Refined Slate - Softer & High Contrast) */
-            --bg-main: #0f172a;       /* Slate 900 - Deep Blue-Grey */
-            --bg-header: rgba(15, 23, 42, 0.95); 
-            --bg-sidebar: #0f172a;    /* Slate 900 */
-            --text-main: #f8fafc;     /* Slate 50 - Bright White */
-            --text-muted: #94a3b8;    /* Slate 400 */
-            --primary: #06b6d4;       /* Cyan 500 */
-            --primary-hover: #0891b2; /* Cyan 600 */
-            --accent: #f59e0b;        /* Amber 500 - Gold/Yellow */
-            --border: #334155;        /* Slate 700 */
+            --bg-main: #0f172a;
+            /* Slate 900 - Deep Blue-Grey */
+            --bg-header: rgba(15, 23, 42, 0.95);
+            --bg-sidebar: #0f172a;
+            /* Slate 900 */
+            --text-main: #f8fafc;
+            /* Slate 50 - Bright White */
+            --text-muted: #94a3b8;
+            /* Slate 400 */
+            --primary: #06b6d4;
+            /* Cyan 500 */
+            --primary-hover: #0891b2;
+            /* Cyan 600 */
+            --accent: #f59e0b;
+            /* Amber 500 - Gold/Yellow */
+            --border: #334155;
+            /* Slate 700 */
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-            --glow: 0 0 15px rgba(245, 158, 11, 0.15); /* Subtle Amber Glow */
+            --glow: 0 0 15px rgba(245, 158, 11, 0.15);
+            /* Subtle Amber Glow */
             --grid-color: #334155;
         }
 
@@ -54,15 +63,41 @@
            🔥 Global Overrides for Legacy Views 🔥 
            Forces hardcoded Tailwind classes to adapt to Dark Mode
         */
-        [data-theme="dark"] .bg-white { background-color: #1e293b !important; color: var(--text-main) !important; border-color: var(--border) !important; }
-        [data-theme="dark"] .bg-gray-50, [data-theme="dark"] .bg-gray-100 { background-color: var(--bg-main) !important; }
-        [data-theme="dark"] .text-gray-900, [data-theme="dark"] .text-gray-800, [data-theme="dark"] .text-black { color: var(--text-main) !important; }
-        [data-theme="dark"] .text-gray-700, [data-theme="dark"] .text-gray-600, [data-theme="dark"] .text-gray-500 { color: var(--text-muted) !important; }
-        [data-theme="dark"] .border-gray-100, [data-theme="dark"] .border-gray-200, [data-theme="dark"] .border-gray-300 { border-color: var(--border) !important; }
-        [data-theme="dark"] input, [data-theme="dark"] select, [data-theme="dark"] textarea { 
-            background-color: var(--bg-main) !important; 
-            color: var(--text-main) !important; 
-            border-color: var(--border) !important; 
+        [data-theme="dark"] .bg-white {
+            background-color: #1e293b !important;
+            color: var(--text-main) !important;
+            border-color: var(--border) !important;
+        }
+
+        [data-theme="dark"] .bg-gray-50,
+        [data-theme="dark"] .bg-gray-100 {
+            background-color: var(--bg-main) !important;
+        }
+
+        [data-theme="dark"] .text-gray-900,
+        [data-theme="dark"] .text-gray-800,
+        [data-theme="dark"] .text-black {
+            color: var(--text-main) !important;
+        }
+
+        [data-theme="dark"] .text-gray-700,
+        [data-theme="dark"] .text-gray-600,
+        [data-theme="dark"] .text-gray-500 {
+            color: var(--text-muted) !important;
+        }
+
+        [data-theme="dark"] .border-gray-100,
+        [data-theme="dark"] .border-gray-200,
+        [data-theme="dark"] .border-gray-300 {
+            border-color: var(--border) !important;
+        }
+
+        [data-theme="dark"] input,
+        [data-theme="dark"] select,
+        [data-theme="dark"] textarea {
+            background-color: var(--bg-main) !important;
+            color: var(--text-main) !important;
+            border-color: var(--border) !important;
         }
 
         body {
@@ -70,11 +105,13 @@
             background-color: var(--bg-main);
             color: var(--text-main);
             transition: background-color 0.3s ease, color 0.3s ease;
-            overflow-x: hidden; /* Prevent horizontal scroll */
+            overflow-x: hidden;
+            /* Prevent horizontal scroll */
         }
 
         /* Responsive Images */
-        img, video {
+        img,
+        video {
             max-width: 100%;
             height: auto;
         }
@@ -153,6 +190,20 @@
 </head>
 
 <body class="antialiased" :data-theme="theme">
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                    document.body.setAttribute('data-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    document.body.setAttribute('data-theme', 'light');
+                }
+            } catch (e) { }
+        })();
+    </script>
     <x-ramadan-theme />
 
     <div class="min-h-screen flex flex-col" x-data="{ mobileMenuOpen: false }">
@@ -183,9 +234,8 @@
                     <span class="md:hidden text-xl">
                         GT <span style="color: var(--primary)">.</span>
                     </span>
-                    
-                    <span
-                        class="text-[10px] tracking-normal hidden md:block normal-case font-thin"
+
+                    <span class="text-[10px] tracking-normal hidden md:block normal-case font-thin"
                         style="color: var(--text-muted)">Admin Portal</span>
                 </h1>
             </div>
@@ -242,11 +292,14 @@
                                         </div>
                                         <div class="flex-1">
                                             <p class="text-sm font-bold" style="color: var(--text-main)">
-                                                {{ $notification->data['title'] }}</p>
+                                                {{ $notification->data['title'] }}
+                                            </p>
                                             <p class="text-xs mt-1 leading-relaxed" style="color: var(--text-muted)">
-                                                {{ $notification->data['body'] }}</p>
+                                                {{ $notification->data['body'] }}
+                                            </p>
                                             <p class="text-[10px] mt-2 opacity-70" style="color: var(--text-muted)">
-                                                {{ $notification->created_at->diffForHumans() }}</p>
+                                                {{ $notification->created_at->diffForHumans() }}
+                                            </p>
                                         </div>
                                     </div>
                                 </div>
@@ -264,7 +317,8 @@
                 <div class="hidden md:flex items-center gap-3 border-l pl-6" style="border-color: var(--border)">
                     <div class="text-right">
                         <p class="text-sm font-bold leading-tight font-tech" style="color: var(--text-main)">Leader
-                            {{ auth()->user()->name }}</p>
+                            {{ auth()->user()->name }}
+                        </p>
                         <p class="text-[9px] uppercase tracking-widest font-bold" style="color: var(--accent)">Team
                             Admin</p>
                     </div>
@@ -391,8 +445,8 @@
                         )
 
                         <div x-data="{
-                                userMgmtOpen: {{ request()->routeIs('admin.users*') || request()->routeIs('admin.activity_logs') || request()->routeIs('admin.teams.*') ? 'true' : 'false' }}
-                            }" class="mt-2">
+                                    userMgmtOpen: {{ request()->routeIs('admin.users*') || request()->routeIs('admin.activity_logs') || request()->routeIs('admin.teams.*') ? 'true' : 'false' }}
+                                }" class="mt-2">
 
                             <button @click="userMgmtOpen = !userMgmtOpen"
                                 class="flex items-center justify-between w-full px-4 py-3 rounded-xl transition-all hover:bg-opacity-10 group"
@@ -446,7 +500,7 @@
                     <div class="mt-auto px-4 space-y-2">
                         {{-- Mobile Profile Link (since hidden in header) --}}
                         <a href="{{ route('profile.show') }}"
-                           class="md:hidden flex items-center justify-center gap-2 text-gray-500 hover:bg-gray-500/10 font-bold text-sm w-full py-3 rounded-xl transition border border-transparent hover:border-gray-500/50">
+                            class="md:hidden flex items-center justify-center gap-2 text-gray-500 hover:bg-gray-500/10 font-bold text-sm w-full py-3 rounded-xl transition border border-transparent hover:border-gray-500/50">
                             <i class="fas fa-user-circle"></i>
                             <span>My Profile</span>
                         </a>
