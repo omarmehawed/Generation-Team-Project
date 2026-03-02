@@ -32,17 +32,18 @@ Route::get('/', [JoinRequestController::class, 'index'])->name('welcome');
 
 // Join Request Form Routes
 Route::get('/join', [JoinRequestController::class, 'create'])->name('join.create');
-Route::post('/join', [JoinRequestController::class, 'store'])->name('join.store');
-Route::get('/join/check-duplicate', [JoinRequestController::class, 'checkDuplicate'])->name('join.checkDuplicate');
-Route::post('/join/status', [JoinRequestController::class, 'checkStatus'])->name('join.status');
+Route::post('/join', [JoinRequestController::class, 'store'])->middleware('throttle:5,1')->name('join.store');
+Route::get('/join/check-duplicate', [JoinRequestController::class, 'checkDuplicate'])->middleware('throttle:10,1')->name('join.checkDuplicate');
+Route::post('/join/status', [JoinRequestController::class, 'checkStatus'])->middleware('throttle:10,1')->name('join.status');
 Route::get('/join/success', function () {
     return view('join_requests.success');
 })->name('join.success');
 
 // Google Login / OAuth Linking Routes
-Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback']);
-Route::post('/auth/google/unlink', [GoogleLoginController::class, 'unlinkGoogle'])->name('auth.google.unlink')->middleware('auth');
+Route::get('/auth/google', [GoogleLoginController::class, 'redirectToGoogle'])->middleware('throttle:10,1')->name('auth.google');
+Route::get('/auth/google/callback', [GoogleLoginController::class, 'handleGoogleCallback'])->middleware('throttle:10,1');
+Route::post('/auth/google/unlink', [GoogleLoginController::class, 'unlinkGoogle'])->name('auth.google.unlink')->middleware(['auth', 'throttle:10,1']);
+
 
 require __DIR__ . '/auth.php';
 
@@ -176,18 +177,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/submit-proposal', [FinalProjectController::class, 'submitProposal'])->name('final_project.submitProposal');
             Route::get('/final-project/proposal/view/{team_id}', [FinalProjectController::class, 'viewProposalFile'])
                 ->name('proposal.view_file');
-            // 🧪 راوت للتجربة فقط: تغيير حالة مشروع التخرج
-            Route::get('/test/approve-team/{id}/{status}', function ($id, $status) {
-                $team = Team::find($id);
-                if (!$team) return "تيم مش موجود";
-
-                $team->update([
-                    'proposal_status' => $status,
-                    'rejection_reason' => $status == 'rejected' ? 'Idea is not clear, please add more details about AI model.' : null
-                ]);
-
-                return redirect()->route('final_project.dashboard', $id)->with('success', "تم تغيير الحالة إلى: $status");
-            });
 
             Route::post('/final-project/update-member', [FinalProjectController::class, 'updateMemberStatus'])->name('final_project.updateMember');
 
@@ -204,22 +193,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/meetings/supervision', [FinalProjectController::class, 'requestSupervisionMeeting'])->name('final_project.requestSupervision');
             Route::post('/final-project/meetings/internal', [FinalProjectController::class, 'storeInternalMeeting'])->name('final_project.storeInternalMeeting');
             Route::post('/final-project/meetings/attendance', [FinalProjectController::class, 'markAttendance'])->name('final_project.markAttendance');
-            // 🧪 راوت للتجربة: الموافقة الفورية على أي ميتينج
-            Route::get('/test/approve-meeting/{id}', function ($id) {
-                Meeting::where('id', $id)->update(['status' => 'confirmed']);
-                return back()->with('success', 'Meeting Confirmed via Magic Link! 🪄');
-            });
 
             Route::post('/final-project/gallery/upload', [FinalProjectController::class, 'uploadGallery'])->name('final_project.uploadGallery');
             Route::post('/final-project/gallery/delete/{id}', [FinalProjectController::class, 'deleteGallery'])->name('final_project.deleteGallery');
 
             Route::post('/final-project/{id}/request-review', [FinalProjectController::class, 'requestPreDefense'])->name('final_project.request_review');
-
-            Route::get('/fix-project-status/{id}', function ($id) {
-                $project = Project::findOrFail($id);
-                $project->update(['status' => 'in_progress']);
-                return "تم إصلاح حالة المشروع رقم " . $id . " ورجع in_progress";
-            });
             Route::get('/phpinfo', function () {
                 return phpinfo();
             });
@@ -273,7 +251,7 @@ Route::middleware(['auth', 'role:admin,ta'])->prefix('staff')->group(function ()
         Route::get('/proposals', [StaffController::class, 'proposals'])->name('staff.proposals');
         Route::post('/proposals/{id}/decide', [StaffController::class, 'decideProposal'])->name('staff.proposals.decide');
         Route::get('/proposal/view/{team_id}', [FinalProjectController::class, 'viewProposalFile'])
-            ->name('proposal.view_file');
+            ->name('staff.proposal.view_file');
     });
 
 
@@ -402,20 +380,7 @@ Route::middleware(['auth', 'role:admin,ta'])->prefix('staff')->group(function ()
 
 
 
-// ده راوت مؤقت عشان ننقذ الموقف
-Route::get('/run-magic-seeder', function () {
-    try {
-        // 1. تشغيل الميجريشن عشان نتأكد إن الجداول موجودة
-        \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
 
-        // 2. تشغيل السيدر
-        \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
-
-        return '<h1>تم يا جيمي! الداتا نزلت بنجاح 🎉</h1>';
-    } catch (\Exception $e) {
-        return '<h1>حصل مشكلة: </h1>' . $e->getMessage();
-    }
-});
 
 
 

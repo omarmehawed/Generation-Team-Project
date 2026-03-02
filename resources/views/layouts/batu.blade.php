@@ -5,6 +5,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Generation Team - System</title>
+    <script>
+        (function () {
+            try {
+                var theme = localStorage.getItem('theme');
+                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+            } catch (e) { }
+        })();
+    </script>
     <link rel="icon" type="image/png" href="{{ asset('assets/gt_logo.jpg') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -36,7 +48,7 @@
             --grid-color: #e2e8f0;
         }
 
-        [data-theme="dark"] {
+        .dark {
             /* Dark Mode (Ramadan Night) */
             --bg-main: #0f172a;
             --bg-panel: #1e1b4b;
@@ -61,39 +73,39 @@
            🔥 Global Overrides for Legacy Views 🔥 
            Forces hardcoded Tailwind classes to adapt to Dark Mode
         */
-        [data-theme="dark"] .bg-white {
+        .dark .bg-white {
             background-color: var(--bg-panel) !important;
             color: var(--text-main) !important;
             border-color: var(--border) !important;
         }
 
-        [data-theme="dark"] .bg-gray-50,
-        [data-theme="dark"] .bg-gray-100 {
+        .dark .bg-gray-50,
+        .dark .bg-gray-100 {
             background-color: var(--bg-main) !important;
         }
 
-        [data-theme="dark"] .text-gray-900,
-        [data-theme="dark"] .text-gray-800,
-        [data-theme="dark"] .text-black {
+        .dark .text-gray-900,
+        .dark .text-gray-800,
+        .dark .text-black {
             color: var(--text-main) !important;
         }
 
-        [data-theme="dark"] .text-gray-700,
-        [data-theme="dark"] .text-gray-600,
-        [data-theme="dark"] .text-gray-500 {
+        .dark .text-gray-700,
+        .dark .text-gray-600,
+        .dark .text-gray-500 {
             color: var(--text-muted) !important;
         }
 
-        [data-theme="dark"] .border-gray-100,
-        [data-theme="dark"] .border-gray-200,
-        [data-theme="dark"] .border-gray-300 {
+        .dark .border-gray-100,
+        .dark .border-gray-200,
+        .dark .border-gray-300 {
             border-color: var(--border) !important;
         }
 
 
-        [data-theme="dark"] input,
-        [data-theme="dark"] select,
-        [data-theme="dark"] textarea {
+        .dark input,
+        .dark select,
+        .dark textarea {
             background-color: var(--bg-main) !important;
             color: var(--text-main) !important;
             border-color: var(--border) !important;
@@ -167,8 +179,7 @@
             transform: translateX(4px);
         }
 
-        /* Light mode specific hover fix */
-        :not([data-theme="dark"]) .sidebar-link:hover {
+        :not(.dark) .sidebar-link:hover {
             background-color: #fffbeb;
             /* Amber 50 */
             color: #b45309;
@@ -183,7 +194,7 @@
             box-shadow: var(--glow);
         }
 
-        :not([data-theme="dark"]) .sidebar-link.active {
+        :not(.dark) .sidebar-link.active {
             background: linear-gradient(90deg, #fffbeb 0%, transparent 100%);
             color: #b45309;
             border-left: 3px solid #d97706;
@@ -228,21 +239,7 @@
     </style>
 </head>
 
-<body class="antialiased" :data-theme="theme">
-    <script>
-        (function () {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                    document.body.setAttribute('data-theme', 'dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    document.body.setAttribute('data-theme', 'light');
-                }
-            } catch (e) { }
-        })();
-    </script>
+<body class="antialiased">
     <x-ramadan-theme />
 
     <!-- Header -->

@@ -23,6 +23,9 @@ return Application::configure(basePath: dirname(__DIR__))
         // 👇 ضيف السطر ده عشان يحل مشكلة الـ HTTPS على Railway
         $middleware->trustProxies(at: '*');
 
+        // Global Security Headers (HSTS, CSP, etc.)
+        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+
         // 👇 ضيف السطر ده عشان السيستم يفهم كلمة permission
         $middleware->alias([
             'permission' => \App\Http\Middleware\CheckPermission::class, // دلوقتي هيلاقيه صح

@@ -57,6 +57,10 @@ class GoogleLoginController extends Controller
 
     public function unlinkGoogle(Request $request)
     {
+        $request->validate([
+            'password' => ['required', 'current_password'],
+        ]);
+
         /** @var \App\Models\User $user */
         $user = Auth::user();
 

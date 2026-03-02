@@ -168,7 +168,7 @@
                                 <td class="px-8 py-6">
                                     @if ($team->proposal_file)
                                         {{-- 🔥 التعديل هنا: استخدام الراوت المباشر بدلاً من asset --}}
-                                        <a href="{{ route('proposal.view_file', $team->id) }}" target="_blank"
+                                        <a href="{{ route('staff.proposal.view_file', $team->id) }}" target="_blank"
                                             class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-red-100 text-red-600 rounded-xl text-xs font-black hover:bg-red-50 hover:shadow-md hover:shadow-red-500/10 transition-all active:scale-95">
                                             <i class="fas fa-file-pdf text-lg"></i>
                                             <span>VIEW PROPOSAL</span>

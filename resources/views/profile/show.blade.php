@@ -137,9 +137,17 @@
                                             <span class="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 text-[10px] font-bold px-3 py-1 rounded-full border border-green-200 dark:border-green-500/30 whitespace-nowrap self-start sm:self-center shadow-sm">Connected</span>
                                         </div>
                                         
-                                        <form action="{{ route('auth.google.unlink') }}" method="POST" class="w-full m-0" onsubmit="return confirm('Are you sure you want to unlink your Google account? You will no longer be able to log in with it.');">
+                                        <form action="{{ route('auth.google.unlink') }}" method="POST" class="w-full m-0">
                                             @csrf
-                                            <button type="submit" class="w-full flex justify-center items-center gap-2 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                                            <div class="mb-3">
+                                                <input type="password" name="password" placeholder="Confirm password to unlink" required
+                                                    class="w-full text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-red-500 focus:border-red-500 transition-colors">
+                                                @error('password', 'googleUnlink')
+                                                    <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p>
+                                                @enderror
+                                            </div>
+                                            <button type="submit" onclick="return confirm('Are you sure you want to unlink your Google account? You will no longer be able to log in with it.');"
+                                                class="w-full flex justify-center items-center gap-2 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
                                                 <i class="fas fa-unlink"></i> Unlink Account
                                             </button>
                                         </form>
