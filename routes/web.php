@@ -107,20 +107,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ]);
     })->name('notifications.check');
 
-    Route::post('/notifications/mark-read', function () {
-        if (Auth::check()) {
-            Auth::user()->unreadNotifications->markAsRead();
+    Route::post('/notifications/mark-read', function (\Illuminate\Http\Request $request) {
+        $user = Auth::user();
+        if (!$user) return response()->json(['success' => false], 401);
+
+        if ($request->has('notification_id')) {
+            // Mark a single notification as read
+            $user->notifications()
+                ->where('id', $request->notification_id)
+                ->whereNull('read_at')
+                ->update(['read_at' => now()]);
+        } else {
+            // Mark all unread as read
+            $user->unreadNotifications->markAsRead();
         }
         return response()->json(['success' => true]);
     })->name('notifications.markAsRead');
-
-    Route::get('/notifications/read-all', function () {
-        $user = Auth::user();
-        if ($user) {
-            $user->unreadNotifications->markAsRead();
-        }
-        return back();
-    })->name('notifications.readAll');
 
     // 6. تسليم المشروع النهائي
     Route::post('/teams/submit', [TeamController::class, 'submitProject'])->name('teams.submit');
@@ -181,6 +183,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/update-member', [FinalProjectController::class, 'updateMemberStatus'])->name('final_project.updateMember');
 
             Route::post('/final-project/expenses', [FinalProjectController::class, 'storeExpense'])->name('final_project.storeExpense');
+            Route::post('/final-project/components', [FinalProjectController::class, 'storeComponent'])->name('final_project.storeComponent');
 
             Route::post('/final-project/funds/create', [FinalProjectController::class, 'storeFund'])->name('final_project.storeFund');
             Route::post('/final-project/funds/submit', [FinalProjectController::class, 'submitPayment'])->name('final_project.submitPayment');

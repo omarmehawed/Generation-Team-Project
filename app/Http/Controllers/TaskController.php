@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use App\Models\TeamMember;
 use App\Notifications\BatuNotification;
+use App\Services\TeamNotifier;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 use App\Services\ActivityLogger;
@@ -78,16 +79,16 @@ class TaskController extends Controller
             $projectUrl = route('projects.show', $team->project->id);
         }
 
-        // إرسال النوتيفيكيشن
+        // إرسال النوتيفيكيشن للشخص المُكلَّف فقط
         $assignedUser = \App\Models\User::find($request->user_id);
         if ($assignedUser) {
             $assignedUser->notify(new \App\Notifications\BatuNotification([
-                'title'   => 'New Task Assigned 📌',
-                'body'    => 'You have a new task: ' . $request->title . ' in ' . $team->project->name,
-                'icon'    => 'fas fa-thumbtack',
-                'color'   => 'text-red-500',
-                'url'     => $projectUrl,
-                'type'    => 'info'
+                'title'      => '📌 New Task Assigned',
+                'message'    => Auth::user()->name . ' assigned you a task: "' . $request->title . '"',
+                'icon'       => 'fas fa-thumbtack',
+                'color'      => 'text-orange-500',
+                'action_url' => route('final_project.dashboard', $team->id) . '#tasks-section',
+                'type'       => 'info'
             ]));
 
             // 🔍 LOG ACTIVITY
@@ -185,6 +186,16 @@ class TaskController extends Controller
                 properties: ['type' => $request->submission_type]
             );
 
+            // Notify leaders when task is submitted
+            TeamNotifier::notifyLeaders($task->team_id, [
+                'title'      => '📤 Task Submitted for Review',
+                'message'    => Auth::user()->name . ' submitted task: "' . $task->title . '" — waiting for your approval.',
+                'icon'       => 'fas fa-paper-plane',
+                'color'      => 'text-blue-500',
+                'action_url' => (isset($team) ? route('final_project.dashboard', $task->team_id) : '#') . '#tasks-section',
+                'type'       => 'info'
+            ], [Auth::id()]); // exclude the submitter
+
             if ($task->deadline && now()->gt($task->deadline)) {
                 return back()->with('warning', 'Task submitted successfully, but it is marked as LATE because the deadline has passed. 🕒');
             }
@@ -220,6 +231,19 @@ class TaskController extends Controller
             'graded_by' => \Illuminate\Support\Facades\Auth::id() // بنسجل مين اللي قبلها
         ]);
 
+        // Notify the task owner that their work was approved
+        $taskOwner = \App\Models\User::find($task->user_id);
+        if ($taskOwner) {
+            $taskOwner->notify(new BatuNotification([
+                'title'      => '✅ Task Approved',
+                'message'    => 'Your task "' . $task->title . '" was approved by ' . Auth::user()->name . '.',
+                'icon'       => 'fas fa-check-circle',
+                'color'      => 'text-green-500',
+                'action_url' => route('final_project.dashboard', $task->team_id) . '#tasks-section',
+                'type'       => 'success'
+            ]));
+        }
+
         // 🔍 LOG ACTIVITY
         ActivityLogger::log(
             action: 'task_approved',
@@ -253,6 +277,19 @@ class TaskController extends Controller
             'graded_at' => now(),
             'graded_by' => \Illuminate\Support\Facades\Auth::id()
         ]);
+
+        // Notify the task owner that their work was rejected
+        $taskOwner = \App\Models\User::find($task->user_id);
+        if ($taskOwner) {
+            $taskOwner->notify(new BatuNotification([
+                'title'      => '❌ Task Rejected',
+                'message'    => 'Your task "' . $task->title . '" was rejected by ' . Auth::user()->name . '. Please revise and resubmit.',
+                'icon'       => 'fas fa-times-circle',
+                'color'      => 'text-red-500',
+                'action_url' => route('final_project.dashboard', $task->team_id) . '#tasks-section',
+                'type'       => 'warning'
+            ]));
+        }
 
         // 🔍 LOG ACTIVITY
         ActivityLogger::log(

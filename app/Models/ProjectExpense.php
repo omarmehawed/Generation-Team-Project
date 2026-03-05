@@ -6,13 +6,19 @@ use Illuminate\Database\Eloquent\Model;
 
 class ProjectExpense extends Model
 {
-    protected $fillable =
-    ['team_id', 'item_name', 'quantity', 'price', 'receipt_image', 'buyer_name'];
+    protected $fillable = [
+        'team_id', 'item_name', 'quantity', 'price', 'receipt_image', 'buyer_name',
+        'component_id', 'price_per_unit',
+    ];
 
     public function contributions()
     {
-        // Adjust class name if your model is named differently (e.g., FundContribution)
         return $this->hasMany(\App\Models\ExpenseContribution::class);
+    }
+
+    public function component()
+    {
+        return $this->belongsTo(ProjectComponent::class);
     }
     // علاقة التيم
     public function team()

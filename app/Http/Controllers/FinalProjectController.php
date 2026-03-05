@@ -13,6 +13,7 @@ use Illuminate\Support\Str;
 use App\Models\ProjectFund;
 use Illuminate\Support\Facades\DB;
 use App\Notifications\BatuNotification;
+use App\Services\TeamNotifier;
 use App\Models\User;
 use Illuminate\Support\Facades\Http;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as Pdf;
@@ -315,6 +316,9 @@ class FinalProjectController extends Controller
                                 ->get();
         }
 
+        // 5. Project Components
+        $components = \App\Models\ProjectComponent::where('team_id', $team->id)->latest()->get();
+
         return view('final_project.dashboard', compact(
             'team',
             'project',
@@ -322,7 +326,8 @@ class FinalProjectController extends Controller
             'fundsHistory',
             'membersDebts',
             'myRole',
-            'pendingMembers' // Passed to view
+            'pendingMembers',
+            'components'
         ));
     }
 
@@ -756,57 +761,130 @@ class FinalProjectController extends Controller
     public function storeExpense(Request $request)
     {
         $request->validate([
-            'team_id' => 'required|exists:teams,id',
-            'item' => 'required|string|max:255',
-            'shop_name' => 'required|string|max:255', // اسم المحل
-            'amount' => 'required|numeric|min:1',
-            'receipt' => 'nullable|image|max:5120' // صورة الوصل (اختياري) بحد أقصى 5MB
+            'team_id'        => 'required|exists:teams,id',
+            'component_id'   => 'required|exists:project_components,id',
+            'shop_name'      => 'required|string|max:255',
+            'price_per_unit' => 'required|numeric|min:0.01',
+            'quantity'       => 'required|integer|min:1',
+            'receipt'        => 'nullable|image|max:5120',
         ]);
 
         $team = Team::findOrFail($request->team_id);
 
-        // حماية: التأكد إن الطالب في التيم
-        if (!$team->members->contains('user_id', Auth::id())) {
-            return back()->with('error', 'Unauthorized.');
+        // Leader-only check
+        $myRecord = $team->members->where('user_id', Auth::id())->first();
+        if (!$myRecord || $myRecord->role !== 'leader') {
+            return back()->with('error', 'Only the Leader can add expenses.');
         }
 
-        // رفع صورة الوصل لو موجودة
+        $component = \App\Models\ProjectComponent::where('id', $request->component_id)
+            ->where('team_id', $team->id)
+            ->firstOrFail();
+
+        $quantity      = (int) $request->quantity;
+        $pricePerUnit  = (float) $request->price_per_unit;
+        $totalAmount   = $pricePerUnit * $quantity;
+
+        // Upload receipt image if provided
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
             $receiptPath = Cloudinary::uploadApi()->upload($request->file('receipt')->getRealPath(), [
-                'folder' => 'receipts',
+                'folder'        => 'receipts',
                 'resource_type' => 'image'
             ])['secure_url'];
         }
 
-        // الحفظ في الداتابيز
         DB::table('project_expenses')->insert([
-            'team_id' => $request->team_id,
-            'user_id' => Auth::id(),
-            'item' => $request->item,
-            'shop_name' => $request->shop_name, // حفظنا اسم المحل
-            'amount' => $request->amount,
-            'receipt_path' => $receiptPath, // حفظنا مسار الصورة
-            'created_at' => now(),
-            'updated_at' => now(),
+            'team_id'        => $request->team_id,
+            'user_id'        => Auth::id(),
+            'component_id'   => $component->id,
+            'item'           => $component->name,
+            'shop_name'      => $request->shop_name,
+            'price_per_unit' => $pricePerUnit,
+            'quantity'       => $quantity,
+            'amount'         => $totalAmount,
+            'receipt_path'   => $receiptPath,
+            'created_at'     => now(),
+            'updated_at'     => now(),
         ]);
-
-        // storeExpense بعد الحفظ
-
-        // نجيب كل أعضاء التيم ما عدا
-        $members = $team->members()->where('user_id', '!=', Auth::id())->get();
 
         // 🔍 LOG ACTIVITY
         ActivityLogger::log(
             action: 'expense_added',
-            description: "Added expense: {$request->item} ({$request->amount} EGP)",
+            description: "Added expense: {$component->name} x{$quantity} ({$totalAmount} EGP)",
             subject: $team,
             teamId: $team->id,
             targetUserId: null,
-            properties: ['amount' => $request->amount, 'shop' => $request->shop_name]
+            properties: ['amount' => $totalAmount, 'shop' => $request->shop_name, 'qty' => $quantity]
         );
 
+        // 🔔 Notify ALL team members
+        TeamNotifier::notifyAll($team, [
+            'title'      => '💸 New Expense Added',
+            'message'    => Auth::user()->name . ' recorded an expense: "' . $component->name . '" × ' . $quantity . ' = ' . number_format($totalAmount, 2) . ' EGP from ' . $request->shop_name,
+            'icon'       => 'fas fa-receipt',
+            'color'      => 'text-red-500',
+            'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+            'type'       => 'info'
+        ], [Auth::id()]); // don't notify the actor
+
         return back()->with('success', 'Expense recorded successfully! 💸');
+    }
+
+    // ==========================================
+    // 11b. إضافة عنصر مكون (Add Project Component)
+    // ==========================================
+    public function storeComponent(Request $request)
+    {
+        $request->validate([
+            'team_id'     => 'required|exists:teams,id',
+            'name'        => 'required|string|max:255',
+            'description' => 'required|string',
+            'image'       => 'nullable|image|max:5120',
+        ]);
+
+        $team = Team::findOrFail($request->team_id);
+
+        // Leader-only
+        $myRecord = $team->members->where('user_id', Auth::id())->first();
+        if (!$myRecord || $myRecord->role !== 'leader') {
+            return back()->with('error', 'Only the Leader can add components.');
+        }
+
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = Cloudinary::uploadApi()->upload($request->file('image')->getRealPath(), [
+                'folder'        => 'project_components',
+                'resource_type' => 'image'
+            ])['secure_url'];
+        }
+
+        \App\Models\ProjectComponent::create([
+            'team_id'     => $team->id,
+            'name'        => $request->name,
+            'description' => $request->description,
+            'image_path'  => $imagePath,
+        ]);
+
+        ActivityLogger::log(
+            action: 'component_added',
+            description: "Added project component: {$request->name}",
+            subject: $team,
+            teamId: $team->id,
+            targetUserId: null
+        );
+
+        // 🔔 Notify ALL team members
+        TeamNotifier::notifyAll($team, [
+            'title'      => '🔩 New Component Added',
+            'message'    => Auth::user()->name . ' added a new component: "' . $request->name . '" — ' . \Illuminate\Support\Str::limit($request->description, 80),
+            'icon'       => 'fas fa-microchip',
+            'color'      => 'text-blue-500',
+            'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+            'type'       => 'info'
+        ], [Auth::id()]);
+
+        return back()->with('success', 'Component added successfully! 🔩');
     }
     // ==========================================
     // 12. إنشاء طلب تمويل (Create Fund Request)
@@ -838,6 +916,17 @@ class FinalProjectController extends Controller
                 'status' => 'pending'
             ]);
         }
+
+        // 🔔 Notify ALL team members about the fund request
+        $deadline = \Carbon\Carbon::parse($request->deadline)->format('M d, Y');
+        TeamNotifier::notifyAll($team, [
+            'title'      => '💰 New Fund Collection Started',
+            'message'    => 'Leader ' . Auth::user()->name . ' started a fund collection: "' . $request->title . '" — ' . number_format($request->amount_per_member, 2) . ' EGP per member. Deadline: ' . $deadline,
+            'icon'       => 'fas fa-hand-holding-usd',
+            'color'      => 'text-green-600',
+            'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+            'type'       => 'warning'
+        ], [Auth::id()]);
 
         return back()->with('success', 'Funding round started! Members notified to pay.');
     }
@@ -908,12 +997,12 @@ class FinalProjectController extends Controller
         // Notify Leader
         if ($leader) {
              $leader->notify(new BatuNotification([
-                'title' => 'Payment Submitted 💸',
-                'body' => Auth::user()->name . ' submitted a payment request.',
-                'icon' => 'fas fa-file-invoice-dollar',
-                'color' => 'text-yellow-500',
-                'url' => route('final_project.dashboard', $team->id),
-                'type' => 'info'
+                'title'      => '💸 Payment Submitted for Review',
+                'message'    => Auth::user()->name . ' submitted a payment for "' . $contrib->fund->title . '" (' . $request->payment_method . '). Please review.',
+                'icon'       => 'fas fa-file-invoice-dollar',
+                'color'      => 'text-yellow-500',
+                'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+                'type'       => 'info'
             ]));
         }
 
@@ -949,12 +1038,12 @@ class FinalProjectController extends Controller
 
             // Notify Member (Success)
             $user->notify(new BatuNotification([
-                'title' => 'Payment Approved ✅',
-                'body' => 'Your payment for ' . $contrib->fund->title . ' has been confirmed.',
-                'icon' => 'fas fa-check-circle',
-                'color' => 'text-green-500',
-                'url' => route('final_project.dashboard', $team->id),
-                'type' => 'success'
+                'title'      => '✅ Payment Approved',
+                'message'    => 'Your payment for "' . $contrib->fund->title . '" has been confirmed by the Leader. Thank you!',
+                'icon'       => 'fas fa-check-circle',
+                'color'      => 'text-green-500',
+                'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+                'type'       => 'success'
             ]));
 
             return back()->with('success', 'Payment approved successfully.');
@@ -967,12 +1056,12 @@ class FinalProjectController extends Controller
 
             // Notify Member (Rejected)
             $user->notify(new BatuNotification([
-                'title' => 'Payment Rejected ❌',
-                'body' => 'Reason: ' . $request->rejection_reason,
-                'icon' => 'fas fa-times-circle',
-                'color' => 'text-red-500',
-                'url' => route('final_project.dashboard', $team->id),
-                'type' => 'alert'
+                'title'      => '❌ Payment Rejected',
+                'message'    => 'Your payment for "' . $contrib->fund->title . '" was rejected. Reason: ' . $request->rejection_reason,
+                'icon'       => 'fas fa-times-circle',
+                'color'      => 'text-red-500',
+                'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+                'type'       => 'alert'
             ]));
 
             return back()->with('success', 'Payment rejected.');
@@ -1054,21 +1143,29 @@ class FinalProjectController extends Controller
             'updated_at' => now(),
         ]);
 
-        // ... جوه دالة storeReport في الآخر
-
-        // نجيب المشرف (TA) بتاع التيم
+        // Notify the TA (Teaching Assistant)
         $ta = User::find(Team::find($request->team_id)->ta_id);
-
         if ($ta) {
             $ta->notify(new BatuNotification([
-                'title'   => 'Weekly Report 📊',
-                'body'    => 'Week ' . $request->week_number . ' report submitted.',
-                'icon'    => 'fas fa-calendar-check',
-                'color'   => 'text-blue-500',
-                'url'     => route('staff.team.manage', $request->team_id), // لينك صفحة التيم عند المعيد
-                'type'    => 'info'
+                'title'      => '📊 Weekly Report Submitted',
+                'message'    => $user->name . ' submitted Week ' . $request->week_number . ' report for team ' . (Team::find($request->team_id)->project->name ?? 'Team') . '.',
+                'icon'       => 'fas fa-calendar-check',
+                'color'      => 'text-blue-500',
+                'action_url' => route('staff.team.manage', $request->team_id),
+                'type'       => 'info'
             ]));
         }
+
+        // 🔔 Notify ALL team members about the new report
+        $teamObj = Team::find($request->team_id);
+        TeamNotifier::notifyAll($teamObj, [
+            'title'      => '📋 New Weekly Report Submitted',
+            'message'    => $user->name . ' submitted the Week ' . $request->week_number . ' report. Check the progress update.',
+            'icon'       => 'fas fa-file-alt',
+            'color'      => 'text-indigo-500',
+            'action_url' => route('final_project.dashboard', $request->team_id) . '#reports-section',
+            'type'       => 'info'
+        ], [$user->id]); // don't notify the submitter
 
         return back()->with('success', 'Weekly Report submitted successfully 📝');
     }

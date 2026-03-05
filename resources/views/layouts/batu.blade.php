@@ -236,6 +236,27 @@
         .ui-card:hover {
             border-color: var(--primary);
         }
+
+        /* Notification highlight pulse (30s on scroll-to) */
+        @keyframes notifHighlightPulse {
+
+            0%,
+            100% {
+                background-color: transparent;
+                box-shadow: none;
+            }
+
+            40% {
+                background-color: rgba(250, 204, 21, 0.22);
+                box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.12);
+            }
+        }
+
+        .notif-highlight {
+            animation: notifHighlightPulse 2s ease-in-out infinite;
+            border-radius: 1.25rem;
+            transition: background-color 1s ease;
+        }
     </style>
 </head>
 
@@ -296,7 +317,7 @@
                         </a>
                     @endif
 
-                    <!-- Notifications -->
+                    {{-- Notifications Bell --}}
                     <div class="relative ml-auto" x-data="{ open: false }">
                         <button @click="open = !open" class="relative group p-2">
                             <i class="fas fa-bell text-xl hover:text-[var(--primary)] transition-colors"
@@ -315,36 +336,53 @@
 
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute right-0 mt-4 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100 dark:border-gray-700">
+                            {{-- Header --}}
                             <div
                                 class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
                                 <span
                                     class="text-xs font-bold uppercase tracking-wider text-gray-500">Notifications</span>
                                 @if(auth()->user()->unreadNotifications->count() > 0)
-                                    <form action="{{ route('notifications.markAsRead') }}" method="POST">
-                                        @csrf
-                                        <button type="submit"
-                                            class="text-[10px] text-blue-500 font-bold hover:underline">Mark
-                                            all read</button>
-                                    </form>
+                                    <button id="mark-all-read-btn" onclick="markAllNotifRead()"
+                                        class="text-[10px] text-blue-500 font-bold hover:underline">
+                                        Mark all read
+                                    </button>
                                 @endif
                             </div>
-                            <div class="max-h-80 overflow-y-auto custom-scroll">
-                                @forelse(auth()->user()->unreadNotifications as $notification)
-                                    <a href="{{ $notification->data['action_url'] ?? '#' }}"
-                                        class="block p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
+
+                            {{-- Notification List --}}
+                            <div class="max-h-80 overflow-y-auto custom-scroll" id="notif-list">
+                                @forelse(auth()->user()->notifications->take(25) as $notification)
+                                    @php
+                                        $isRead = !is_null($notification->read_at);
+                                        $url = $notification->data['action_url'] ?? ($notification->data['url'] ?? '#');
+                                        $title = $notification->data['title'] ?? 'Notification';
+                                        $message = $notification->data['message'] ?? ($notification->data['body'] ?? '');
+                                        $icon = $notification->data['icon'] ?? 'fas fa-bell';
+                                    @endphp
+                                    <a href="#" onclick="handleNotifClick(event, '{{ $notification->id }}', '{{ $url }}')"
+                                        class="block p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors {{ $isRead ? 'opacity-60' : '' }}"
+                                        id="notif-{{ $notification->id }}">
                                         <div class="flex gap-3">
                                             <div
-                                                class="w-8 h-8 rounded-full bg-blue-100 text-blue-500 flex items-center justify-center flex-shrink-0">
-                                                <i class="{{ $notification->data['icon'] ?? 'fas fa-bell' }} text-sm"></i>
+                                                class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
+                                                        {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
+                                                <i class="{{ $icon }} text-sm"></i>
                                             </div>
-                                            <div>
-                                                <p class="text-sm font-bold default-text-color">
-                                                    {{ $notification->data['title'] ?? 'New Notification' }}
-                                                </p>
-                                                <p class="text-xs text-gray-500 mt-1 line-clamp-2">
-                                                    {{ $notification->data['message'] ?? '' }}
-                                                </p>
-                                                <p class="text-[10px] text-gray-400 mt-2">
+                                            <div class="flex-1 min-w-0">
+                                                <div class="flex items-start justify-between gap-1">
+                                                    <p
+                                                        class="text-sm font-bold text-gray-800 dark:text-gray-100 leading-tight">
+                                                        {{ $title }}
+                                                    </p>
+                                                    @if(!$isRead)
+                                                        <span
+                                                            class="flex-shrink-0 w-2 h-2 rounded-full bg-blue-500 mt-1"></span>
+                                                    @endif
+                                                </div>
+                                                @if($message)
+                                                    <p class="text-xs text-gray-500 mt-0.5 line-clamp-2">{{ $message }}</p>
+                                                @endif
+                                                <p class="text-[10px] text-gray-400 mt-1">
                                                     {{ $notification->created_at->diffForHumans() }}
                                                 </p>
                                             </div>
@@ -353,7 +391,7 @@
                                 @empty
                                     <div class="p-8 text-center text-gray-400">
                                         <i class="far fa-bell-slash mb-2 text-lg"></i>
-                                        <p class="text-sm">No new notifications</p>
+                                        <p class="text-sm">No notifications yet</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -536,6 +574,98 @@
         @if($errors->any())
             Toast.fire({ icon: 'warning', title: '{{ $errors->first() }}', iconColor: '#facc15' });
         @endif
+    </script>
+
+    {{-- ============================================================== --}}
+    {{-- 🔔 Notification JS: mark-all (AJAX), click-redirect, highlight --}}
+    {{-- ============================================================== --}}
+    <script>
+        const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content
+            || '{{ csrf_token() }}';
+
+        /**
+         * Mark ALL unread notifications via AJAX (fixes the print-page bug).
+         */
+        function markAllNotifRead() {
+            fetch('{{ route("notifications.markAsRead") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({})
+            })
+                .then(r => r.json())
+                .then(data => {
+                    if (data.success) {
+                        // Dim all notification rows and remove unread dots
+                        document.querySelectorAll('#notif-list a').forEach(el => el.classList.add('opacity-60'));
+                        document.querySelectorAll('#notif-list .bg-blue-500.rounded-full').forEach(dot => dot.remove());
+                        document.querySelectorAll('#notif-list .bg-blue-100').forEach(ic => {
+                            ic.classList.replace('bg-blue-100', 'bg-gray-100');
+                            ic.classList.replace('text-blue-500', 'text-gray-400');
+                        });
+
+                        // Hide the mark-all button
+                        const btn = document.getElementById('mark-all-read-btn');
+                        if (btn) btn.remove();
+                    }
+                })
+                .catch(console.error);
+        }
+
+        /**
+         * Handle single notification click:
+         *  1. Mark that specific notification as read (AJAX)
+         *  2. Navigate to action_url (which may include a #hash)
+         */
+        function handleNotifClick(event, notifId, url) {
+            event.preventDefault();
+
+            fetch('{{ route("notifications.markAsRead") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': CSRF_TOKEN,
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({ notification_id: notifId })
+            })
+                .then(r => r.json())
+                .then(() => {
+                    // Navigate to the target URL (may contain #anchor)
+                    if (url && url !== '#') {
+                        window.location.href = url;
+                    }
+                })
+                .catch(() => {
+                    // Fallback: navigate anyway
+                    if (url && url !== '#') window.location.href = url;
+                });
+        }
+
+        /**
+         * On page load: check URL hash → scroll to element → apply 30-second highlight.
+         */
+        (function applyNotifHighlight() {
+            const hash = window.location.hash; // e.g. "#budget-section"
+            if (!hash) return;
+
+            // Small delay so page content has rendered
+            setTimeout(function () {
+                const el = document.querySelector(hash);
+                if (!el) return;
+
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                el.classList.add('notif-highlight');
+
+                // Remove highlight after 30 seconds
+                setTimeout(function () {
+                    el.classList.remove('notif-highlight');
+                }, 30000);
+            }, 400);
+        })();
     </script>
 </body>
 

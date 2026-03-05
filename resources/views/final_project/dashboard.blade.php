@@ -1474,7 +1474,7 @@
             </div>
 
             {{-- 2. لوحة المهام المقسمة (Split Tasks Board) --}}
-            <div x-data="{ expanded: false }"
+            <div id="tasks-section" x-data="{ expanded: false }"
                 class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift relative mt-10">
                 <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition-colors">
                     <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
@@ -1608,19 +1608,71 @@
                 </div> {{-- End Collapsible Body --}}
             </div>
             {{-- 3. قسم الميزانية والتمويل (Split View) --}}
-            <div x-data="{ expandedParent: false }" class="mt-12">
+            <div id="budget-section" x-data="{ expandedParent: false }" class="mt-12">
                 {{-- العنوان الرئيسي للقسم --}}
                 <div @click="expandedParent = !expandedParent" class="flex items-center gap-3 mb-6 cursor-pointer group w-max">
                     <div class="p-3 bg-green-100 rounded-xl text-green-600 shadow-sm group-hover:scale-110 transition-transform"><i
                             class="fas fa-wallet text-xl"></i>
                     </div>
                     <h3 class="text-2xl font-black text-gray-800 flex items-center gap-2">
-                        Expenses & Budget
+                        Expenses &amp; Budget
                         <i class="fas fa-chevron-down text-lg text-gray-400 transition-transform duration-300 ml-2 group-hover:text-gray-600" :class="expandedParent ? 'rotate-180' : ''"></i>
                     </h3>
                 </div>
-                <div x-show="expandedParent" x-transition.opacity.duration.300ms style="display: none;" class="grid grid-cols-1 xl:grid-cols-2 gap-8 mt-10">
-                    {{-- 🟢 الجزء الأول: المصروفات (Expenses - Outgoing) --}}
+                <div x-show="expandedParent" x-transition.opacity.duration.300ms style="display: none;" class="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-10">
+
+                    {{-- ⚙️ الجزء الأول: المكونات (Components) --}}
+                    <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-blue-100 shadow-xl overflow-hidden hover-lift flex flex-col">
+                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-blue-50/40 cursor-pointer hover:bg-blue-50 transition-colors">
+                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                                <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm"><i class="fas fa-microchip"></i></div>
+                                Components
+                                <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                            </h3>
+                            @if ($myRole == 'leader')
+                                <button @click.stop onclick="openModal('addComponentModal')"
+                                    class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold shadow-md transition flex items-center gap-1">
+                                    <i class="fas fa-plus"></i> Add Component
+                                </button>
+                            @endif
+                        </div>
+
+                        <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
+                        <div class="p-6">
+                            @if ($components->count() > 0)
+                                <div class="space-y-4 overflow-y-auto max-h-80 custom-scroll">
+                                    @foreach ($components as $comp)
+                                        <div class="flex items-start gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition">
+                                            {{-- Component Image --}}
+                                            @if ($comp->image_path)
+                                                <img src="{{ $comp->image_path }}" alt="{{ $comp->name }}"
+                                                    class="w-14 h-14 rounded-xl object-cover border border-gray-200 flex-shrink-0">
+                                            @else
+                                                <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center border border-blue-200 flex-shrink-0">
+                                                    <i class="fas fa-microchip text-blue-400 text-xl"></i>
+                                                </div>
+                                            @endif
+                                            <div class="min-w-0">
+                                                <p class="font-bold text-gray-800 text-sm truncate">{{ $comp->name }}</p>
+                                                <p class="text-[11px] text-gray-500 leading-relaxed mt-0.5">{{ Str::limit($comp->description, 80) }}</p>
+                                            </div>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @else
+                                <div class="text-center py-10 border-2 border-dashed border-blue-100 rounded-2xl bg-blue-50/20">
+                                    <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <i class="fas fa-microchip text-blue-300 text-2xl"></i>
+                                    </div>
+                                    <p class="text-sm font-bold text-gray-600">No components yet</p>
+                                    <p class="text-xs text-gray-400 mt-1">Add the hardware/software components your project needs.</p>
+                                </div>
+                            @endif
+                        </div>
+                        </div> {{-- End Components Collapsible Area --}}
+                    </div>
+
+                    {{-- 🟢 الجزء الثاني: المصروفات (Expenses - Outgoing) --}}
                     <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift flex flex-col">
                         <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
                             <h3 class="font-bold text-gray-800 flex items-center gap-2">
@@ -1629,10 +1681,12 @@
                                 Expenses
                                 <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                             </h3>
-                            <button @click.stop onclick="openModal('addExpenseModal')"
-                                class="text-xs btn-gold px-4 py-2 rounded-xl font-bold shadow-md"><i
-                                    class="fas fa-plus"></i>
-                                Add Item</button>
+                            @if ($myRole == 'leader')
+                                <button @click.stop onclick="openModal('addExpenseModal')"
+                                    class="text-xs btn-gold px-4 py-2 rounded-xl font-bold shadow-md"><i
+                                        class="fas fa-plus"></i>
+                                    Add Item</button>
+                            @endif
                         </div>
 
                         <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
@@ -1653,24 +1707,18 @@
                                             <tr>
                                                 <td class="py-3 px-2">
                                                     <div class="flex items-center gap-3">
-                                                        {{-- التأكد إن المسار موجود --}}
                                                         @if ($expense->receipt_path)
-                                                            {{-- ✅ التعديل هنا: استخدام الرابط المباشر كلاوديناري --}}
                                                             <a href="{{ $expense->receipt_path }}"
                                                                 target="_blank"
                                                                 class="group relative block w-10 h-10 rounded-lg overflow-hidden border border-gray-200 hover:border-blue-400 transition">
-
-                                                                {{-- ✅ التعديل هنا: استخدام نفس الراوت لعرض الصورة المصغرة --}}
                                                                 <img src="{{ $expense->receipt_path }}"
                                                                     alt="Receipt"
                                                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
-
                                                                 <div
                                                                     class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition">
                                                                 </div>
                                                             </a>
                                                         @else
-                                                            {{-- لو مفيش صورة --}}
                                                             <div
                                                                 class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-300 border border-gray-100">
                                                                 <i class="fas fa-receipt text-xs"></i>
@@ -1681,8 +1729,12 @@
                                                             <p class="font-bold text-gray-800">
                                                                 {{ $expense->item ?? $expense->item_name }}
                                                             </p>
-                                                            <p class="text-[10px] text-gray-400">{{ $expense->shop_name }}
-                                                            </p>
+                                                            <p class="text-[10px] text-gray-400">{{ $expense->shop_name }}</p>
+                                                            @if (isset($expense->quantity) && $expense->quantity > 1)
+                                                                <p class="text-[10px] text-blue-400">
+                                                                    {{ number_format($expense->price_per_unit) }} EGP × {{ $expense->quantity }}
+                                                                </p>
+                                                            @endif
                                                         </div>
                                                     </div>
                                                 </td>
@@ -1703,7 +1755,7 @@
                         </div>
                         </div> {{-- End Expenses Collapsible Area --}}
                     </div>
-                    {{-- 🟡 الجزء الثاني: التمويل واللمّ (Funds Collection) --}}
+                    {{-- 🟡 الجزء الثالث: التمويل واللمّ (Funds Collection) --}}
                     <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-yellow-100 shadow-xl overflow-hidden hover-lift flex flex-col">
                         <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-[#FFF8E1]/50 cursor-pointer hover:bg-yellow-50 transition-colors">
                             <h3 class="font-bold text-gray-800 flex items-center gap-2">
@@ -1901,6 +1953,7 @@
                 </div> {{-- End Expenses & Budget Expanded Parent --}}
             </div>
 
+
             {{-- 4. معرض المشروع (Project Showroom) --}}
             <div x-data="{ expanded: false }" class="mt-12 mb-20">
                 <div @click="expanded = !expanded" class="flex items-center justify-between mb-6 cursor-pointer group">
@@ -2076,7 +2129,7 @@
             {{-- الحاوية الرئيسية للـ Grid --}}
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 items-start">
                 {{-- العمود الأول: قسم التقارير الأسبوعية --}}
-                <div x-data="{ expanded: false }"
+                <div id="reports-section" x-data="{ expanded: false }"
                     class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift transition-all flex flex-col">
                     <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
                         <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
@@ -2435,6 +2488,205 @@
         @endif
     </div>
 
+
+    {{-- ========================================== --}}
+    {{-- 🔩 مودال إضافة مكون (Add Component Modal) --}}
+    {{-- ========================================== --}}
+    <div id="addComponentModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"
+                onclick="closeModal('addComponentModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                {{-- Header --}}
+                <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-microchip text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-white font-bold text-lg">Add Component</h3>
+                    </div>
+                    <button onclick="closeModal('addComponentModal')" class="text-white/70 hover:text-white transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form action="{{ route('final_project.storeComponent') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                    @csrf
+                    <input type="hidden" name="team_id" value="{{ $team->id }}">
+
+                    {{-- Component Name --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Component Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="name" required
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition"
+                            placeholder="e.g. Arduino Uno, Raspberry Pi, LCD Screen...">
+                    </div>
+
+                    {{-- Description --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Description <span class="text-red-500">*</span></label>
+                        <textarea name="description" required rows="3"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition resize-none"
+                            placeholder="How will this component help in the project?"></textarea>
+                    </div>
+
+                    {{-- Component Image --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Component Image <span class="text-gray-400">(optional)</span></label>
+                        <div class="relative border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition cursor-pointer" onclick="document.getElementById('comp_image_input').click()">
+                            <i class="fas fa-image text-gray-300 text-2xl mb-1"></i>
+                            <p class="text-xs text-gray-400" id="comp_image_label">Click to upload image</p>
+                            <input type="file" id="comp_image_input" name="image" accept="image/*" class="hidden"
+                                onchange="document.getElementById('comp_image_label').innerText = this.files[0]?.name || 'Click to upload image'">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="closeModal('addComponentModal')"
+                            class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit"
+                            class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">
+                            <i class="fas fa-check mr-1"></i> Accept
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ========================================== --}}
+    {{-- 💸 مودال إضافة مصروف (Add Expense Modal) --}}
+    {{-- ========================================== --}}
+    <div id="addExpenseModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"
+                onclick="closeModal('addExpenseModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                {{-- Header --}}
+                <div class="bg-gradient-to-r from-red-500 to-rose-500 px-6 py-4 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-shopping-cart text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-white font-bold text-lg">Add Expense</h3>
+                    </div>
+                    <button onclick="closeModal('addExpenseModal')" class="text-white/70 hover:text-white transition">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                </div>
+
+                <form action="{{ route('final_project.storeExpense') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                    @csrf
+                    <input type="hidden" name="team_id" value="{{ $team->id }}">
+
+                    {{-- Select Component --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Select Component <span class="text-red-500">*</span></label>
+                        @if ($components->count() > 0)
+                            <select name="component_id" id="expense_component_select" required
+                                onchange="expenseUpdateTotal()"
+                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white">
+                                <option value="">-- Choose a component --</option>
+                                @foreach ($components as $comp)
+                                    <option value="{{ $comp->id }}">{{ $comp->name }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-sm text-yellow-700 font-bold">
+                                <i class="fas fa-exclamation-triangle mr-1"></i>
+                                No components added yet. Please add components first from the Components card.
+                            </div>
+                            {{-- Disable submit if no components --}}
+                            <script>
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const form = document.querySelector('#addExpenseModal form');
+                                    if (form) {
+                                        const submitBtn = form.querySelector('button[type="submit"]');
+                                        if (submitBtn) submitBtn.disabled = true;
+                                    }
+                                });
+                            </script>
+                        @endif
+                    </div>
+
+                    {{-- Unit Price --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Unit Price (EGP) <span class="text-red-500">*</span></label>
+                        <input type="number" name="price_per_unit" id="expense_unit_price" required min="0.01" step="0.01"
+                            oninput="expenseUpdateTotal()"
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition"
+                            placeholder="e.g. 200">
+                    </div>
+
+                    {{-- Quantity +/- Control --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Quantity <span class="text-red-500">*</span></label>
+                        <div class="flex items-center gap-3">
+                            <button type="button" onclick="expenseChangeQty(-1)"
+                                class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-black text-xl flex items-center justify-center transition select-none">−</button>
+                            <input type="number" name="quantity" id="expense_qty" value="1" min="1" readonly
+                                class="w-20 text-center border border-gray-200 rounded-xl py-2 text-base font-bold text-gray-800 focus:outline-none">
+                            <button type="button" onclick="expenseChangeQty(1)"
+                                class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-black text-xl flex items-center justify-center transition select-none">+</button>
+                            {{-- Auto-calculated total --}}
+                            <div class="flex-1 bg-red-50 border border-red-100 rounded-xl px-4 py-2 text-right">
+                                <p class="text-[10px] text-red-400 font-bold uppercase">Total</p>
+                                <p class="text-lg font-black text-red-600" id="expense_total_display">0 EGP</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- Store Name --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Store Name <span class="text-red-500">*</span></label>
+                        <input type="text" name="shop_name" required
+                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition"
+                            placeholder="e.g. Maadi Electronics, Amazon...">
+                    </div>
+
+                    {{-- Receipt Image --}}
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Receipt Image <span class="text-gray-400">(optional)</span></label>
+                        <div class="relative border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-red-300 transition cursor-pointer" onclick="document.getElementById('expense_receipt_input').click()">
+                            <i class="fas fa-receipt text-gray-300 text-2xl mb-1"></i>
+                            <p class="text-xs text-gray-400" id="expense_receipt_label">Click to upload receipt</p>
+                            <input type="file" id="expense_receipt_input" name="receipt" accept="image/*" class="hidden"
+                                onchange="document.getElementById('expense_receipt_label').innerText = this.files[0]?.name || 'Click to upload receipt'">
+                        </div>
+                    </div>
+
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="closeModal('addExpenseModal')"
+                            class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit"
+                            class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">
+                            <i class="fas fa-check mr-1"></i> Save Expense
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function expenseChangeQty(delta) {
+            const qtyInput = document.getElementById('expense_qty');
+            let val = parseInt(qtyInput.value) || 1;
+            val = Math.max(1, val + delta);
+            qtyInput.value = val;
+            expenseUpdateTotal();
+        }
+
+        function expenseUpdateTotal() {
+            const price = parseFloat(document.getElementById('expense_unit_price')?.value) || 0;
+            const qty   = parseInt(document.getElementById('expense_qty')?.value) || 1;
+            const total = price * qty;
+            const display = document.getElementById('expense_total_display');
+            if (display) display.innerText = total.toLocaleString('en-EG') + ' EGP';
+        }
+    </script>
 
     {{-- ========================================== --}}
     {{-- 🛑 مودال تقديم الدفع (Payment Submission Modal) --}}
