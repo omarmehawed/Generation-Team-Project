@@ -29,8 +29,7 @@
                     Team: {{ $team->name }}
                     @php $myRoleInTeam = $team->members->where('user_id', $user->id)->first()?->role; @endphp
                     | Role: <span class="font-bold">
-                        @if($myRoleInTeam === 'leader') Leader (Group A)
-                        @elseif($myRoleInTeam === 'leader_b') Leader (Group B)
+                        @if($myRoleInTeam === 'leader') Leader
                         @elseif($myRoleInTeam === 'vice_leader') Vice Leader
                         @else Member @endif
                     </span>

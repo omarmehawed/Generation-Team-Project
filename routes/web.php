@@ -124,6 +124,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return response()->json(['success' => true]);
     })->name('notifications.markAsRead');
 
+    Route::get('/notifications/read-all', function () {
+        $user = Auth::user();
+        if ($user) {
+            $user->unreadNotifications->markAsRead();
+        }
+        return back();
+    })->name('notifications.readAll');
+
     // 6. تسليم المشروع النهائي
     Route::post('/teams/submit', [TeamController::class, 'submitProject'])->name('teams.submit');
 

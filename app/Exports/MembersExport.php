@@ -10,26 +10,17 @@ use Maatwebsite\Excel\Concerns\WithMapping;
 class MembersExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $columns;
-    protected $groupId;
     protected $teamId;
 
-    public function __construct(array $columns, $groupId, $teamId)
+    public function __construct(array $columns, $teamId)
     {
         $this->columns = $columns;
-        $this->groupId = $groupId;
         $this->teamId = $teamId;
     }
 
     public function collection()
     {
         $query = TeamMember::with('user')->where('team_id', $this->teamId);
-
-        if ($this->groupId === 'A') {
-            $query->where('is_group_a', true);
-        } elseif ($this->groupId === 'B') {
-            $query->where('is_group_b', true);
-        }
-
         return $query->get();
     }
 
