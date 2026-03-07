@@ -365,7 +365,7 @@
                                         <div class="flex gap-3">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                                                        {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
+                                                                    {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
                                                 <i class="{{ $icon }} text-sm"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
@@ -499,7 +499,19 @@
                             class="inline-flex items-center justify-center px-2 ms-auto text-[10px] font-bold text-white rounded shadow-lg animate-pulse"
                             style="background: linear-gradient(45deg, #ef4444, #f87171);">LIVE</span>
                     </a>
-                </li>
+                    @if(auth()->check() && \App\Models\TeamMember::where('user_id', auth()->id())->value('role') === 'leader')
+                        <li>
+                            <a href="{{ route('posters.index') }}"
+                                class="sidebar-link {{ request()->routeIs('posters.*') ? 'active' : '' }}">
+                                <i class="fas fa-images text-yellow-500"></i>
+                                <span>Posters</span>
+                                <span
+                                    class="inline-flex items-center justify-center px-1.5 py-0.5 ms-2 text-[10px] font-bold text-yellow-800 bg-yellow-100 rounded border border-yellow-200">CMS</span>
+                            </a>
+                        </li>
+                    @endif
+
+
             </ul>
 
             <ul class="pb-4">

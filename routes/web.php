@@ -132,10 +132,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return back();
     })->name('notifications.readAll');
 
-    // 6. تسليم المشروع النهائي
-    Route::post('/teams/submit', [TeamController::class, 'submitProject'])->name('teams.submit');
-
-    //Final project:
+    // Poster Management (Leader Only)
+    Route::middleware(['auth', 'verified'])->group(function () {
+        Route::post('/posters/update-order', [\App\Http\Controllers\PosterController::class, 'updateOrder'])->name('posters.update_order');
+        Route::get('/posters/{poster}/layout', [\App\Http\Controllers\PosterController::class, 'editLayout'])->name('posters.edit_layout');
+        Route::post('/posters/{poster}/layout', [\App\Http\Controllers\PosterController::class, 'updateLayout'])->name('posters.update_layout');
+        Route::resource('posters', \App\Http\Controllers\PosterController::class)->except(['show']);
+    });
     Route::middleware(['auth', 'verified'])->group(function () {
         // 1. زرار البداية
         Route::get('/final-project/start', [FinalProjectController::class, 'start'])->name('final_project.start');

@@ -349,6 +349,173 @@
         </div>
     </section>
 
+    <!-- Custom Posters Section (Leader Managed) -->
+    @php
+        $posters = \App\Models\Poster::orderBy('order')->get();
+    @endphp
+
+    @if($posters->count() > 0)
+        <section id="custom-posters" class="py-16 relative overflow-hidden bg-white dark:bg-dark">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+                @foreach($posters as $poster)
+                    <?php
+                        $settings = $poster->layout_settings ?? [];
+                        $cardWidth = $settings['card_width'] ?? 12;
+
+                        $sizeClass = match($poster->image_size) {
+                            'small' => 'w-full md:w-1/3 mx-auto',
+                            'medium' => 'w-full md:w-1/2 mx-auto',
+                            'large' => 'w-full md:w-3/4 mx-auto',
+                            default => 'w-full',
+                        };
+                        
+                        // Image styles
+                        $imgScale = isset($settings['image_scale']) ? $settings['image_scale'] / 100 : 1;
+                        $imgX = $settings['image_x'] ?? 0;
+                        $imgY = $settings['image_y'] ?? 0;
+                        $imgStyle = "transform: translate({$imgX}px, {$imgY}px) scale({$imgScale});";
+                        
+                        $frameClasses = !empty($settings['has_frame']) 
+                            ? 'border-8 border-amber-500 shadow-[0_0_50px_rgba(251,191,36,0.3)] rounded-xl' 
+                            : '';
+
+                        // Text styles
+                        $txtScale = isset($settings['text_scale']) ? $settings['text_scale'] / 100 : 1;
+                        $txtX = $settings['text_x'] ?? 0;
+                        $txtY = $settings['text_y'] ?? 0;
+                        $txtStyle = "transform: translate({$txtX}px, {$txtY}px) scale({$txtScale});";
+                    ?>
+                    
+                    <div class="md:col-span-{{ $cardWidth }} col-span-1 relative w-full rounded-3xl overflow-hidden border border-[var(--border)] shadow-xl group">
+
+                        @if($poster->template_type === 'slider')
+                            <!-- Slider Template -->
+                            <div class="p-8 text-center" style="background-color: var(--bg-panel)">
+                                <div style="{{ $txtStyle }}">
+                                    <h2 class="text-3xl md:text-5xl font-bold font-amiri mb-4" style="color: {{ $poster->text_color }}">
+                                        {{ $poster->title }}</h2>
+                                    @if($poster->description)
+                                        <p class="text-lg opacity-90 font-amiri max-w-4xl mx-auto" style="color: {{ $poster->text_color }}">
+                                            {{ $poster->description }}</p>
+                                    @endif
+                                </div>
+                            </div>
+                            
+                            @if(!empty($poster->images))
+                            <div class="relative w-full overflow-hidden" x-data="{ activeSlide: 0, slides: {{ count($poster->images) }} }" x-init="setInterval(() => { activeSlide = activeSlide === slides - 1 ? 0 : activeSlide + 1 }, 4000)">
+                                <div class="flex transition-transform duration-500 ease-out" :style="`transform: translateX(${activeSlide * 100}%)`" dir="ltr">
+                                    @foreach($poster->images as $img)
+                                        <div class="w-full shrink-0 p-4 relative z-0">
+                                            <img src="{{ asset('storage/' . $img) }}" class="{{ $sizeClass }} {{ $frameClasses }} h-auto max-h-[70vh] object-cover block mx-auto" style="{{ $imgStyle }}" loading="lazy" alt="Slider Image">
+                                        </div>
+                                    @endforeach
+                                </div>
+                                <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2 z-20">
+                                    <template x-for="i in slides" :key="i">
+                                        <button @click="activeSlide = i - 1" class="w-3 h-3 rounded-full transition-colors focus:outline-none shadow-sm" :class="activeSlide === i - 1 ? 'bg-amber-500' : 'bg-white/50 border border-gray-400'"></button>
+                                    </template>
+                                </div>
+                            </div>
+                            @endif
+
+                        @elseif($poster->template_type === 'profile_card')
+                            <!-- Profile Card Template -->
+                            <div class="p-8 text-center flex flex-col items-center" style="background-color: var(--bg-panel)">
+                                @if($poster->image_path)
+                                <div class="mb-6 relative z-0">
+                                    <img src="{{ asset('storage/' . $poster->image_path) }}" class="w-40 h-40 md:w-56 md:h-56 rounded-full border-4 border-amber-500 shadow-2xl mx-auto object-cover block"
+                                        style="{{ $imgStyle }}" alt="{{ $poster->title }}" loading="lazy">
+                                </div>
+                                @endif
+                                
+                                <div style="{{ $txtStyle }}" class="w-full relative z-10">
+                                    <h2 class="text-3xl md:text-4xl font-bold font-amiri mb-2" style="color: {{ $poster->text_color }}">
+                                        {{ $poster->title }}</h2>
+                                    @if($poster->description)
+                                        <p class="text-base md:text-lg opacity-90 font-amiri max-w-xl mx-auto mb-8" style="color: {{ $poster->text_color }}">
+                                            {{ $poster->description }}</p>
+                                    @endif
+                                </div>
+                                
+                                <!-- Links Repeater -->
+                                @if(!empty($poster->links))
+                                    <div class="flex justify-center flex-wrap gap-6 mt-2 relative z-10 w-full">
+                                        @foreach($poster->links as $link)
+                                            <a href="{{ $link['url'] ?? '#' }}" target="_blank" rel="noopener noreferrer" class="flex flex-col items-center gap-3 group/link">
+                                                <div class="w-14 h-14 rounded-full bg-[var(--bg-main)] flex items-center justify-center text-2xl text-[var(--primary)] group-hover/link:-translate-y-2 transition-transform border border-[var(--border)] group-hover/link:border-[var(--primary)] group-hover/link:shadow-lg shadow-sm">
+                                                    <i class="{{ $link['icon'] ?? 'fas fa-link' }}"></i>
+                                                </div>
+                                                <span class="text-sm font-bold text-[var(--text-muted)] group-hover/link:text-[var(--primary)] transition-colors">{{ $link['platform'] ?? 'Link' }}</span>
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                            </div>
+
+                        @else
+                            <!-- Standard Poster -->
+                            <!-- Text Above -->
+                            @if($poster->text_position === 'above')
+                                <div class="p-8 text-center" style="background-color: var(--bg-panel)">
+                                    <div style="{{ $txtStyle }}">
+                                        <h2 class="text-3xl md:text-5xl font-bold font-amiri mb-4" style="color: {{ $poster->text_color }}">
+                                            {{ $poster->title }}</h2>
+                                        @if($poster->description)
+                                            <p class="text-lg opacity-90 font-amiri max-w-4xl mx-auto" style="color: {{ $poster->text_color }}">
+                                                {{ $poster->description }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                                <!-- Image -->
+                                <div class="overflow-hidden p-4 relative z-0">
+                                    <img src="{{ asset('storage/' . $poster->image_path) }}" class="{{ $sizeClass }} {{ $frameClasses }} h-auto max-h-[70vh] object-cover block mx-auto"
+                                        style="{{ $imgStyle }}" alt="{{ $poster->title }}" loading="lazy">
+                                </div>
+
+                            <!-- Overlay Option -->
+                            @elseif($poster->text_position === 'overlay')
+                                <div class="relative {{ $sizeClass }} h-[60vh] md:h-[80vh] overflow-hidden rounded-3xl mx-auto z-0">
+                                    <img src="{{ asset('storage/' . $poster->image_path) }}"
+                                        class="absolute inset-0 w-full h-full object-cover {{ $frameClasses }}" 
+                                        style="{{ $imgStyle }}" alt="{{ $poster->title }}" loading="lazy">
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-8 md:p-16 text-center pointer-events-none z-10">
+                                        <div style="{{ $txtStyle }}">
+                                            <h2 class="text-4xl md:text-6xl font-black font-amiri mb-4 drop-shadow-lg"
+                                                style="color: {{ $poster->text_color }}">{{ $poster->title }}</h2>
+                                            @if($poster->description)
+                                                <p class="text-xl md:text-2xl font-amiri max-w-4xl mx-auto drop-shadow-md"
+                                                    style="color: {{ $poster->text_color }}">{{ $poster->description }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </div>
+
+                            <!-- Text Below -->
+                            @elseif($poster->text_position === 'below')
+                                <!-- Image -->
+                                <div class="overflow-hidden p-4 relative z-0">
+                                    <img src="{{ asset('storage/' . $poster->image_path) }}" class="{{ $sizeClass }} {{ $frameClasses }} h-auto max-h-[70vh] object-cover block mx-auto"
+                                        style="{{ $imgStyle }}" alt="{{ $poster->title }}" loading="lazy">
+                                </div>
+                                <div class="p-8 text-center z-10 relative" style="background-color: var(--bg-panel)">
+                                    <div style="{{ $txtStyle }}">
+                                        <h2 class="text-3xl md:text-5xl font-bold font-amiri mb-4" style="color: {{ $poster->text_color }}">
+                                            {{ $poster->title }}</h2>
+                                        @if($poster->description)
+                                            <p class="text-lg opacity-90 font-amiri max-w-4xl mx-auto" style="color: {{ $poster->text_color }}">
+                                                {{ $poster->description }}</p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endif
+                            
+                        @endif
+                    </div>
+                @endforeach
+            </div>
+        </section>
+    @endif
+
     <!-- About Team Section -->
     <section id="team" class="py-24 relative overflow-hidden bg-white dark:bg-dark">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
