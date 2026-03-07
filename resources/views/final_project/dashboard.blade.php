@@ -2890,6 +2890,7 @@
     function openAttendanceModal(id, topic) {
         document.getElementById('attendanceMeetingId').value = id;
         document.getElementById('attendanceMeetingTopic').innerText = topic;
+        window.dispatchEvent(new CustomEvent('load-attendees', { detail: '' }));
         openModal('markAttendanceModal');
     }
 

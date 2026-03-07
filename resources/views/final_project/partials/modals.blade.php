@@ -1271,10 +1271,16 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         aria-modal="true">
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('markAttendanceModal')"></div>
-            <div class="modal-content !max-w-md">
+            <div class="modal-content !max-w-xl" x-data="attendanceManager()"
+                @load-attendees.window="loadExisting($event)">
                 <form action="{{ route('final_project.markAttendance') }}" method="POST">
                     @csrf
                     <input type="hidden" name="meeting_id" id="attendanceMeetingId">
+
+                    <!-- Hidden inputs for form submission -->
+                    <template x-for="member in selectedAttendees" :key="member.id">
+                        <input type="hidden" name="attendees[]" :value="member.id">
+                    </template>
 
                     <div class="bg-gray-900 px-8 py-5 border-b border-gray-800 rounded-t-[1.3rem]">
                         <h3 class="text-lg font-black text-white">Mark Attendance 📝</h3>
@@ -1282,32 +1288,83 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             PRESENT.</p>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 max-h-60 overflow-y-auto custom-scroll">
-                        <div class="space-y-2">
-                            @if (isset($team) && $team)
-                                @foreach ($team->members as $member)
-                                    <label
-                                        class="flex items-center p-3 border rounded-xl hover:bg-gray-50 cursor-pointer transition select-none group">
-                                        <input type="checkbox" name="attendees[]" value="{{ $member->user_id }}"
-                                            class="w-5 h-5 text-green-600 rounded focus:ring-green-500 cursor-pointer">
-                                        <div class="ml-3 flex items-center gap-3">
-                                            <img src="https://ui-avatars.com/api/?name={{ $member->user->name }}"
-                                                class="w-8 h-8 rounded-full border group-hover:scale-110 transition shadow-sm">
-                                            <span class="text-sm font-bold text-gray-700">{{ $member->user->name }}</span>
-                                        </div>
-                                    </label>
-                                @endforeach
-                            @else
-                                <p class="text-center text-gray-400 text-xs">No members found.</p>
-                            @endif
+                    <div class="bg-white px-8 pt-6 pb-6 min-h-[300px] flex flex-col">
+
+                        <!-- Selected Attendees List -->
+                        <div class="mb-4">
+                            <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Selected Attendees
+                                (<span x-text="selectedAttendees.length"></span>)</p>
+                            <div class="flex flex-wrap gap-2">
+                                <template x-for="member in selectedAttendees" :key="member.id">
+                                    <div
+                                        class="flex items-center gap-2 bg-green-50 border border-green-200 text-green-800 px-3 py-1.5 rounded-full text-sm font-medium shadow-sm transition-all animate-fade-in-up">
+                                        <img :src="member.avatar" class="w-5 h-5 rounded-full border border-green-300">
+                                        <span x-text="member.name"></span>
+                                        <button type="button" @click="removeMember(member.id)"
+                                            class="text-green-600 hover:text-red-500 focus:outline-none ml-1">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </div>
+                                </template>
+                                <div x-show="selectedAttendees.length === 0" class="text-sm text-gray-400 italic mt-1">
+                                    No one selected yet.
+                                </div>
+                            </div>
                         </div>
+
+                        <!-- Dropdown Search -->
+                        <div class="relative mt-auto" @click.away="isOpen = false">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Search & Add Attendee</label>
+                            <div class="relative items-center">
+                                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                <input type="text" x-ref="searchInput" x-model="searchQuery" @focus="isOpen = true"
+                                    @input="isOpen = true" placeholder="Type name or academic ID..."
+                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 outline-none bg-gray-50 focus:bg-white transition-colors">
+                            </div>
+
+                            <!-- Results Box (Drops UP) -->
+                            <div x-show="isOpen && searchQuery.length > 0" x-transition
+                                class="absolute left-0 right-0 bottom-full mb-2 z-10 bg-white border border-gray-200 rounded-xl shadow-[0_-5px_15px_rgba(0,0,0,0.1)] max-h-60 overflow-y-auto custom-scroll">
+
+                                <template x-if="filteredMembers.length > 0">
+                                    <ul class="py-1">
+                                        <template x-for="member in filteredMembers" :key="member.id">
+                                            <li>
+                                                <button type="button" @click.prevent="selectMember(member)"
+                                                    class="w-full text-left px-4 py-2 hover:bg-green-50 focus:bg-green-50 transition-colors flex items-center justify-between group outline-none">
+                                                    <div class="flex items-center gap-3">
+                                                        <img :src="member.avatar"
+                                                            class="w-8 h-8 rounded-full border group-hover:border-green-300">
+                                                        <div class="flex flex-col">
+                                                            <span
+                                                                class="text-sm font-bold text-gray-700 group-hover:text-green-800 transition-colors"
+                                                                x-text="member.name"></span>
+                                                            <span class="text-[10px] text-gray-400 font-mono"
+                                                                x-text="member.academic || 'No ID'"></span>
+                                                        </div>
+                                                    </div>
+                                                    <i
+                                                        class="fas fa-plus text-green-500 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                                                </button>
+                                            </li>
+                                        </template>
+                                    </ul>
+                                </template>
+                                <template x-if="filteredMembers.length === 0">
+                                    <div class="px-4 py-3 text-sm text-gray-500 text-center">
+                                        No matching names or IDs found.
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-4 flex justify-end gap-2 border-t border-gray-100">
+                    <div class="bg-gray-50 px-8 py-4 flex justify-end gap-2 border-t border-gray-100 mt-auto">
                         <button type="submit"
                             class="bg-green-600 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-green-700 transition ripple-btn">Save
                             Attendance</button>
-                        <button type="button" onclick="closeModal('markAttendanceModal')"
+                        <button type="button" @click="closeModal('markAttendanceModal')"
                             class="text-gray-500 px-4 py-2 text-sm hover:text-gray-700 font-bold">Cancel</button>
                     </div>
                 </form>
@@ -1400,14 +1457,21 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         @forelse($internalLogs as $meet)
                             <div
                                 class="mb-4 border border-gray-100 rounded-xl p-4 hover:border-blue-200 transition hover:shadow-md bg-gray-50/20">
-                                <div class="flex justify-between items-start mb-3">
-                                    <div>
+                                <div class="flex justify-between items-start mb-3 gap-4">
+                                    <div class="flex-grow">
                                         <h4 class="font-bold text-gray-800 text-sm">{{ $meet->topic }}</h4>
                                         <span class="text-xs text-gray-400 block mt-1 font-mono">
                                             {{ \Carbon\Carbon::parse($meet->meeting_date)->format('d M, Y - h:i A') }}
                                             • {{ ucfirst($meet->mode) }}
                                         </span>
                                     </div>
+                                    @if(isset($myRole) && $myRole == 'leader')
+                                        <button type="button"
+                                            onclick="openEditAttendanceModal({{ $meet->id }}, '{{ addslashes($meet->topic) }}', '{{ $meet->attendances->where('is_present', true)->pluck('user_id')->implode(',') }}')"
+                                            class="flex-shrink-0 text-[10px] bg-blue-50 text-blue-600 px-3 py-1.5 rounded-lg border border-blue-200 hover:bg-blue-600 hover:text-white transition shadow-sm font-bold flex items-center gap-1">
+                                            <i class="fas fa-edit"></i> Edit Attendance
+                                        </button>
+                                    @endif
                                 </div>
 
                                 <div class="flex flex-wrap gap-1">
@@ -1655,6 +1719,60 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     {{-- ⚡ MAGIC SCRIPTS: Core Logic & Behavior --}}
     {{-- ========================================================= --}}
     <script>
+        function attendanceManager() {
+            return {
+                searchQuery: '',
+                isOpen: false,
+                selectedAttendees: [],
+                allMembers: [
+                    @if(isset($team) && $team)
+                        @foreach($team->members as $member)
+                                                                                      {
+                                id: {{ $member->user_id }},
+                                name: "{!! addslashes($member->user->name) !!}",
+                                academic: "{{ explode('@', $member->user->university_email ?? $member->user->email)[0] }}",
+                                avatar: "https://ui-avatars.com/api/?name={{ urlencode($member->user->name) }}&background=E5E7EB"
+                            },
+                        @endforeach
+                    @endif
+                ],
+
+                get filteredMembers() {
+                    if (this.searchQuery === '') return [];
+                    const q = this.searchQuery.toLowerCase();
+                    return this.allMembers.filter(m =>
+                        (m.name.toLowerCase().includes(q) || m.academic.includes(q)) &&
+                        !this.selectedAttendees.some(s => s.id === m.id)
+                    );
+                },
+
+                selectMember(member) {
+                    if (!this.selectedAttendees.some(s => s.id === member.id)) {
+                        this.selectedAttendees.push(member);
+                    }
+                    this.searchQuery = '';
+                    this.isOpen = false;
+                    this.$refs.searchInput.focus();
+                },
+
+                removeMember(id) {
+                    this.selectedAttendees = this.selectedAttendees.filter(m => m.id !== id);
+                },
+
+                loadExisting(event) {
+                    let idsString = event.detail;
+                    if (!idsString) {
+                        this.selectedAttendees = [];
+                        return;
+                    }
+                    let ids = idsString.toString().split(',').map(Number);
+                    this.selectedAttendees = this.allMembers.filter(m => ids.includes(m.id));
+                    this.searchQuery = '';
+                    this.isOpen = false;
+                }
+            }
+        }
+
         /**
          * 1. DOM Teleportation & Initialization
          * Ensures modals are placed correctly in the body to avoid CSS z-index conflicts.
@@ -1665,6 +1783,19 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 document.body.appendChild(modalContainer);
             }
         });
+
+        function openEditAttendanceModal(meetingId, topic, existingAttendeesCSV) {
+            closeModal('internalHistoryModal');
+            document.getElementById('attendanceMeetingId').value = meetingId;
+            document.getElementById('attendanceMeetingTopic').innerText = 'Topic: ' + topic;
+
+            // Pass the pre-selected attendee IDs to the Alpine component
+            window.dispatchEvent(new CustomEvent('load-attendees', { detail: existingAttendeesCSV }));
+
+            setTimeout(() => {
+                openModal('markAttendanceModal');
+            }, 50);
+        }
 
         /**
          * 2. Open Modal Logic
