@@ -1730,7 +1730,7 @@
                                                                 Try Again
                                                             </button>
                                                             @if($contrib->rejection_reason)
-                                                                <p class="text-[9px] text-red-500 mt-1 max-w-[100px] leading-tight">{{ STR::limit($contrib->rejection_reason, 30) }}</p>
+                                                                <p class="text-[9px] text-red-500 mt-1 max-w-[100px] leading-tight">{{ Str::limit($contrib->rejection_reason, 30) }}</p>
                                                             @endif
                                                         @endif
                                                     </div>
