@@ -1651,6 +1651,12 @@
                                 <div class="overflow-y-auto max-h-80 custom-scroll space-y-3">
                                     @foreach ($activeFund->contributions as $contrib)
                                         @php
+                                            $canViewTeamFunds = $myRole == 'leader' || Auth::user()->hasPermission('view_team_funds');
+                                        @endphp
+
+                                        {{-- Only show if the current user is the contributor OR has permission to view all funds --}}
+                                        @if ($canViewTeamFunds || $contrib->user_id == Auth::id())
+                                        @php
                                             $debt = $membersDebts[$contrib->user_id] ?? 0;
                                             $isLate =
                                                 $contrib->status == 'pending' &&
@@ -1763,6 +1769,7 @@
                                             </div>
 
                                         </div>
+                                        @endif
                                     @endforeach
                                 </div>
                             @else

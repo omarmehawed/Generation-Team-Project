@@ -635,7 +635,8 @@ class FinalProjectController extends Controller
             'role' => 'required|in:member,vice_leader', // الدور الإداري
             'technical_role' => 'required|in:general,software,hardware', // التخصص التقني
             'extra_role' => 'nullable|in:none,presentation,reports,marketing', // المسؤولية الإضافية
-            'is_dorm' => 'nullable|boolean' // الإقامة
+            'permissions' => 'nullable|array',
+            'permissions.*' => 'string|in:view_team_funds'
         ]);
 
         $leader = Auth::user();
@@ -672,11 +673,13 @@ class FinalProjectController extends Controller
             ->where('user_id', $request->user_id)
             ->update($updateData);
 
-        if ($request->has('is_dorm')) {
-            \App\Models\User::where('id', $request->user_id)->update(['is_dorm' => $request->is_dorm]);
-        }
+        // Update Permissions
+        $targetUser = \App\Models\User::findOrFail($request->user_id);
+        $permissions = $request->permissions ?? [];
+        $targetUser->permissions = $permissions;
+        $targetUser->save();
 
-        return back()->with('success', 'Member roles updated successfully ✨');
+        return back()->with('success', 'Member roles and permissions updated successfully ✨');
     }
 
 

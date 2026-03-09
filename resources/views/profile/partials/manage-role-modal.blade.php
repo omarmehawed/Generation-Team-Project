@@ -88,23 +88,32 @@
                         </div>
                     </div>
 
-                    {{-- Residence Status --}}
+                    {{-- Permissions --}}
+                    @php
+                        // Safely decode permissions if they are a string, otherwise use empty array
+                        $userPermissions = collect(is_string($user->permissions) ? json_decode($user->permissions, true) : ($user->permissions ?? []));
+                        $hasViewTeamFunds = $userPermissions->contains('view_team_funds');
+                    @endphp
                     <div class="mb-5">
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Residence
-                            Status (Dorm)</label>
-                        <div class="grid grid-cols-2 gap-3">
-                            <label class="cursor-pointer">
-                                <input type="radio" name="is_dorm" value="0" class="peer hidden" {{ !$user->is_dorm ? 'checked' : '' }}>
-                                <div
-                                    class="p-2.5 rounded-xl border border-gray-200 text-center peer-checked:bg-blue-500 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-blue-500">
-                                    <i class="fas fa-home mr-1"></i> Local / Home
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Advanced
+                            Permissions</label>
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative flex items-center">
+                                    <input type="checkbox" name="permissions[]" value="view_team_funds"
+                                        class="peer sr-only" {{ $hasViewTeamFunds ? 'checked' : '' }}>
+                                    <div
+                                        class="h-5 w-5 rounded border-2 border-gray-300 bg-white peer-checked:bg-[#175C53] peer-checked:border-[#175C53] transition-all flex items-center justify-center group-hover:border-[#175C53]">
+                                        <i
+                                            class="fas fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    </div>
                                 </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="is_dorm" value="1" class="peer hidden" {{ $user->is_dorm ? 'checked' : '' }}>
-                                <div
-                                    class="p-2.5 rounded-xl border border-gray-200 text-center peer-checked:bg-orange-500 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-orange-500">
-                                    <i class="fas fa-building mr-1"></i> Resident / Dorm
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-sm font-bold text-gray-800 group-hover:text-[#175C53] transition-colors">View
+                                        Team Funds</span>
+                                    <span class="text-[10px] text-gray-500">Allow this member to view the full team's
+                                        financial contributions</span>
                                 </div>
                             </label>
                         </div>
