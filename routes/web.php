@@ -212,9 +212,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/gallery/delete/{id}', [FinalProjectController::class, 'deleteGallery'])->name('final_project.deleteGallery');
 
             Route::post('/final-project/{id}/request-review', [FinalProjectController::class, 'requestPreDefense'])->name('final_project.request_review');
-            Route::get('/phpinfo', function () {
-                return phpinfo();
-            });
+            // phpinfo route removed for security reasons
             Route::post('/final-project/{id}/submit-final', [FinalProjectController::class, 'submitFinalProject'])
                 ->name('final_project.submit_final');
 

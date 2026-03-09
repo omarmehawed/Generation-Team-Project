@@ -54,22 +54,23 @@
                     </div>
 
                     {{-- 📅 Date Range Filter --}}
-                    <div class="flex items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-200">
-                        <div>
+                    <div
+                        class="flex flex-col sm:flex-row items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-200 flex-1 xl:flex-none w-full sm:w-auto">
+                        <div class="w-full sm:w-auto">
                             <label class="text-[9px] font-bold text-gray-400 uppercase block pl-1">From</label>
                             <input type="date" name="date_from" value="{{ request('date_from') }}"
-                                class="bg-transparent border-none text-xs font-bold text-gray-700 focus:ring-0 p-1">
+                                class="bg-transparent border-none w-full sm:w-auto text-xs font-bold text-gray-700 focus:ring-0 p-1">
                         </div>
-                        <div class="h-8 w-px bg-gray-300"></div>
-                        <div>
+                        <div class="hidden sm:block h-8 w-px bg-gray-300"></div>
+                        <div class="w-full sm:w-auto">
                             <label class="text-[9px] font-bold text-gray-400 uppercase block pl-1">To</label>
                             <input type="date" name="date_to" value="{{ request('date_to') }}"
-                                class="bg-transparent border-none text-xs font-bold text-gray-700 focus:ring-0 p-1">
+                                class="bg-transparent border-none w-full sm:w-auto text-xs font-bold text-gray-700 focus:ring-0 p-1">
                         </div>
                     </div>
 
                     {{-- Submit & Reset Buttons --}}
-                    <div class="flex gap-2">
+                    <div class="flex gap-2 w-full xl:w-auto mt-2 xl:mt-0 justify-end">
                         <button type="submit"
                             class="py-3 px-4 bg-[#175c53] text-white rounded-xl hover:bg-[#124a42] font-bold shadow-lg shadow-green-900/20 transition"
                             title="Apply Filters">
@@ -301,37 +302,37 @@
                     if (member.role !== 'leader') {
                         // استخدام data-username لتجنب مشاكل علامات التنصيص في الاسم
                         deleteBtn = `
-                                    <form id="remove-member-form-${user.id}" action="${deleteUrl}" method="POST">
-                                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.content || ''}">
-                                        <input type="hidden" name="_method" value="DELETE">
+                                        <form id="remove-member-form-${user.id}" action="${deleteUrl}" method="POST">
+                                            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]')?.content || ''}">
+                                            <input type="hidden" name="_method" value="DELETE">
 
-                                        <button type="button"
-                                            onclick="confirmRemoveMember('${user.id}', this.getAttribute('data-username'))"
-                                            data-username="${user.name}"
-                                            class="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition"
-                                            title="Kick Member">
-                                            <i class="fas fa-user-times"></i>
-                                        </button>
-                                    </form>
-                                `;
+                                            <button type="button"
+                                                onclick="confirmRemoveMember('${user.id}', this.getAttribute('data-username'))"
+                                                data-username="${user.name}"
+                                                class="text-red-400 hover:text-red-600 p-2 rounded-full hover:bg-red-50 transition"
+                                                title="Kick Member">
+                                                <i class="fas fa-user-times"></i>
+                                            </button>
+                                        </form>
+                                    `;
                     }
 
                     contentHtml += `
-                                <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
-                                    <div class="flex items-center gap-3">
-                                        <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 font-bold shadow-sm">
-                                            ${user.name.charAt(0).toUpperCase()}
+                                    <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 font-bold shadow-sm">
+                                                ${user.name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <p class="text-sm font-bold text-gray-800 flex items-center">
+                                                    ${user.name} ${roleBadge}
+                                                </p>
+                                                <p class="text-xs text-gray-500">${user.email}</p>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <p class="text-sm font-bold text-gray-800 flex items-center">
-                                                ${user.name} ${roleBadge}
-                                            </p>
-                                            <p class="text-xs text-gray-500">${user.email}</p>
-                                        </div>
+                                        ${deleteBtn}
                                     </div>
-                                    ${deleteBtn}
-                                </div>
-                            `;
+                                `;
                 });
 
                 listContainer.innerHTML = contentHtml;

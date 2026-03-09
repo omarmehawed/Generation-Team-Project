@@ -136,13 +136,13 @@
 
                     {{-- 🔥 Date Range (From - To) --}}
                     <div
-                        class="flex items-center gap-1 bg-gray-50 rounded-xl px-2 border border-transparent focus-within:ring-2 focus-within:ring-blue-500 focus-within:bg-white transition">
+                        class="flex flex-col sm:flex-row items-center gap-1 bg-gray-50 rounded-xl px-2 py-1 border border-transparent focus-within:ring-2 focus-within:ring-blue-500 focus-within:bg-white transition w-full md:w-auto">
                         <input type="date" name="date_from" value="{{ request('date_from') }}"
-                            class="bg-transparent border-none text-xs font-bold text-gray-600 focus:ring-0 p-1 w-24"
+                            class="bg-transparent border-none text-xs font-bold text-gray-600 focus:ring-0 p-1 w-full sm:w-24"
                             title="From Date">
-                        <span class="text-gray-400">-</span>
+                        <span class="text-gray-400 hidden sm:block">-</span>
                         <input type="date" name="date_to" value="{{ request('date_to') }}"
-                            class="bg-transparent border-none text-xs font-bold text-gray-600 focus:ring-0 p-1 w-24"
+                            class="bg-transparent border-none text-xs font-bold text-gray-600 focus:ring-0 p-1 w-full sm:w-24"
                             title="To Date">
                     </div>
 
@@ -164,7 +164,7 @@
                 </form>
 
                 {{-- Action Buttons (Wrapped & Responsive) --}}
-                <div class="flex flex-wrap gap-2 w-full xl:w-auto justify-end">
+                <div class="flex flex-wrap gap-2 w-full xl:w-auto justify-start md:justify-end">
 
                     {{-- Import --}}
                     <button onclick="document.getElementById('importModal').classList.remove('hidden')"
@@ -202,7 +202,7 @@
             {{-- 📋 Deleted Checkbox --}}
             <div class="flex items-center gap-2 ml-4">
                 <a href="{{ request('trash') ? route('admin.users') : route('admin.users', ['trash' => 1]) }}" class="flex items-center gap-2 px-4 py-2.5 rounded-xl border transition-all duration-300 font-bold
-                       {{ request('trash')
+                           {{ request('trash')
         ? 'bg-red-100 text-red-700 border-red-300 shadow-inner'
         : 'bg-white text-gray-500 border-gray-200 hover:bg-gray-50' }}">
 
@@ -390,7 +390,7 @@
                                             </div>
                                             {{-- 🔥 Smart Floating Bulk Action Bar --}}
                                             <div id="bulkActionBar"
-                                                class="fixed bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-6 py-4 rounded-full shadow-2xl z-50 flex items-center gap-6 transition-all duration-300 translate-y-32 opacity-0">
+                                                class="fixed bottom-4 md:bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 md:px-6 py-3 md:py-4 rounded-3xl md:rounded-full shadow-2xl z-50 flex flex-col md:flex-row items-center gap-3 md:gap-6 transition-all duration-300 translate-y-32 opacity-0 w-[95%] max-w-lg md:w-auto">
                                                 <div class="flex items-center gap-2">
                                                     <span
                                                         class="bg-blue-600 text-white text-xs font-bold px-2 py-1 rounded-full"
@@ -398,53 +398,58 @@
                                                     <span class="font-medium text-sm">Users Selected</span>
                                                 </div>
 
-                                                <div class="h-6 w-px bg-gray-700"></div>
+                                                <div class="hidden md:block h-6 w-px bg-gray-700"></div>
 
                                                 {{-- 🅰️ أزرار صفحة الـ Active Users --}}
                                                 @if (!request('trash'))
-                                                    <button onclick="openBulkEditModal()"
-                                                        class="flex items-center gap-2 text-sm font-bold hover:text-blue-400 transition">
-                                                        <i class="fas fa-edit"></i> Edit Permissions & Courses
-                                                    </button>
-                                                    {{-- 🔥 زرار الحذف الجديد --}}
-                                                    <button onclick="openBulkDeleteModal()"
-                                                        class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
-                                                        <i class="fas fa-trash-alt"></i> Move to Trash
-                                                    </button>
+                                                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-6">
+                                                        <button onclick="openBulkEditModal()"
+                                                            class="flex items-center gap-2 text-sm font-bold hover:text-blue-400 transition">
+                                                            <i class="fas fa-edit"></i> Edit Permissions & Courses
+                                                        </button>
+                                                        {{-- 🔥 زرار الحذف الجديد --}}
+                                                        <button onclick="openBulkDeleteModal()"
+                                                            class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
+                                                            <i class="fas fa-trash-alt"></i> Move to Trash
+                                                        </button>
+                                                    </div>
                                                 @else
                                                     {{-- 🅱️ أزرار صفحة الـ Trash Users (جديد) --}}
-                                                    {{-- زرار الاسترجاع الجماعي --}}
-                                                    <form action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
-                                                        class="flex items-center">
-                                                        @csrf
-                                                        <input type="hidden" name="selected_ids" id="restoreIds">
-                                                        <input type="hidden" name="action" value="restore">
-                                                        <button type="submit"
-                                                            class="flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition">
-                                                            <i class="fas fa-undo"></i> Restore All
+                                                    <div class="flex flex-wrap items-center justify-center gap-3 md:gap-6">
+                                                        {{-- زرار الاسترجاع الجماعي --}}
+                                                        <form action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
+                                                            class="flex items-center">
+                                                            @csrf
+                                                            <input type="hidden" name="selected_ids" id="restoreIds">
+                                                            <input type="hidden" name="action" value="restore">
+                                                            <button type="submit"
+                                                                class="flex items-center gap-2 text-sm font-bold text-green-400 hover:text-green-300 transition">
+                                                                <i class="fas fa-undo"></i> Restore All
+                                                            </button>
+                                                        </form>
+
+                                                        <div class="hidden md:block h-6 w-px bg-gray-700 mx-2"></div>
+
+                                                        {{-- زرار الحذف النهائي الجماعي --}}
+                                                        <button onclick="confirmBulkForceDelete()"
+                                                            class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
+                                                            <i class="fas fa-times"></i> Delete Forever
                                                         </button>
-                                                    </form>
 
-                                                    <div class="h-6 w-px bg-gray-700 mx-2"></div>
-
-                                                    {{-- زرار الحذف النهائي الجماعي --}}
-                                                    <button onclick="confirmBulkForceDelete()"
-                                                        class="flex items-center gap-2 text-sm font-bold text-red-400 hover:text-red-300 transition">
-                                                        <i class="fas fa-times"></i> Delete Forever
-                                                    </button>
-
-                                                    {{-- فورم مخفية للحذف النهائي عشان نبعتها بالـ JS --}}
-                                                    <form id="bulkForceDeleteForm"
-                                                        action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
-                                                        class="hidden">
-                                                        @csrf
-                                                        <input type="hidden" name="selected_ids" id="forceDeleteIds">
-                                                        <input type="hidden" name="action" value="force_delete">
-                                                    </form>
+                                                        {{-- فورم مخفية للحذف النهائي عشان نبعتها بالـ JS --}}
+                                                        <form id="bulkForceDeleteForm"
+                                                            action="{{ route('admin.users.bulk_trash_action') }}" method="POST"
+                                                            class="hidden">
+                                                            @csrf
+                                                            <input type="hidden" name="selected_ids" id="forceDeleteIds">
+                                                            <input type="hidden" name="action" value="force_delete">
+                                                        </form>
+                                                    </div>
                                                 @endif
 
                                                 {{-- زرار الإغلاق --}}
-                                                <button onclick="clearSelection()" class="ml-4 text-gray-500 hover:text-white">
+                                                <button onclick="clearSelection()"
+                                                    class="absolute top-2 right-4 md:static md:ml-4 text-gray-500 hover:text-white">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </div>
@@ -716,13 +721,13 @@
                 let displayName = user.name ? user.name : 'Unknown';
                 let displayEmail = user.email ? user.email : 'No Email';
                 listContainer.innerHTML += `
-                            <div class="flex items-start gap-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
-                                <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold uppercase shrink-0">${displayName.charAt(0)}</div>
-                                <div class="overflow-hidden">
-                                    <p class="text-xs font-bold text-gray-800 truncate">${displayName}</p>
-                                    <p class="text-[10px] text-gray-500 truncate font-mono">${displayEmail}</p>
-                                </div>
-                            </div>`;
+                                <div class="flex items-start gap-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
+                                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold uppercase shrink-0">${displayName.charAt(0)}</div>
+                                    <div class="overflow-hidden">
+                                        <p class="text-xs font-bold text-gray-800 truncate">${displayName}</p>
+                                        <p class="text-[10px] text-gray-500 truncate font-mono">${displayEmail}</p>
+                                    </div>
+                                </div>`;
             });
 
             // 4. 🔥🔥 التبديل الذكي بين الحقول (ده التعديل المهم) 🔥🔥
@@ -773,19 +778,19 @@
 
                 // تصميم الكارت الصغير جوه قائمة الحذف
                 htmlList += `
-                                <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
-                                    <div class="flex items-center gap-3 overflow-hidden">
-                                        <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-bold">
-                                            ${name.charAt(0)}
+                                    <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                                        <div class="flex items-center gap-3 overflow-hidden">
+                                            <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-bold">
+                                                ${name.charAt(0)}
+                                            </div>
+                                            <div class="truncate">
+                                                <p class="text-xs font-bold text-gray-800 truncate w-32">${name}</p>
+                                                <p class="text-[9px] text-gray-500 truncate">${email}</p>
+                                            </div>
                                         </div>
-                                        <div class="truncate">
-                                            <p class="text-xs font-bold text-gray-800 truncate w-32">${name}</p>
-                                            <p class="text-[9px] text-gray-500 truncate">${email}</p>
-                                        </div>
+                                        <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600">${role}</span>
                                     </div>
-                                    <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600">${role}</span>
-                                </div>
-                            `;
+                                `;
             });
 
             // ملء المودال بالبيانات

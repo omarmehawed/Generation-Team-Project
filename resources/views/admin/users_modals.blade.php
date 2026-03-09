@@ -9,7 +9,8 @@
             class="bg-white rounded-3xl shadow-2xl w-full max-w-4xl border border-gray-100 flex flex-col max-h-[90vh] overflow-hidden transform transition-all">
 
             {{-- 1. Premium Header --}}
-            <div class="bg-white px-8 py-6 border-b border-gray-100 flex justify-between items-center flex-shrink-0">
+            <div
+                class="bg-white px-4 sm:px-8 py-6 border-b border-gray-100 flex justify-between items-center flex-shrink-0">
                 <div>
                     <h3 class="text-2xl font-black text-gray-800 tracking-tight" id="modalTitle">User Profile</h3>
                     <p class="text-sm text-gray-400 font-medium mt-1">Manage account details, roles, and permissions.
@@ -30,7 +31,7 @@
                 <div id="methodField"></div>
 
                 {{-- 2. Scrollable Body --}}
-                <div class="p-8 space-y-8 overflow-y-auto custom-scrollbar flex-1">
+                <div class="p-4 sm:p-8 space-y-8 overflow-y-auto custom-scrollbar flex-1">
 
                     {{-- Section: Account Info --}}
                     <div>
@@ -410,7 +411,7 @@
 
                 {{-- 3. Footer (Fixed) --}}
                 <div
-                    class="px-8 py-5 border-t border-gray-100 bg-white flex justify-end gap-4 flex-shrink-0 rounded-b-3xl">
+                    class="px-4 sm:px-8 py-5 border-t border-gray-100 bg-white flex justify-end gap-4 flex-shrink-0 rounded-b-3xl">
                     <button type="button" onclick="closeUserModal()"
                         class="px-6 py-2.5 rounded-xl text-sm font-bold text-gray-500 hover:bg-gray-50 hover:text-gray-700 transition-colors">
                         Cancel
