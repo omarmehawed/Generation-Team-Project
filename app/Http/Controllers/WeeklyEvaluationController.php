@@ -146,13 +146,11 @@ class WeeklyEvaluationController extends Controller
         
         $pdf->save($tempPath);
         
-        $result = Cloudinary::uploadApi()->upload($tempPath, [
-            'folder' => 'evaluations/' . $evaluation->student_id,
-            'public_id' => 'week_' . $evaluation->week_number,
-            'resource_type' => 'raw'
-        ]);
+        $r2Path = 'evaluations/' . $evaluation->student_id . '/week_' . $evaluation->week_number . '.pdf';
+        \Illuminate\Support\Facades\Storage::disk('r2')->put($r2Path, file_get_contents($tempPath));
+        $secureUrl = \Illuminate\Support\Facades\Storage::disk('r2')->url($r2Path);
         
         @unlink($tempPath);
-        return $result['secure_url'];
+        return $secureUrl;
     }
 }

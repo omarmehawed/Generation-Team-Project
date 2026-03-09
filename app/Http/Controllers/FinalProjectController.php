@@ -236,11 +236,11 @@ class FinalProjectController extends Controller
         $base64Image = $request->input('team_logo_base64');
 
         if (preg_match('/^data:image\/(\w+);base64,/', $base64Image, $type)) {
-            // Cloudinary supports direct uploading of base64 data URIs
-            $path = Cloudinary::uploadApi()->upload($base64Image, [
-                'folder' => 'team_logos',
-                'resource_type' => 'image'
-            ])['secure_url'];
+            $imageData = substr($base64Image, strpos($base64Image, ',') + 1);
+            $extension = strtolower($type[1]);
+            $fileName = 'team_logos/' . uniqid() . '.' . $extension;
+            \Illuminate\Support\Facades\Storage::disk('r2')->put($fileName, base64_decode($imageData));
+            $path = \Illuminate\Support\Facades\Storage::disk('r2')->url($fileName);
 
             $team->update(['logo' => $path]);
         }
@@ -557,11 +557,8 @@ class FinalProjectController extends Controller
         // 2. رفع الملف (Upload)
         $filePath = null;
         if ($request->hasFile('proposal_file')) {
-            // هيحفظ الملف ويرجع المسار بتاعه في المتغير $filePath
-            $filePath = Cloudinary::uploadApi()->upload($request->file('proposal_file')->getRealPath(), [
-                'folder' => 'proposals',
-                'resource_type' => 'raw'
-            ])['secure_url'];
+            $storedPath = $request->file('proposal_file')->store('proposals', 'r2');
+            $filePath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         // 3. التحديث (Update) - الحفظ في الداتا بيز
@@ -717,10 +714,8 @@ class FinalProjectController extends Controller
         // Upload receipt image if provided
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
-            $receiptPath = Cloudinary::uploadApi()->upload($request->file('receipt')->getRealPath(), [
-                'folder'        => 'receipts',
-                'resource_type' => 'image'
-            ])['secure_url'];
+            $storedPath = $request->file('receipt')->store('receipts', 'r2');
+            $receiptPath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         DB::table('project_expenses')->insert([
@@ -782,10 +777,8 @@ class FinalProjectController extends Controller
 
         $imagePath = null;
         if ($request->hasFile('image')) {
-            $imagePath = Cloudinary::uploadApi()->upload($request->file('image')->getRealPath(), [
-                'folder'        => 'project_components',
-                'resource_type' => 'image'
-            ])['secure_url'];
+            $storedPath = $request->file('image')->store('project_components', 'r2');
+            $imagePath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         \App\Models\ProjectComponent::create([
@@ -903,11 +896,8 @@ class FinalProjectController extends Controller
         if ($request->payment_method == 'transfer') {
             // Upload Proof
             if ($request->hasFile('proof_image')) {
-                $path = Cloudinary::uploadApi()->upload($request->file('proof_image')->getRealPath(), [
-                    'folder' => 'payment_proofs',
-                    'resource_type' => 'image'
-                ])['secure_url'];
-                $updateData['payment_proof'] = $path;
+                $storedPath = $request->file('proof_image')->store('payment_proofs', 'r2');
+                $updateData['payment_proof'] = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
             }
             $updateData['amount'] = $request->amount_transferred; // Assuming column is 'amount' (it is in schema)
             $updateData['from_number'] = $request->from_number;
@@ -1051,10 +1041,8 @@ class FinalProjectController extends Controller
         // Handle File Upload
         $filePath = null;
         if ($request->hasFile('report_file')) {
-            $filePath = Cloudinary::uploadApi()->upload($request->file('report_file')->getRealPath(), [
-                'folder' => 'weekly_reports',
-                'resource_type' => 'raw'
-            ])['secure_url'];
+            $storedPath = $request->file('report_file')->store('weekly_reports', 'r2');
+            $filePath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         // Insert into Database
@@ -1258,10 +1246,8 @@ class FinalProjectController extends Controller
         // رفع الصورة
         $filePath = null;
         if ($request->type == 'image' && $request->hasFile('image')) {
-            $filePath = Cloudinary::uploadApi()->upload($request->file('image')->getRealPath(), [
-                'folder' => 'gallery',
-                'resource_type' => 'image'
-            ])['secure_url'];
+            $storedPath = $request->file('image')->store('gallery', 'r2');
+            $filePath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         DB::table('project_galleries')->insert([
@@ -1352,15 +1338,8 @@ class FinalProjectController extends Controller
                 if ($request->hasFile('submission_file')) {
                     $file = $request->file('submission_file');
                     
-                    // Determine resource type based on extension
-                    $ext = strtolower($file->getClientOriginalExtension());
-                    $isImage = in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg']);
-                    $resourceType = $isImage ? 'image' : 'raw';
-
-                    $path = Cloudinary::uploadApi()->upload($file->getRealPath(), [
-                        'folder' => 'submissions',
-                        'resource_type' => $resourceType
-                    ])['secure_url'];
+                    $storedPath = $file->store('submissions', 'r2');
+                    $path = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
 
                     $updateData['submission_file'] = $path;
                     $updateData['submission_value'] = null; // مسح اللينك القديم لو موجود
@@ -1516,19 +1495,13 @@ class FinalProjectController extends Controller
 
         // 3. رفع الملفات (لو موجودة)
         if ($request->hasFile('final_book')) {
-            $bookPath = Cloudinary::uploadApi()->upload($request->file('final_book')->getRealPath(), [
-                'folder' => 'final_books',
-                'resource_type' => 'raw'
-            ])['secure_url'];
-            $team->final_book_file = $bookPath; // بنسجل في جدول teams
+            $storedPath = $request->file('final_book')->store('final_books', 'r2');
+            $team->final_book_file = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         if ($request->hasFile('presentation')) {
-            $pptPath = Cloudinary::uploadApi()->upload($request->file('presentation')->getRealPath(), [
-                'folder' => 'presentations',
-                'resource_type' => 'raw'
-            ])['secure_url'];
-            $team->presentation_file = $pptPath; // بنسجل في جدول teams
+            $storedPath = $request->file('presentation')->store('presentations', 'r2');
+            $team->presentation_file = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         if ($request->defense_video) {

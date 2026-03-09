@@ -33,12 +33,17 @@ class PosterController extends Controller
             'image_size' => 'required|in:small,medium,large,full',
         ]);
 
-        $imagePath = $request->hasFile('image') ? $request->file('image')->store('posters', 'public') : null;
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $storedPath = $request->file('image')->store('posters', 'r2');
+            $imagePath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+        }
         
         $imagesPaths = [];
         if ($request->hasFile('slider_images')) {
             foreach ($request->file('slider_images') as $file) {
-                $imagesPaths[] = $file->store('posters/sliders', 'public');
+                $storedPath = $file->store('posters/sliders', 'r2');
+                $imagesPaths[] = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
             }
         }
 
@@ -92,23 +97,31 @@ class PosterController extends Controller
         ];
 
         if ($request->hasFile('image')) {
-            if ($poster->image_path && Storage::disk('public')->exists($poster->image_path)) {
-                Storage::disk('public')->delete($poster->image_path);
+            if ($poster->image_path && str_starts_with($poster->image_path, 'http')) {
+                $pathToDelete = str_replace(env('CLOUDFLARE_R2_URL') . '/', '', $poster->image_path);
+                \Illuminate\Support\Facades\Storage::disk('r2')->delete($pathToDelete);
+            } elseif ($poster->image_path && \Illuminate\Support\Facades\Storage::disk('public')->exists($poster->image_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($poster->image_path);
             }
-            $data['image_path'] = $request->file('image')->store('posters', 'public');
+            $storedPath = $request->file('image')->store('posters', 'r2');
+            $data['image_path'] = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
         if ($request->hasFile('slider_images')) {
             if (!empty($poster->images)) {
                 foreach ($poster->images as $oldImg) {
-                    if (Storage::disk('public')->exists($oldImg)) {
-                        Storage::disk('public')->delete($oldImg);
+                    if (str_starts_with($oldImg, 'http')) {
+                        $pathToDelete = str_replace(env('CLOUDFLARE_R2_URL') . '/', '', $oldImg);
+                        \Illuminate\Support\Facades\Storage::disk('r2')->delete($pathToDelete);
+                    } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($oldImg)) {
+                        \Illuminate\Support\Facades\Storage::disk('public')->delete($oldImg);
                     }
                 }
             }
             $imagesPaths = [];
             foreach ($request->file('slider_images') as $file) {
-                $imagesPaths[] = $file->store('posters/sliders', 'public');
+                $storedPath = $file->store('posters/sliders', 'r2');
+                $imagesPaths[] = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
             }
             $data['images'] = $imagesPaths;
         }
@@ -124,13 +137,21 @@ class PosterController extends Controller
 
     public function destroy(Poster $poster)
     {
-        if ($poster->image_path && Storage::disk('public')->exists($poster->image_path)) {
-            Storage::disk('public')->delete($poster->image_path);
+        if ($poster->image_path) {
+            if (str_starts_with($poster->image_path, 'http')) {
+                $pathToDelete = str_replace(env('CLOUDFLARE_R2_URL') . '/', '', $poster->image_path);
+                \Illuminate\Support\Facades\Storage::disk('r2')->delete($pathToDelete);
+            } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($poster->image_path)) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($poster->image_path);
+            }
         }
         if (!empty($poster->images)) {
             foreach ($poster->images as $oldImg) {
-                if (Storage::disk('public')->exists($oldImg)) {
-                    Storage::disk('public')->delete($oldImg);
+                if (str_starts_with($oldImg, 'http')) {
+                    $pathToDelete = str_replace(env('CLOUDFLARE_R2_URL') . '/', '', $oldImg);
+                    \Illuminate\Support\Facades\Storage::disk('r2')->delete($pathToDelete);
+                } elseif (\Illuminate\Support\Facades\Storage::disk('public')->exists($oldImg)) {
+                    \Illuminate\Support\Facades\Storage::disk('public')->delete($oldImg);
                 }
             }
         }
