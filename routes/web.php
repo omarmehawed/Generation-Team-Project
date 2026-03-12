@@ -198,6 +198,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
             Route::post('/final-project/funds/create', [FinalProjectController::class, 'storeFund'])->name('final_project.storeFund');
             Route::post('/final-project/funds/submit', [FinalProjectController::class, 'submitPayment'])->name('final_project.submitPayment');
+            Route::get('/final-project/funds/export', [FinalProjectController::class, 'exportFunds'])->name('funds.export');
             Route::post('/final-project/funds/review', [FinalProjectController::class, 'reviewPayment'])->name('final_project.reviewPayment');
             // Route::post('/final-project/funds/pay', [FinalProjectController::class, 'markPaid'])->name('final_project.markPaid'); // Deprecated
 
@@ -232,14 +233,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Wallet System
-    Route::get('/wallet', [App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
-    Route::get('/wallet/search', [App\Http\Controllers\WalletController::class, 'search'])->name('wallet.search');
-    Route::post('/wallet/transaction', [App\Http\Controllers\WalletController::class, 'transact'])->name('wallet.transact');
-    
-    // Wallet Deposit Requests
-    Route::post('/wallet/requests/submit', [App\Http\Controllers\WalletController::class, 'submitDepositRequest'])->name('wallet.request.submit');
-    Route::get('/wallet/requests/all', [App\Http\Controllers\WalletController::class, 'getDepositRequests'])->name('wallet.requests.all');
-    Route::post('/wallet/requests/{id}/process', [App\Http\Controllers\WalletController::class, 'processDepositRequest'])->name('wallet.requests.process');
+    Route::prefix('wallet')->group(function () {
+        Route::get('/', [App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
+        Route::post('/search', [App\Http\Controllers\WalletController::class, 'search'])->name('wallet.search');
+        Route::post('/transact', [App\Http\Controllers\WalletController::class, 'transact'])->name('wallet.transact');
+        Route::post('/bulk-transact', [App\Http\Controllers\WalletController::class, 'bulkTransact'])->name('wallet.bulk_transact');
+        Route::post('/requests/submit', [App\Http\Controllers\WalletController::class, 'submitDepositRequest'])->name('wallet.request.submit');
+        Route::get('/requests/all', [App\Http\Controllers\WalletController::class, 'getDepositRequests'])->name('wallet.requests.all');
+        Route::post('/requests/{id}/process', [App\Http\Controllers\WalletController::class, 'processDepositRequest'])->name('wallet.requests.process');
+    });
 
 });
 

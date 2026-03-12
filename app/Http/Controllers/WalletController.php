@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
+use App\Notifications\BatuNotification;
 
 class WalletController extends Controller
 {
@@ -19,14 +20,21 @@ class WalletController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $hasManagement = $user->hasPermission('wallet_management');
+        $hasManagement = $user->hasPermission('wallet_management') || $user->email === '2420823@batechu.com';
 
         $pendingCount = 0;
 
         if ($hasManagement) {
             $query = WalletTransaction::with(['user', 'admin'])->latest();
 
-            // ... (keep filters)
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->whereHas('user', function($q) use ($search) {
+                    $q->where('name', 'LIKE', "%{$search}%")
+                      ->orWhere('email', 'LIKE', "{$search}%");
+                });
+            }
+
             if ($request->filled('type')) {
                 $query->where('type', $request->type);
             }
@@ -134,7 +142,77 @@ class WalletController extends Controller
             'notes' => $request->notes ?? "Manual " . ucfirst($type),
         ]);
 
+        // 3. Notify User
+        $user->notify(new BatuNotification([
+            'title' => ($type === 'deposit' ? '💰 Wallet Credited' : '💸 Wallet Debited'),
+            'message' => "Your wallet has been " . ($type === 'deposit' ? "credited with" : "debited by") . " {$amount} EGP by Admin.",
+            'icon' => ($type === 'deposit' ? 'fas fa-coins' : 'fas fa-wallet'),
+            'color' => ($type === 'deposit' ? 'text-green-500' : 'text-red-500'),
+            'action_url' => route('wallet.index'),
+            'type' => 'info'
+        ]));
+
         return back()->with('success', ucfirst($type) . " of {$amount} completed for {$user->name}.");
+    }
+
+    /**
+     * Apply a bulk operation (deposit/withdrawal) to all members with balance > 0.
+     */
+    public function bulkTransact(Request $request)
+    {
+        $this->authorizeAccess();
+
+        $request->validate([
+            'type'    => 'required|in:deposit,withdrawal',
+            'amount'  => 'required|numeric|min:0.1',
+        ]);
+
+        $amount = $request->amount;
+        $type = $request->type;
+        $adminId = Auth::id();
+
+        // Only members with balance > 0
+        $users = User::where('wallet_balance', '>', 0)->get();
+        
+        if ($users->isEmpty()) {
+            return back()->with('error', 'No members with balance > 0 found.');
+        }
+
+        $count = 0;
+        foreach ($users as $user) {
+            $appliedAmount = $amount;
+            
+            if ($type === 'withdrawal') {
+                $appliedAmount = min($user->wallet_balance, $amount);
+                $user->decrement('wallet_balance', $appliedAmount);
+            } else {
+                $appliedAmount = $amount;
+                $user->increment('wallet_balance', $appliedAmount);
+            }
+
+            WalletTransaction::create([
+                'user_id' => $user->id,
+                'admin_id' => $adminId,
+                'type' => $type,
+                'amount' => $appliedAmount,
+                'balance_after' => $user->wallet_balance,
+                'notes' => "Bulk " . ucfirst($type),
+            ]);
+
+            // Notify
+            $user->notify(new BatuNotification([
+                'title' => ($type === 'deposit' ? '💰 Wallet Credited' : '💸 Wallet Debited'),
+                'message' => "Your wallet has been " . ($type === 'deposit' ? "credited with" : "debited by") . " {$appliedAmount} EGP (Bulk Operation).",
+                'icon' => ($type === 'deposit' ? 'fas fa-coins' : 'fas fa-wallet'),
+                'color' => ($type === 'deposit' ? 'text-green-500' : 'text-red-500'),
+                'action_url' => route('wallet.index'),
+                'type' => 'info'
+            ]));
+            
+            $count++;
+        }
+
+        return back()->with('success', "Bulk " . ucfirst($type) . " applied to {$count} members.");
     }
 
     /**
@@ -225,6 +303,16 @@ class WalletController extends Controller
                 'processed_at' => now(),
             ]);
 
+            // 3. Notify User
+            $user->notify(new BatuNotification([
+                'title' => '✅ Deposit Approved',
+                'message' => "Your deposit request for {$depositRequest->amount} EGP has been approved.",
+                'icon' => 'fas fa-check-circle',
+                'color' => 'text-green-500',
+                'action_url' => route('wallet.index'),
+                'type' => 'success'
+            ]));
+
             return back()->with('success', 'Deposit request accepted and balance updated.');
         } else {
             $depositRequest->update([
@@ -233,6 +321,16 @@ class WalletController extends Controller
                 'processed_at' => now(),
                 'rejection_reason' => $request->rejection_reason,
             ]);
+
+            // Notify User
+            $depositRequest->user->notify(new BatuNotification([
+                'title' => '❌ Deposit Rejected',
+                'message' => "Your deposit request for {$depositRequest->amount} EGP was rejected. Reason: " . $request->rejection_reason,
+                'icon' => 'fas fa-times-circle',
+                'color' => 'text-red-500',
+                'action_url' => route('wallet.index'),
+                'type' => 'alert'
+            ]));
 
             return back()->with('success', 'Deposit request rejected.');
         }

@@ -20,6 +20,9 @@ use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf as Pdf;
 use CloudinaryLabs\CloudinaryLaravel\Facades\Cloudinary;
 
 use App\Services\ActivityLogger;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Models\FundContribution;
+use App\Exports\FundExport;
 
 class FinalProjectController extends Controller
 {
@@ -1020,6 +1023,101 @@ class FinalProjectController extends Controller
         // ... (Old logic commented out or removed)
     }
     */
+
+    public function exportFunds(Request $request)
+    {
+        $type = $request->query('type', 'paid');
+        $teamId = $request->query('team_id');
+        $user = Auth::user();
+        
+        // Permission check: Leader or Super Admin
+        $isAdmin = $user->email === '2420823@batechu.com';
+        
+        if ($teamId && $isAdmin) {
+            $team = Team::with('members.user')->find($teamId);
+        } else {
+            $teamMember = TeamMember::where('user_id', $user->id)->first();
+            if (!$teamMember || $teamMember->role !== 'leader') {
+                return back()->with('error', 'Only the Team Leader can export data.');
+            }
+            $team = Team::with('members.user')->find($teamMember->team_id);
+        }
+
+        if (!$team) {
+            return back()->with('error', 'Team not found.');
+        }
+
+        $activeFund = ProjectFund::where('team_id', $team->id)->latest()->first();
+        
+        if (!$activeFund) {
+            return back()->with('error', 'No active fund request found for this team.');
+        }
+
+        $data = [];
+        
+        if ($type === 'paid') {
+            $contributions = FundContribution::with('user')
+                ->where('fund_id', $activeFund->id)
+                ->where('status', 'paid')
+                ->get();
+            
+            foreach ($contributions as $c) {
+                if (!$c->user) continue;
+                $data[] = [
+                    'Member Name' => $c->user->name,
+                    'Academic Number' => Str::before($c->user->email, '@'),
+                    'Payment Status' => 'Paid',
+                    'Amount Paid' => $activeFund->amount_per_member . ' EGP',
+                    'Payment Date' => $c->updated_at->format('Y-m-d H:i')
+                ];
+            }
+        } else {
+            // Unpaid members including historical debt
+            foreach ($team->members as $member) {
+                $u = $member->user;
+                if (!$u) continue;
+
+                // Check if paid current active fund
+                $hasPaidActive = FundContribution::where('fund_id', $activeFund->id)
+                    ->where('user_id', $u->id)
+                    ->where('status', 'paid')
+                    ->exists();
+                
+                // Calculate historical debt
+                $allFunds = ProjectFund::where('team_id', $team->id)->get();
+                $totalDebt = 0;
+                $unpaidFundsNames = [];
+
+                foreach ($allFunds as $fund) {
+                    $isPaid = FundContribution::where('fund_id', $fund->id)
+                        ->where('user_id', $u->id)
+                        ->where('status', 'paid')
+                        ->exists();
+                    
+                    if (!$isPaid) {
+                        $totalDebt += $fund->amount_per_member;
+                        $unpaidFundsNames[] = $fund->title;
+                    }
+                }
+
+                if ($totalDebt > 0) {
+                    $data[] = [
+                        'Member Name' => $u->name,
+                        'Academic Number' => Str::before($u->email, '@'),
+                        'Status' => $hasPaidActive ? 'History Debt Only' : 'Unpaid + History Debt',
+                        'Total Debt (EGP)' => $totalDebt,
+                        'Pending Funds' => implode(', ', $unpaidFundsNames)
+                    ];
+                }
+            }
+        }
+
+        if (empty($data)) {
+            return back()->with('error', 'No members found for this criteria.');
+        }
+
+        return Excel::download(new FundExport($data), 'Fund_'.ucfirst($type).'_'.now()->format('Y-m-d').'.xlsx');
+    }
 
 
 

@@ -931,7 +931,7 @@
 
 
                     {{-- 1. جدول الأعضاء (The Team Members) --}}
-                    <div x-data="{ expanded: false }" class="bg-white rounded-[2rem] border border-gray-100 shadow-2xl overflow-hidden relative">
+                    <div x-data="{ expanded: false, searchMember: '' }" class="bg-white rounded-[2rem] border border-gray-100 shadow-2xl overflow-hidden relative">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-50 rounded-bl-[100%] -mr-10 -mt-10 z-0">
                         </div>
                         <div @click="expanded = !expanded" class="px-8 py-8 border-b border-gray-100 flex justify-between items-center relative z-10 cursor-pointer hover:bg-gray-50 transition-colors">
@@ -964,6 +964,18 @@
                         
                         {{-- Collapsible Body --}}
                         <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;">
+                            {{-- Search Bar --}}
+                            <div class="px-8 pt-6">
+                                <div class="relative group">
+                                    <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                        <i class="fas fa-search text-gray-400 group-focus-within:text-yellow-500 transition-colors"></i>
+                                    </div>
+                                    <input type="text" x-model="searchMember" 
+                                        class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all shadow-sm"
+                                        placeholder="Search by Name or Academic ID...">
+                                </div>
+                            </div>
+
                             <div class="overflow-x-auto px-8 pt-4 pb-6 custom-scroll max-h-[500px] overflow-y-auto">
                             <table class="w-full text-left border-separate border-spacing-y-3">
                                 <thead>
@@ -976,7 +988,12 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($team->members as $member)
-                                        <tr class="group transition-all duration-300 hover:-translate-y-1">
+                                        @php
+                                            $mName = str_replace("'", "\\'", strtolower($member->user->name));
+                                            $mID = strtolower($member->user->email ? explode('@', $member->user->email)[0] : '');
+                                        @endphp
+                                        <tr class="group transition-all duration-300 hover:-translate-y-1"
+                                            x-show="searchMember === '' || '{{ $mName }}'.includes(searchMember.toLowerCase()) || '{{ $mID }}'.includes(searchMember.toLowerCase())">
                                             <td class="bg-white group-hover:bg-yellow-50/30 rounded-l-2xl border-y border-l border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
                                                 <div class="flex items-center gap-4">
                                                     <div class="relative">
@@ -1586,24 +1603,28 @@
                     </div>
                     {{-- 🟡 الجزء الثالث: التمويل واللمّ (Funds Collection) --}}
                     <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-yellow-100 shadow-xl overflow-hidden hover-lift flex flex-col">
-                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-[#FFF8E1]/50 cursor-pointer hover:bg-yellow-50 transition-colors">
+                        <div @click="expanded = !expanded" class="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#FFF8E1]/50 cursor-pointer hover:bg-yellow-50 transition-colors gap-3">
                             <h3 class="font-bold text-gray-800 flex items-center gap-2">
                                 <div class="p-2 bg-yellow-100 rounded-lg text-[#AA8A26] shadow-sm"><i
                                         class="fas fa-hand-holding-usd"></i></div>
-                                Fund Collection
+                                <span>Fund Collection</span>
                                 <i class="fas fa-chevron-down text-sm text-[#AA8A26] transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                             </h3>
-                            <div class="flex gap-2">
+                            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                                 {{-- زرار الهستوري --}}
                                 @if ($fundsHistory->count() > 0)
                                     <button @click.stop onclick="openModal('fundsHistoryModal')"
-                                        class="text-xs bg-gray-100 text-gray-600 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition"><i
+                                        class="flex-1 sm:flex-none text-[10px] bg-gray-100 text-gray-600 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition whitespace-nowrap"><i
                                             class="fas fa-history"></i> History</button>
                                 @endif
 
                                 @if ($myRole == 'leader')
+                                    <button @click.stop onclick="openModal('exportFundModal')"
+                                        class="flex-1 sm:flex-none text-[10px] bg-green-500 text-white px-3 py-2 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                        <i class="fas fa-file-excel text-xs"></i> Export
+                                    </button>
                                     <button @click.stop onclick="openModal('createFundModal')"
-                                        class="text-xs bg-black text-[#FFD700] px-4 py-2 rounded-xl font-bold shadow-md hover:gray-900 transition"><i
+                                        class="flex-1 sm:flex-none text-[10px] bg-black text-[#FFD700] px-3 py-2 rounded-xl font-bold shadow-md hover:bg-gray-900 transition whitespace-nowrap"><i
                                             class="fas fa-bullhorn"></i> Request</button>
                                 @endif
                             </div>
@@ -2819,6 +2840,56 @@
         }
     </script>
 
+    {{-- Export Fund Modal --}}
+    <div id="exportFundModal" class="modal fixed inset-0 z-[100] hidden">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('exportFundModal')"></div>
+        <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+                <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                    <h3 class="text-xl font-black text-gray-800 flex items-center gap-3">
+                        <i class="fas fa-file-excel text-green-500"></i> Export Fund Data
+                    </h3>
+                    <button onclick="closeModal('exportFundModal')" class="text-gray-400 hover:text-red-500 transition-colors">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+
+                <div class="p-8">
+                    <p class="text-sm text-gray-400 mb-6">Choose the type of data you want to export as an Excel sheet.</p>
+                    
+                    <div class="grid grid-cols-1 gap-4">
+                        <a href="{{ route('funds.export', ['type' => 'paid', 'team_id' => $team->id]) }}" 
+                           class="flex items-center justify-between p-4 bg-green-50 border border-green-100 rounded-2xl hover:bg-green-100 transition group cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-green-500 text-white flex items-center justify-center shadow-md">
+                                    <i class="fas fa-check"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800">Paid Members</p>
+                                    <p class="text-[10px] text-green-600 font-bold uppercase tracking-wider">Who completed payment</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-green-300 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+
+                        <a href="{{ route('funds.export', ['type' => 'unpaid', 'team_id' => $team->id]) }}" 
+                           class="flex items-center justify-between p-4 bg-red-50 border border-red-100 rounded-2xl hover:bg-red-100 transition group cursor-pointer">
+                            <div class="flex items-center gap-4">
+                                <div class="w-10 h-10 rounded-full bg-red-500 text-white flex items-center justify-center shadow-md">
+                                    <i class="fas fa-times"></i>
+                                </div>
+                                <div>
+                                    <p class="font-bold text-gray-800">Unpaid Members</p>
+                                    <p class="text-[10px] text-red-600 font-bold uppercase tracking-wider">Includes historical debt</p>
+                                </div>
+                            </div>
+                            <i class="fas fa-chevron-right text-red-300 group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 {{-- ========================================================= --}}

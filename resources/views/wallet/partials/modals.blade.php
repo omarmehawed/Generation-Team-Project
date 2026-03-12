@@ -286,6 +286,74 @@
     </div>
 </div>
 
+@if($hasManagement)
+    {{-- Bulk Operation Modal (For Admins) --}}
+    <div id="bulkModal" class="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-4 sm:p-6" x-cloak
+        style="display: none;">
+        <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal('bulk')">
+        </div>
+
+        <div
+            class="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 md:p-8 border-t md:border border-gray-200 dark:border-gray-700 transform transition-all">
+            <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2" id="bulkModalTitle">
+                <i class="fas fa-layer-group text-amber-500"></i> Bulk Wallet Operation
+            </h3>
+
+            <form action="{{ route('wallet.bulk_transact') }}" method="POST">
+                @csrf
+
+                <div class="mb-5">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Operation
+                        Type</label>
+                    <div class="grid grid-cols-2 gap-3">
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="type" value="deposit" class="peer hidden" checked>
+                            <div
+                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-green-500 peer-checked:bg-green-50 dark:peer-checked:bg-green-900/20 transition-all">
+                                <i class="fas fa-plus text-lg mb-1 block text-gray-400 peer-checked:text-green-500"></i>
+                                <p class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-green-600">
+                                    Bulk Deposit</p>
+                            </div>
+                        </label>
+                        <label class="cursor-pointer group">
+                            <input type="radio" name="type" value="withdrawal" class="peer hidden">
+                            <div
+                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-red-500 peer-checked:bg-red-50 dark:peer-checked:bg-red-900/20 transition-all">
+                                <i class="fas fa-minus text-lg mb-1 block text-gray-400 peer-checked:text-red-500"></i>
+                                <p class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-red-600">Bulk
+                                    Withdrawal</p>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Amount (EGP)</label>
+                    <div class="relative">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">£</span>
+                        <input type="number" name="amount" step="0.01" min="1" required
+                            class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-white"
+                            placeholder="0.00">
+                    </div>
+                    <p class="text-[10px] text-gray-400 mt-2 italic">* This will be applied ONLY to members who currently
+                        have a balance > 0.</p>
+                </div>
+
+                <div class="flex gap-3">
+                    <button type="button" onclick="closeModal('bulk')"
+                        class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="flex-1 px-6 py-3 bg-gray-800 dark:bg-gray-100 text-[#FFD700] dark:text-gray-800 rounded-xl font-bold hover:bg-black dark:hover:bg-white transition-colors">
+                        Apply to All
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+@endif
+
 <script>
     window.openDepositRequestModal = function () {
         document.getElementById('depositRequestModal').style.display = 'flex';

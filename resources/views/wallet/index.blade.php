@@ -111,6 +111,12 @@
                         </div>
 
                         <div class="flex gap-3 w-full sm:w-auto">
+                            @if($hasManagement)
+                            <button @click="openModal('bulk')"
+                                class="flex-1 sm:flex-none justify-center px-6 py-2.5 bg-gray-800 hover:bg-black text-[#FFD700] rounded-xl font-bold shadow-lg shadow-black/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
+                                <i class="fas fa-layer-group"></i> Bulk
+                            </button>
+                            @endif
                             <button @click="openModal('deposit')"
                                 class="flex-1 sm:flex-none justify-center px-6 py-2.5 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-500/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
                                 <i class="fas fa-plus"></i> Deposit
@@ -126,7 +132,21 @@
 
             {{-- Filters --}}
             <form method="GET" action="{{ route('wallet.index') }}"
-                class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-4 bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+                class="mb-6 grid grid-cols-1 {{ $hasManagement ? 'md:grid-cols-5' : 'md:grid-cols-4' }} gap-4 bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+
+                @if($hasManagement)
+                <div>
+                    <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Search Member</label>
+                    <div class="relative">
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            class="w-full pl-3 pr-10 py-2.5 rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-sm focus:ring-2 focus:ring-blue-500 text-gray-700 dark:text-gray-200"
+                            placeholder="Name or ID...">
+                        <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
+                            <i class="fas fa-search text-xs"></i>
+                        </div>
+                    </div>
+                </div>
+                @endif
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Transaction
