@@ -235,7 +235,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Wallet System
     Route::prefix('wallet')->group(function () {
         Route::get('/', [App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
-        Route::post('/search', [App\Http\Controllers\WalletController::class, 'search'])->name('wallet.search');
+        Route::get('/search', [App\Http\Controllers\WalletController::class, 'search'])->name('wallet.search');
         Route::post('/transact', [App\Http\Controllers\WalletController::class, 'transact'])->name('wallet.transact');
         Route::post('/bulk-transact', [App\Http\Controllers\WalletController::class, 'bulkTransact'])->name('wallet.bulk_transact');
         Route::post('/requests/submit', [App\Http\Controllers\WalletController::class, 'submitDepositRequest'])->name('wallet.request.submit');

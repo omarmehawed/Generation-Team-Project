@@ -28,6 +28,13 @@
                             @endif
                         </button>
                     @endif
+
+                    @if($hasManagement)
+                        <button @click="openModal('bulk')"
+                            class="px-5 py-2.5 bg-gray-800 hover:bg-black text-[#FFD700] rounded-xl font-bold text-sm shadow-lg shadow-black/20 transition-all flex items-center gap-2">
+                            <i class="fas fa-layer-group"></i> Bulk Operations
+                        </button>
+                    @endif
                     {{-- Search Box --}}
                     <form @submit.prevent="searchUser()" class="relative w-72 lg:w-96">
                         <input type="search" enterkeyhint="search" x-model="searchQuery"
@@ -111,12 +118,6 @@
                         </div>
 
                         <div class="flex gap-3 w-full sm:w-auto">
-                            @if($hasManagement)
-                            <button @click="openModal('bulk')"
-                                class="flex-1 sm:flex-none justify-center px-6 py-2.5 bg-gray-800 hover:bg-black text-[#FFD700] rounded-xl font-bold shadow-lg shadow-black/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
-                                <i class="fas fa-layer-group"></i> Bulk
-                            </button>
-                            @endif
                             <button @click="openModal('deposit')"
                                 class="flex-1 sm:flex-none justify-center px-6 py-2.5 bg-green-500 hover:bg-green-600 active:bg-green-700 text-white rounded-xl font-bold shadow-lg shadow-green-500/20 transition-all hover:-translate-y-0.5 flex items-center gap-2">
                                 <i class="fas fa-plus"></i> Deposit
