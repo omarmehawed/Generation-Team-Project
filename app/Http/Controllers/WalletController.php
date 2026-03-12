@@ -5,8 +5,11 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\WalletTransaction;
+use App\Models\WalletDepositRequest;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 class WalletController extends Controller
 {
@@ -15,25 +18,45 @@ class WalletController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorizeAccess();
+        $user = Auth::user();
+        $hasManagement = $user->hasPermission('wallet_management');
 
-        $query = WalletTransaction::with(['user', 'admin'])->latest();
+        $pendingCount = 0;
 
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
+        if ($hasManagement) {
+            $query = WalletTransaction::with(['user', 'admin'])->latest();
+
+            // ... (keep filters)
+            if ($request->filled('type')) {
+                $query->where('type', $request->type);
+            }
+            if ($request->filled('date_from')) {
+                $query->whereDate('created_at', '>=', $request->date_from);
+            }
+            if ($request->filled('date_to')) {
+                $query->whereDate('created_at', '<=', $request->date_to);
+            }
+
+            $transactions = $query->paginate(20);
+            $totalBalance = User::sum('wallet_balance');
+            $pendingCount = WalletDepositRequest::where('status', 'pending')->count();
+
+            return view('wallet.index', compact('transactions', 'totalBalance', 'hasManagement', 'pendingCount'));
+        } else {
+            // Normal member view: Unified History
+            $transactions = WalletTransaction::with(['admin', 'depositRequest'])
+                ->where('user_id', $user->id)
+                ->latest()
+                ->get();
+            
+            // Still get pending requests to show them as "In Progress"
+            $myRequests = WalletDepositRequest::where('user_id', $user->id)
+                ->where('status', 'pending')
+                ->latest()
+                ->get();
+
+            return view('wallet.index', compact('transactions', 'myRequests', 'hasManagement', 'pendingCount'));
         }
-
-        if ($request->filled('date_from')) {
-            $query->whereDate('created_at', '>=', $request->date_from);
-        }
-
-        if ($request->filled('date_to')) {
-            $query->whereDate('created_at', '<=', $request->date_to);
-        }
-
-        $transactions = $query->paginate(20);
-
-        return view('wallet.index', compact('transactions'));
     }
 
     /**
@@ -68,6 +91,7 @@ class WalletController extends Controller
             'email' => $user->email,
             'balance' => $user->wallet_balance ?? 0.00,
             'academic_id' => $displayId,
+            'avatar' => $user->profile_photo_url,
         ]);
     }
 
@@ -82,6 +106,7 @@ class WalletController extends Controller
             'user_id' => 'required|exists:users,id',
             'type'    => 'required|in:deposit,withdrawal',
             'amount'  => 'required|numeric|min:0.1',
+            'notes'   => 'nullable|string|max:255',
         ]);
 
         $user = User::findOrFail($request->user_id);
@@ -105,9 +130,112 @@ class WalletController extends Controller
             'admin_id' => Auth::id(),
             'type' => $type,
             'amount' => $amount,
+            'balance_after' => $user->wallet_balance,
+            'notes' => $request->notes ?? "Manual " . ucfirst($type),
         ]);
 
         return back()->with('success', ucfirst($type) . " of {$amount} completed for {$user->name}.");
+    }
+
+    /**
+     * Submit a deposit request (Member Side).
+     */
+    public function submitDepositRequest(Request $request)
+    {
+        $request->validate([
+            'payment_method' => 'required|in:cash,vodafone_cash,instapay',
+            'amount' => 'required|numeric|min:1',
+            'notes' => 'required_if:payment_method,cash|nullable|string',
+            'phone_number' => 'required_if:payment_method,vodafone_cash,instapay|nullable|string',
+            'transfer_date' => 'required_if:payment_method,vodafone_cash,instapay|nullable|date',
+            'transfer_time' => 'required_if:payment_method,vodafone_cash,instapay|nullable',
+            'screenshot' => 'required_if:payment_method,vodafone_cash,instapay|nullable|image|max:10240',
+        ]);
+
+        $data = $request->only(['payment_method', 'amount', 'notes', 'phone_number', 'transfer_date', 'transfer_time']);
+        $data['user_id'] = Auth::id();
+        $data['status'] = 'pending';
+
+        if ($request->hasFile('screenshot')) {
+            $path = $request->file('screenshot')->store('wallet/screenshots', 'r2');
+            $data['screenshot_path'] = Storage::disk('r2')->url($path);
+        }
+
+        WalletDepositRequest::create($data);
+
+        return back()->with('success', 'Deposit request submitted successfully! Waiting for review.');
+    }
+
+    /**
+     * Get all pending deposit requests (Leader/Authorized Side).
+     */
+    public function getDepositRequests()
+    {
+        if (!Auth::user()->hasPermission('deposit_requests')) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $requests = WalletDepositRequest::with('user')->where('status', 'pending')->latest()->get();
+        return response()->json($requests);
+    }
+
+    /**
+     * Process a deposit request (Approve/Reject).
+     */
+    public function processDepositRequest(Request $request, $id)
+    {
+        if (!Auth::user()->hasPermission('deposit_requests')) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'action' => 'required|in:accept,reject',
+            'rejection_reason' => 'required_if:action,reject|nullable|string',
+        ]);
+
+        $depositRequest = WalletDepositRequest::findOrFail($id);
+        
+        if ($depositRequest->status !== 'pending') {
+            return back()->with('error', 'Request already processed.');
+        }
+
+        if ($request->action === 'accept') {
+            $user = $depositRequest->user;
+            $user->increment('wallet_balance', $depositRequest->amount);
+
+            $methodName = str_replace('_', ' ', strtoupper($depositRequest->payment_method));
+            $txnNotes = "Deposit via {$methodName}";
+            if ($depositRequest->notes) {
+                $txnNotes .= ": " . $depositRequest->notes;
+            }
+
+            WalletTransaction::create([
+                'user_id' => $user->id,
+                'admin_id' => Auth::id(),
+                'type' => 'deposit',
+                'amount' => $depositRequest->amount,
+                'balance_after' => $user->wallet_balance,
+                'notes' => $txnNotes,
+                'deposit_request_id' => $depositRequest->id,
+            ]);
+
+            $depositRequest->update([
+                'status' => 'accepted',
+                'processed_by' => Auth::id(),
+                'processed_at' => now(),
+            ]);
+
+            return back()->with('success', 'Deposit request accepted and balance updated.');
+        } else {
+            $depositRequest->update([
+                'status' => 'rejected',
+                'processed_by' => Auth::id(),
+                'processed_at' => now(),
+                'rejection_reason' => $request->rejection_reason,
+            ]);
+
+            return back()->with('success', 'Deposit request rejected.');
+        }
     }
 
     /**
@@ -115,9 +243,10 @@ class WalletController extends Controller
      */
     private function authorizeAccess()
     {
-        $allowed = ['2420823@batechu.com', '2420324@batechu.com'];
-        if (!in_array(Auth::user()->email, $allowed)) {
-            abort(403, 'Unauthorized access.');
+        $user = Auth::user();
+        if ($user->hasPermission('wallet_management')) {
+            return;
         }
+        abort(403, 'Unauthorized access.');
     }
 }

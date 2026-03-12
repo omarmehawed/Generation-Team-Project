@@ -17,6 +17,23 @@ class User extends Authenticatable
     use HasFactory, Notifiable, SoftDeletes;
     use LogsActivity;
 
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    public function getProfilePhotoUrlAttribute()
+    {
+        if ($this->profile_photo_path) {
+            if (str_starts_with($this->profile_photo_path, 'http')) {
+                return $this->profile_photo_path;
+            }
+            // If it's a relative path, assume it's stored on the default disk or cloudinary
+            return \Illuminate\Support\Facades\Storage::url($this->profile_photo_path);
+        }
+
+        return 'https://ui-avatars.com/api/?name=' . urlencode($this->name) . '&background=000&color=00f3ff&bold=true&size=128';
+    }
+
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
@@ -66,18 +83,26 @@ class User extends Authenticatable
     // ✅ دالة سحرية عشان نفحص الصلاحية في السايد بار
     public function hasPermission($permission)
     {
+        // 1. Super Admin Bypass (Specific Email Only)
+        $superAdminEmail = '2420823@batechu.com';
+        if ($this->email === $superAdminEmail) {
+            return true;
+        }
 
-        // حتى لو هو Admin، لو مش معاه الصلاحية دي مكتوبة، مياخدهاش.
+        // 2. Explicit check for backup_db (Even for other Admins)
         if ($permission === 'backup_db') {
             return !empty($this->permissions) && in_array($permission, $this->permissions);
         }
 
-        // 2. باقي الصلاحيات العادية (Admin = Leader) ✅
+        // 3. Admin Role Check (Bypass for non-wallet permissions)
         if ($this->role === 'admin') {
-            return true;
+            $walletPermissions = ['wallet_management', 'deposit_requests'];
+            if (!in_array($permission, $walletPermissions)) {
+                return true;
+            }
         }
 
-        // 3. الفحص العادي لباقي الموظفين (Members)
+        // 4. Regular Permisson Check
         if (empty($this->permissions)) {
             return false;
         }

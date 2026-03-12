@@ -636,7 +636,7 @@ class FinalProjectController extends Controller
             'technical_role' => 'required|in:general,software,hardware', // التخصص التقني
             'extra_role' => 'nullable|in:none,presentation,reports,marketing', // المسؤولية الإضافية
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|in:view_team_funds'
+            'permissions.*' => 'string|in:view_team_funds,wallet_management,deposit_requests'
         ]);
 
         $leader = Auth::user();
@@ -864,7 +864,7 @@ class FinalProjectController extends Controller
     {
         $request->validate([
             'contribution_id' => 'required|exists:fund_contributions,id',
-            'payment_method' => 'required|in:cash,transfer',
+            'payment_method' => 'required|in:cash,transfer,wallet',
         ]);
 
         $contrib = \App\Models\FundContribution::findOrFail($request->contribution_id);
@@ -883,7 +883,7 @@ class FinalProjectController extends Controller
                 'transaction_time' => 'required',
                 'proof_image' => 'required|image|max:5120'
             ]);
-        } else {
+        } elseif ($request->payment_method == 'cash') {
             $request->validate([
                 'notes' => 'required|string|min:5',
             ]);
@@ -906,6 +906,9 @@ class FinalProjectController extends Controller
             $updateData['from_number'] = $request->from_number;
             $updateData['transaction_date'] = $request->transaction_date;
             $updateData['transaction_time'] = $request->transaction_time;
+        } elseif ($request->payment_method == 'wallet') {
+             // Wallet logic: No special fields needed for submission, just mark as pending
+             $updateData['notes'] = "Payment via Wallet Balance";
         } else {
              $updateData['notes'] = $request->notes;
         }
@@ -953,6 +956,24 @@ class FinalProjectController extends Controller
         $user = User::find($contrib->user_id);
 
         if ($request->action == 'approve') {
+            // Deduct from wallet if method is wallet
+            if ($contrib->payment_method === 'wallet') {
+                if ($user->wallet_balance < $contrib->fund->amount_per_member) {
+                    return back()->with('error', 'Insufficient wallet balance for this member.');
+                }
+                
+                $user->decrement('wallet_balance', $contrib->fund->amount_per_member);
+                
+                \App\Models\WalletTransaction::create([
+                    'user_id' => $user->id,
+                    'admin_id' => Auth::id(),
+                    'type' => 'withdrawal',
+                    'amount' => $contrib->fund->amount_per_member,
+                    'balance_after' => $user->wallet_balance,
+                    'notes' => "Fund Payment: " . $contrib->fund->title,
+                ]);
+            }
+
             $contrib->update([
                 'status' => 'paid',
                 'paid_at' => now(),
@@ -1531,19 +1552,13 @@ class FinalProjectController extends Controller
 
         $request->validate([
             'team_id' => 'required|exists:teams,id',
-            'group_id' => 'required|in:all,A,B',
             'columns' => 'required|array|min:1'
         ]);
 
         $fileName = 'team_members.xlsx';
-        if ($request->group_id === 'A') {
-            $fileName = 'group_A_members.xlsx';
-        } elseif ($request->group_id === 'B') {
-            $fileName = 'group_B_members.xlsx';
-        }
 
         return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\MembersExport($request->columns, $request->group_id, $request->team_id),
+            new \App\Exports\MembersExport($request->columns, $request->team_id),
             $fileName
         );
     }

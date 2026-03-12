@@ -14,6 +14,9 @@ class WalletTransaction extends Model
         'admin_id',
         'type',
         'amount',
+        'balance_after',
+        'notes',
+        'deposit_request_id',
     ];
 
     public function user()
@@ -24,5 +27,10 @@ class WalletTransaction extends Model
     public function admin()
     {
         return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    public function depositRequest()
+    {
+        return $this->belongsTo(WalletDepositRequest::class, 'deposit_request_id');
     }
 }

@@ -97,11 +97,11 @@
                     <div class="mb-5">
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Advanced
                             Permissions</label>
-                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4">
+                        <div class="bg-gray-50 border border-gray-200 rounded-xl p-4 space-y-4">
                             <label class="flex items-center gap-3 cursor-pointer group">
                                 <div class="relative flex items-center">
                                     <input type="checkbox" name="permissions[]" value="view_team_funds"
-                                        class="peer sr-only" {{ $hasViewTeamFunds ? 'checked' : '' }}>
+                                        class="peer sr-only" {{ $userPermissions->contains('view_team_funds') ? 'checked' : '' }}>
                                     <div
                                         class="h-5 w-5 rounded border-2 border-gray-300 bg-white peer-checked:bg-[#175C53] peer-checked:border-[#175C53] transition-all flex items-center justify-center group-hover:border-[#175C53]">
                                         <i
@@ -114,6 +114,48 @@
                                         Team Funds</span>
                                     <span class="text-[10px] text-gray-500">Allow this member to view the full team's
                                         financial contributions</span>
+                                </div>
+                            </label>
+
+                            <div class="h-px bg-gray-200"></div>
+
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative flex items-center">
+                                    <input type="checkbox" name="permissions[]" value="wallet_management"
+                                        class="peer sr-only" {{ $userPermissions->contains('wallet_management') ? 'checked' : '' }}>
+                                    <div
+                                        class="h-5 w-5 rounded border-2 border-gray-300 bg-white peer-checked:bg-amber-600 peer-checked:border-amber-600 transition-all flex items-center justify-center group-hover:border-amber-600">
+                                        <i
+                                            class="fas fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-sm font-bold text-gray-800 group-hover:text-amber-600 transition-colors">Wallet
+                                        Management</span>
+                                    <span class="text-[10px] text-gray-500">Allow this member to view, deposit, and
+                                        withdraw from the wallet</span>
+                                </div>
+                            </label>
+
+                            <div class="h-px bg-gray-200"></div>
+
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative flex items-center">
+                                    <input type="checkbox" name="permissions[]" value="deposit_requests"
+                                        class="peer sr-only" {{ $userPermissions->contains('deposit_requests') ? 'checked' : '' }}>
+                                    <div
+                                        class="h-5 w-5 rounded border-2 border-gray-300 bg-white peer-checked:bg-indigo-600 peer-checked:border-indigo-600 transition-all flex items-center justify-center group-hover:border-indigo-600">
+                                        <i
+                                            class="fas fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span
+                                        class="text-sm font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">Deposit
+                                        Requests</span>
+                                    <span class="text-[10px] text-gray-500">Allow this member to see and manage deposit
+                                        requests from members</span>
                                 </div>
                             </label>
                         </div>

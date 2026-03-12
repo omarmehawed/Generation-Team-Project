@@ -309,13 +309,11 @@
                             style="display: none;"></i>
                     </button>
 
-                    <!-- Wallet (Restricted) -->
-                    @if(in_array(auth()->user()->email, ['2420823@batechu.com', '2420324@batechu.com']))
-                        <a href="{{ route('wallet.index') }}" class="relative group p-2 mx-1" title="Wallet">
-                            <i class="fas fa-wallet text-xl hover:text-blue-500 transition-colors"
-                                style="color: var(--text-muted)"></i>
-                        </a>
-                    @endif
+                    {{-- Wallet (Always link to index) --}}
+                    <a href="{{ route('wallet.index') }}" class="relative group p-2 mx-1" title="Wallet">
+                        <i class="fas fa-wallet text-xl hover:text-blue-500 transition-colors"
+                            style="color: var(--text-muted)"></i>
+                    </a>
 
                     {{-- Notifications Bell --}}
                     <div class="relative ml-auto" x-data="{ open: false }">
@@ -365,7 +363,7 @@
                                         <div class="flex gap-3">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                                                                    {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
+                                                                            {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
                                                 <i class="{{ $icon }} text-sm"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">

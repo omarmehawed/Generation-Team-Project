@@ -1705,8 +1705,10 @@
                                                             onclick="openReviewModal({{ json_encode([
                                                                 'id' => $contrib->id,
                                                                 'member_name' => $contrib->user->name,
+                                                                'member_balance' => $contrib->user->wallet_balance,
                                                                 'payment_method' => $contrib->payment_method,
                                                                 'amount' => $contrib->amount ?? $activeFund->amount_per_member,
+                                                                'active_fund_amount' => $activeFund->amount_per_member,
                                                                 'from_number' => $contrib->from_number,
                                                                 'transaction_date' => $contrib->transaction_date,
                                                                 'transaction_time' => $contrib->transaction_time,
@@ -1731,7 +1733,7 @@
                                                         </span>
                                                         @if ($contrib->user_id == Auth::id())
                                                             <button
-                                                                onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}')"
+                                                                onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
                                                                 class="text-[10px] bg-gray-900 text-white px-3 py-1 rounded-lg hover:bg-gray-800 transition font-bold shadow-sm">
                                                                 Try Again
                                                             </button>
@@ -1748,7 +1750,7 @@
                                                             <span class="text-[10px] bg-red-600 text-white px-2 py-1 rounded-lg font-bold animate-pulse block mb-1">OVERDUE!</span>
                                                             @if ($contrib->user_id == Auth::id())
                                                                 <button
-                                                                    onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}')"
+                                                                    onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
                                                                     class="text-[10px] bg-gray-900 text-white px-3 py-1 rounded-lg hover:bg-[#D4AF37] transition font-bold shadow-md">
                                                                     Pay Now
                                                                 </button>
@@ -1757,7 +1759,7 @@
                                                     @elseif ($contrib->user_id == Auth::id())
                                                         {{-- Member: Pay Button --}}
                                                         <button
-                                                            onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}')"
+                                                            onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
                                                             class="text-[10px] bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-[#D4AF37] transition font-bold shadow-md">
                                                             Pay Now
                                                         </button>
@@ -2558,6 +2560,7 @@
                                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm rounded-md">
                                             <option value="transfer">Vodafone Cash / InstaPay</option>
                                             <option value="cash">Cash (Hand to Hand)</option>
+                                            <option value="wallet">My Wallet Balance</option>
                                         </select>
                                     </div>
 
@@ -2599,6 +2602,25 @@
                                             <textarea name="notes" rows="3" placeholder="I gave you the money when we met at..."
                                                 class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"></textarea>
                                         </div>
+                                    </div>
+
+                                    {{-- Wallet Fields --}}
+                                    <div id="wallet_fields" class="hidden space-y-4">
+                                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                                            <div class="flex items-center justify-between mb-3">
+                                                <span class="text-xs font-bold text-amber-700 uppercase">Your Balance</span>
+                                                <span class="text-lg font-black text-amber-900"><span id="wallet_current_balance">0.00</span> EGP</span>
+                                            </div>
+                                            <div class="flex items-center justify-between mb-3 text-red-600">
+                                                <span class="text-xs font-bold uppercase">Requested Amount</span>
+                                                <span class="text-sm font-bold">- <span id="wallet_request_amount">0.00</span> EGP</span>
+                                            </div>
+                                            <div class="pt-3 border-t border-amber-200 flex items-center justify-between">
+                                                <span class="text-xs font-bold text-gray-600 uppercase">After Deduction</span>
+                                                <span class="text-lg font-black text-green-600"><span id="wallet_after_balance">0.00</span> EGP</span>
+                                            </div>
+                                        </div>
+                                        <p class="text-[10px] text-gray-400 italic text-center">Funds will be deducted upon leader approval.</p>
                                     </div>
                                 </div>
                             </div>
@@ -2669,6 +2691,22 @@
                                         <p class="mt-1"><strong>Notes:</strong></p>
                                         <p id="review_notes" class="text-gray-600 italic border-l-2 border-gray-300 pl-2"></p>
                                     </div>
+
+                                    {{-- Wallet Details --}}
+                                    <div id="review_wallet_details" class="hidden bg-amber-50 border border-amber-100 rounded-lg p-3">
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-gray-500">Member Balance:</span>
+                                            <span class="font-bold text-gray-800"><span id="review_wallet_balance">0.00</span> EGP</span>
+                                        </div>
+                                        <div class="flex justify-between text-xs mb-1">
+                                            <span class="text-gray-500">Requested Deduction:</span>
+                                            <span class="font-bold text-red-600">- <span id="review_wallet_deduction">0.00</span> EGP</span>
+                                        </div>
+                                        <div class="flex justify-between text-xs pt-2 border-t border-amber-200">
+                                            <span class="font-bold text-gray-700">Balance After:</span>
+                                            <span class="font-black text-green-600"><span id="review_wallet_after">0.00</span> EGP</span>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 {{-- Rejection Reason (Conditional) --}}
@@ -2711,18 +2749,28 @@
 
     <script>
         function togglePaymentFields(method) {
+            document.getElementById('transfer_fields').classList.add('hidden');
+            document.getElementById('cash_fields').classList.add('hidden');
+            document.getElementById('wallet_fields').classList.add('hidden');
+
             if (method === 'transfer') {
                 document.getElementById('transfer_fields').classList.remove('hidden');
-                document.getElementById('cash_fields').classList.add('hidden');
-            } else {
-                document.getElementById('transfer_fields').classList.add('hidden');
+            } else if (method === 'cash') {
                 document.getElementById('cash_fields').classList.remove('hidden');
+            } else if (method === 'wallet') {
+                document.getElementById('wallet_fields').classList.remove('hidden');
             }
         }
 
-        function openPaymentModal(contributionId, amount) {
+        function openPaymentModal(contributionId, amount, userBalance) {
             document.getElementById('submit_contribution_id').value = contributionId;
             document.getElementById('default_amount_input').value = amount;
+            
+            // Wallet Preview
+            document.getElementById('wallet_current_balance').innerText = parseFloat(userBalance).toLocaleString();
+            document.getElementById('wallet_request_amount').innerText = parseFloat(amount).toLocaleString();
+            document.getElementById('wallet_after_balance').innerText = (parseFloat(userBalance) - parseFloat(amount)).toLocaleString();
+            
             openModal('paymentSubmissionModal');
         }
 
@@ -2735,10 +2783,11 @@
             // Reset UI
             document.getElementById('review_transfer_details').classList.add('hidden');
             document.getElementById('review_cash_details').classList.add('hidden');
+            document.getElementById('review_wallet_details').classList.add('hidden');
             document.getElementById('rejection_area').classList.add('hidden');
             document.getElementById('approve_btn').classList.remove('hidden');
             document.getElementById('reject_btn').classList.remove('hidden');
-             document.getElementById('confirm_reject_btn').classList.add('hidden');
+            document.getElementById('confirm_reject_btn').classList.add('hidden');
 
             if (data.payment_method === 'transfer') {
                 document.getElementById('review_transfer_details').classList.remove('hidden');
@@ -2746,9 +2795,14 @@
                 document.getElementById('review_from').innerText = data.from_number;
                 document.getElementById('review_date').innerText = data.transaction_date + ' at ' + data.transaction_time;
                 document.getElementById('review_proof_link').href = data.proof_url;
-            } else {
+            } else if (data.payment_method === 'cash') {
                 document.getElementById('review_cash_details').classList.remove('hidden');
                 document.getElementById('review_notes').innerText = data.notes;
+            } else if (data.payment_method === 'wallet') {
+                document.getElementById('review_wallet_details').classList.remove('hidden');
+                document.getElementById('review_wallet_balance').innerText = parseFloat(data.member_balance).toLocaleString();
+                document.getElementById('review_wallet_deduction').innerText = parseFloat(data.active_fund_amount).toLocaleString();
+                document.getElementById('review_wallet_after').innerText = (parseFloat(data.member_balance) - parseFloat(data.active_fund_amount)).toLocaleString();
             }
 
             openModal('paymentReviewModal');
