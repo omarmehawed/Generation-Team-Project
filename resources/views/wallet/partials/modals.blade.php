@@ -289,64 +289,120 @@
 @if($hasManagement)
     {{-- Bulk Operation Modal (For Admins) --}}
     <div id="bulkModal" class="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-4 sm:p-6" x-cloak
-        style="display: none;">
-        <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" onclick="closeModal('bulk')">
+        style="display: none;" x-data="bulkApp()">
+        <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" @click="closeBulkModal()">
         </div>
 
         <div
-            class="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 md:p-8 border-t md:border border-gray-200 dark:border-gray-700 transform transition-all">
-            <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-white flex items-center gap-2" id="bulkModalTitle">
-                <i class="fas fa-layer-group text-amber-500"></i> Bulk Wallet Operation
-            </h3>
+            class="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 border-t md:border border-gray-200 dark:border-gray-700 transform transition-all flex flex-col max-h-[90vh]">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-layer-group text-amber-500"></i> Bulk Operation
+                </h3>
+                <button @click="closeBulkModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-lg"></i>
+                </button>
+            </div>
 
-            <form action="{{ route('wallet.bulk_transact') }}" method="POST">
+            <form action="{{ route('wallet.bulk_transact') }}" method="POST"
+                class="overflow-y-auto flex-1 pr-2 custom-scroll">
                 @csrf
 
-                <div class="mb-5">
+                {{-- Student Selector --}}
+                <div class="mb-6">
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Students</label>
+                    <div class="space-y-3">
+                        {{-- ID Input --}}
+                        <div class="relative">
+                            <input type="text" x-model="studentQuery" @keydown.enter.prevent="addStudent()"
+                                class="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-white text-sm"
+                                placeholder="Type Academic ID and press Enter..." :disabled="loading">
+                            <button type="button" @click="addStudent()"
+                                class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-lg transition-colors"
+                                :disabled="loading || !studentQuery">
+                                <i class="fas fa-plus" x-show="!loading"></i>
+                                <i class="fas fa-spinner fa-spin" x-show="loading"></i>
+                            </button>
+                        </div>
+                        <p x-show="error" x-text="error" class="text-red-500 text-[10px] font-bold mt-1"></p>
+
+                        {{-- Selected Students Avatars --}}
+                        <div
+                            class="flex flex-wrap gap-2 p-2 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 min-h-[60px]">
+                            <template x-for="(student, index) in selectedStudents" :key="student.id">
+                                <div class="relative group">
+                                    <div class="w-10 h-10 rounded-full border-2 border-white dark:border-gray-700 overflow-hidden shadow-sm"
+                                        :title="student.name">
+                                        <img :src="student.avatar" class="w-full h-full object-cover">
+                                    </div>
+                                    <button type="button" @click="removeStudent(index)"
+                                        class="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white rounded-full flex items-center justify-center text-[10px] shadow-sm hover:scale-110 transition-transform">
+                                        <i class="fas fa-times text-[8px]"></i>
+                                    </button>
+                                    {{-- Hidden input for form submission --}}
+                                    <input type="hidden" name="user_ids[]" :value="student.id">
+                                </div>
+                            </template>
+                            <template x-if="selectedStudents.length === 0">
+                                <div class="flex items-center justify-center w-full h-full text-gray-400 text-xs italic">
+                                    No students selected yet.
+                                </div>
+                            </template>
+                        </div>
+                        <p class="text-[10px] text-gray-400" x-text="selectedStudents.length + ' students selected'"></p>
+                    </div>
+                </div>
+
+                <div class="mb-6">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Operation
                         Type</label>
                     <div class="grid grid-cols-2 gap-3">
                         <label class="cursor-pointer group">
-                            <input type="radio" name="type" value="deposit" class="peer hidden" checked>
+                            <input type="radio" name="type" value="deposit" class="peer hidden" checked x-model="type">
                             <div
-                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-green-500 peer-checked:bg-green-50 dark:peer-checked:bg-green-900/20 transition-all">
+                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-green-500 peer-checked:bg-green-50 dark:peer-checked:bg-green-900/20 transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                 <i class="fas fa-plus text-lg mb-1 block text-gray-400 peer-checked:text-green-500"></i>
                                 <p class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-green-600">
-                                    Bulk Deposit</p>
+                                    Deposit</p>
                             </div>
                         </label>
                         <label class="cursor-pointer group">
-                            <input type="radio" name="type" value="withdrawal" class="peer hidden">
+                            <input type="radio" name="type" value="withdrawal" class="peer hidden" x-model="type">
                             <div
-                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-red-500 peer-checked:bg-red-50 dark:peer-checked:bg-red-900/20 transition-all">
+                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-red-500 peer-checked:bg-red-50 dark:peer-checked:bg-red-900/20 transition-all hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                 <i class="fas fa-minus text-lg mb-1 block text-gray-400 peer-checked:text-red-500"></i>
-                                <p class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-red-600">Bulk
+                                <p class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-red-600">
                                     Withdrawal</p>
                             </div>
                         </label>
                     </div>
                 </div>
 
-                <div class="mb-6">
+                <div class="mb-8">
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Amount (EGP)</label>
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">£</span>
-                        <input type="number" name="amount" step="0.01" min="1" required
-                            class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-white"
-                            placeholder="0.00">
+                        <input type="number" name="amount" step="0.1" min="0.1" required x-model="amount"
+                            class="w-full pl-10 pr-4 py-4 text-2xl font-mono font-black bg-gray-50 dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 text-gray-800 dark:text-white transition-all placeholder-gray-300"
+                            placeholder="0.0">
                     </div>
-                    <p class="text-[10px] text-gray-400 mt-2 italic">* This will be applied ONLY to members who currently
-                        have a balance > 0.</p>
+                    {{-- Total Calculation --}}
+                    <div
+                        class="mt-4 p-4 bg-amber-50/50 dark:bg-amber-900/10 rounded-2xl border border-amber-100 dark:border-amber-800/50 flex justify-between items-center">
+                        <span class="text-xs font-bold text-amber-700/70 uppercase">Total Estimated</span>
+                        <span class="text-xl font-black text-amber-600"
+                            x-text="(amount * selectedStudents.length).toLocaleString() + ' EGP'"></span>
+                    </div>
                 </div>
 
-                <div class="flex gap-3">
-                    <button type="button" onclick="closeModal('bulk')"
-                        class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 rounded-xl font-bold hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+                <div class="flex gap-4">
+                    <button type="button" @click="closeBulkModal()"
+                        class="flex-1 py-4 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-2xl font-bold text-sm transition-all">
                         Cancel
                     </button>
-                    <button type="submit"
-                        class="flex-1 px-6 py-3 bg-gray-800 dark:bg-gray-100 text-[#FFD700] dark:text-gray-800 rounded-xl font-bold hover:bg-black dark:hover:bg-white transition-colors">
-                        Apply to All
+                    <button type="submit" :disabled="selectedStudents.length === 0 || !amount"
+                        class="flex-1 py-4 bg-gray-900 hover:bg-black text-amber-400 rounded-2xl font-black text-sm shadow-xl shadow-black/20 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                        <i class="fas fa-bolt"></i> Process Operation
                     </button>
                 </div>
             </form>
@@ -379,7 +435,81 @@
         document.getElementById('requestDetailsModal').style.display = 'none';
     };
 
+    window.openBulkModal = function () {
+        document.getElementById('bulkModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    };
+
+    window.closeBulkModal = function () {
+        document.getElementById('bulkModal').style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
     // Alpine Apps
+    function bulkApp() {
+        return {
+            loading: false,
+            studentQuery: '',
+            selectedStudents: [],
+            type: 'deposit',
+            amount: 0,
+            error: null,
+
+            init() {
+                window.addEventListener('open-bulk-modal', () => {
+                    this.openBulkModal();
+                });
+            },
+
+            openBulkModal() {
+                document.getElementById('bulkModal').style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+            },
+
+            closeBulkModal() {
+                document.getElementById('bulkModal').style.display = 'none';
+                document.body.style.overflow = '';
+                // Reset form if needed
+                this.selectedStudents = [];
+                this.studentQuery = '';
+                this.error = null;
+            },
+
+            async addStudent() {
+                if (!this.studentQuery) return;
+
+                // Check if already added
+                if (this.selectedStudents.some(s => s.academic_id === this.studentQuery)) {
+                    this.error = "Student already added.";
+                    return;
+                }
+
+                this.loading = true;
+                this.error = null;
+
+                try {
+                    const response = await fetch(`{{ route('wallet.search_member') }}?query=${this.studentQuery}`);
+                    const data = await response.json();
+
+                    if (data) {
+                        this.selectedStudents.push(data);
+                        this.studentQuery = '';
+                    } else {
+                        this.error = "Student not found.";
+                    }
+                } catch (e) {
+                    this.error = "Search failed.";
+                } finally {
+                    this.loading = false;
+                }
+            },
+
+            removeStudent(index) {
+                this.selectedStudents.splice(index, 1);
+            }
+        }
+    }
+
     function depositRequestApp() {
         return {
             method: 'cash'

@@ -157,27 +157,68 @@ class WalletController extends Controller
         return back()->with('success', ucfirst($type) . " of {$amount} completed for {$user->name}.");
     }
 
+    public function activeBalances(Request $request)
+    {
+        $this->authorizeAccess();
+
+        $users = User::where('wallet_balance', '>', 0)->get();
+
+        return response()->json([
+            'users' => $users->map(fn($u) => [
+                'id' => $u->id,
+                'name' => $u->name,
+                'avatar' => $u->profile_photo_url,
+                'academic_id' => $u->university_email ?? $u->email,
+                'balance' => $u->wallet_balance,
+            ]),
+            'total_balance' => $users->sum('wallet_balance'),
+        ]);
+    }
+
+    public function searchMember(Request $request)
+    {
+        $this->authorizeAccess();
+
+        $query = $request->get('query');
+        if (empty($query)) return response()->json(null);
+
+        $user = User::where('university_email', 'like', $query . '%')
+                    ->orWhere('email', 'like', $query . '%')
+                    ->first();
+
+        if (!$user) return response()->json(null);
+
+        return response()->json([
+            'id' => $user->id,
+            'name' => $user->name,
+            'avatar' => $user->profile_photo_url,
+            'academic_id' => $user->university_email ?? $user->email,
+        ]);
+    }
+
     /**
-     * Apply a bulk operation (deposit/withdrawal) to all members with balance > 0.
+     * Apply a bulk operation (deposit/withdrawal) to selected members.
      */
     public function bulkTransact(Request $request)
     {
         $this->authorizeAccess();
 
         $request->validate([
-            'type'    => 'required|in:deposit,withdrawal',
-            'amount'  => 'required|numeric|min:0.1',
+            'type'       => 'required|in:deposit,withdrawal',
+            'amount'     => 'required|numeric|min:0.1',
+            'user_ids'   => 'required|array',
+            'user_ids.*' => 'exists:users,id'
         ]);
 
+        $userIds = $request->user_ids;
         $amount = $request->amount;
         $type = $request->type;
         $adminId = Auth::id();
 
-        // Only members with balance > 0
-        $users = User::where('wallet_balance', '>', 0)->get();
+        $users = User::whereIn('id', $userIds)->get();
         
         if ($users->isEmpty()) {
-            return back()->with('error', 'No members with balance > 0 found.');
+            return back()->with('error', 'No valid members selected.');
         }
 
         $count = 0;
@@ -186,9 +227,9 @@ class WalletController extends Controller
             
             if ($type === 'withdrawal') {
                 $appliedAmount = min($user->wallet_balance, $amount);
+                if ($appliedAmount <= 0) continue;
                 $user->decrement('wallet_balance', $appliedAmount);
             } else {
-                $appliedAmount = $amount;
                 $user->increment('wallet_balance', $appliedAmount);
             }
 

@@ -2626,6 +2626,12 @@
                                     </div>
 
                                     {{-- Wallet Fields --}}
+                                    <div id="wallet_error_msg" class="hidden p-3 bg-red-50 border border-red-200 rounded-lg">
+                                        <p class="text-xs text-red-600 font-bold flex items-center gap-2">
+                                            <i class="fas fa-exclamation-triangle"></i>
+                                            Insufficient wallet balance to cover this amount.
+                                        </p>
+                                    </div>
                                     <div id="wallet_fields" class="hidden space-y-4">
                                         <div class="bg-amber-50 border border-amber-200 rounded-xl p-4">
                                             <div class="flex items-center justify-between mb-3">
@@ -2648,8 +2654,8 @@
                         </div>
                     </div>
                     <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                        <button type="submit"
-                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                        <button type="submit" id="submit_payment_btn"
+                            class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm">
                             Submit Payment
                         </button>
                         <button type="button" onclick="closeModal('paymentSubmissionModal')"
@@ -2769,10 +2775,53 @@
     </div>
 
     <script>
+        let currentAmount = 0;
+        let currentUserBalance = 0;
+
+        function openPaymentModal(contributionId, amount, userBalance) {
+            currentAmount = parseFloat(amount);
+            currentUserBalance = parseFloat(userBalance);
+            
+            document.getElementById('submit_contribution_id').value = contributionId;
+            document.getElementById('default_amount_input').value = amount;
+            
+            // Wallet Preview
+            document.getElementById('wallet_current_balance').innerText = currentUserBalance.toLocaleString();
+            document.getElementById('wallet_request_amount').innerText = currentAmount.toLocaleString();
+            document.getElementById('wallet_after_balance').innerText = (currentUserBalance - currentAmount).toLocaleString();
+            
+            // Initial check if wallet is default
+            if (document.getElementById('payment_method_select').value === 'wallet') {
+                validateWalletPayment();
+            }
+
+            openModal('paymentSubmissionModal');
+        }
+
+        function validateWalletPayment() {
+            const errorMsg = document.getElementById('wallet_error_msg');
+            const submitBtn = document.getElementById('submit_payment_btn');
+            
+            if (currentUserBalance < currentAmount) {
+                errorMsg.classList.remove('hidden');
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                errorMsg.classList.add('hidden');
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
         function togglePaymentFields(method) {
             document.getElementById('transfer_fields').classList.add('hidden');
             document.getElementById('cash_fields').classList.add('hidden');
             document.getElementById('wallet_fields').classList.add('hidden');
+            
+            // Reset submit button state
+            const submitBtn = document.getElementById('submit_payment_btn');
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 
             if (method === 'transfer') {
                 document.getElementById('transfer_fields').classList.remove('hidden');
@@ -2780,19 +2829,8 @@
                 document.getElementById('cash_fields').classList.remove('hidden');
             } else if (method === 'wallet') {
                 document.getElementById('wallet_fields').classList.remove('hidden');
+                validateWalletPayment();
             }
-        }
-
-        function openPaymentModal(contributionId, amount, userBalance) {
-            document.getElementById('submit_contribution_id').value = contributionId;
-            document.getElementById('default_amount_input').value = amount;
-            
-            // Wallet Preview
-            document.getElementById('wallet_current_balance').innerText = parseFloat(userBalance).toLocaleString();
-            document.getElementById('wallet_request_amount').innerText = parseFloat(amount).toLocaleString();
-            document.getElementById('wallet_after_balance').innerText = (parseFloat(userBalance) - parseFloat(amount)).toLocaleString();
-            
-            openModal('paymentSubmissionModal');
         }
 
         function openReviewModal(data) {
