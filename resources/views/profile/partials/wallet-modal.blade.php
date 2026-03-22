@@ -29,13 +29,13 @@
                     </div>
 
                     {{-- Action Type (Add / Withdraw) --}}
-                    <div class="mb-5" x-data="{ type: 'add' }">
+                    <div class="mb-5" x-data="{ type: 'deposit' }">
                         <label
                             class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Action</label>
                         <div class="grid grid-cols-2 gap-3">
                             <label class="cursor-pointer">
-                                <input type="radio" name="type" value="add" class="peer hidden" checked
-                                    @click="type = 'add'">
+                                <input type="radio" name="type" value="deposit" class="peer hidden" checked
+                                    @click="type = 'deposit'">
                                 <div
                                     class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-green-500 peer-checked:bg-green-50 transition-all hover:bg-gray-50">
                                     <p class="text-sm font-bold text-gray-600 peer-checked:text-green-700"><i
@@ -43,8 +43,8 @@
                                 </div>
                             </label>
                             <label class="cursor-pointer">
-                                <input type="radio" name="type" value="withdraw" class="peer hidden"
-                                    @click="type = 'withdraw'">
+                                <input type="radio" name="type" value="withdrawal" class="peer hidden"
+                                    @click="type = 'withdrawal'">
                                 <div
                                     class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-red-500 peer-checked:bg-red-50 transition-all hover:bg-gray-50">
                                     <p class="text-sm font-bold text-gray-600 peer-checked:text-red-700"><i
@@ -66,6 +66,14 @@
                                 placeholder="0.00">
                         </div>
                     </div>
+
+                    {{-- Notes Input --}}
+                    <div class="mb-2">
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notes (Optional)</label>
+                        <textarea name="notes" rows="2" maxlength="255"
+                            class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-green-500 focus:border-green-500 outline-none transition bg-white text-gray-900"
+                            placeholder="Add reason or details..."></textarea>
+                    </div>
                 </div>
 
                 <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 rounded-b-xl">
@@ -80,7 +88,7 @@
 </div>
 
 <script>
-    function openWalletModal() {
+    window.openWalletModal = function() {
         document.getElementById('walletModal').classList.remove('hidden');
         document.body.classList.add('modal-open-lock');
     }

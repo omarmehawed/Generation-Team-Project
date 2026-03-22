@@ -31,7 +31,10 @@
             } catch (e) { }
         })();
     </script>
-    <x-ramadan-theme />
+    {{-- Auto-Disable Eid Theme on Thursday 26/03/2026 11:59PM --}}
+    @if(config('app.eid_theme', false) && \Carbon\Carbon::now()->lt(\Carbon\Carbon::create(2026, 3, 26, 23, 59, 59)))
+        @include('partials.eid-theme')
+    @endif
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
         <div>
             <a href="/">

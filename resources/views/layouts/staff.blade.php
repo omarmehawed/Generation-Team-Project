@@ -204,7 +204,10 @@
             } catch (e) { }
         })();
     </script>
-    <x-ramadan-theme />
+    {{-- Auto-Disable Eid Theme on Thursday 26/03/2026 11:59PM --}}
+    @if(config('app.eid_theme', false) && \Carbon\Carbon::now()->lt(\Carbon\Carbon::create(2026, 3, 26, 23, 59, 59)))
+        @include('partials.eid-theme')
+    @endif
 
     <div class="min-h-screen flex flex-col" x-data="{ mobileMenuOpen: false }">
 
@@ -517,7 +520,7 @@
                 </nav>
             </aside>
 
-            <main class="flex-1 md:ml-64 p-4 md:p-8 relative transition-colors duration-300">
+            <main id="main-content" class="flex-1 md:ml-64 p-4 md:p-8 relative transition-colors duration-300">
                 {{-- Background Grid Effect for Main Content --}}
                 <div class="absolute inset-0 z-0 pointer-events-none opacity-20"
                     style="background-image: radial-gradient(var(--grid-color) 1px, transparent 1px); background-size: 20px 20px;">

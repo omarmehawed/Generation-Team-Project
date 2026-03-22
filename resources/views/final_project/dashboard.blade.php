@@ -1686,11 +1686,10 @@
 
                                         <div
                                             class="flex items-center justify-between p-3 rounded-xl border {{ $contrib->status == 'paid' ? 'bg-green-50 border-green-100' : ($isLate ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100') }}">
-                                            <div class="flex items-center gap-3">
-                                                <img class="w-9 h-9 rounded-full border shadow-sm"
-                                                    src="https://ui-avatars.com/api/?name={{ $contrib->user->name }}">
+                                            <a href="{{ route('profile.show', $contrib->user_id) }}" class="flex items-center gap-3 group/profile">
+                                                <x-user-avatar :user="$contrib->user" size="w-9 h-9" />
                                                 <div>
-                                                    <p class="text-xs font-bold text-gray-800">{{ $contrib->user->name }}
+                                                    <p class="text-xs font-bold text-gray-800 group-hover/profile:text-[#AA8A26] transition-colors">{{ $contrib->user->name }}
                                                     </p>
 
                                                     {{-- 🔥 عرض الديون القديمة (الفضيحة) --}}
@@ -1701,7 +1700,7 @@
                                                         </p>
                                                     @endif
                                                 </div>
-                                            </div>
+                                            </a>
                                             <div>
                                                 @if ($contrib->status == 'paid')
                                                     {{-- ✅ مدفوع (Paid) --}}

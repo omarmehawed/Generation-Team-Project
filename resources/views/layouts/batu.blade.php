@@ -258,10 +258,17 @@
             transition: background-color 1s ease;
         }
     </style>
+    {{-- Auto-Disable Eid Theme on Thursday 26/03/2026 11:59PM --}}
+    @if(config('app.eid_theme', false) && \Carbon\Carbon::now()->lt(\Carbon\Carbon::create(2026, 3, 26, 23, 59, 59)))
+        @include('partials.eid-theme')
+    @endif
 </head>
 
 <body class="antialiased">
-    <x-ramadan-theme />
+    {{-- Auto-Disable Eid Theme on Thursday 26/03/2026 11:59PM --}}
+    @if(config('app.eid_theme', false) && \Carbon\Carbon::now()->lt(\Carbon\Carbon::create(2026, 3, 26, 23, 59, 59)))
+        @include('partials.eid-theme')
+    @endif
 
     <!-- Header -->
     <nav class="fixed top-0 z-50 w-full tech-header">

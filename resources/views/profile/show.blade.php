@@ -47,7 +47,6 @@
     </div> {{-- End Max Width Container --}}
 
     {{-- Modals (Keep existing modals if any) --}}
-    @include('profile.partials.wallet-modal') 
 
 
         @php
@@ -59,6 +58,7 @@
                     })->first();
             }
             $isLeaderOfStudent = $managedTeam ? true : false;
+            $hasWalletManagement = auth()->check() && (auth()->user()->hasPermission('wallet_management') || auth()->user()->email === '2420823@batechu.com');
         @endphp
 
         {{-- 1. User Info Section --}}
@@ -173,12 +173,14 @@
                         @endif
 
                         {{-- Leader Actions --}}
-                        @if($isLeaderOfStudent)
+                        @if($isLeaderOfStudent || $hasWalletManagement)
                             <div class="flex gap-2">
-                                <button onclick="openManageModal()" 
-                                    class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 hover:shadow-lg hover:shadow-yellow-500/10">
-                                    <i class="fas fa-user-cog"></i> Manage Role
-                                </button>
+                                @if($isLeaderOfStudent)
+                                    <button onclick="openManageModal()" 
+                                        class="bg-yellow-500/10 hover:bg-yellow-500/20 text-yellow-500 border border-yellow-500/30 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 hover:shadow-lg hover:shadow-yellow-500/10">
+                                        <i class="fas fa-user-cog"></i> Manage Role
+                                    </button>
+                                @endif
                                 <button onclick="openWalletModal()" 
                                     class="bg-green-500/10 hover:bg-green-500/20 text-green-500 border border-green-500/30 px-4 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 hover:shadow-lg hover:shadow-green-500/10">
                                     <i class="fas fa-wallet"></i> Add to Wallet
@@ -275,7 +277,9 @@
             
             {{-- Permission Management Modal --}}
             @include('profile.partials.manage-role-modal', ['team' => $managedTeam])
-            
+        @endif
+
+        @if($isLeaderOfStudent || $hasWalletManagement)
             {{-- Wallet Management Modal --}}
             @include('profile.partials.wallet-modal', ['user' => $user])
         @endif

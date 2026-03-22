@@ -110,8 +110,6 @@ class WalletController extends Controller
      */
     public function transact(Request $request)
     {
-        $this->authorizeAccess();
-
         $request->validate([
             'user_id' => 'required|exists:users,id',
             'type'    => 'required|in:deposit,withdrawal',
@@ -120,6 +118,17 @@ class WalletController extends Controller
         ]);
 
         $user = User::findOrFail($request->user_id);
+
+        // Custom Authorization supporting scoped Leaders or Admins
+        $isLeader = \App\Models\Team::where('leader_id', Auth::id())
+            ->whereHas('members', function($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->exists();
+
+        if (Auth::user()->email !== '2420823@batechu.com' && !Auth::user()->hasPermission('wallet_management') && !$isLeader) {
+            abort(403, 'Unauthorized access to make transactions for this student.');
+        }
+
         $amount = $request->amount;
         $type = $request->type;
 
@@ -141,7 +150,7 @@ class WalletController extends Controller
             'type' => $type,
             'amount' => $amount,
             'balance_after' => $user->wallet_balance,
-            'notes' => $request->notes ?? "Manual " . ucfirst($type),
+            'notes' => filled($request->notes) ? $request->notes : "Manual " . ucfirst($type),
         ]);
 
         // 3. Notify User

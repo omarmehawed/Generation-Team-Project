@@ -46,10 +46,6 @@
                         primary: '#fbbf24', // Gold
                         dark: '#0f172a',
                         light: '#f8fafc',
-                        ramadan: {
-                            night: '#1e1b4b',
-                            gold: '#fbbf24',
-                        }
                     },
                     animation: {
                         'float': 'float 6s ease-in-out infinite',
@@ -188,7 +184,11 @@
           }
       }"
     x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark'))">
-    <x-ramadan-theme />
+    {{-- Auto-Disable Eid Theme on Thursday 26/03/2026 11:59PM --}}
+    @if(config('app.eid_theme', false) && \Carbon\Carbon::now()->lt(\Carbon\Carbon::create(2026, 3, 26, 23, 59, 59)))
+        @include('partials.eid-theme')
+    @endif
+    
 
     <!-- Navigation -->
     <nav
@@ -205,7 +205,6 @@
                     <div class="hidden md:block">
                         <h1 class="text-2xl font-bold font-tech tracking-wider text-gray-900 dark:text-white">
                             GENERATION <span class="text-amber-500">TEAM</span>
-                            <span class="text-xs text-amber-500 block font-amiri -mt-1">رمضان كريم 🌙</span>
                         </h1>
                     </div>
                 </div>
@@ -521,7 +520,7 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">عن <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">عن <span
                         class="text-amber-500">الفريق</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
             </div>
@@ -542,15 +541,15 @@
 
                     <div class="grid grid-cols-2 gap-6 mt-8">
                         <div
-                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-ramadan-night dark:border-amber-500/30">
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-slate-900 dark:border-amber-500/30">
                             <i class="fas fa-users text-3xl text-amber-500 mb-3"></i>
-                            <h4 class="font-bold text-xl text-ramadan-night dark:text-gray-200">عمل جماعي</h4>
+                            <h4 class="font-bold text-xl text-slate-900 dark:text-gray-200">عمل جماعي</h4>
                             <p class="text-sm opacity-70">بيئة تعاونية محفزة</p>
                         </div>
                         <div
-                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-ramadan-night dark:border-amber-500/30">
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-slate-900 dark:border-amber-500/30">
                             <i class="fas fa-lightbulb text-3xl text-amber-500 mb-3"></i>
-                            <h4 class="font-bold text-xl text-ramadan-night dark:text-gray-200">ابتكار</h4>
+                            <h4 class="font-bold text-xl text-slate-900 dark:text-gray-200">ابتكار</h4>
                             <p class="text-sm opacity-70">أفكار خارج الصندوق</p>
                         </div>
                     </div>
@@ -625,7 +624,7 @@
         @mouseleave="dragEnd" @touchstart="dragStart" @touchmove="dragMove" @touchend="dragEnd">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">التعاون مع <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">التعاون مع <span
                         class="text-amber-500">IT Club</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
             </div>
@@ -816,7 +815,7 @@
         @mouseleave="dragEnd" @touchstart="dragStart" @touchmove="dragMove" @touchend="dragEnd">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">القيادة <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">القيادة <span
                         class="text-amber-500">والإشراف</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
             </div>
@@ -1022,7 +1021,7 @@
     <section id="project" class="py-24 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-ramadan-night dark:text-gray-100">عن <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">عن <span
                         class="text-amber-500">المشروع</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
                 <p class="mt-6 text-xl max-w-2xl mx-auto opacity-80 text-gray-700 dark:text-gray-300">
@@ -1033,7 +1032,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
 
                 <!-- Card 1 -->
-                <div class="p-8 rounded-3xl border hover-card group ramadan-card">
+                <div class="p-8 rounded-3xl border hover-card group ">
                     <div
                         class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-microchip text-3xl text-amber-500 group-hover:text-white"></i>
@@ -1044,7 +1043,7 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="p-8 rounded-3xl border hover-card group ramadan-card">
+                <div class="p-8 rounded-3xl border hover-card group ">
                     <div
                         class="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-brain text-3xl text-indigo-500 group-hover:text-white"></i>
@@ -1054,7 +1053,7 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="p-8 rounded-3xl border hover-card group ramadan-card">
+                <div class="p-8 rounded-3xl border hover-card group ">
                     <div
                         class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-cogs text-3xl text-emerald-500 group-hover:text-white"></i>
@@ -1065,7 +1064,7 @@
                 </div>
 
                 <!-- Card 4 -->
-                <div class="p-8 rounded-3xl border hover-card group ramadan-card">
+                <div class="p-8 rounded-3xl border hover-card group ">
                     <div
                         class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-battery-full text-3xl text-red-500 group-hover:text-white"></i>
@@ -1075,7 +1074,7 @@
                 </div>
 
                 <!-- Card 5 -->
-                <div class="p-8 rounded-3xl border hover-card group ramadan-card">
+                <div class="p-8 rounded-3xl border hover-card group ">
                     <div
                         class="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-flask text-3xl text-orange-500 group-hover:text-white"></i>
@@ -1086,7 +1085,7 @@
 
                 <!-- Card 6 -->
                 <div
-                    class="p-8 rounded-3xl border bg-gradient-to-br from-ramadan-light to-ramadan-night text-white hover-card transform scale-105 shadow-2xl">
+                    class="p-8 rounded-3xl border bg-gradient-to-br from-amber-400 to-amber-600 text-white hover-card transform scale-105 shadow-2xl">
                     <div class="w-16 h-16 bg-white/20 rounded-2xl flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-rocket text-3xl text-amber-400"></i>
                     </div>

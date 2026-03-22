@@ -16,6 +16,7 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
 
     'ramadan_theme' => env('RAMADAN_THEME', false),
+    'eid_theme' => env('EID_THEME', false),
 
     /*
     |--------------------------------------------------------------------------

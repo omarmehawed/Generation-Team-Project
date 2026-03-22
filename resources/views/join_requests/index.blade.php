@@ -27,7 +27,7 @@
         <!-- Page Header -->
         <div class="row align-items-center mb-6">
             <div class="col-lg-6 col-12">
-                <h2 class="text-3xl font-bold text-ramadan-night dark:text-white font-amiri tracking-wide mb-1">
+                <h2 class="text-3xl font-bold text-slate-800 dark:text-white font-amiri tracking-wide mb-1">
                     Join Requests <span class="text-amber-500 dark:text-amber-400">Database</span>
                 </h2>
                 <p class="text-gray-600 dark:text-gray-400 text-sm font-medium">Manage and review incoming team applications.</p>
@@ -110,7 +110,7 @@
 
                     <!-- Export Button -->
                     <button type="button" @click="exportModal = true"
-                        class="px-6 py-3 bg-ramadan-night text-white rounded-xl hover:bg-ramadan-light transition-all flex items-center gap-2 border border-amber-500/30 shadow-lg shadow-amber-500/20">
+                        class="px-6 py-3 bg-slate-800 dark:bg-slate-700 text-white rounded-xl hover:bg-slate-700 dark:hover:bg-slate-600 transition-all flex items-center gap-2 border border-amber-500/30 shadow-lg shadow-amber-500/20">
                         <i class="fas fa-file-export"></i>
                         <span class="font-bold">Export</span>
                     </button>

@@ -131,7 +131,7 @@
             {{-- Manage User (Search Result) --}}
             <div x-show="!balanceMode && user" x-transition class="mb-8">
                 {{-- Individual User Card --}}
-                <div class="ramadan-card transform transition-all duration-500 overflow-hidden">
+                <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-xl transform transition-all duration-500 overflow-hidden">
                     <div class="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start border-b border-gray-100 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
 
                         {{-- Error Message --}}
@@ -278,18 +278,18 @@
                             @forelse($transactions as $txn)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors group">
                                     <td class="px-4 md:px-6 py-4">
-                                        <div class="flex items-center gap-3">
+                                        <a href="{{ route('profile.show', $txn->user_id) }}" class="flex items-center gap-3 group/profile">
                                             <x-user-avatar :user="$txn->user" size="w-8 h-8 md:w-10 md:h-10" />
                                             <div>
                                                 <p
-                                                    class="font-bold text-sm text-gray-800 dark:text-gray-200 group-hover:text-blue-600 transition-colors line-clamp-1 max-w-[150px] md:max-w-none">
+                                                    class="font-bold text-sm text-gray-800 dark:text-gray-200 group-hover/profile:text-blue-600 transition-colors line-clamp-1 max-w-[150px] md:max-w-none">
                                                     {{ $txn->user->name }}
                                                 </p>
                                                 <p class="text-[10px] md:text-xs text-gray-400 font-mono">
                                                     {{ Str::before($txn->user->email, '@') }}
                                                 </p>
                                             </div>
-                                        </div>
+                                        </a>
                                     </td>
                                     <td class="px-4 md:px-6 py-4">
                                         <p class="text-xs font-medium text-gray-600 dark:text-gray-400 max-w-[200px] truncate"
