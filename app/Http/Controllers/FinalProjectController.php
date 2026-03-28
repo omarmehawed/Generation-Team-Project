@@ -329,6 +329,7 @@ class FinalProjectController extends Controller
             'fundsHistory',
             'membersDebts',
             'myRole',
+            'myMemberRecord',
             'pendingMembers',
             'components'
         ));
@@ -629,7 +630,7 @@ class FinalProjectController extends Controller
         return redirect($team->proposal_file);
     }
 
-    // 10. تعديل أدوار وتخصصات العضو (Updated)
+    // 10. تعديل أدوار وتخصصات العضو (Updated with Strict Permissions)
     public function updateMemberStatus(Request $request)
     {
         $request->validate([
@@ -637,47 +638,93 @@ class FinalProjectController extends Controller
             'user_id' => 'required|exists:users,id',
             'role' => 'required|in:member,vice_leader', // الدور الإداري
             'technical_role' => 'required|in:general,software,hardware', // التخصص التقني
-            'extra_role' => 'nullable|in:none,presentation,reports,marketing', // المسؤولية الإضافية
+            'extra_role' => 'nullable|in:none,presentation,reports,marketing,project_book', // المسؤوليات الإضافية
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|in:view_team_funds,wallet_management,deposit_requests'
+            'permissions.*' => 'string|in:view_team_funds,wallet_management,deposit_requests',
+            'can_manage_components' => 'nullable|boolean',
+            'can_manage_expenses'   => 'nullable|boolean',
         ]);
 
-        $leader = Auth::user();
+        $currentUser = Auth::user();
         $team = Team::findOrFail($request->team_id);
-        $team = Team::findOrFail($request->team_id);
 
-        // 1. Get Current User ID once
-        $currentUserId = Auth::id();
+        // 1. Get Member Records
+        $myMemberRecord = $team->members()->where('user_id', $currentUser->id)->first();
+        $targetMemberRecord = $team->members()->where('user_id', $request->user_id)->first();
 
-        // 2. Check Roles
-        $isLeader = $team->leader_id === $currentUserId;
+        if (!$targetMemberRecord) {
+            return back()->with('error', 'Member not found in this team.');
+        }
 
-        // تأكدنا هنا من استخدام المتغير بدلاً من استدعاء الدالة مرتين
-        $isViceLeader = $team->members()
-            ->where('user_id', $currentUserId)
-            ->where('role', 'vice_leader')
-            ->exists();
+        // 2. Authorization Check
+        $isLeader = $team->leader_id == $currentUser->id;
+        $isViceLeader = ($myMemberRecord->role ?? '') == 'vice_leader';
 
-        // 3. Final Authorization Check
-        if (! $isLeader && ! $isViceLeader) {
+        if (!$isLeader && !$isViceLeader) {
             abort(403, 'Unauthorized action.');
         }
-        if ($request->user_id == $leader->id) {
+
+        // 3. User cannot change their own role/permissions
+        if ($request->user_id == $currentUser->id) {
             return back()->with('error', 'You cannot change your own role.');
         }
 
+        // 4. VICE LEADER RESTRICTIONS
+        if ($isViceLeader) {
+            // A. Vice Leader can only manage people who are currently 'member'
+            if ($targetMemberRecord->role !== 'member') {
+                return back()->with('error', 'You can only manage regular Members. You cannot manage Leaders or other Vice Leaders.');
+            }
+
+            // B. Vice Leader can only set role to 'member' (They cannot promote anyone to Admin/VL)
+            if ($request->role !== 'member') {
+                return back()->with('error', 'You do not have permission to promote users to administrative roles.');
+            }
+
+            // C. Vice Leader cannot edit permissions or extra roles
+            // We ignore whatever they sent and keep the existing ones
+            $existingPermissions = is_string($targetMemberRecord->user->permissions) ? json_decode($targetMemberRecord->user->permissions, true) : ($targetMemberRecord->user->permissions ?? []);
+            $request->merge([
+                'permissions' => $existingPermissions,
+                'extra_role' => $targetMemberRecord->extra_role ?? 'none',
+                'can_manage_components' => $targetMemberRecord->can_manage_components,
+                'can_manage_expenses'   => $targetMemberRecord->can_manage_expenses
+            ]);
+
+            // D. Domain Scoping (Hardware/Software)
+            $myDomain = strtolower($myMemberRecord->technical_role ?? 'general');
+            $targetDomain = strtolower($targetMemberRecord->technical_role ?? 'general');
+            
+            // If Vice Leader is Hardware/Software, they can ONLY manage members in THAT domain
+            if (in_array($myDomain, ['hardware', 'software'])) {
+                if ($targetDomain !== $myDomain && $targetDomain !== 'general') {
+                    return back()->with('error', "You can only manage members in the " . ucfirst($myDomain) . " team.");
+                }
+                // Check if they are trying to move them out of their domain
+                if (strtolower($request->technical_role) !== $myDomain) {
+                    return back()->with('error', "You cannot move members to other technical teams.");
+                }
+            } else {
+                // General Vice Leader logic if needed (Currently we restricted them in UI, but if any exist:)
+                // They can manage anyone if no specific domain is set for them? 
+                // As per user: "No specific domain if General" -> So they can manage but let's be safe.
+            }
+        }
+
+        // 5. Build Update Data
         $updateData = [
             'role' => $request->role,
             'technical_role' => $request->technical_role,
-            'extra_role' => ($request->extra_role == 'none') ? null : $request->extra_role
+            'extra_role' => ($request->extra_role == 'none' || !$request->extra_role) ? null : $request->extra_role,
+            'can_manage_components' => $request->has('can_manage_components') ? (bool) $request->can_manage_components : false,
+            'can_manage_expenses'   => $request->has('can_manage_expenses') ? (bool) $request->can_manage_expenses : false,
         ];
 
-        TeamMember::where('team_id', $request->team_id)
-            ->where('user_id', $request->user_id)
-            ->update($updateData);
+        // Perform Update in team_members
+        $targetMemberRecord->update($updateData);
 
-        // Update Permissions
-        $targetUser = \App\Models\User::findOrFail($request->user_id);
+        // Update Permissions in users table
+        $targetUser = $targetMemberRecord->user;
         $permissions = $request->permissions ?? [];
         $targetUser->permissions = $permissions;
         $targetUser->save();
@@ -703,10 +750,10 @@ class FinalProjectController extends Controller
 
         $team = Team::findOrFail($request->team_id);
 
-        // Leader-only check
+        // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
-        if (!$myRecord || $myRecord->role !== 'leader') {
-            return back()->with('error', 'Only the Leader can add expenses.');
+        if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_expenses)) {
+            return back()->with('error', 'You do not have permission to add expenses.');
         }
 
         $component = \App\Models\ProjectComponent::where('id', $request->component_id)
@@ -733,7 +780,7 @@ class FinalProjectController extends Controller
             'price_per_unit' => $pricePerUnit,
             'quantity'       => $quantity,
             'amount'         => $totalAmount,
-            'receipt_path'   => $receiptPath,
+            'receipt_path'   => $receiptPath, // Ensure this is stored
             'created_at'     => now(),
             'updated_at'     => now(),
         ]);
@@ -775,10 +822,10 @@ class FinalProjectController extends Controller
 
         $team = Team::findOrFail($request->team_id);
 
-        // Leader-only
+        // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
-        if (!$myRecord || $myRecord->role !== 'leader') {
-            return back()->with('error', 'Only the Leader can add components.');
+        if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_components)) {
+            return back()->with('error', 'You do not have permission to manage components.');
         }
 
         $imagePath = null;
@@ -1598,48 +1645,90 @@ class FinalProjectController extends Controller
     // 21 دالة التسليم النهائي (الكتاب + الفيديو)
     public function submitFinalProject(Request $request)
     {
-        // 1. هات التيم الخاص بالطالب اللي فاتح (أحمد أو عمر)
         $user = Auth::user();
-        $team = Team::where('leader_id', $user->id)->first();
-
-        // أمان: لو ملوش تيم أو مش هو الليدر
-        if (!$team) {
-            return back()->with('error', 'Only Team Leader can submit.');
+        
+        // 1. Get the member record for the current user
+        // We assume the user belongs to only one team for this project context
+        $memberRecord = TeamMember::where('user_id', $user->id)->first();
+        
+        if (!$memberRecord) {
+            return back()->with('error', 'You are not a member of any team.');
         }
 
-        // 2. التحقق من الملفات
+        $team = $memberRecord->team;
+        $isLeader = $team->leader_id === $user->id;
+        $extraRole = $memberRecord->extra_role ?? 'none';
+
+        // 2. Authorization Check
+        $canUploadPresentation = $isLeader || $extraRole === 'presentation';
+        $canUploadBook = $isLeader || $extraRole === 'project_book';
+
+        if (!$canUploadPresentation && !$canUploadBook) {
+            return back()->with('error', 'You do not have permission to upload project files.');
+        }
+
+        // 3. Validation
         $request->validate([
-            // تأكد إنك بتستقبل الملفات دي من الفورم
             'final_book' => 'nullable|file|mimes:pdf|max:1048576',
             'presentation' => 'nullable|file|mimes:ppt,pptx,pdf|max:1048576',
             'defense_video' => 'nullable|url',
         ]);
 
-        // 3. رفع الملفات (لو موجودة)
+        // 4. File Handling with Role Restrictions
+        $updatedSomething = false;
+
+        // Final Book: Leader or Project Book role
         if ($request->hasFile('final_book')) {
-            $storedPath = $request->file('final_book')->store('final_books', 'r2');
-            $team->final_book_file = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+            if ($canUploadBook) {
+                $storedPath = $request->file('final_book')->store('final_books', 'r2');
+                $team->final_book_file = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+                $updatedSomething = true;
+            } else {
+                return back()->with('error', 'Only the Team Leader or Project Book Manager can upload the final book.');
+            }
         }
 
+        // Presentation: Leader or Presentation role
         if ($request->hasFile('presentation')) {
-            $storedPath = $request->file('presentation')->store('presentations', 'r2');
-            $team->presentation_file = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+            if ($canUploadPresentation) {
+                $storedPath = $request->file('presentation')->store('presentations', 'r2');
+                $team->presentation_file = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+                $updatedSomething = true;
+            } else {
+                return back()->with('error', 'Only the Team Leader or Presentation Manager can upload the presentation.');
+            }
         }
 
+        // Video Link: Leader only (or as per general team consensus, but let's stick to Leader for core links)
         if ($request->defense_video) {
-            $team->defense_video_link = $request->defense_video;
+            if ($isLeader) {
+                $team->defense_video_link = $request->defense_video;
+                $updatedSomething = true;
+            } else {
+                // If they are not leader, we might skip or error. 
+                // Let's just allow it if they have either upload role? No, let's keep it Leader for now unless requested.
+            }
         }
 
-        // 4. لو داس على زرار التسليم النهائي (القفل)
+        // 5. Final Submission (Locking the Project)
         if ($request->has('submit_finish')) {
-            $team->is_fully_submitted = true;
-            $team->project_phase = 'completed'; // أو finished
-            $team->submitted_at = now();
+            if ($isLeader) {
+                $team->is_fully_submitted = true;
+                $team->project_phase = 'completed';
+                $team->submitted_at = now();
+                $updatedSomething = true;
+            } else {
+                // Non-leaders CANNOT submit final. They only save drafts.
+                return back()->with('warning', 'Draft saved. Only the Team Leader can perform the Final Submission.');
+            }
         }
 
-        $team->save(); // حفظ التغييرات في جدول التيم الخاص بالطالب ده بس
+        if ($updatedSomething) {
+            $team->save();
+            return back()->with('success', 'Project files updated successfully ✨');
+        }
 
-        return back()->with('success', 'Final submission updated successfully.');
+        return back();
     }
 
     public function exportMembers(\Illuminate\Http\Request $request)

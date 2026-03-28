@@ -25,12 +25,16 @@ class TeamMember extends Model
         'team_id',
         'user_id',
         'role',
+        'technical_role',
+        'extra_role',
         'rank',
         'is_group_a',
         'is_group_b',
         'sub_team',
         'is_vice_leader',
         'status', // Added status
+        'can_manage_components',
+        'can_manage_expenses',
     ];
 
 }

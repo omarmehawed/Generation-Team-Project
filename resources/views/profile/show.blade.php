@@ -51,13 +51,27 @@
 
         @php
             $managedTeam = null;
+            $viewerMemberRecord = null;
             if(auth()->check() && auth()->id() != $user->id) {
-                $managedTeam = \App\Models\Team::where('leader_id', auth()->id())
-                    ->whereHas('members', function($q) use ($user) {
+                // Find a team where the viewer is either the Leader OR a Vice Leader
+                // and the target profile user is a member of that same team.
+                $managedTeam = \App\Models\Team::whereHas('members', function($q) use ($user) {
                         $q->where('user_id', $user->id);
+                    })
+                    ->where(function($q) {
+                        $q->where('leader_id', auth()->id())
+                          ->orWhereHas('members', function($mq) {
+                              $mq->where('user_id', auth()->id())->where('role', 'vice_leader');
+                          });
                     })->first();
+                
+                if ($managedTeam) {
+                    $viewerMemberRecord = $managedTeam->members->where('user_id', auth()->id())->first();
+                }
             }
-            $isLeaderOfStudent = $managedTeam ? true : false;
+            // Permission check: Leader or Vice Leader (General/Software/Hardware)
+            // Note: The actual domain scoping happens inside the modal and backend
+            $isLeaderOfStudent = $managedTeam && ($managedTeam->leader_id == auth()->id() || ($viewerMemberRecord && $viewerMemberRecord->role == 'vice_leader'));
             $hasWalletManagement = auth()->check() && (auth()->user()->hasPermission('wallet_management') || auth()->user()->email === '2420823@batechu.com');
         @endphp
 

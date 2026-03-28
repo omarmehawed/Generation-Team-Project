@@ -846,8 +846,14 @@
                                 <i
                                     class="fas {{ $myRole == 'leader' ? 'fa-crown text-3xl animate-pulse' : 'fa-user text-3xl' }}"></i>
                             </div>
-                            <span class="text-2xl font-black text-gray-800 capitalize">{{ ucfirst($myRole) }}</span>
-                            <span class="text-xs text-gray-400 mt-1">Authorized Personnel</span>
+                            <span class="text-2xl font-black text-gray-800 capitalize">
+                                {{ $myRole === 'vice_leader' ? 'Vice Leader' : ucfirst($myRole) }}
+                            </span>
+                            @if($myRole === 'vice_leader')
+                                <span class="text-xs text-blue-500 font-bold uppercase tracking-widest mt-1">{{ $myMember->technical_role ?? 'General' }}</span>
+                            @else
+                                <span class="text-xs text-gray-400 mt-1">Authorized Personnel</span>
+                            @endif
                         </div>
 
                         {{-- 🔥🔥 الزرار الذكي (بيقفل ويفتح حسب الديدلاين) 🔥🔥 --}}
@@ -1002,14 +1008,18 @@
                                                             <div class="absolute -top-2 -right-2 bg-yellow-500 text-white w-5 h-5 rounded-full flex items-center justify-center shadow-sm text-[10px]">
                                                                 <i class="fas fa-crown"></i>
                                                             </div>
+                                                        @elseif ($member->role == 'vice_leader')
+                                                            <div class="absolute -top-2 -right-2 bg-purple-500 text-white w-5 h-5 rounded-full flex items-center justify-center shadow-sm text-[10px]">
+                                                                <i class="fas fa-award"></i>
+                                                            </div>
                                                         @endif
                                                     </div>
                                                     <div>
                                                         <div class="text-base font-bold text-gray-800 group-hover:text-yellow-800 transition-colors">
                                                             {{ $member->user->name }}
                                                         </div>
-                                                        <div class="text-xs text-gray-400">
-                                                            {{ $member->user->email ?? 'Dev Team' }}
+                                                        <div class="text-[10px] uppercase font-black tracking-tighter {{ $member->technical_role == 'software' ? 'text-blue-500' : ($member->technical_role == 'hardware' ? 'text-orange-500' : 'text-gray-400') }}">
+                                                            {{ $member->technical_role ?? 'General' }}
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1024,6 +1034,10 @@
                                                     <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-xs font-black shadow-sm border border-yellow-300">
                                                         <i class="fas fa-star text-[10px] animate-spin-slow"></i> TEAM LEADER
                                                     </span>
+                                                @elseif ($member->role == 'vice_leader')
+                                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-purple-50 text-purple-700 text-[10px] font-black border border-purple-200 uppercase whitespace-nowrap">
+                                                        Vice Leader
+                                                    </span>
                                                 @else
                                                     <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gray-50 text-gray-500 text-xs font-bold border border-gray-200">
                                                         <span class="w-2 h-2 rounded-full bg-gray-400"></span> Member
@@ -1032,12 +1046,7 @@
                                             </td>
                                             <td class="px-8 py-4 text-right bg-white group-hover:bg-yellow-50/30 rounded-r-2xl border-y border-r border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md">
                                                 <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
-                                                    @php
-                                                        $isLeaderManaging = $myRole == 'leader' && $member->role != 'leader';
-                                                        $isViceManaging = $myRole == 'vice_leader' && $member->role == 'member';
-                                                    @endphp
-
-                                                    @if ($isLeaderManaging || $isViceManaging)
+                                                    @if ($myRole == 'leader' || ($myRole == 'vice_leader' && $member->role == 'member'))
                                                         <a href="{{ route('profile.show', $member->user->id) }}"
                                                             class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 hover:bg-blue-600 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
                                                             title="View Profile">
@@ -1475,7 +1484,7 @@
                                 Components
                                 <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                             </h3>
-                            @if ($myRole == 'leader')
+                            @if ($myRole == 'leader' || ($myMemberRecord && $myMemberRecord->can_manage_components))
                                 <button @click.stop onclick="openModal('addComponentModal')"
                                     class="text-xs bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-bold shadow-md transition flex items-center gap-1">
                                     <i class="fas fa-plus"></i> Add Component
@@ -1485,7 +1494,7 @@
 
                         <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
                         <div class="p-6">
-                            @if ($components->count() > 0)
+                            @if (isset($components) && $components->count() > 0)
                                 <div class="space-y-4 overflow-y-auto max-h-80 custom-scroll">
                                     @foreach ($components as $comp)
                                         <div class="flex items-start gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition">
@@ -1527,7 +1536,7 @@
                                 Expenses
                                 <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
                             </h3>
-                            @if ($myRole == 'leader')
+                            @if ($myRole == 'leader' || ($myMemberRecord && $myMemberRecord->can_manage_expenses))
                                 <button @click.stop onclick="openModal('addExpenseModal')"
                                     class="text-xs btn-gold px-4 py-2 rounded-xl font-bold shadow-md"><i
                                         class="fas fa-plus"></i>
@@ -2034,7 +2043,6 @@
                                             </span>
                                         </div>
 
-                                        {{-- ✅✅✅ التعديل هنا: استخدام الراوت الجوكر لعرض الملف --}}
                                         @if ($report->file_path)
                                             <a href="{{ $report->file_path }}"
                                                 target="_blank"
@@ -2042,8 +2050,6 @@
                                                 <i class="fas fa-paperclip"></i> View File
                                             </a>
                                         @endif
-                                        {{-- ✅✅✅ نهاية التعديل --}}
-
                                     </div>
                                     <div class="space-y-3">
                                         <div>
@@ -2109,6 +2115,11 @@
                             @csrf
                             <div class="p-8 space-y-6 relative z-10">
 
+                                @php
+                                    $canUploadBook = $isLeader || ($myMember && $myMember->extra_role == 'project_book');
+                                    $canUploadPresentation = $isLeader || ($myMember && $myMember->extra_role == 'presentation');
+                                @endphp
+
                                 {{-- 1. رفع الكتاب --}}
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
@@ -2121,18 +2132,18 @@
                                                 <i class="fas fa-file-pdf text-red-500 text-xl"></i>
                                                 <span class="text-sm font-bold text-gray-700">Project_Book.pdf</span>
                                             </div>
-                                            {{-- ✅✅✅ التعديل الأول: استخدام الراوت الجوكر --}}
                                             <a href="{{ $team->final_book_file }}"
                                                 target="_blank"
                                                 class="text-green-600 hover:text-green-800 text-xs font-bold underline">Download</a>
                                         </div>
-                                    @else
-                                        @if (auth()->id() == $team->leader_id)
-                                            <input type="file" name="final_book" accept=".pdf"
-                                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
-                                        @else
-                                            <p class="text-sm text-gray-400 italic">Waiting for leader to upload...</p>
-                                        @endif
+                                    @endif
+
+                                    @if (!$team->is_fully_submitted && $canUploadBook)
+                                        <div class="mt-2 text-[10px] text-gray-400 font-bold mb-1 ml-1 uppercase">Upload New {{ $team->final_book_file ? 'Version' : '' }}</div>
+                                        <input type="file" name="final_book" accept=".pdf"
+                                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
+                                    @elseif (!$team->is_fully_submitted && !$team->final_book_file)
+                                        <p class="text-sm text-gray-400 italic">Waiting for leader or manager to upload...</p>
                                     @endif
                                 </div>
 
@@ -2148,41 +2159,46 @@
                                                 <i class="fas fa-file-powerpoint text-orange-500 text-xl"></i>
                                                 <span class="text-sm font-bold text-gray-700">Presentation.pptx</span>
                                             </div>
-                                            {{-- ✅✅✅ التعديل الثاني: استخدام الراوت الجوكر --}}
                                             <a href="{{ $team->presentation_file }}"
                                                 target="_blank"
                                                 class="text-green-600 hover:text-green-800 text-xs font-bold underline">Download</a>
                                         </div>
-                                    @else
-                                        @if (auth()->id() == $team->leader_id)
-                                            <input type="file" name="presentation" accept=".ppt,.pptx,.pdf"
-                                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
-                                        @else
-                                            <p class="text-sm text-gray-400 italic">Waiting for leader to upload...</p>
-                                        @endif
+                                    @endif
+
+                                    @if (!$team->is_fully_submitted && $canUploadPresentation)
+                                        <div class="mt-2 text-[10px] text-gray-400 font-bold mb-1 ml-1 uppercase">Upload New {{ $team->presentation_file ? 'Version' : '' }}</div>
+                                        <input type="file" name="presentation" accept=".ppt,.pptx,.pdf"
+                                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
+                                    @elseif (!$team->is_fully_submitted && !$team->presentation_file)
+                                        <p class="text-sm text-gray-400 italic">Waiting for leader or manager to upload...</p>
                                     @endif
                                 </div>
 
-                                {{-- 3. رابط فيديو المناقشة (ده لينك خارجي يوتيوب فمش محتاج تعديل) --}}
+                                {{-- 3. رابط فيديو المناقشة --}}
                                 <div>
                                     <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
                                         <i class="fab fa-youtube text-red-500 mr-1"></i> Defense Video Link
                                     </label>
-                                    @if (auth()->id() == $team->leader_id)
+                                    @if (!$team->is_fully_submitted && $canUploadPresentation)
                                         <input type="url" name="defense_video"
                                             value="{{ $team->defense_video_link }}" placeholder="https://..."
                                             class="w-full border-2 border-gray-100 bg-gray-50 p-4 rounded-xl focus:border-[#D4AF37] outline-none transition font-medium text-gray-700">
                                     @else
-                                        <p class="text-sm text-gray-400 italic">Waiting for leader to upload...</p>
+                                        @if($team->defense_video_link)
+                                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-xs font-bold text-blue-600 truncate">
+                                                <i class="fas fa-link mr-1"></i> {{ $team->defense_video_link }}
+                                            </div>
+                                        @elseif(!$team->is_fully_submitted)
+                                            <p class="text-sm text-gray-400 italic">Waiting for leader to upload...</p>
+                                        @endif
                                     @endif
                                 </div>
                             </div>
 
                             @if (!$team->is_fully_submitted)
                                 {{-- الحالة الأولى: لم يتم التسليم النهائي بعد --}}
-                                @if (auth()->id() == $team->leader_id)
-                                    {{-- (1) لو المستخدم هو الليدر: اعرض أزرار التحكم --}}
-                                    <div class="bg-gray-50 px-8 py-6 border-t border-gray-100 flex flex-col gap-4">
+                                <div class="bg-gray-50 px-8 py-6 border-t border-gray-100 flex flex-col gap-4">
+                                    @if ($isLeader)
                                         {{-- زر التسليم النهائي --}}
                                         <button type="submit" name="submit_finish" value="1"
                                             onclick="return confirmAction(event, 'WARNING: This is the Final Submission. You cannot undo this action!')"
@@ -2192,23 +2208,23 @@
                                                 Final Submit <i class="fas fa-flag-checkered text-[#FFD700]"></i>
                                             </span>
                                         </button>
+                                    @endif
 
-                                        {{-- زر حفظ المسودة --}}
-                                        <button type="submit"
-                                            class="text-gray-500 font-bold hover:text-gray-700 text-sm transition text-center hover:underline flex items-center justify-center gap-1">
+                                    {{-- زر حفظ المسودة --}}
+                                    @if($canUploadBook || $canUploadPresentation)
+                                        <button type="submit" name="submit_finish" value="0"
+                                            class="w-full bg-white border-2 border-gray-200 text-gray-600 font-bold py-4 rounded-xl shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-2">
                                             <i class="fas fa-save"></i> Save Draft
                                         </button>
-                                    </div>
-                                @else
-                                    {{-- (2) لو المستخدم عضو عادي: اعرض رسالة انتظار فقط --}}
-                                    <div class="bg-yellow-50 px-8 py-6 border-t border-yellow-100 text-center">
-                                        <div
-                                            class="text-yellow-700 font-medium text-sm flex items-center justify-center gap-2">
-                                            <i class="fas fa-user-clock"></i>
-                                            <span>Waiting for leader to submit</span>
+                                        @if(!$isLeader)
+                                            <p class="text-[10px] text-center text-amber-600 font-bold uppercase tracking-wider">Note: Final Submission is restricted to the Team Leader.</p>
+                                        @endif
+                                    @else
+                                        <div class="text-center py-2">
+                                            <p class="text-xs text-gray-400 italic">You don't have permission to modify final deliverables.</p>
                                         </div>
-                                    </div>
-                                @endif
+                                    @endif
+                                </div>
                             @else
                                 {{-- الحالة الثانية: تم التسليم النهائي (القفل) --}}
                                 <div class="bg-green-500/10 px-8 py-6 border-t border-green-500/20 text-center">
@@ -2442,7 +2458,7 @@
                     {{-- Select Component --}}
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Select Component <span class="text-red-500">*</span></label>
-                        @if ($components->count() > 0)
+                        @if (isset($components) && $components->count() > 0)
                             <select name="component_id" id="expense_component_select" required
                                 onchange="expenseUpdateTotal()"
                                 class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white">

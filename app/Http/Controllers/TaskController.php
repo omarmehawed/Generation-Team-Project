@@ -218,6 +218,17 @@ class TaskController extends Controller
             return back()->with('error', 'Unauthorized: Only Leader or Vice Leader can approve tasks.');
         }
 
+        // Domain Check for Vice Leader
+        if ($currentMember->role === 'vice_leader') {
+            $taskOwnerMember = \App\Models\TeamMember::where('team_id', $task->team_id)
+                ->where('user_id', $task->user_id)
+                ->first();
+            
+            if (!$taskOwnerMember || strtolower($currentMember->technical_role) !== strtolower($taskOwnerMember->technical_role)) {
+                return back()->with('error', 'Unauthorized: You can only approve tasks in your own domain (' . ucfirst($currentMember->technical_role) . ').');
+            }
+        }
+
         // 3. التنفيذ
         $task->update([
             'status' => 'completed',
@@ -263,6 +274,17 @@ class TaskController extends Controller
         // 2. التحقق: لازم يكون موجود ويكون (Leader) أو (Vice Leader)
         if (!$currentMember || !in_array($currentMember->role, ['leader', 'vice_leader'])) {
             return back()->with('error', 'Unauthorized: Only Leader or Vice Leader can reject tasks.');
+        }
+
+        // Domain Check for Vice Leader
+        if ($currentMember->role === 'vice_leader') {
+            $taskOwnerMember = \App\Models\TeamMember::where('team_id', $task->team_id)
+                ->where('user_id', $task->user_id)
+                ->first();
+            
+            if (!$taskOwnerMember || strtolower($currentMember->technical_role) !== strtolower($taskOwnerMember->technical_role)) {
+                return back()->with('error', 'Unauthorized: You can only reject tasks in your own domain (' . ucfirst($currentMember->technical_role) . ').');
+            }
         }
 
         // 3. التنفيذ
