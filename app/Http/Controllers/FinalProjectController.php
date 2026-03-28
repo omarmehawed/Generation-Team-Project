@@ -861,6 +861,145 @@ class FinalProjectController extends Controller
 
         return back()->with('success', 'Component added successfully! 🔩');
     }
+
+    public function updateComponent(Request $request, $id)
+    {
+        $request->validate([
+            'name'        => 'required|string|max:255',
+            'description' => 'required|string',
+            'image'       => 'nullable|image|max:5120',
+        ]);
+
+        $component = \App\Models\ProjectComponent::findOrFail($id);
+        $team = $component->team;
+
+        // Authorization: Leader or delegated permission
+        $myRecord = $team->members->where('user_id', Auth::id())->first();
+        if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_components)) {
+            return back()->with('error', 'You do not have permission to manage components.');
+        }
+
+        $imagePath = $component->image_path;
+        if ($request->hasFile('image')) {
+            // Optional: Delete old image if it exists
+            if ($imagePath && str_contains($imagePath, 'storage.googleapis.com') === false && str_contains($imagePath, 'http') === true) {
+                // Logic to delete from R2 if needed, but usually we just overwrite or leave it. 
+                // For now, let's just upload the new one.
+            }
+            $storedPath = $request->file('image')->store('project_components', 'r2');
+            $imagePath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+        }
+
+        $component->update([
+            'name'        => $request->name,
+            'description' => $request->description,
+            'image_path'  => $imagePath,
+        ]);
+
+        ActivityLogger::log(
+            action: 'component_updated',
+            description: "Updated project component: {$request->name}",
+            subject: $team,
+            teamId: $team->id,
+            targetUserId: null
+        );
+
+        return back()->with('success', 'Component updated successfully! 🛠️');
+    }
+
+    public function destroyComponent($id)
+    {
+        $component = \App\Models\ProjectComponent::findOrFail($id);
+        $team = $component->team;
+
+        // Authorization: Leader or delegated permission
+        $myRecord = $team->members->where('user_id', Auth::id())->first();
+        if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_components)) {
+            return back()->with('error', 'You do not have permission to manage components.');
+        }
+
+        $name = $component->name;
+        $component->delete();
+
+        ActivityLogger::log(
+            action: 'component_deleted',
+            description: "Deleted project component: {$name}",
+            subject: $team,
+            teamId: $team->id,
+            targetUserId: null
+        );
+
+        return back()->with('success', 'Component deleted successfully! 🗑️');
+    }
+    public function updateExpense(Request $request, $id)
+    {
+        $request->validate([
+            'amount'         => 'required|numeric|min:0.01',
+            'shop_name'      => 'required|string|max:255',
+            'receipt'        => 'nullable|image|max:5120',
+            'quantity'       => 'required|integer|min:1',
+            'price_per_unit' => 'required|numeric|min:0.01',
+        ]);
+
+        $expense = \App\Models\ProjectExpense::findOrFail($id);
+        $team = $expense->team;
+
+        // Authorization: Leader or delegated permission
+        $myRecord = $team->members->where('user_id', Auth::id())->first();
+        if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_expenses)) {
+            return back()->with('error', 'You do not have permission to manage expenses.');
+        }
+
+        $receiptPath = $expense->receipt_path;
+        if ($request->hasFile('receipt')) {
+            $storedPath = $request->file('receipt')->store('receipts', 'r2');
+            $receiptPath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+        }
+
+        $expense->update([
+            'amount'         => $request->amount,
+            'shop_name'      => $request->shop_name,
+            'receipt_path'   => $receiptPath,
+            'quantity'       => $request->quantity,
+            'price_per_unit' => $request->price_per_unit,
+        ]);
+
+        ActivityLogger::log(
+            action: 'expense_updated',
+            description: "Updated expense: {$expense->item} from {$request->shop_name}",
+            subject: $team,
+            teamId: $team->id,
+            targetUserId: null
+        );
+
+        return back()->with('success', 'Expense updated successfully! 💸');
+    }
+
+    public function destroyExpense($id)
+    {
+        $expense = \App\Models\ProjectExpense::findOrFail($id);
+        $team = $expense->team;
+
+        // Authorization: Leader or delegated permission
+        $myRecord = $team->members->where('user_id', Auth::id())->first();
+        if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_expenses)) {
+            return back()->with('error', 'You do not have permission to manage expenses.');
+        }
+
+        $itemName = $expense->item;
+        $expense->delete();
+
+        ActivityLogger::log(
+            action: 'expense_deleted',
+            description: "Deleted expense: {$itemName}",
+            subject: $team,
+            teamId: $team->id,
+            targetUserId: null
+        );
+
+        return back()->with('success', 'Expense deleted successfully! 🗑️');
+    }
+
     // ==========================================
     // 12. إنشاء طلب تمويل (Create Fund Request)
     // ==========================================

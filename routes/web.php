@@ -194,7 +194,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/update-member', [FinalProjectController::class, 'updateMemberStatus'])->name('final_project.updateMember');
 
             Route::post('/final-project/expenses', [FinalProjectController::class, 'storeExpense'])->name('final_project.storeExpense');
+            Route::put('/final-project/expenses/{id}', [FinalProjectController::class, 'updateExpense'])->name('final_project.updateExpense');
+            Route::delete('/final-project/expenses/{id}', [FinalProjectController::class, 'destroyExpense'])->name('final_project.destroyExpense');
+
             Route::post('/final-project/components', [FinalProjectController::class, 'storeComponent'])->name('final_project.storeComponent');
+            Route::put('/final-project/components/{id}', [FinalProjectController::class, 'updateComponent'])->name('final_project.updateComponent');
+            Route::delete('/final-project/components/{id}', [FinalProjectController::class, 'destroyComponent'])->name('final_project.destroyComponent');
 
             Route::post('/final-project/funds/create', [FinalProjectController::class, 'storeFund'])->name('final_project.storeFund');
             Route::post('/final-project/funds/submit', [FinalProjectController::class, 'submitPayment'])->name('final_project.submitPayment');

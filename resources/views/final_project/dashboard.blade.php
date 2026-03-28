@@ -1507,8 +1507,29 @@
                                                     <i class="fas fa-microchip text-blue-400 text-xl"></i>
                                                 </div>
                                             @endif
-                                            <div class="min-w-0">
-                                                <p class="font-bold text-gray-800 text-sm truncate">{{ $comp->name }}</p>
+                                            <div class="min-w-0 flex-grow">
+                                                <div class="flex justify-between items-start">
+                                                    <p class="font-bold text-gray-800 text-sm truncate">{{ $comp->name }}</p>
+                                                    {{-- Edit/Delete Buttons --}}
+                                                    @if ($myRole == 'leader' || ($myMemberRecord && $myMemberRecord->can_manage_components))
+                                                        <div class="flex items-center gap-1">
+                                                            <button type="button" @click.stop 
+                                                                onclick="openEditComponentModal({{ json_encode($comp) }})"
+                                                                class="p-1.5 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors" title="Edit">
+                                                                <i class="fas fa-edit text-xs"></i>
+                                                            </button>
+                                                            <form action="{{ route('final_project.destroyComponent', $comp->id) }}" method="POST" id="delete-comp-{{ $comp->id }}">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="button" @click.stop 
+                                                                    onclick="showDeleteConfirm(document.getElementById('delete-comp-{{ $comp->id }}'), 'Are you sure you want to delete this component? This action cannot be undone.')"
+                                                                    class="p-1.5 text-red-500 hover:bg-red-100 rounded-lg transition-colors" title="Delete">
+                                                                    <i class="fas fa-trash text-xs"></i>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                    @endif
+                                                </div>
                                                 <p class="text-[11px] text-gray-500 leading-relaxed mt-0.5">{{ Str::limit($comp->description, 80) }}</p>
                                             </div>
                                         </div>
@@ -1559,7 +1580,7 @@
                                 <table class="w-full text-sm text-left">
                                     <tbody class="divide-y divide-gray-100">
                                         @forelse($team->expenses as $expense)
-                                            <tr>
+                                            <tr class="group">
                                                 <td class="py-3 px-2">
                                                     <div class="flex items-center gap-3">
                                                         @if ($expense->receipt_path)
@@ -1595,7 +1616,28 @@
                                                 </td>
 
                                                 <td class="py-3 px-2 text-right font-bold text-red-500">
-                                                    -{{ number_format($expense->amount) }}
+                                                    <div class="flex flex-col items-end">
+                                                        <span>-{{ number_format($expense->amount) }}</span>
+                                                        {{-- Edit/Delete Buttons --}}
+                                                        @if ($myRole == 'leader' || ($myMemberRecord && $myMemberRecord->can_manage_expenses))
+                                                            <div class="flex items-center gap-1 mt-1 opacity-0 hover:opacity-100 transition-opacity group-hover:opacity-100">
+                                                                <button type="button" @click.stop 
+                                                                    onclick="openEditExpenseModal({{ json_encode($expense) }})"
+                                                                    class="p-1 text-gray-400 hover:text-blue-500 transition-colors" title="Edit">
+                                                                    <i class="fas fa-edit text-[10px]"></i>
+                                                                </button>
+                                                                <form action="{{ route('final_project.destroyExpense', $expense->id) }}" method="POST" id="delete-exp-{{ $expense->id }}">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="button" @click.stop 
+                                                                        onclick="showDeleteConfirm(document.getElementById('delete-exp-{{ $expense->id }}'), 'Are you sure you want to delete this expense?')"
+                                                                        class="p-1 text-gray-400 hover:text-red-500 transition-colors" title="Delete">
+                                                                        <i class="fas fa-trash text-[10px]"></i>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        @endif
+                                                    </div>
                                                 </td>
                                             </tr>
                                         @empty
@@ -2543,8 +2585,159 @@
             </div>
         </div>
     </div>
+    {{-- ========================================== --}}
+    {{-- 🛠️ مودال تعديل عنصر (Edit Component Modal) --}}
+    {{-- ========================================== --}}
+    <div id="editComponentModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('editComponentModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                <div class="bg-blue-600 px-6 py-4 flex justify-between items-center text-white">
+                    <h3 class="text-lg font-black flex items-center gap-2"><i class="fas fa-edit"></i> Edit Component</h3>
+                    <button onclick="closeModal('editComponentModal')" class="hover:rotate-90 transition-transform"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <form id="editComponentForm" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Name</label>
+                        <input type="text" name="name" id="edit_comp_name" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Description</label>
+                        <textarea name="description" id="edit_comp_description" required rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none transition"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">New Image <span class="text-gray-400">(Leave empty to keep current)</span></label>
+                        <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="closeModal('editComponentModal')" class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ========================================== --}}
+    {{-- 💸 مودال تعديل مصروف (Edit Expense Modal) --}}
+    {{-- ========================================== --}}
+    <div id="editExpenseModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('editExpenseModal')"></div>
+            <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                <div class="bg-red-500 px-6 py-4 flex justify-between items-center text-white">
+                    <h3 class="text-lg font-black flex items-center gap-2"><i class="fas fa-edit"></i> Edit Expense</h3>
+                    <button onclick="closeModal('editExpenseModal')" class="hover:rotate-90 transition-transform"><i class="fas fa-times text-xl"></i></button>
+                </div>
+                <form id="editExpenseForm" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Shop/Store Name</label>
+                        <input type="text" name="shop_name" id="edit_expense_shop" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Unit Price</label>
+                            <input type="number" step="0.01" name="price_per_unit" id="edit_expense_price" required oninput="editExpenseUpdateTotal()" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Quantity</label>
+                            <input type="number" name="quantity" id="edit_expense_qty" required oninput="editExpenseUpdateTotal()" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Total Amount (EGP)</label>
+                        <input type="number" step="0.01" name="amount" id="edit_expense_amount" readonly class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-gray-50 font-bold text-red-600">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">New Receipt <span class="text-gray-400">(optional)</span></label>
+                        <input type="file" name="receipt" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                    </div>
+                    <div class="flex gap-3 pt-2">
+                        <button type="button" onclick="closeModal('editExpenseModal')" class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                        <button type="submit" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- ========================================== --}}
+    {{-- 🗑️ مودال تأكيد الحذف (Custom Delete Confirmation Modal) --}}
+    {{-- ========================================== --}}
+    <div id="confirmDeleteModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+        <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" onclick="closeDeleteModal()"></div>
+        <div class="relative bg-white rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl transform transition-all scale-100 opacity-100">
+            <div class="p-8 text-center">
+                <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center animate-pulse">
+                        <i class="fas fa-trash-alt text-red-500 text-2xl"></i>
+                    </div>
+                </div>
+                <h3 class="text-2xl font-black text-gray-900 mb-3">Wait a minute!</h3>
+                <p class="text-gray-500 leading-relaxed mb-8" id="confirmDeleteMessage">Are you sure you want to delete this item? This action cannot be undone.</p>
+                <div class="flex gap-3 mt-4">
+                    <button type="button" onclick="closeDeleteModal()" 
+                            class="flex-1 px-6 py-3.5 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 hover:text-gray-600 transition duration-300">
+                        Cancel
+                    </button>
+                    <button type="button" id="confirmDeleteBtn"
+                            class="flex-1 px-6 py-3.5 bg-red-500 text-white font-bold rounded-2xl hover:bg-red-600 shadow-lg shadow-red-200 transition duration-300 transform active:scale-95">
+                        Yes, Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
+        function openEditComponentModal(comp) {
+            const form = document.getElementById('editComponentForm');
+            form.action = `/final-project/components/${comp.id}`;
+            document.getElementById('edit_comp_name').value = comp.name;
+            document.getElementById('edit_comp_description').value = comp.description;
+            openModal('editComponentModal');
+        }
+
+        function openEditExpenseModal(expense) {
+            const form = document.getElementById('editExpenseForm');
+            form.action = `/final-project/expenses/${expense.id}`;
+            document.getElementById('edit_expense_shop').value = expense.shop_name;
+            document.getElementById('edit_expense_price').value = expense.price_per_unit;
+            document.getElementById('edit_expense_qty').value = expense.quantity;
+            document.getElementById('edit_expense_amount').value = expense.amount;
+            openModal('editExpenseModal');
+        }
+
+        let formToSubmit = null;
+        function showDeleteConfirm(form, message = null) {
+            formToSubmit = form;
+            if (message) document.getElementById('confirmDeleteMessage').innerText = message;
+            document.getElementById('confirmDeleteModal').classList.remove('hidden');
+            document.getElementById('confirmDeleteModal').classList.add('flex');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('confirmDeleteModal').classList.add('hidden');
+            document.getElementById('confirmDeleteModal').classList.remove('flex');
+            formToSubmit = null;
+        }
+
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if (formToSubmit) formToSubmit.submit();
+        });
+
+        function editExpenseUpdateTotal() {
+            const price = parseFloat(document.getElementById('edit_expense_price').value) || 0;
+            const qty = parseInt(document.getElementById('edit_expense_qty').value) || 0;
+            document.getElementById('edit_expense_amount').value = (price * qty).toFixed(2);
+        }
+
         function expenseChangeQty(delta) {
             const qtyInput = document.getElementById('expense_qty');
             let val = parseInt(qtyInput.value) || 1;
