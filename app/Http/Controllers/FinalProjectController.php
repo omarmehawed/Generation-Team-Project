@@ -740,12 +740,15 @@ class FinalProjectController extends Controller
     public function storeExpense(Request $request)
     {
         $request->validate([
-            'team_id'        => 'required|exists:teams,id',
-            'component_id'   => 'required|exists:project_components,id',
-            'shop_name'      => 'required|string|max:255',
-            'price_per_unit' => 'required|numeric|min:0.01',
-            'quantity'       => 'required|integer|min:1',
-            'receipt'        => 'nullable|image|max:5120',
+            'team_id'          => 'required|exists:teams,id',
+            'component_id'     => 'required|array|min:1',
+            'component_id.*'   => 'exists:project_components,id',
+            'shop_name'        => 'required|string|max:255',
+            'price_per_unit'   => 'required|array',
+            'price_per_unit.*' => 'numeric|min:0.01',
+            'quantity'         => 'required|array',
+            'quantity.*'       => 'integer|min:1',
+            'receipt'          => 'required|image|max:5120',
         ]);
 
         $team = Team::findOrFail($request->team_id);
@@ -756,56 +759,72 @@ class FinalProjectController extends Controller
             return back()->with('error', 'You do not have permission to add expenses.');
         }
 
-        $component = \App\Models\ProjectComponent::where('id', $request->component_id)
-            ->where('team_id', $team->id)
-            ->firstOrFail();
-
-        $quantity      = (int) $request->quantity;
-        $pricePerUnit  = (float) $request->price_per_unit;
-        $totalAmount   = $pricePerUnit * $quantity;
-
-        // Upload receipt image if provided
+        // Upload receipt image ONCE
         $receiptPath = null;
         if ($request->hasFile('receipt')) {
             $storedPath = $request->file('receipt')->store('receipts', 'r2');
             $receiptPath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
-        DB::table('project_expenses')->insert([
-            'team_id'        => $request->team_id,
-            'user_id'        => Auth::id(),
-            'component_id'   => $component->id,
-            'item'           => $component->name,
-            'shop_name'      => $request->shop_name,
-            'price_per_unit' => $pricePerUnit,
-            'quantity'       => $quantity,
-            'amount'         => $totalAmount,
-            'receipt_path'   => $receiptPath, // Ensure this is stored
-            'created_at'     => now(),
-            'updated_at'     => now(),
-        ]);
+        $componentIds = $request->component_id;
+        $prices       = $request->price_per_unit;
+        $quantities   = $request->quantity;
 
-        // 🔍 LOG ACTIVITY
-        ActivityLogger::log(
-            action: 'expense_added',
-            description: "Added expense: {$component->name} x{$quantity} ({$totalAmount} EGP)",
-            subject: $team,
-            teamId: $team->id,
-            targetUserId: null,
-            properties: ['amount' => $totalAmount, 'shop' => $request->shop_name, 'qty' => $quantity]
-        );
+        DB::beginTransaction();
+        try {
+            $totalBatchAmount = 0;
+            $itemsList = [];
 
-        // 🔔 Notify ALL team members
-        TeamNotifier::notifyAll($team, [
-            'title'      => '💸 New Expense Added',
-            'message'    => Auth::user()->name . ' recorded an expense: "' . $component->name . '" × ' . $quantity . ' = ' . number_format($totalAmount, 2) . ' EGP from ' . $request->shop_name,
-            'icon'       => 'fas fa-receipt',
-            'color'      => 'text-red-500',
-            'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
-            'type'       => 'info'
-        ], [Auth::id()]); // don't notify the actor
+            foreach ($componentIds as $index => $compId) {
+                $comp = \App\Models\ProjectComponent::where('id', $compId)
+                    ->where('team_id', $team->id)
+                    ->firstOrFail();
 
-        return back()->with('success', 'Expense recorded successfully! 💸');
+                $pricePerUnit = (float) $prices[$index];
+                $qty          = (int) $quantities[$index];
+                $amount       = $pricePerUnit * $qty;
+                $totalBatchAmount += $amount;
+                $itemsList[] = "{$comp->name} x{$qty}";
+
+                DB::table('project_expenses')->insert([
+                    'team_id'        => $team->id,
+                    'user_id'        => Auth::id(),
+                    'component_id'   => $comp->id,
+                    'item'           => $comp->name,
+                    'shop_name'      => $request->shop_name,
+                    'price_per_unit' => $pricePerUnit,
+                    'quantity'       => $qty,
+                    'amount'         => $amount,
+                    'receipt_path'   => $receiptPath,
+                    'created_at'     => now(),
+                    'updated_at'     => now(),
+                ]);
+            }
+
+            // 🔍 LOG ACTIVITY
+            ActivityLogger::log(
+                action: 'expense_batch_added',
+                description: "Added batch expenses from {$request->shop_name}: " . implode(', ', $itemsList),
+                teamId: $team->id,
+                properties: ['total' => $totalBatchAmount, 'count' => count($componentIds)]
+            );
+
+            // 🔔 Notify ALL team members
+            TeamNotifier::notifyAll($team, [
+                'title'      => '💸 New Batch Expenses Added',
+                'message'    => Auth::user()->name . ' recorded ' . count($componentIds) . ' expenses totaling ' . number_format($totalBatchAmount, 2) . ' EGP from ' . $request->shop_name,
+                'icon'       => 'fas fa-receipt',
+                'color'      => 'text-red-500',
+                'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+                'type'       => 'info'
+            ], [Auth::id()]);
+
+            DB::commit();
+            return back()->with('success', 'Batch expenses recorded successfully! 💸');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return back()->with('error', 'Failed to save batch expenses: ' . $e->getMessage());
+        }
     }
 
     // ==========================================

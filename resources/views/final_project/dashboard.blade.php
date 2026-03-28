@@ -2493,95 +2493,125 @@
                     </button>
                 </div>
 
-                <form action="{{ route('final_project.storeExpense') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
-                    @csrf
-                    <input type="hidden" name="team_id" value="{{ $team->id }}">
+                <div x-data="{ 
+                    selectedItems: [],
+                    availableComponents: [
+                        @foreach($components as $comp)
+                            { id: '{{ $comp->id }}', name: '{{ addslashes($comp->name) }}' },
+                        @endforeach
+                    ],
+                    addItem(compId) {
+                        if (!compId) return;
+                        const comp = this.availableComponents.find(c => c.id == compId);
+                        if (comp && !this.selectedItems.find(i => i.id == compId)) {
+                            this.selectedItems.push({ id: comp.id, name: comp.name, price: 0, qty: 1 });
+                        }
+                        this.$refs.compSelect.value = '';
+                    },
+                    removeItem(index) {
+                        this.selectedItems.splice(index, 1);
+                    },
+                    get totalSum() {
+                        return this.selectedItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0) * (parseInt(item.qty) || 0), 0);
+                    }
+                }">
+                    <form action="{{ route('final_project.storeExpense') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                        @csrf
+                        <input type="hidden" name="team_id" value="{{ $team->id }}">
 
-                    {{-- Select Component --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Select Component <span class="text-red-500">*</span></label>
-                        @if (isset($components) && $components->count() > 0)
-                            <select name="component_id" id="expense_component_select" required
-                                onchange="expenseUpdateTotal()"
-                                class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white">
-                                <option value="">-- Choose a component --</option>
-                                @foreach ($components as $comp)
-                                    <option value="{{ $comp->id }}">{{ $comp->name }}</option>
-                                @endforeach
-                            </select>
-                        @else
-                            <div class="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-sm text-yellow-700 font-bold">
-                                <i class="fas fa-exclamation-triangle mr-1"></i>
-                                No components added yet. Please add components first from the Components card.
+                        {{-- Choose components to add --}}
+                        <div>
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Add Components to Invoice <span class="text-red-500">*</span></label>
+                            @if (isset($components) && $components->count() > 0)
+                                <div class="flex gap-2">
+                                    <select x-ref="compSelect"
+                                        @change="addItem($event.target.value)"
+                                        class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white">
+                                        <option value="">-- Choose a component --</option>
+                                        <template x-for="comp in availableComponents" :key="comp.id">
+                                            <option :value="comp.id" x-text="comp.name"></option>
+                                        </template>
+                                    </select>
+                                </div>
+                            @else
+                                <div class="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-sm text-yellow-700 font-bold">
+                                    <i class="fas fa-exclamation-triangle mr-1"></i> No components added yet.
+                                </div>
+                            @endif
+                        </div>
+
+                        {{-- List of selected components with their prices --}}
+                        <div class="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
+                            <template x-for="(item, index) in selectedItems" :key="item.id">
+                                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 relative group animate-in fade-in slide-in-from-top-2">
+                                    <div class="flex justify-between items-start mb-3">
+                                        <h4 class="text-sm font-black text-gray-800" x-text="item.name"></h4>
+                                        <button type="button" @click="removeItem(index)" class="text-gray-400 hover:text-red-500 transition">
+                                            <i class="fas fa-times-circle"></i>
+                                        </button>
+                                    </div>
+                                    <input type="hidden" name="component_id[]" :value="item.id">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Unit Price</label>
+                                            <input type="number" name="price_per_unit[]" x-model="item.price" required step="0.01" min="0.01"
+                                                class="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Quantity</label>
+                                            <div class="flex items-center gap-2">
+                                                <button type="button" @click="item.qty = Math.max(1, parseInt(item.qty) - 1)" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition">-</button>
+                                                <input type="number" name="quantity[]" x-model="item.qty" readonly
+                                                    class="w-12 text-center bg-transparent border-0 font-bold text-gray-800 focus:ring-0 p-0">
+                                                <button type="button" @click="item.qty = parseInt(item.qty) + 1" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition">+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </template>
+                            
+                            <template x-if="selectedItems.length === 0">
+                                <div class="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl">
+                                    <i class="fas fa-shopping-cart text-gray-200 text-3xl mb-2"></i>
+                                    <p class="text-xs text-gray-400">No components selected yet.</p>
+                                </div>
+                            </template>
+                        </div>
+
+                        {{-- Store & Invoice (Shared) --}}
+                        <div class="grid grid-cols-1 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Store Name <span class="text-red-500">*</span></label>
+                                <input type="text" name="shop_name" required
+                                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition"
+                                    placeholder="e.g. Amazon, local shop...">
                             </div>
-                            {{-- Disable submit if no components --}}
-                            <script>
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const form = document.querySelector('#addExpenseModal form');
-                                    if (form) {
-                                        const submitBtn = form.querySelector('button[type="submit"]');
-                                        if (submitBtn) submitBtn.disabled = true;
-                                    }
-                                });
-                            </script>
-                        @endif
-                    </div>
 
-                    {{-- Unit Price --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Unit Price (EGP) <span class="text-red-500">*</span></label>
-                        <input type="number" name="price_per_unit" id="expense_unit_price" required min="0.01" step="0.01"
-                            oninput="expenseUpdateTotal()"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition"
-                            placeholder="e.g. 200">
-                    </div>
-
-                    {{-- Quantity +/- Control --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-2">Quantity <span class="text-red-500">*</span></label>
-                        <div class="flex items-center gap-3">
-                            <button type="button" onclick="expenseChangeQty(-1)"
-                                class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-black text-xl flex items-center justify-center transition select-none">−</button>
-                            <input type="number" name="quantity" id="expense_qty" value="1" min="1" readonly
-                                class="w-20 text-center border border-gray-200 rounded-xl py-2 text-base font-bold text-gray-800 focus:outline-none">
-                            <button type="button" onclick="expenseChangeQty(1)"
-                                class="w-10 h-10 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-black text-xl flex items-center justify-center transition select-none">+</button>
-                            {{-- Auto-calculated total --}}
-                            <div class="flex-1 bg-red-50 border border-red-100 rounded-xl px-4 py-2 text-right">
-                                <p class="text-[10px] text-red-400 font-bold uppercase">Total</p>
-                                <p class="text-lg font-black text-red-600" id="expense_total_display">0 EGP</p>
+                            <div class="bg-red-50 rounded-2xl p-4 border border-red-100">
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <p class="text-xs font-bold text-red-400 uppercase">Grand Total</p>
+                                        <p class="text-2xl font-black text-red-600" x-text="totalSum.toLocaleString() + ' EGP'"></p>
+                                    </div>
+                                    <div class="h-12 w-[1px] bg-red-200"></div>
+                                    <div class="flex-1 pl-4">
+                                        <label class="block text-[10px] font-bold text-red-400 uppercase mb-1">Invoice Receipt</label>
+                                        <input type="file" name="receipt" accept="image/*" required class="text-[10px] text-red-600 file:mr-2 file:py-1 file:px-2 file:rounded-md file:border-0 file:text-[10px] file:font-bold file:bg-red-600 file:text-white hover:file:bg-red-700 cursor-pointer">
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {{-- Store Name --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Store Name <span class="text-red-500">*</span></label>
-                        <input type="text" name="shop_name" required
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition"
-                            placeholder="e.g. Maadi Electronics, Amazon...">
-                    </div>
-
-                    {{-- Receipt Image --}}
-                    <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Receipt Image <span class="text-gray-400">(optional)</span></label>
-                        <div class="relative border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-red-300 transition cursor-pointer" onclick="document.getElementById('expense_receipt_input').click()">
-                            <i class="fas fa-receipt text-gray-300 text-2xl mb-1"></i>
-                            <p class="text-xs text-gray-400" id="expense_receipt_label">Click to upload receipt</p>
-                            <input type="file" id="expense_receipt_input" name="receipt" accept="image/*" class="hidden"
-                                onchange="document.getElementById('expense_receipt_label').innerText = this.files[0]?.name || 'Click to upload receipt'">
+                        <div class="flex gap-3 pt-2">
+                            <button type="button" onclick="closeModal('addExpenseModal')"
+                                class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                            <button type="submit" :disabled="selectedItems.length === 0"
+                                class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                                Save Batch Expense
+                            </button>
                         </div>
-                    </div>
-
-                    <div class="flex gap-3 pt-2">
-                        <button type="button" onclick="closeModal('addExpenseModal')"
-                            class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
-                        <button type="submit"
-                            class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">
-                            <i class="fas fa-check mr-1"></i> Save Expense
-                        </button>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
