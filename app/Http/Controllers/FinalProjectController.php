@@ -950,6 +950,10 @@ class FinalProjectController extends Controller
             return back()->with('error', 'You do not have permission to manage expenses.');
         }
 
+        $quantity = (int) $request->quantity;
+        $pricePerUnit = (float) $request->price_per_unit;
+        $totalAmount = $quantity * $pricePerUnit;
+
         $receiptPath = $expense->receipt_path;
         if ($request->hasFile('receipt')) {
             $storedPath = $request->file('receipt')->store('receipts', 'r2');
@@ -957,11 +961,11 @@ class FinalProjectController extends Controller
         }
 
         $expense->update([
-            'amount'         => $request->amount,
+            'amount'         => $totalAmount,
             'shop_name'      => $request->shop_name,
             'receipt_path'   => $receiptPath,
-            'quantity'       => $request->quantity,
-            'price_per_unit' => $request->price_per_unit,
+            'quantity'       => $quantity,
+            'price_per_unit' => $pricePerUnit,
         ]);
 
         ActivityLogger::log(

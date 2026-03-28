@@ -7,8 +7,15 @@ use Illuminate\Database\Eloquent\Model;
 class ProjectExpense extends Model
 {
     protected $fillable = [
-        'team_id', 'item_name', 'quantity', 'price', 'receipt_image', 'buyer_name',
-        'component_id', 'price_per_unit',
+        'team_id', 
+        'user_id',
+        'component_id',
+        'item',
+        'shop_name',
+        'price_per_unit',
+        'quantity',
+        'amount',
+        'receipt_path',
     ];
 
     public function contributions()

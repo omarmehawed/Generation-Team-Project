@@ -2711,6 +2711,7 @@
             document.getElementById('edit_expense_price').value = expense.price_per_unit;
             document.getElementById('edit_expense_qty').value = expense.quantity;
             document.getElementById('edit_expense_amount').value = expense.amount;
+            editExpenseUpdateTotal(); // Re-calculate to be sure
             openModal('editExpenseModal');
         }
 
