@@ -23,86 +23,88 @@ class TaskController extends Controller
         // 1. Validation
         $request->validate([
             'title' => 'required|string|max:255',
-            'user_id' => 'required|exists:users,id',
+            'user_id' => 'required', // Can be single ID or array
             'team_id' => 'required|exists:teams,id',
             'deadline' => 'nullable|date',
         ]);
 
-        // 2. التحقق من الصلاحيات (مين بيعمل التاسك)
+        // 2. Normalize user_id to an array
+        $userIds = is_array($request->user_id) ? $request->user_id : [$request->user_id];
+
+        // 3. Get Current User Member Record
         $currentUserMember = \App\Models\TeamMember::where('user_id', Auth::id())
             ->where('team_id', $request->team_id)
             ->first();
 
-        // 3. بيانات الشخص اللي هيتعمل له التاسك
-        $targetMember = \App\Models\TeamMember::where('user_id', $request->user_id)
-            ->where('team_id', $request->team_id)
-            ->first();
+        if (!$currentUserMember || !in_array($currentUserMember->role, ['leader', 'vice_leader'])) {
+            return back()->withErrors(['msg' => 'Unauthorized! Only Leaders and Vice Leaders can assign tasks.']);
+        }
 
-        // 4. لوجيك الصلاحيات (ليدر للكل - فايس لنفس تخصصه)
-        $canAssign = false;
+        $team = \App\Models\Team::with('project')->find($request->team_id);
+        $taskCount = 0;
 
-        if ($currentUserMember) {
-            if ($currentUserMember->role == 'leader') {
-                $canAssign = true;
-            } elseif ($currentUserMember->role == 'vice_leader') {
-                // لازم يكونوا نفس التخصص (Technical Role)
-                if ($targetMember && $currentUserMember->technical_role == $targetMember->technical_role) {
+        \Illuminate\Support\Facades\DB::transaction(function () use ($request, $userIds, $currentUserMember, $team, &$taskCount) {
+            foreach ($userIds as $userId) {
+                // Check if user exists in team
+                $targetMember = \App\Models\TeamMember::where('user_id', $userId)
+                    ->where('team_id', $request->team_id)
+                    ->first();
+
+                if (!$targetMember) continue;
+
+                // Permissions logic (Leader for all, Vice leader for their domain)
+                $canAssign = false;
+                if ($currentUserMember->role == 'leader') {
                     $canAssign = true;
+                } elseif ($currentUserMember->role == 'vice_leader') {
+                    if (strtolower($currentUserMember->technical_role) == strtolower($targetMember->technical_role)) {
+                        $canAssign = true;
+                    }
+                }
+
+                if (!$canAssign) continue;
+
+                // Create Task
+                $task = \App\Models\Task::create([
+                    'title' => $request->title,
+                    'user_id' => $userId,
+                    'team_id' => $request->team_id,
+                    'deadline' => $request->deadline,
+                    'status' => 'pending'
+                ]);
+
+                $taskCount++;
+
+                // Notify User
+                $assignedUser = \App\Models\User::find($userId);
+                if ($assignedUser) {
+                    $assignedUser->notify(new \App\Notifications\BatuNotification([
+                        'title'      => '📌 New Task Assigned',
+                        'message'    => Auth::user()->name . ' assigned you a task: "' . $request->title . '"',
+                        'icon'       => 'fas fa-thumbtack',
+                        'color'      => 'text-orange-500',
+                        'action_url' => route('final_project.dashboard', $team->id) . '#tasks-section',
+                        'type'       => 'info'
+                    ]));
+
+                    // LOG ACTIVITY
+                    ActivityLogger::log(
+                        action: 'task_assigned',
+                        description: "Assigned task '{$request->title}' to {$assignedUser->name}",
+                        subject: $task,
+                        teamId: $request->team_id,
+                        targetUserId: $assignedUser->id,
+                        properties: ['deadline' => $request->deadline]
+                    );
                 }
             }
+        });
+
+        if ($taskCount == 0) {
+            return back()->withErrors(['msg' => 'No tasks were assigned. Check permissions or selections.']);
         }
 
-        if (!$canAssign) {
-            return back()->withErrors(['msg' => 'Unauthorized! Leaders can assign to all. Vice leaders to their team only.']);
-        }
-
-        // 5. إنشاء التاسك (بدون creator_id عشان ميطلعش ايرور)
-        $task = \App\Models\Task::create([
-            'title' => $request->title,
-            'user_id' => $request->user_id,
-            'team_id' => $request->team_id,
-            'deadline' => $request->deadline,
-            'status' => 'pending'
-        ]);
-
-
-        // نجيب الطالب اللي اتعمله التاسك
-        // 🔥 تحديد الرابط الصحيح بناءً على نوع المشروع
-        $team = \App\Models\Team::with('project')->find($request->team_id);
-        $projectUrl = '#'; // Default
-
-        if ($team->project->type == 'graduation') {
-            // لو مشروع تخرج، روح للداشبورد الخاصة
-            $projectUrl = route('final_project.dashboard', $team->id);
-        } else {
-            // لو مادة عادية، روح لصفحة عرض المادة
-            $projectUrl = route('projects.show', $team->project->id);
-        }
-
-        // إرسال النوتيفيكيشن للشخص المُكلَّف فقط
-        $assignedUser = \App\Models\User::find($request->user_id);
-        if ($assignedUser) {
-            $assignedUser->notify(new \App\Notifications\BatuNotification([
-                'title'      => '📌 New Task Assigned',
-                'message'    => Auth::user()->name . ' assigned you a task: "' . $request->title . '"',
-                'icon'       => 'fas fa-thumbtack',
-                'color'      => 'text-orange-500',
-                'action_url' => route('final_project.dashboard', $team->id) . '#tasks-section',
-                'type'       => 'info'
-            ]));
-
-            // 🔍 LOG ACTIVITY
-            ActivityLogger::log(
-                action: 'task_assigned',
-                description: "Assigned task '{$request->title}' to {$assignedUser->name}",
-                subject: $task,
-                teamId: $request->team_id,
-                targetUserId: $assignedUser->id,
-                properties: ['deadline' => $request->deadline]
-            );
-        }
-
-        return back()->with('success', 'Task assigned successfully!');
+        return back()->with('success', "Task assigned to {$taskCount} member(s) successfully!");
     }
 
 

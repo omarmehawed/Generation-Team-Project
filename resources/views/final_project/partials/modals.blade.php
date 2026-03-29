@@ -1607,7 +1607,8 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     </div>
 
     {{-- 19. Add Task Modal --}}
-    <div id="addTaskModal" class="hidden relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+    <div id="addTaskModal" x-data="{ selectedTaskMembers: [], teamType: '', canSeeAllBtn: false }"
+        class="hidden relative z-50" aria-labelledby="modal-title" role="dialog" aria-modal="true">
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('addTaskModal')"></div>
             <div class="modal-content !max-w-md">
@@ -1622,19 +1623,69 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </h3>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Task Title</label>
-                            <input type="text" name="title" required placeholder="e.g. Design Database Schema"
-                                class="input-classic font-bold">
+                    <div class="bg-white px-8 pt-6 pb-6 space-y-5">
+                        {{-- Assign to All Button (Prominent) --}}
+                        <div x-show="canSeeAllBtn">
+                            <button type="button" @click="assignAllToTask()"
+                                :class="teamType === 'software' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-600 hover:bg-orange-700'"
+                                class="w-full text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
+                                <i class="fas fa-users-cog text-sm"></i>
+                                Assign to All <span x-text="teamType"></span> Team
+                            </button>
+                            <div class="relative flex py-3 items-center">
+                                <div class="flex-grow border-t border-gray-100"></div>
+                                <span class="flex-shrink mx-4 text-[10px] font-bold text-gray-300 uppercase">OR SELECT
+                                    INDIVIDUALLY</span>
+                                <div class="flex-grow border-t border-gray-100"></div>
+                            </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Assign To</label>
-                            <select name="user_id" id="taskAssignUser"
-                                class="w-full border rounded-xl p-3 text-sm bg-white outline-none focus:border-gray-500 transition">
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Task
+                                Title</label>
+                            <input type="text" name="title" required placeholder="e.g. Design Database Schema"
+                                class="input-classic font-bold border-2 border-gray-100">
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Add
+                                Member</label>
+                            <select id="taskAssignUser"
+                                @change="addMemberToTask($event.target.value); $event.target.value = ''"
+                                class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gray-200 outline-none transition bg-gray-50 font-bold">
+                                <option value="">-- Choose a member --</option>
                                 {{-- JS Injected --}}
                             </select>
+                        </div>
+
+                        {{-- Selected Members List --}}
+                        <div class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                            <p class="text-[10px] font-bold text-gray-400 uppercase">Current Assignees:</p>
+                            <template x-for="(m, index) in selectedTaskMembers" :key="m.id">
+                                <div
+                                    class="flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl p-3 animate-in fade-in slide-in-from-top-2">
+                                    <div class="flex items-center gap-3">
+                                        <div class="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400"
+                                            x-text="m.name.split(' ').map(n => n[0]).join('').substring(0,2)"></div>
+                                        <div>
+                                            <p class="text-xs font-black text-gray-800" x-text="m.name"></p>
+                                            <p class="text-[9px] text-gray-400 capitalize" x-text="m.tech"></p>
+                                        </div>
+                                    </div>
+                                    <button type="button" @click="removeMemberFromTask(index)"
+                                        class="text-gray-300 hover:text-red-500 transition">
+                                        <i class="fas fa-times-circle"></i>
+                                    </button>
+                                    <input type="hidden" name="user_id[]" :value="m.id">
+                                </div>
+                            </template>
+
+                            <template x-if="selectedTaskMembers.length === 0">
+                                <div class="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl">
+                                    <i class="fas fa-user-plus text-gray-200 text-3xl mb-1"></i>
+                                    <p class="text-[10px] text-gray-400 font-bold uppercase">No members selected yet</p>
+                                </div>
+                            </template>
                         </div>
 
                         <div>
@@ -1727,7 +1778,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 allMembers: [
                     @if(isset($team) && $team)
                         @foreach($team->members as $member)
-                                                                                      {
+                                                                                              {
                                 id: {{ $member->user_id }},
                                 name: "{!! addslashes($member->user->name) !!}",
                                 academic: "{{ explode('@', $member->user->university_email ?? $member->user->email)[0] }}",

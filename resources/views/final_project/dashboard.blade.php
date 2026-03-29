@@ -3321,14 +3321,16 @@
 
     const teamMembers = @json(isset($team) && $team
             ? $team->members->map(function ($m) {
-                return ['id' => $m->user->id, 'name' => $m->user->name, 'tech' => $m->technical_role];
+                return ['id' => $m->user->id, 'name' => $m->user->name, 'tech' => strtolower($m->technical_role ?? '')];
             })
             : []
     );
+    const currentUserRole = "{{ $myRole }}";
+    const currentUserTech = "{{ strtolower($myMember->technical_role ?? '') }}";
 
     function openAddTaskModal(type) {
         const select = document.getElementById('taskAssignUser');
-        select.innerHTML = '';
+        select.innerHTML = '<option value="">-- Choose a member --</option>';
         const filtered = teamMembers.filter(m => m.tech === type);
         filtered.forEach(m => {
             let option = document.createElement('option');
@@ -3336,18 +3338,63 @@
             option.text = m.name;
             select.appendChild(option);
         });
+
+        // Sync with Alpine.js
+        const modal = document.getElementById('addTaskModal');
+        if (window.Alpine) {
+            const data = Alpine.$data(modal);
+            data.selectedTaskMembers = [];
+            data.teamType = type;
+            data.canSeeAllBtn = currentUserRole === 'leader' || (currentUserRole === 'vice_leader' && currentUserTech === type);
+        }
+
         const header = document.getElementById('addTaskHeader');
         const badge = document.getElementById('addTaskTypeBadge');
         if (type === 'software') {
-            header.className = 'bg-blue-600 px-8 py-5 transition-colors';
+            header.className = 'bg-blue-600 px-8 py-5 transition-colors rounded-t-[1.3rem]';
             badge.innerText = 'Software';
-            badge.className = 'bg-white/20 text-white text-[10px] px-2 py-0.5 rounded ml-2 uppercase';
+            badge.className = 'bg-white/20 text-white text-xs px-2 py-0.5 rounded ml-2 font-mono';
         } else {
-            header.className = 'bg-orange-600 px-8 py-5 transition-colors';
+            header.className = 'bg-orange-600 px-8 py-5 transition-colors rounded-t-[1.3rem]';
             badge.innerText = 'Hardware';
-            badge.className = 'bg-white/20 text-white text-[10px] px-2 py-0.5 rounded ml-2 uppercase';
+            badge.className = 'bg-white/20 text-white text-xs px-2 py-0.5 rounded ml-2 font-mono';
         }
         openModal('addTaskModal');
+    }
+
+    function addMemberToTask(userId) {
+        if (!userId) return;
+        const modal = document.getElementById('addTaskModal');
+        const data = Alpine.$data(modal);
+        
+        // Check if already added
+        if (data.selectedTaskMembers.some(m => m.id == userId)) return;
+
+        const member = teamMembers.find(m => m.id == userId);
+        if (member) {
+            data.selectedTaskMembers.push(member);
+        }
+    }
+
+    function removeMemberFromTask(index) {
+        const modal = document.getElementById('addTaskModal');
+        const data = Alpine.$data(modal);
+        data.selectedTaskMembers.splice(index, 1);
+    }
+
+    function assignAllToTask() {
+        const modal = document.getElementById('addTaskModal');
+        const data = Alpine.$data(modal);
+        
+        // Get all members of current team type
+        const filtered = teamMembers.filter(m => m.tech === data.teamType);
+        
+        // Add them (avoiding duplicates)
+        filtered.forEach(member => {
+            if (!data.selectedTaskMembers.some(m => m.id == member.id)) {
+                data.selectedTaskMembers.push(member);
+            }
+        });
     }
 
     function openSubmitTaskModal(taskId, title) {
