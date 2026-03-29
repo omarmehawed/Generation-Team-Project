@@ -993,7 +993,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach ($team->members as $member)
+                                @php
+                                    $displayMembers = $team->members;
+                                    if ($myRole === 'member') {
+                                        $displayMembers = $displayMembers->where('user_id', Auth::id());
+                                    }
+                                @endphp
+                                @foreach ($displayMembers as $member)
                                         @php
                                             $mName = str_replace("'", "\\'", strtolower($member->user->name));
                                             $mID = strtolower($member->user->email ? explode('@', $member->user->email)[0] : '');
@@ -1370,7 +1376,12 @@
                             @endif
                         </div>
 
-                        @php $softMembers = $team->members->where('technical_role', 'software'); @endphp
+                        @php 
+                            $softMembers = $team->members->where('technical_role', 'software');
+                            if ($myRole === 'member') {
+                                $softMembers = $softMembers->where('user_id', Auth::id());
+                            }
+                        @endphp
                         <div class="space-y-4">
                             @foreach ($softMembers as $member)
                                 @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
@@ -1423,7 +1434,12 @@
                             @endif
                         </div>
 
-                        @php $hardMembers = $team->members->where('technical_role', 'hardware'); @endphp
+                        @php 
+                            $hardMembers = $team->members->where('technical_role', 'hardware');
+                            if ($myRole === 'member') {
+                                $hardMembers = $hardMembers->where('user_id', Auth::id());
+                            }
+                        @endphp
                         <div class="space-y-4">
                             @foreach ($hardMembers as $member)
                                 @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
