@@ -318,6 +318,20 @@
                                 @endforelse
                             </tbody>
                         </table>
+
+                        {{-- Pagination Footer --}}
+                        @if($members->total() > 0)
+                        <div class="mt-4 px-6 pb-6 pt-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/30 dark:bg-[#0b1220]/20">
+                            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                                <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                    Showing <span class="text-indigo-500 dark:text-indigo-400">{{ $members->firstItem() }}</span> to <span class="text-indigo-500 dark:text-indigo-400">{{ $members->lastItem() }}</span> of <span class="text-indigo-500 dark:text-indigo-400">{{ $members->total() }}</span> members
+                                </p>
+                                <div class="flex items-center gap-2">
+                                    {{ $members->appends(['tab' => 'members'])->links('pagination::simple-tailwind') }}
+                                </div>
+                            </div>
+                        </div>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -326,9 +340,7 @@
             @if(!$isSubLeader)
             <div x-show="tab==='subleaders'" x-transition style="display:none;">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    
-
-                    @forelse(($subLeaders ?? collect()) as $sl)
+                                        @forelse(($subLeaders ?? collect()) as $sl)
                         <div class="relative rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-[#111827] p-6 group hover:border-indigo-500 transition-all shadow-sm">
                             {{-- Admin Actions (Top Right) --}}
                             @if($isLeader || $isGeneralVice || $isSoftwareVice || $isHardwareVice)
@@ -351,8 +363,11 @@
                             @endif
 
                             <div class="flex items-center gap-4 mb-4">
-                                <img src="https://ui-avatars.com/api/?name={{ urlencode($sl?->user?->name ?? 'Sub Leader') }}&background=8b5cf6&color=fff&bold=true"
-                                     class="w-12 h-12 rounded-2xl object-cover bg-white dark:bg-gray-900 p-1 border border-indigo-100 dark:border-indigo-900/50">
+                                @php
+                                    $slAvatarUrl = ($sl->user?->profile_photo_url ?? $sl->avatar) ?? 'https://ui-avatars.com/api/?name=' . urlencode($sl?->user?->name ?? 'SL') . '&background=8b5cf6&color=fff&bold=true';
+                                @endphp
+                                <img src="{{ $slAvatarUrl }}"
+                                     class="w-12 h-12 rounded-2xl object-cover bg-white dark:bg-gray-900 p-1 border border-indigo-100 dark:border-indigo-900/50 shadow-sm">
                                 <div>
                                     <h4 class="font-black text-gray-900 dark:text-white">{{ $sl?->user?->name ?? 'Unknown' }}</h4>
                                     <p class="text-[10px] text-purple-500 font-black uppercase tracking-widest">{{ $sl?->technical_role ?? 'Unknown' }} Team #{{ $sl?->team_number ?? '-' }}</p>
@@ -365,7 +380,7 @@
                             <div class="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full mt-2 overflow-hidden">
                                 <div class="bg-purple-500 h-full rounded-full transition-all duration-1000" style="width: {{ $sl?->weekly_score ?? 0 }}%"></div>
                             </div>
-                            <button onclick="openEvaluationModal('{{ $sl?->id }}', '{{ $sl?->user?->name ?? 'Unknown' }}', 'sub_leader', '{{ $currentPeriod->id ?? '' }}')"
+                            <button onclick="openEvaluationModal('{{ $sl?->id }}', '{{ addslashes($sl?->user?->name ?? 'Unknown') }}', 'sub_leader', '{{ $currentPeriod->id ?? '' }}')"
                                 class="w-full mt-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black py-3 text-xs shadow-lg shadow-purple-500/20 transition-all opacity-0 group-hover:opacity-100">
                                 Submit Evaluation
                             </button>
@@ -373,6 +388,7 @@
                     @empty
                         <div class="col-span-full py-12 text-center text-gray-400 dark:text-gray-500 font-bold italic">No sub-leaders assigned.</div>
                     @endforelse
+
                     {{-- Assign Button Card --}}
                     @if($isLeader || $isGeneralVice || $isSoftwareVice || $isHardwareVice)
                     <div class="rounded-2xl border-2 border-dashed border-gray-200 dark:border-gray-800 flex flex-col items-center justify-center p-8 group hover:border-indigo-500 transition-all cursor-pointer bg-gray-50/30 dark:bg-gray-800/10"
@@ -384,6 +400,18 @@
                     </div>
                     @endif
                 </div>
+
+                {{-- SubLeader Pagination Footer --}}
+                @if($subLeaders->total() > 0)
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
+                    <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                        Showing <span class="text-purple-500">{{ $subLeaders->firstItem() }}</span> to <span class="text-purple-500">{{ $subLeaders->lastItem() }}</span> of <span class="text-purple-500">{{ $subLeaders->total() }}</span> sub-leaders
+                    </p>
+                    <div class="flex items-center gap-2">
+                        {{ $subLeaders->appends(['tab' => 'subleaders'])->links('pagination::simple-tailwind') }}
+                    </div>
+                </div>
+                @endif
             </div>
             @endif
 
@@ -394,15 +422,17 @@
                     @forelse(($viceLeaders ?? collect()) as $vl)
                         <div class="rounded-3xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 p-6 shadow-sm group hover:-translate-y-1 transition-all">
                             <div class="flex items-center gap-4 mb-6">
-                                <div class="w-14 h-14 rounded-2xl bg-indigo-50 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center font-black text-xl border border-indigo-100 dark:border-indigo-900/30">
-                                    {{ substr($vl?->user?->name ?? 'V', 0, 1) }}
-                                </div>
+                                @php
+                                    $vlAvatarUrl = ($vl->user?->profile_photo_url ?? $vl->avatar) ?? 'https://ui-avatars.com/api/?name=' . urlencode($vl?->user?->name ?? 'VL') . '&background=6366f1&color=fff&bold=true';
+                                @endphp
+                                <img src="{{ $vlAvatarUrl }}"
+                                     class="w-14 h-14 rounded-2xl object-cover bg-white dark:bg-gray-900 p-1 border border-indigo-100 dark:border-indigo-900/30 shadow-md">
                                 <div>
                                     <h4 class="font-black text-gray-900 dark:text-white leading-tight">{{ $vl?->user?->name ?? 'Unknown' }}</h4>
-                                    <p class="text-[10px] text-indigo-500 font-black uppercase tracking-widest mt-1">{{ $vl?->technical_role ?? 'Vice' }} Vice Leader</p>
+                                    <p class="text-[10px] text-indigo-500 font-black uppercase tracking-widest mt-1">{{ strtoupper($vl?->technical_role ?? 'Vice') }} Vice Leader</p>
                                 </div>
                             </div>
-                            <button onclick="openEvaluationModal('{{ $vl?->id }}', '{{ $vl?->user?->name ?? 'Unknown' }}', 'vice_leader', '{{ $currentPeriod->id ?? '' }}')"
+                            <button onclick="openEvaluationModal('{{ $vl?->id }}', '{{ addslashes($vl?->user?->name ?? 'Unknown') }}', 'vice_leader', '{{ $currentPeriod->id ?? '' }}')"
                                 class="w-full rounded-2xl bg-gray-50 dark:bg-[#0b1220] border border-gray-100 dark:border-gray-800 text-gray-700 dark:text-gray-300 font-black py-3 text-xs hover:bg-indigo-600 hover:text-white transition-all shadow-sm">
                                 Evaluate Vice Leader
                             </button>
@@ -411,6 +441,18 @@
                         <div class="col-span-full py-12 text-center text-gray-400 dark:text-gray-500 font-bold italic">No vice leaders found.</div>
                     @endforelse
                 </div>
+
+                {{-- ViceLeader Pagination Footer --}}
+                @if($viceLeaders->total() > 0)
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
+                    <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                        Showing <span class="text-indigo-500">{{ $viceLeaders->firstItem() }}</span> to <span class="text-indigo-500">{{ $viceLeaders->lastItem() }}</span> of <span class="text-indigo-500">{{ $viceLeaders->total() }}</span> vice-leaders
+                    </p>
+                    <div class="flex items-center gap-2">
+                        {{ $viceLeaders->appends(['tab' => 'viceleaders'])->links('pagination::simple-tailwind') }}
+                    </div>
+                </div>
+                @endif
             </div>
             @endif
 
@@ -439,54 +481,34 @@
                             @forelse(($tasks ?? collect()) as $t)
                                 <tr class="hover:bg-gray-50 dark:hover:bg-[#0b1220]/50 transition-colors">
                                     <td class="px-6 py-4">
-                                        <p class="font-black text-gray-900 dark:text-white leading-none">{{ $t?->title ?? 'Untitled Task' }}</p>
-                                        <p class="text-[10px] text-indigo-500 mt-2 font-bold uppercase tracking-wider">{{ $t?->technical_role ?? 'General' }}</p>
+                                        <p class="font-black text-gray-900 dark:text-white leading-none">{{ $t->title }}</p>
+                                        <p class="text-[10px] text-indigo-500 mt-2 font-bold uppercase tracking-wider">{{ strtoupper($t->technical_role) }}</p>
+                                        <div class="mt-2 flex flex-wrap gap-1">
+                                            @foreach($t->members as $memberName)
+                                                <span class="text-[9px] bg-gray-100 dark:bg-gray-800 px-1.5 py-0.5 rounded-md font-bold text-gray-500 dark:text-gray-400">{{ $memberName }}</span>
+                                            @endforeach
+                                        </div>
                                     </td>
                                     <td class="px-6 py-4 font-bold text-gray-600 dark:text-gray-400">
-                                        {{ $t?->deadline ? (is_string($t?->deadline) ? date('M d, Y', strtotime($t?->deadline)) : $t?->deadline->format('M d, Y')) : 'No Deadline' }}
+                                        {{ $t->deadline ? (is_string($t->deadline) ? date('M d, Y', strtotime($t->deadline)) : $t->deadline->format('M d, Y')) : 'No Deadline' }}
                                     </td>
                                     <td class="px-6 py-4">
                                         @php
-                                            $statusColor = match($t?->status) {
+                                            $statusColor = match($t->status) {
                                                 'approved' => 'bg-emerald-500',
                                                 'rejected' => 'bg-red-500',
-                                                'pending' => 'bg-amber-500 animate-pulse',
-                                                default => 'bg-gray-400'
+                                                default => 'bg-amber-500'
                                             };
                                         @endphp
                                         <div class="flex items-center gap-2">
                                             <div class="w-2 h-2 rounded-full {{ $statusColor }}"></div>
-                                            <span class="text-[10px] font-black uppercase text-gray-500 dark:text-gray-400">{{ $t?->status ?? 'Unknown' }}</span>
+                                            <span class="text-[10px] font-black uppercase tracking-widest">{{ $t->status }}</span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-2">
-                                            @if($t->status === 'reviewing' && in_array($viewRole, ['leader', 'software_vice_leader', 'hardware_vice_leader']))
-                                                <div class="flex items-center gap-1.5 bg-white dark:bg-[#111827] p-1 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm">
-                                                    <!-- Approve -->
-                                                    <form action="{{ route('tasks.approve', $t->id) }}" method="POST" class="m-0">
-                                                        @csrf
-                                                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-green-600 hover:bg-green-500 hover:text-white hover:shadow-md transition-all duration-200" title="Approve Task">
-                                                            <i class="fas fa-check text-xs"></i>
-                                                        </button>
-                                                    </form>
-
-                                                    <div class="w-px h-4 bg-gray-200 dark:bg-gray-700"></div>
-
-                                                    <!-- Reject -->
-                                                    <form action="{{ route('tasks.reject', $t->id) }}" method="POST" class="m-0">
-                                                        @csrf
-                                                        <button class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-500 hover:text-white hover:shadow-md transition-all duration-200" title="Reject Task">
-                                                            <i class="fas fa-times text-xs"></i>
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            @endif
-
-                                            <a href="{{ route('final_project.start') }}#tasks-section" class="inline-block px-5 py-2.5 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">
-                                                VIEW TASK
-                                            </a>
-                                        </div>
+                                        <a href="{{ route('final_project.start') }}#tasks-section" class="inline-block px-5 py-2.5 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 text-[10px] font-black uppercase tracking-widest shadow-lg active:scale-95 transition-all">
+                                            VIEW TASK
+                                        </a>
                                     </td>
                                 </tr>
                             @empty
@@ -496,6 +518,20 @@
                             @endforelse
                         </tbody>
                     </table>
+
+                    {{-- Tasks Pagination Footer --}}
+                    @if($tasks->total() > 0)
+                    <div class="mt-4 px-6 pb-6 pt-4 border-t border-gray-100 dark:border-gray-800 bg-gray-50/20">
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                            <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                Showing <span class="text-indigo-500">{{ $tasks->firstItem() }}</span> to <span class="text-indigo-500">{{ $tasks->lastItem() }}</span> of <span class="text-indigo-500">{{ $tasks->total() }}</span> tasks
+                            </p>
+                            <div class="flex items-center gap-2">
+                                {{ $tasks->appends(['tab' => 'tasks'])->links('pagination::simple-tailwind') }}
+                            </div>
+                        </div>
+                    </div>
+                    @endif
                 </div>
             </div>
 
@@ -520,7 +556,7 @@
                                     </p>
                                 </div>
                                 <span class="rounded-xl bg-amber-50 dark:bg-amber-900/20 text-amber-700 dark:text-amber-400 px-2 py-1 text-[8px] font-black uppercase border border-amber-100 dark:border-amber-900/30">
-                                    {{ $w?->technical_role ?? 'General' }}
+                                    {{ strtoupper($w?->technical_role ?? $w?->domain ?? 'General') }}
                                 </span>
                             </div>
                             <div class="flex flex-wrap gap-2 mt-6">
@@ -533,6 +569,18 @@
                         <div class="col-span-full py-12 text-center text-gray-400 dark:text-gray-500 font-bold italic">No workshops available.</div>
                     @endforelse
                 </div>
+
+                {{-- Workshops Pagination Footer --}}
+                @if($workshops->total() > 0)
+                <div class="mt-8 flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
+                    <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                        Showing <span class="text-amber-500">{{ $workshops->firstItem() }}</span> to <span class="text-amber-500">{{ $workshops->lastItem() }}</span> of <span class="text-amber-500">{{ $workshops->total() }}</span> workshops
+                    </p>
+                    <div class="flex items-center gap-2">
+                        {{ $workshops->appends(['tab' => 'workshops'])->links('pagination::simple-tailwind') }}
+                    </div>
+                </div>
+                @endif
             </div>
 
             {{-- Meetings --}}
