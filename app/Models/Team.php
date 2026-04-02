@@ -99,8 +99,11 @@ class Team extends Model
     // علاقة الاجتماعات (التيم عنده اجتماعات كتير)
     public function meetings()
     {
-        // تأكد إن عندك موديل اسمه Meeting
-        // لو الموديل مش موجود، شيل السطر ده من الكنترولر مؤقتاً
         return $this->hasMany(\App\Models\Meeting::class);
+    }
+
+    public function evaluationPeriods()
+    {
+        return $this->hasMany(WeeklyEvaluationPeriod::class);
     }
 }

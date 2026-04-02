@@ -322,6 +322,33 @@ class FinalProjectController extends Controller
         // 5. Project Components
         $components = \App\Models\ProjectComponent::where('team_id', $team->id)->latest()->get();
 
+        // 6. Sub Leader Setup Check
+        $needsSubLeaderSetup = $myMemberRecord && $myMemberRecord->is_sub_leader && is_null($myMemberRecord->team_number);
+        $availableMembers = [];
+        if ($needsSubLeaderSetup) {
+            $myDomain = $myMemberRecord->technical_role;
+            $availableMembers = $team->members()
+                ->where('role', 'member')
+                ->where('is_sub_leader', false) // shouldn't assign another sub leader
+                ->whereNull('parent_id') // currently unassigned
+                ->where('technical_role', $myDomain) // same domain
+                ->get();
+        }
+
+        // 7. Workshops
+        $workshops = \App\Models\Workshop::where('team_id', $team->id)->with('creator')->latest()->get();
+
+        // 8. Task Filtering
+        if (in_array($myRole, ['vice_leader'])) {
+            $myDomain = strtolower($myMemberRecord->technical_role);
+            if (in_array($myDomain, ['software', 'hardware'])) {
+                $filteredTasks = $team->tasks->filter(function($t) use ($myDomain) {
+                    return strtolower($t->technical_role) === $myDomain;
+                });
+                $team->setRelation('tasks', $filteredTasks);
+            }
+        }
+
         return view('final_project.dashboard', compact(
             'team',
             'project',
@@ -331,7 +358,10 @@ class FinalProjectController extends Controller
             'myRole',
             'myMemberRecord',
             'pendingMembers',
-            'components'
+            'components',
+            'needsSubLeaderSetup',
+            'availableMembers',
+            'workshops'
         ));
     }
 
@@ -452,6 +482,49 @@ class FinalProjectController extends Controller
         ]));
 
         return back()->with('success', 'Member added successfully!');
+    }
+
+    // ==========================================
+    // Sub Leader Setup
+    // ==========================================
+    public function subLeaderSetup(Request $request)
+    {
+        $request->validate([
+            'team_id' => 'required|exists:teams,id',
+            'team_number' => 'required|integer|min:1',
+            'member_ids' => 'required|array',
+            'member_ids.*' => 'exists:team_members,id'
+        ]);
+
+        $currentUser = Auth::user();
+        $team = Team::findOrFail($request->team_id);
+        
+        $myMemberRecord = $team->members()->where('user_id', $currentUser->id)->first();
+        if (!$myMemberRecord || !$myMemberRecord->is_sub_leader) {
+            abort(403, 'Unauthorized. Only Sub Leaders can setup teams.');
+        }
+
+        // Check if team number is unique in this main team
+        $numberExists = TeamMember::where('team_id', $team->id)
+            ->where('is_sub_leader', true)
+            ->where('team_number', $request->team_number)
+            ->exists();
+
+        if ($numberExists) {
+            return back()->with('error', 'Team Number ' . $request->team_number . ' is already taken by another Sub Leader.');
+        }
+
+        \DB::transaction(function () use ($request, $myMemberRecord) {
+            // Update Sub Leader's team number
+            $myMemberRecord->update(['team_number' => $request->team_number]);
+
+            // Assign parent_id to selected members
+            TeamMember::whereIn('id', $request->member_ids)->update([
+                'parent_id' => $myMemberRecord->id
+            ]);
+        });
+
+        return back()->with('success', 'Your team has been set up successfully!');
     }
 
     // ==========================================
@@ -637,6 +710,7 @@ class FinalProjectController extends Controller
             'team_id' => 'required|exists:teams,id',
             'user_id' => 'required|exists:users,id',
             'role' => 'required|in:member,vice_leader', // الدور الإداري
+            'is_sub_leader' => 'nullable|boolean',
             'technical_role' => 'required|in:general,software,hardware', // التخصص التقني
             'extra_role' => 'nullable|in:none,presentation,reports,marketing,project_book', // المسؤوليات الإضافية
             'permissions' => 'nullable|array',
@@ -692,6 +766,7 @@ class FinalProjectController extends Controller
             ]);
 
             // D. Domain Scoping (Hardware/Software)
+            // Note: Vice Leader CA N promote members to Sub Leader now within their domain.
             $myDomain = strtolower($myMemberRecord->technical_role ?? 'general');
             $targetDomain = strtolower($targetMemberRecord->technical_role ?? 'general');
             
@@ -714,6 +789,7 @@ class FinalProjectController extends Controller
         // 5. Build Update Data
         $updateData = [
             'role' => $request->role,
+            'is_sub_leader' => $request->has('is_sub_leader') ? (bool) $request->is_sub_leader : false,
             'technical_role' => $request->technical_role,
             'extra_role' => ($request->extra_role == 'none' || !$request->extra_role) ? null : $request->extra_role,
             'can_manage_components' => $request->has('can_manage_components') ? (bool) $request->can_manage_components : false,
@@ -1486,42 +1562,61 @@ class FinalProjectController extends Controller
             $finalLocation = ($request->location_type == 'college') ? 'College Campus' : $request->custom_location;
         }
 
+        $team = Team::find($request->team_id);
+        $currentUserRole = \App\Models\TeamMember::where('team_id', $team->id)->where('user_id', Auth::id())->first();
+
+        $domain = null;
+        $team_number = null;
+
+        if ($currentUserRole && $currentUserRole->role == 'vice_leader') {
+            $domain = $currentUserRole->technical_role;
+        } elseif ($currentUserRole && $currentUserRole->role == 'sub_leader') {
+            $team_number = $currentUserRole->team_number;
+        }
+
         $meeting = \App\Models\Meeting::create([
             'team_id' => $request->team_id,
             'topic' => $request->topic,
             'meeting_date' => $request->meeting_date,
             'mode' => $request->mode,
             'meeting_link' => $request->mode == 'online' ? $request->meeting_link : null,
-            'location' => $finalLocation, // حفظنا المكان
+            'location' => $finalLocation,
             'type' => 'internal',
-            'status' => 'confirmed'
+            'status' => 'confirmed',
+            'created_by' => Auth::id(),
+            'domain' => $domain,
+            'team_number' => $team_number
         ]);
 
+        // Fetch valid attendees based on hierarchy scope
+        $membersQuery = $team->members();
+        if ($domain) {
+            $membersQuery->where('technical_role', $domain)->where('role', '!=', 'leader'); // Exclude leader from domain-specific defaults usually, or keep them if they are general? We can just filter by domain.
+        } elseif ($team_number) {
+            $membersQuery->where('team_number', $team_number);
+        }
+
+        $targetMembers = $membersQuery->get();
+
         // سجل الحضور
-        $team = Team::find($request->team_id);
-        foreach ($team->members as $member) {
+        foreach ($targetMembers as $member) {
             \App\Models\MeetingAttendance::create([
                 'meeting_id' => $meeting->id,
                 'user_id' => $member->user_id,
                 'is_present' => false
             ]);
         }
-        // ... جوه دالة storeInternalMeeting بعد الحفظ
 
-        // نجيب التيم عشان نلف على الأعضاء
-        $team = Team::find($request->team_id);
+        // إرسال الإشعارات
+        foreach ($targetMembers as $member) {
+            if ($member->user_id == Auth::id()) continue; // Don't notify the creator
 
-        // نلف على كل الأعضاء ما عدا الليدر (اللي هو أنا)
-        $members = $team->members()->where('user_id', '!=', Auth::id())->get();
-
-        foreach ($members as $member) {
-            $userToNotify = User::find($member->user_id);
-
+            $userToNotify = \App\Models\User::find($member->user_id);
             if ($userToNotify) {
-                $userToNotify->notify(new BatuNotification([
+                $userToNotify->notify(new \App\Notifications\BatuNotification([
                     'title'   => 'New Team Meeting 📅',
                     'body'    => 'Topic: ' . $request->topic . ' on ' . $request->meeting_date,
-                    'icon'    => 'fas fa-users', // أيقونة تعبر عن الاجتماع
+                    'icon'    => 'fas fa-users',
                     'color'   => 'text-indigo-500',
                     'url'     => route('final_project.dashboard', $team->id),
                     'type'    => 'info'
@@ -1540,6 +1635,14 @@ class FinalProjectController extends Controller
         $request->validate(['meeting_id' => 'required|exists:meetings,id']);
 
         $meeting = \App\Models\Meeting::findOrFail($request->meeting_id);
+        
+        $currentUserRole = \App\Models\TeamMember::where('team_id', $meeting->team_id)->where('user_id', Auth::id())->first();
+
+        // Enforce Edit authority constraints: Sub Leaders can "Save" attendance but only Vice Leaders can override/edit after save.
+        if ($meeting->status === 'completed' && $currentUserRole && $currentUserRole->role === 'sub_leader') {
+            // Can't edit after it's been completed
+            return back()->with('error', 'Attendance is locked. You can no longer modify it without Vice Leader approval.');
+        }
 
         // 1. تصفير الحضور
         \App\Models\MeetingAttendance::where('meeting_id', $meeting->id)->update(['is_present' => false]);
@@ -1635,7 +1738,7 @@ class FinalProjectController extends Controller
         // 1. التحقق من البيانات (Logic ذكي بيغير الشروط حسب نوع التسليم)
         $validated = $request->validate([
             'task_id' => 'required|exists:tasks,id',
-            'submission_type' => 'required|in:file,link', // لازم يحدد نوع التسليم
+            'submission_type' => 'required|in:file,link',
 
             // لو النوع ملف: يبقى الملف إجباري
             'submission_file' => 'required_if:submission_type,file|nullable|file|mimes:pdf,zip,rar,doc,docx,png,jpg|max:102400',
@@ -1644,6 +1747,9 @@ class FinalProjectController extends Controller
             'link' => 'required_if:submission_type,link|nullable|url',
 
             'submission_comment' => 'nullable|string|max:1000'
+        ], [
+            'submission_file.file' => 'The file could not be uploaded. It might be too large (exceeds PHP limits) or corrupted.',
+            'submission_file.max' => 'The file size cannot exceed 100MB.'
         ]);
 
         try {

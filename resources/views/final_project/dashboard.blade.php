@@ -876,6 +876,8 @@
                             </button>
                         @endif
                     </div>
+
+
                     {{-- 🏟️ Lobby Card (Always Visible for Leader) --}}
                     @if(isset($myRole) && $myRole == 'leader')
                     <div class="bg-white rounded-3xl border border-gray-100 shadow-xl p-6 relative overflow-hidden group hover:border-blue-300 transition-colors mb-8">
@@ -1108,7 +1110,7 @@
                                     <i class="fas fa-history"></i> Log
                                 </button>
 
-                                @if ($myRole == 'leader')
+                                @if (in_array($myRole, ['leader', 'vice_leader', 'sub_leader']))
                                     <button onclick="openModal('internalMeetingModal')"
                                         class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl shadow-lg transition transform hover:scale-105 font-bold text-xs flex items-center gap-2">
                                         <i class="fas fa-plus"></i> Schedule
@@ -1167,8 +1169,7 @@
             </div>
         @endif
 
-        {{-- استدعاء المودالات --}}
-        @include('final_project.partials.modals')
+
 
         {{-- ========================================== --}}
         {{-- 🔔 منطقة التنبيهات (Status Banners) --}}
@@ -1332,6 +1333,45 @@
                         <p class="text-gray-500 text-sm">No upcoming supervision sessions.</p>
                     </div>
                 @endif
+            </div>
+
+            {{-- 6. Workshops (Workshops System) --}}
+            {{-- 🛠️ Domain Workshops (Redesigned) --}}
+            <div id="workshops-section" x-data="{ expanded: true }" class="bg-[#111827] rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden hover-lift w-full mb-10 transition-all">
+                <div @click="expanded = !expanded" class="px-8 py-6 border-b border-white/5 bg-white/5 flex justify-between items-center cursor-pointer hover:bg-white/10 transition-colors">
+                    <h3 class="font-bold text-white flex items-center gap-3 text-lg">
+                        <div class="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 shadow-sm">
+                            <i class="fas fa-hammer"></i>
+                        </div>
+                        Domain Workshops
+                        <i class="fas fa-chevron-down text-sm text-gray-500 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                    </h3>
+                    
+                    @if (in_array($myRole, ['leader', 'vice_leader']))
+                    <button onclick="openWorkshopModal()" @click.stop class="rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-5 py-2.5 text-xs font-black shadow-lg shadow-indigo-600/20 transition transform hover:scale-105 flex items-center gap-2">
+                        <i class="fas fa-plus"></i> Create Workshop
+                    </button>
+                    @endif
+
+                </div>
+
+                <div x-show="expanded" x-transition.opacity.duration.300ms class="p-8">
+                    @if ($workshops->count() > 0)
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            @foreach ($workshops as $workshop)
+                                @include('final_project.partials.workshop_card', ['workshop' => $workshop, 'myRole' => $myRole])
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-12 bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-[2rem]">
+                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100">
+                                <i class="fas fa-calendar-times text-gray-300 text-xl"></i>
+                            </div>
+                            <h4 class="text-gray-500 font-bold mb-1">No Workshops Scheduled</h4>
+                            <p class="text-gray-400 text-xs">Stay tuned for upcoming technical sessions!</p>
+                        </div>
+                    @endif
+                </div>
             </div>
 
             {{-- 2. لوحة المهام المقسمة (Split Tasks Board) --}}
@@ -1642,7 +1682,7 @@
                                                                     class="p-1 text-gray-400 hover:text-blue-500 transition-colors" title="Edit">
                                                                     <i class="fas fa-edit text-[10px]"></i>
                                                                 </button>
-                                                                <form action="{{ route('final_project.destroyExpense', $expense->id) }}" method="POST" id="delete-exp-{{ $expense->id }}">
+                                                                <form action="{{ route('final_project.deleteExpense', $expense->id) }}" method="POST" id="delete-exp-{{ $expense->id }}">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="button" @click.stop 
@@ -3183,6 +3223,73 @@
             </div>
         </div>
     </div>
+    @if(isset($needsSubLeaderSetup) && $needsSubLeaderSetup)
+    <!-- Forced Sub Leader Setup Modal -->
+    <div id="subLeaderSetupModal" class="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6" aria-modal="true">
+        <div class="fixed inset-0 bg-gray-900/90 backdrop-blur-md" aria-hidden="true"></div>
+        <div class="relative w-full max-w-xl transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-indigo-600">
+            <div class="bg-indigo-50 px-8 py-6 rounded-t-xl border-b border-indigo-100 flex flex-col items-center text-center">
+                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md text-indigo-600 text-3xl mb-4 border border-indigo-100 animate-bounce">
+                    <i class="fas fa-users-cog"></i>
+                </div>
+                <h2 class="text-2xl font-black text-indigo-900 mb-1">Sub-Leader Setup</h2>
+                <p class="text-indigo-600 text-sm font-bold">You have been promoted! Please setup your team before continuing.</p>
+            </div>
+            
+            <form action="{{ route('final_project.subLeaderSetup') }}" method="POST">
+                @csrf
+                <input type="hidden" name="team_id" value="{{ $team->id }}">
+                <div class="p-8 space-y-6">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Assign Team Number</label>
+                        <p class="text-[10px] text-gray-400 mb-3">Choose a unique team number (e.g. 1, 2, 3...) to identify your group inside your domain.</p>
+                        <input type="number" name="team_number" required min="1" placeholder="Enter team number..."
+                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg font-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-gray-50">
+                    </div>
+
+                    <hr class="border-gray-100">
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Claim Your Members</label>
+                        <p class="text-[10px] text-gray-400 mb-3">Select the members that will perform tasks and workshops under your supervision.</p>
+                        
+                        <div class="max-h-60 overflow-y-auto pr-2 custom-scrollbar space-y-2">
+                            @forelse($availableMembers as $avMember)
+                                <label class="flex items-center justify-between p-3 border border-gray-100 hover:border-indigo-300 rounded-xl cursor-pointer transition bg-white hover:bg-indigo-50 group">
+                                    <div class="flex items-center gap-3">
+                                        <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-xs font-black text-gray-500 group-hover:text-indigo-600 group-hover:bg-white border border-transparent group-hover:border-indigo-200 transition">
+                                            {{ substr($avMember->user->name, 0, 2) }}
+                                        </div>
+                                        <div>
+                                            <p class="text-sm font-bold text-gray-800">{{ $avMember->user->name }}</p>
+                                            <p class="text-[10px] text-gray-400">{{ $avMember->user->email }} - Level {{ $avMember->user->academic_year ?? '1' }}</p>
+                                        </div>
+                                    </div>
+                                    <input type="checkbox" name="member_ids[]" value="{{ $avMember->id }}" class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                </label>
+                            @empty
+                                <div class="text-center py-6 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                                    <p class="text-xs font-bold text-gray-500">No available members to claim in your domain right now.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 px-8 py-5 border-t border-gray-100 rounded-b-xl flex justify-end">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                        Complete Setup <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        // Lock scrolling
+        document.body.style.overflow = 'hidden';
+    </script>
+    @endif
+    
 @endsection
 
 {{-- ========================================================= --}}
@@ -3206,27 +3313,32 @@
         const el = document.getElementById(id);
         if (el) {
             el.classList.remove('hidden');
-            // 🔥 إضافة كلاسات الإصلاح
+            // 🔥 إضافة الكلاسات الأساسية
             el.classList.add('royal-modal-active');
-            // 🔥 منع سكرول الخلفية
             document.body.classList.add('modal-open');
 
-            // إضافة أنيميشن للمحتوى الداخلي إذا وجد
-            const content = el.querySelector('div[class*="bg-white"]');
-            if (content) {
-                content.classList.add('modal-content-styled');
-            }
+            // 🔥 تفعيل الأنيميشن للمحتوى (CSS Transition)
+            setTimeout(() => {
+                const inner = el.querySelector('.modal-content') || el.querySelector('.modal-card') || el.querySelector('div[class*="bg-white"]');
+                if (inner) {
+                    inner.classList.add('active');
+                    inner.classList.add('modal-content-styled');
+                }
+            }, 10);
         }
     }
 
     function closeModal(id) {
         const el = document.getElementById(id);
         if (el) {
-            el.classList.add('hidden');
-            // 🔥 إزالة كلاسات الإصلاح
-            el.classList.remove('royal-modal-active');
-            // 🔥 إرجاع سكرول الخلفية
-            document.body.classList.remove('modal-open');
+            const inner = el.querySelector('.modal-content') || el.querySelector('.modal-card') || el.querySelector('div[class*="bg-white"]');
+            if (inner) inner.classList.remove('active');
+            
+            setTimeout(() => {
+                el.classList.add('hidden');
+                el.classList.remove('royal-modal-active');
+                document.body.classList.remove('modal-open');
+            }, 300);
         }
     }
 
@@ -3399,7 +3511,7 @@
 
     function openSubmitTaskModal(taskId, title) {
         document.getElementById('submitTaskTitle').innerText = title;
-        document.getElementById('submitTaskForm').action = "/tasks/" + taskId + "/submit";
+        document.getElementById('submissionForm').action = "/tasks/" + taskId + "/submit";
         openModal('submitTaskModal');
     }
 
@@ -3548,4 +3660,32 @@
         // 3. نفتح مودال الدفع
         openModal('markPaidModal');
     }
+
+    function openWorkshopModal() {
+        const modal = document.getElementById('addWorkshopModal');
+        const content = document.getElementById('addWorkshopModalContent');
+        if (!modal || !content) return;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+        }, 10);
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function closeWorkshopModal() {
+        const modal = document.getElementById('addWorkshopModal');
+        const content = document.getElementById('addWorkshopModalContent');
+        if (!modal || !content) return;
+        content.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 200);
+        document.body.classList.remove('overflow-hidden');
+    }
 </script>
+
+{{-- استدعاء المودالات --}}
+@include('final_project.partials.modals')
+

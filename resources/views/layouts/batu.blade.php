@@ -5,6 +5,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Generation Team - System</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
         (function () {
             try {
@@ -20,6 +21,11 @@
     <link rel="icon" type="image/png" href="{{ asset('assets/gt_logo.jpg') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
@@ -517,6 +523,23 @@
                     @endif
 
 
+                @php
+                    $member = \App\Models\TeamMember::where('user_id', auth()->id())->first();
+                    $myRole = $member ? $member->role : null;
+                    $isSubLeader = $member ? $member->is_sub_leader : false;
+                    $myTeamId = $member ? $member->team_id : null;
+                @endphp
+
+                @if($myTeamId && (in_array($myRole, ['leader', 'vice_leader']) || $isSubLeader))
+                    <li>
+                        <a href="{{ route('evaluation.index', $myTeamId) }}" 
+                           class="sidebar-link {{ request()->routeIs('evaluation.*') ? 'active' : '' }}">
+                            <i class="fas fa-clipboard-check text-indigo-500"></i>
+                            <span>Weekly Evaluation</span>
+                            <span class="inline-flex items-center justify-center px-1.5 py-0.5 ms-2 text-[10px] font-bold text-indigo-800 bg-indigo-100 rounded border border-indigo-200">CORE</span>
+                        </a>
+                    </li>
+                @endif
             </ul>
 
             <ul class="pb-4">

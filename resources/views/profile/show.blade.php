@@ -285,10 +285,7 @@
             </div>
         </div>
 
-        {{-- 🆕 Weekly Evaluation Section (Leaders Only) --}}
         @if($isLeaderOfStudent)
-            @include('profile.partials.weekly-evaluation-card')
-            
             {{-- Permission Management Modal --}}
             @include('profile.partials.manage-role-modal', ['team' => $managedTeam])
         @endif
@@ -298,7 +295,124 @@
             @include('profile.partials.wallet-modal', ['user' => $user])
         @endif
 
-        {{-- 🚀 Big Separator --}}
+        {{-- Weekly Evaluation History Card --}}
+        <div class="mb-8 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden relative">
+            {{-- Accent Glow --}}
+            <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px] -mr-16 -mt-16 pointer-events-none"></div>
+            
+            <div class="px-8 py-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+                <div class="flex items-center gap-4">
+                    <div class="w-11 h-11 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
+                        <i class="fas fa-chart-line text-white"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-gray-900 dark:text-white">Weekly Performance</h3>
+                        <p class="text-xs text-indigo-500 font-bold uppercase tracking-widest mt-0.5">Evaluation Breakdown by Week</p>
+                    </div>
+                </div>
+                @if(!empty($weeklyEvalHistory) && count($weeklyEvalHistory) > 0)
+                <div class="bg-indigo-50 dark:bg-indigo-900/40 px-4 py-2 rounded-xl border border-indigo-100 dark:border-indigo-800">
+                     <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-300 uppercase tracking-widest">Avg. Score</span>
+                     <p class="text-lg font-black text-indigo-700 dark:text-indigo-200 leading-none mt-1">
+                        {{ number_format(collect($weeklyEvalHistory)->flatten()->avg('total_overall_score'), 1) }} <span class="text-xs opacity-60">/ 30</span>
+                     </p>
+                </div>
+                @endif
+            </div>
+
+            <div class="p-8">
+                @if(!empty($weeklyEvalHistory) && count($weeklyEvalHistory) > 0)
+                    <div class="space-y-4" x-data="{ openWeek: {{ array_key_first($weeklyEvalHistory->toArray()) }} }">
+                        @foreach($weeklyEvalHistory as $weekNumber => $records)
+                        @php $record = $records->first(); @endphp
+                        <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 overflow-hidden transition-all hover:border-indigo-300 dark:hover:border-indigo-700">
+                            <button @click="openWeek = openWeek === {{ $weekNumber }} ? null : {{ $weekNumber }}"
+                                class="w-full flex items-center justify-between px-6 py-5 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors group">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm font-black border border-gray-200 dark:border-gray-700 shadow-sm group-hover:scale-110 transition-transform">
+                                        {{ $weekNumber ?? '?' }}
+                                    </div>
+                                    <div class="text-left">
+                                        <p class="font-black text-gray-800 dark:text-gray-200 leading-tight">Week {{ $weekNumber ?? '?' }}</p>
+                                        <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
+                                            {{ $record->period?->start_date?->format('M d') }} — {{ $record->period?->end_date?->format('M d, Y') }}
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-6">
+                                    <div class="hidden md:flex gap-6">
+                                        <div class="text-center">
+                                            <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-0.5">Tasks</p>
+                                            <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_task_score, 1) }}</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-[8px] font-black text-amber-500 uppercase tracking-widest mb-0.5">Workshops</p>
+                                            <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_workshop_score, 1) }}</p>
+                                        </div>
+                                        <div class="text-center">
+                                            <p class="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-0.5">Meetings</p>
+                                            <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_meeting_score, 1) }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-4">
+                                        <div class="text-right">
+                                            <p class="text-[8px] font-black text-indigo-500 uppercase tracking-widest mb-0.5">Overall</p>
+                                            <p class="text-base font-black text-indigo-600 dark:text-indigo-400 leading-tight">{{ number_format($record->total_overall_score, 1) }}</p>
+                                        </div>
+                                        <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"
+                                            :class="openWeek === {{ $weekNumber }} ? 'rotate-180' : ''"></i>
+                                    </div>
+                                </div>
+                            </button>
+                            <div x-show="openWeek === {{ $weekNumber }}" x-collapse class="px-6 py-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    <div class="rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50 p-4 relative overflow-hidden group">
+                                        <i class="fas fa-tasks absolute -right-2 -bottom-2 text-4xl opacity-5 text-blue-500 group-hover:scale-125 transition-transform"></i>
+                                        <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2"><i class="fas fa-tasks mr-2"></i>Task Score</p>
+                                        <p class="text-2xl font-black text-blue-700 dark:text-blue-300">{{ number_format($record->total_task_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
+                                    </div>
+                                    <div class="rounded-2xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50 p-4 relative overflow-hidden group">
+                                        <i class="fas fa-chalkboard-teacher absolute -right-2 -bottom-2 text-4xl opacity-5 text-amber-500 group-hover:scale-125 transition-transform"></i>
+                                        <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2"><i class="fas fa-chalkboard-teacher mr-2"></i>Workshop Score</p>
+                                        <p class="text-2xl font-black text-amber-700 dark:text-amber-300">{{ number_format($record->total_workshop_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
+                                    </div>
+                                    <div class="rounded-2xl bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50 p-4 relative overflow-hidden group">
+                                        <i class="fas fa-users absolute -right-2 -bottom-2 text-4xl opacity-5 text-emerald-500 group-hover:scale-125 transition-transform"></i>
+                                        <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2"><i class="fas fa-users mr-2"></i>Meeting Attendance</p>
+                                        <p class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ number_format($record->total_meeting_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
+                                    </div>
+                                </div>
+                                @if($record->general_notes)
+                                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-inner">
+                                    <div class="flex items-center gap-2 mb-3">
+                                        <div class="w-1.5 h-4 bg-indigo-500 rounded-full"></div>
+                                        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Leader Feedback</p>
+                                    </div>
+                                    <p class="text-sm text-gray-600 dark:text-gray-300 italic font-medium leading-relaxed">"{{ $record->general_notes }}"</p>
+                                </div>
+                                @endif
+                                
+                                <div class="mt-6 flex justify-between items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                    <span>Evaluated by: {{ $record->evaluator->user->name ?? 'Leader' }}</span>
+                                    <span>{{ $record->created_at->format('M d, Y') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-16 bg-gray-50/50 dark:bg-gray-800/10 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800">
+                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4 border border-gray-200 dark:border-gray-700">
+                            <i class="fas fa-chart-line text-2xl text-gray-400"></i>
+                        </div>
+                        <h4 class="text-lg font-black text-gray-800 dark:text-gray-200">No Evaluations Yet</h4>
+                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto">Your weekly performance scores will appear here once your leaders complete their reviews.</p>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+
         <div class="flex items-center justify-center my-12">
             <div class="h-px bg-gradient-to-r from-transparent via-cyan-500 to-transparent w-full max-w-2xl opacity-50">
             </div>

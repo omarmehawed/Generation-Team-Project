@@ -101,10 +101,21 @@ class ProfileController extends Controller
             $subjectProjectsData[] = $this->getProjectAssets($member->team, $user);
         }
 
+        // 3. Fetch Weekly Evaluation History for this user
+        $weeklyEvalHistory = [];
+        $memberIds = \App\Models\TeamMember::where('user_id', $user->id)->pluck('id');
+        if ($memberIds->isNotEmpty()) {
+            $weeklyEvalHistory = \App\Models\WeeklyEvaluationRecord::with('period')
+                ->whereIn('evaluatee_id', $memberIds)
+                ->get()
+                ->groupBy(fn($r) => $r->period?->week_number);
+        }
+
         return view('profile.show', [
             'user' => $user,
             'gradProjectData' => $gradProjectData,
-            'subjectProjectsData' => $subjectProjectsData
+            'subjectProjectsData' => $subjectProjectsData,
+            'weeklyEvalHistory' => $weeklyEvalHistory,
         ]);
     }
 

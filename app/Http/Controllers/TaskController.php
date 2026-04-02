@@ -36,8 +36,11 @@ class TaskController extends Controller
             ->where('team_id', $request->team_id)
             ->first();
 
-        if (!$currentUserMember || !in_array($currentUserMember->role, ['leader', 'vice_leader'])) {
-            return back()->withErrors(['msg' => 'Unauthorized! Only Leaders and Vice Leaders can assign tasks.']);
+        if (!$currentUserMember || (
+            !in_array($currentUserMember->role, ['leader', 'vice_leader']) &&
+            !$currentUserMember->is_sub_leader
+        )) {
+            return back()->withErrors(['msg' => 'Unauthorized! Only Leaders, Vice Leaders, and Sub Leaders can assign tasks.']);
         }
 
         $team = \App\Models\Team::with('project')->find($request->team_id);
@@ -52,12 +55,20 @@ class TaskController extends Controller
 
                 if (!$targetMember) continue;
 
-                // Permissions logic (Leader for all, Vice leader for their domain)
                 $canAssign = false;
                 if ($currentUserMember->role == 'leader') {
                     $canAssign = true;
                 } elseif ($currentUserMember->role == 'vice_leader') {
                     if (strtolower($currentUserMember->technical_role) == strtolower($targetMember->technical_role)) {
+                        $canAssign = true;
+                    }
+                } elseif ($currentUserMember->is_sub_leader) {
+                    // Sub-leader can only assign to members in their own team_number
+                    if (
+                        $targetMember->team_number == $currentUserMember->team_number &&
+                        !$targetMember->is_sub_leader &&
+                        $targetMember->role === 'member'
+                    ) {
                         $canAssign = true;
                     }
                 }

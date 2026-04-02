@@ -32,6 +32,9 @@ class TeamMember extends Model
         'is_group_b',
         'sub_team',
         'is_vice_leader',
+        'parent_id',
+        'team_number',
+        'is_sub_leader',
         'status', // Added status
         'can_manage_components',
         'can_manage_expenses',

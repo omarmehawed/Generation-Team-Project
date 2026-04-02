@@ -18,9 +18,11 @@ class Meeting extends Model
         'status',
         'meeting_link',
         'location',
-        'meeting_link',
         'type',
-        'notes'
+        'notes',
+        'created_by',
+        'domain',
+        'team_number'
     ];
 
     protected $casts = ['meeting_date' => 'datetime'];

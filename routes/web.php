@@ -191,13 +191,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/final-project/proposal/view/{team_id}', [FinalProjectController::class, 'viewProposalFile'])
                 ->name('proposal.view_file');
 
-            Route::post('/final-project/update-member', [FinalProjectController::class, 'updateMemberStatus'])->name('final_project.updateMember');
+            // Role Management (Leader/Vice Leader)
+            Route::post('/final-project/update-member', [App\Http\Controllers\FinalProjectController::class, 'updateMemberStatus'])->name('final_project.updateMember');
+
+            // Sub Leader Setup
+            Route::post('/final-project/sub-leader-setup', [App\Http\Controllers\FinalProjectController::class, 'subLeaderSetup'])->name('final_project.subLeaderSetup');
 
             Route::post('/final-project/expenses', [FinalProjectController::class, 'storeExpense'])->name('final_project.storeExpense');
             Route::put('/final-project/expenses/{id}', [FinalProjectController::class, 'updateExpense'])->name('final_project.updateExpense');
-            Route::delete('/final-project/expenses/{id}', [FinalProjectController::class, 'destroyExpense'])->name('final_project.destroyExpense');
+            Route::delete('/final-project/expenses/{id}', [FinalProjectController::class, 'deleteExpense'])->name('final_project.deleteExpense');
+
+            // Workshop Routes
+            Route::post('/final-project/workshops', [App\Http\Controllers\WorkshopController::class, 'store'])->name('workshops.store');
+            Route::get('/final-project/workshops/{id}/attendees', [App\Http\Controllers\WorkshopController::class, 'getAttendees'])->name('workshops.attendees');
+            Route::put('/final-project/workshops/{id}/attendance', [App\Http\Controllers\WorkshopController::class, 'updateAttendance'])->name('workshops.updateAttendance');
+            Route::delete('/final-project/workshops/{id}', [App\Http\Controllers\WorkshopController::class, 'destroy'])->name('workshops.destroy');
+
 
             Route::post('/final-project/components', [FinalProjectController::class, 'storeComponent'])->name('final_project.storeComponent');
+            Route::post('/final-project/update-component-lock', [FinalProjectController::class, 'updateComponentLock'])->name('final_project.updateComponentLock');
             Route::put('/final-project/components/{id}', [FinalProjectController::class, 'updateComponent'])->name('final_project.updateComponent');
             Route::delete('/final-project/components/{id}', [FinalProjectController::class, 'destroyComponent'])->name('final_project.destroyComponent');
 
@@ -229,12 +241,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
     // ====================================================
-    // 🆕 Weekly Evaluation System (Leaders Only)
+    // 🆕 Weekly Evaluation System (Independent Module)
     // ====================================================
-    Route::middleware(['auth'])->group(function() {
-        Route::get('/weekly-evaluation/get/{studentId}/{week}', [App\Http\Controllers\WeeklyEvaluationController::class, 'getWeekData'])->name('weekly_evaluation.get');
-        Route::post('/weekly-evaluation/store', [App\Http\Controllers\WeeklyEvaluationController::class, 'store'])->name('weekly_evaluation.store');
-        Route::get('/weekly-evaluation/download/{id}', [App\Http\Controllers\WeeklyEvaluationController::class, 'downloadPdf'])->name('weekly_evaluation.download');
+    Route::middleware(['auth'])->group(function() {        
+        Route::get('/evaluation/team/{team}', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'index'])->name('evaluation.index');
+        Route::post('/evaluation/team/{team}/store', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'store'])->name('evaluation.store');
+        Route::post('/evaluation/team/{team}/store-period', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'storePeriod'])->name('evaluation.store-period');
+        Route::post('/evaluation/team/{team}/assign-member', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'assignMember'])->name('evaluation.assign-member');
+        Route::post('/evaluation/team/{team}/remove-sub-leader', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'removeSubLeader'])->name('evaluation.remove-sub-leader');
+        Route::get('/evaluation/team/{team}/{evaluatee_id}/auto-score', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'autoScore'])->name('evaluation.autoScore');
+        Route::get('/evaluation/team/{team}/export', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'export'])->name('evaluation.export');
+        Route::post('/evaluation/team/{team}/complete-week', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'completeWeek'])->name('evaluation.completeWeek');
     });
 
     // Wallet System
@@ -487,10 +504,8 @@ Route::get('/fix-images', function () {
         } else {
             $photos = 'Directory not found: ' . $photosPath;
         }
-    } else {
-        $photos = 'Storage root not found at ' . $path;
     }
-
+    
     return [
         'symlink_exists' => file_exists($link),
         'symlink_valid' => is_link($link),
@@ -500,7 +515,7 @@ Route::get('/fix-images', function () {
         'root_files' => $files,
         'join_requests_photos_content' => $photos,
         'app_url' => env('APP_URL'),
-        'asset_test' => asset('storage/test.jpg'),
     ];
 });
 
+Route::post('/evaluation/team/{team}/assign-sub-leader', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'assignSubLeader'])->name('evaluation.assign-sub-leader');

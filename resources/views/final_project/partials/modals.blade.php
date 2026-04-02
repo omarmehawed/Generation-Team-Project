@@ -893,8 +893,8 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
                             <div>
                                 <label
-                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Deadline</label>
-                                <input type="date" name="deadline" required
+                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Due Date & Time</label>
+                                <input type="datetime-local" name="deadline" required
                                     class="w-full border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-0 focus:border-[#D4AF37] focus:bg-white transition text-sm font-bold text-gray-700 outline-none">
                             </div>
                         </div>
@@ -1689,8 +1689,8 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Deadline</label>
-                            <input type="date" name="deadline" required class="input-classic text-sm">
+                            <label class="block text-xs font-bold text-gray-500 mb-1">Due Date & Time</label>
+                            <input type="datetime-local" name="deadline" required class="input-classic text-sm">
                         </div>
                     </div>
 
@@ -1924,7 +1924,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 this.appendChild(ripple);
                 setTimeout(() => {
                     ripple.remove();
-                }, 600);
+                        }, 600);
             });
         });
 
@@ -1992,3 +1992,315 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         });
     </script>
 </div>
+
+{{-- =========================================================================
+    🛠️ 12. WORKSHOP MODALS (CREATE & ATTENDANCE)
+========================================================================= --}}
+<!-- Add Workshop Modal -->
+<!-- Add Workshop Modal -->
+<div id="addWorkshopModal"
+     class="fixed inset-0 z-[9999] hidden items-center justify-center p-4"
+     aria-labelledby="modal-title"
+     role="dialog"
+     aria-modal="true">
+
+    <div class="absolute inset-0 bg-gray-900/90 backdrop-blur-md" aria-hidden="true" onclick="closeWorkshopModal()"></div>
+
+    <div id="addWorkshopModalContent"
+         class="relative w-full max-w-lg transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-indigo-600 scale-95 opacity-0 duration-300">
+
+        <form action="{{ route('workshops.store') }}" method="POST">
+            @csrf
+            <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
+
+            <div class="bg-indigo-50 px-8 py-6 rounded-t-xl border-b border-indigo-100 flex justify-between items-center">
+                <div class="flex items-center gap-3 text-indigo-700">
+                    <div class="p-2 bg-white rounded-full shadow-sm text-indigo-600 text-xl">
+                        <i class="fas fa-hammer"></i>
+                    </div>
+                    <h3 class="text-xl font-black">Plan New Workshop</h3>
+                </div>
+
+                <button type="button" onclick="closeWorkshopModal()" class="text-gray-500 hover:text-red-500 text-xl">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div class="p-8 space-y-5 bg-white">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Workshop Title *</label>
+                    <input type="text" name="title" required placeholder="e.g. Intro to PCB Design"
+                           class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Date *</label>
+                        <input type="date" name="workshop_date" required
+                               class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Time *</label>
+                        <input type="time" name="workshop_time" required
+                               class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Domain *</label>
+                        <select name="domain" required
+                                class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="software">Software</option>
+                            <option value="hardware">Hardware</option>
+                            <option value="general">General</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Format *</label>
+                        <select name="type" required
+                                class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                            <option value="offline">Offline / On-Campus</option>
+                            <option value="online">Online / GMeet</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Location / Link</label>
+                    <input type="text" name="location_or_link" placeholder="Room D234 or Google Meet link"
+                           class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                </div>
+            </div>
+
+            <div class="bg-gray-50 px-8 py-5 border-t border-gray-100 flex justify-end gap-3 rounded-b-xl">
+                <button type="button" onclick="closeWorkshopModal()"
+                        class="bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-xl font-bold transition">
+                    Cancel
+                </button>
+                <button type="submit"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2 rounded-xl font-bold transition shadow-md">
+                    Create Workshop
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Attendance & Evaluation Modal -->
+<div id="attendanceWorkshopModal"
+     class="fixed inset-0 z-[9999] hidden items-center justify-center p-4"
+     aria-labelledby="modal-title" role="dialog" aria-modal="true"
+     x-data="{ attendees: [], isLoading: false, searchQuery: '', get filtered() { const q = this.searchQuery.toLowerCase(); return q ? this.attendees.filter(a => a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q)) : this.attendees; } }">
+    <div class="absolute inset-0 bg-gray-900/90 backdrop-blur-md" onclick="closeAttendanceModal()"></div>
+    <div id="attendanceWorkshopModalContent"
+         class="relative w-full max-w-2xl transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-indigo-600 flex flex-col max-h-[90vh] scale-95 opacity-0 duration-300">
+            
+            <div class="bg-indigo-50 px-6 py-5 rounded-t-xl border-b border-indigo-100 shrink-0">
+                <div class="flex justify-between items-start mb-3">
+                    <div class="flex items-center gap-3 text-indigo-700">
+                        <div class="p-2 bg-white rounded-full shadow-sm text-indigo-600 text-lg"><i class="fas fa-user-check"></i></div>
+                        <div>
+                            <h3 class="text-lg font-black" id="attendanceWorkshopTitle">Update Attendance</h3>
+                            <p class="text-[10px] text-indigo-500">Record participation marks and score per member.</p>
+                        </div>
+                    </div>
+                    <button onclick="closeAttendanceModal()" class="text-gray-400 hover:text-red-500 transition p-1">
+                        <i class="fas fa-times text-lg"></i>
+                    </button>
+                </div>
+                {{-- Search Bar --}}
+                <div class="relative">
+                    <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+                    <input type="text" x-model="searchQuery" placeholder="Search by name or email / academic number..."
+                        class="w-full pl-9 pr-4 py-2 rounded-xl border border-indigo-200 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400">
+                </div>
+            </div>
+
+            <form id="attendanceWorkshopForm" method="POST" class="flex flex-col overflow-hidden" onsubmit="submitAttendanceForm(event)">
+                @csrf
+                @method('PUT')
+
+                <div class="overflow-y-auto flex-1 px-6 py-4">
+                    {{-- Loading --}}
+                    <div x-show="isLoading" class="flex justify-center items-center py-12">
+                        <div class="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+                        <span class="ml-3 text-sm text-gray-500">Loading members...</span>
+                    </div>
+
+                    {{-- Empty state --}}
+                    <div x-show="!isLoading && filtered.length === 0" class="py-12 text-center text-gray-400">
+                        <i class="fas fa-user-slash text-3xl mb-2"></i>
+                        <p class="text-sm font-bold">No members found</p>
+                    </div>
+
+                    {{-- Members List --}}
+                    <div x-show="!isLoading && filtered.length > 0" class="space-y-3">
+                        <template x-for="(attendee, index) in filtered" :key="attendee.id">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-2xl border border-gray-100 bg-gray-50 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all">
+                                {{-- Avatar + Name --}}
+                                <div class="flex items-center gap-3 w-full sm:w-2/5">
+                                    <div class="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-black text-indigo-600 shrink-0" x-text="attendee.name.substring(0, 2).toUpperCase()"></div>
+                                    <div class="overflow-hidden">
+                                        <p class="text-sm font-bold text-gray-800 truncate" x-text="attendee.name"></p>
+                                        <p class="text-[10px] text-gray-400 truncate" x-text="attendee.email"></p>
+                                    </div>
+                                </div>
+
+                                {{-- Hidden inputs for form submission --}}
+                                <input type="hidden" :name="'attendees[' + index + '][id]'" :value="attendee.id">
+
+                                {{-- Status --}}
+                                <div class="flex-1">
+                                    <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Status</label>
+                                    <select :name="'attendees[' + index + '][status]'" x-model="attendee.status"
+                                        class="w-full border border-gray-200 rounded-xl p-2 text-xs font-bold focus:ring-indigo-400 focus:border-indigo-400 bg-white"
+                                        @change="attendee.status === 'absent' && (attendee.participation_score = 0)">
+                                        <option value="pending">⏳ Pending</option>
+                                        <option value="attended">✅ Present</option>
+                                        <option value="late">⏰ Late</option>
+                                        <option value="absent">❌ Absent</option>
+                                    </select>
+                                </div>
+
+                                {{-- Score --}}
+                                <div class="w-28">
+                                    <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Score / 10</label>
+                                    <input type="number" :name="'attendees[' + index + '][participation_score]'" x-model="attendee.participation_score"
+                                        min="0" max="10" step="0.5"
+                                        :disabled="attendee.status === 'absent'"
+                                        :class="attendee.status === 'absent' ? 'bg-red-50 text-red-300 cursor-not-allowed' : 'bg-white text-indigo-700'"
+                                        class="w-full border border-gray-200 rounded-xl p-2 text-xs font-black text-center focus:ring-indigo-400 focus:border-indigo-400 transition">
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-between items-center shrink-0 rounded-b-xl">
+                    <p class="text-xs text-gray-400 font-bold"><span x-text="attendees.length"></span> members total</p>
+                    <button type="submit" 
+                        :disabled="isLoading"
+                        class="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-2.5 rounded-xl font-black transition shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <i class="fas fa-spinner fa-spin" x-show="isLoading"></i>
+                        <i class="fas fa-save" x-show="!isLoading"></i>
+                        <span x-text="isLoading ? 'Saving...' : 'Save Records'"></span>
+                    </button>
+                </div>
+            </form>
+    </div>
+</div>
+
+
+
+
+<script>
+    function openWorkshopAttendanceModal(workshopId, title) {
+        const modal = document.getElementById('attendanceWorkshopModal');
+        const content = document.getElementById('attendanceWorkshopModalContent');
+        if (!modal || !content) { console.error('Attendance modal not found'); return; }
+
+        // Show the modal
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+
+        setTimeout(() => {
+            content.classList.remove('scale-95', 'opacity-0');
+        }, 10);
+
+        // Set title
+        const titleEl = document.getElementById('attendanceWorkshopTitle');
+        if (titleEl) titleEl.innerText = title + ' – Attendance & Scores';
+
+        // Store workshopId on modal
+        modal.dataset.workshopId = workshopId;
+
+        // Access Alpine data
+        const data = Alpine.$data(modal);
+        data.searchQuery = '';
+        data.isLoading = true;
+        data.attendees = [];
+
+        fetch(`/final-project/workshops/${workshopId}/attendees`)
+            .then(res => res.json())
+            .then(json => {
+                data.attendees = json.attendees || [];
+                data.isLoading = false;
+            })
+            .catch(err => {
+                console.error('Failed to load attendees:', err);
+                data.isLoading = false;
+            });
+    }
+
+    function closeAttendanceModal() {
+        const modal = document.getElementById('attendanceWorkshopModal');
+        const content = document.getElementById('attendanceWorkshopModalContent');
+        if (!modal || !content) return;
+        content.classList.add('scale-95', 'opacity-0');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }, 200);
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    function submitAttendanceForm(event) {
+        event.preventDefault();
+        const modal = document.getElementById('attendanceWorkshopModal');
+        const workshopId = modal.dataset.workshopId;
+        const data = Alpine.$data(modal);
+
+        if (!workshopId) {
+            alert('Workshop ID missing. Please refresh and try again.');
+            return;
+        }
+
+        data.isLoading = true;
+
+        const payload = data.attendees.map(a => ({
+            id: a.id,
+            status: a.status,
+            participation_score: a.status === 'absent' ? 0 : (parseFloat(a.participation_score) || 0)
+        }));
+
+        // Get CSRF token safely
+        const tokenMeta = document.querySelector('meta[name="csrf-token"]');
+        const token = tokenMeta ? tokenMeta.getAttribute('content') : document.querySelector('input[name="_token"]')?.value;
+
+        fetch(`/final-project/workshops/${workshopId}/attendance`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': token,
+            },
+            body: JSON.stringify({ attendees: payload })
+        })
+        .then(res => {
+            if (!res.ok) throw new Error('Network response was not ok');
+            return res.json();
+        })
+        .then(() => {
+            data.isLoading = false;
+            closeAttendanceModal();
+            
+            // Show a simple success toast
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] bg-green-600 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl flex items-center gap-2 fade-in-up';
+            toast.innerHTML = '<i class="fas fa-check-circle"></i> Attendance & scores saved!';
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'transition-opacity', 'duration-500');
+                setTimeout(() => toast.remove(), 500);
+            }, 3000);
+        })
+        .catch(err => {
+            console.error('Save failed:', err);
+            data.isLoading = false;
+            alert('Failed to save: ' + err.message);
+        });
+    }
+</script>
+
+</div> {{-- End of royal-modals-container --}}

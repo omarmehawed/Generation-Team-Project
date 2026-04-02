@@ -66,13 +66,43 @@
                                     </div>
                                 </label>
                             </div>
+                            
+                            <div class="mt-4 p-3 bg-gray-50 border border-gray-100 rounded-xl">
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative flex items-center">
+                                        <input type="checkbox" name="is_sub_leader" value="1" class="peer sr-only" {{ $targetMember?->is_sub_leader ? 'checked' : '' }}>
+                                        <div class="h-5 w-5 rounded border-2 border-gray-300 bg-white peer-checked:bg-indigo-600 peer-checked:border-indigo-600 transition-all flex items-center justify-center group-hover:border-indigo-600">
+                                            <i class="fas fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">Promote to Sub-Leader</span>
+                                        <span class="text-[10px] text-gray-500">Allow this member to manage and evaluate a sub-team</span>
+                                    </div>
+                                </label>
+                            </div>
                         </div>
                     @else
                         {{-- Vice Leader View: They can only assign Member role --}}
                         <input type="hidden" name="role" value="member">
-                        <div class="mb-5 p-4 bg-gray-50 border border-gray-100 rounded-xl flex items-center justify-between">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Administrative Role</span>
-                            <span class="bg-[#FFF8E1] text-[#AA8A26] px-3 py-1 rounded-lg text-xs font-black border border-[#D4AF37]/30">MEMBER 👤</span>
+                        <div class="mb-5 p-4 bg-gray-50 border border-gray-100 rounded-xl flex flex-col gap-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Administrative Role</span>
+                                <span class="bg-[#FFF8E1] text-[#AA8A26] px-3 py-1 rounded-lg text-xs font-black border border-[#D4AF37]/30">MEMBER 👤</span>
+                            </div>
+                            <div class="h-px bg-gray-200"></div>
+                            <label class="flex items-center gap-3 cursor-pointer group">
+                                <div class="relative flex items-center">
+                                    <input type="checkbox" name="is_sub_leader" value="1" class="peer sr-only" {{ $targetMember?->is_sub_leader ? 'checked' : '' }}>
+                                    <div class="h-5 w-5 rounded border-2 border-gray-300 bg-white peer-checked:bg-indigo-600 peer-checked:border-indigo-600 transition-all flex items-center justify-center group-hover:border-indigo-600">
+                                        <i class="fas fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                    </div>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-sm font-bold text-gray-800 group-hover:text-indigo-600 transition-colors">Promote to Sub-Leader</span>
+                                    <span class="text-[10px] text-gray-500">Allow this member to manage and evaluate a sub-team</span>
+                                </div>
+                            </label>
                         </div>
                     @endif
 
