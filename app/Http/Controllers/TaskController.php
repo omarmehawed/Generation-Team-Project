@@ -136,6 +136,10 @@ class TaskController extends Controller
             'link' => 'required_if:submission_type,link|nullable|url',
 
             'submission_comment' => 'nullable|string|max:1000'
+        ], [
+            'submission_file.file' => 'The file could not be uploaded. It might be too large (exceeds PHP limits) or corrupted.',
+            'submission_file.max' => 'The file size cannot exceed 100MB.',
+            'submission_file.uploaded' => 'The submission file failed to upload. This usually happens if the file exceeds the server\'s upload limit (upload_max_filesize).',
         ]);
 
         try {
@@ -178,6 +182,7 @@ class TaskController extends Controller
 
                 // حفظ اللينك
                 $updateData['submission_value'] = $request->link;
+                $updateData['submission_file'] = null; // Clear file if link is submitted
             }
 
             // 5. الحفظ النهائي
@@ -359,12 +364,12 @@ class TaskController extends Controller
         $task = Task::findOrFail($id);
 
         // التأكد إن فيه ملف أصلاً
-        if (!$task->submission_value || $task->submission_type != 'file') {
+        if (!$task->submission_file || $task->submission_type != 'file') {
             return back()->withErrors(['msg' => 'No file attached to this task.']);
         }
 
         // التأكد إن الملف موجود (طالما هو رابط Cloudinary يعتبر موجود)
         // أمر التحميل المباشر للرابط الخارجي
-        return redirect($task->submission_value);
+        return redirect($task->submission_file);
     }
 }

@@ -235,14 +235,37 @@
                 <div class="rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-sm">
                     <div class="p-4 border-b border-gray-200 dark:border-gray-800 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3">
                         <h2 class="text-lg font-semibold">Members Evaluation</h2>
-                        <div class="flex items-center gap-3 w-full lg:w-auto">
-                            <input type="text" placeholder="Search members..." class="w-full lg:w-72 rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0b1220] px-4 py-2 text-sm">
+                        <form action="{{ request()->url() }}" method="GET" class="flex flex-wrap items-center gap-3 w-full lg:w-auto">
+                            @if(request('period_id'))
+                                <input type="hidden" name="period_id" value="{{ request('period_id') }}">
+                            @endif
+                            <input type="hidden" name="tab" value="members">
+
+                            {{-- Team Filter (Leader & Vice Leaders only) --}}
+                            @if($isLeader || str_contains($viewRole, 'vice_leader'))
+                                <select name="team_filter" onchange="this.form.submit()" 
+                                    class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0b1220] px-3 py-2 text-xs font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                    <option value="">All Teams (Filter)</option>
+                                    @foreach($uniqueTeamNumbers as $tn)
+                                        <option value="{{ $tn }}" {{ ($currentTeamFilter ?? '') == $tn ? 'selected' : '' }}>Team {{ $tn }} Only</option>
+                                    @endforeach
+                                </select>
+                            @endif
+
+                            <div class="relative w-full lg:w-64">
+                                <input type="text" name="search" value="{{ $currentSearch ?? '' }}" placeholder="Name, Email, or Academic #" 
+                                    class="w-full rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0b1220] pl-4 pr-10 py-2 text-xs font-medium focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
+                                <button type="submit" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-500 transition-colors">
+                                    <i class="fas fa-search text-xs"></i>
+                                </button>
+                            </div>
+
                             @if($isSubLeader || $viewRole === 'leader' || str_contains($viewRole, 'vice_leader'))
-                                <button type="button" onclick="openAssignMemberModal()" class="shrink-0 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 text-sm font-medium shadow transition-colors">
-                                    <i class="fas fa-plus mr-1.5"></i> Add Member
+                                <button type="button" onclick="openAssignMemberModal()" class="shrink-0 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 text-xs font-bold shadow-lg shadow-indigo-500/20 transition-all active:scale-95">
+                                    <i class="fas fa-plus mr-1"></i> Add Member
                                 </button>
                             @endif
-                        </div>
+                        </form>
                     </div>
 
                     <div class="overflow-x-auto">
@@ -560,7 +583,8 @@
                                 </span>
                             </div>
                             <div class="flex flex-wrap gap-2 mt-6">
-                                <button class="px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl text-[10px] font-black transition-all hover:shadow-lg active:scale-95">
+                                <button onclick="openWorkshopAttendanceModal({{ $w?->id }}, '{{ addslashes($w?->title ?? 'Untitled') }}')" 
+                                    class="px-4 py-2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 rounded-xl text-[10px] font-black transition-all hover:shadow-lg active:scale-95">
                                     ATTENDANCE
                                 </button>
                             </div>
@@ -648,6 +672,7 @@
 @include("evaluation.partials.assign_member_modal")
 @include("evaluation.partials.meeting_modal")
 @include("evaluation.partials.workshop_modal")
+@include("evaluation.partials.attendance_modal")
 @include("evaluation.partials.assign_task_modal")
 @include("evaluation.partials.edit_team_modal")
 @endsection

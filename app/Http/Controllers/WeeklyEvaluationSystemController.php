@@ -58,7 +58,10 @@ class WeeklyEvaluationSystemController extends Controller
 
         // 1. Fetch ALL relevant items
         $allMembers = TeamMember::with('user')->where('team_id', $team->id)->get();
-        
+
+        // Unique team numbers for the filter dropdown
+        $uniqueTeamNumbers = $allMembers->whereNotNull('team_number')->pluck('team_number')->unique()->sort()->values();
+
         // 2. Filter Lists based on Role Visibility Rules
         if ($isLeader) {
             $allViceLeaders = $allMembers->where('role', 'vice_leader');
@@ -83,6 +86,34 @@ class WeeklyEvaluationSystemController extends Controller
             $allViceLeaders = collect();
             $allSubLeaders = collect();
             $allRegularMembers = collect();
+        }
+
+        // Apply Search & Team Filter
+        $currentSearch = $request->query('search');
+        $currentTeamFilter = $request->query('team_filter');
+
+        $filterClosure = function($m) use ($currentSearch, $currentTeamFilter) {
+            $match = true;
+            if ($currentSearch) {
+                $q = strtolower($currentSearch);
+                $userName = strtolower($m->user->name ?? '');
+                $userEmail = strtolower($m->user->email ?? '');
+                $userUniEmail = strtolower($m->user->university_email ?? '');
+                
+                $match = str_contains($userName, $q) || 
+                         str_contains($userEmail, $q) || 
+                         str_contains($userUniEmail, $q);
+            }
+            if ($match && $currentTeamFilter) {
+                $match = (string)$m->team_number === (string)$currentTeamFilter;
+            }
+            return $match;
+        };
+
+        if ($currentSearch || $currentTeamFilter) {
+            $allRegularMembers = $allRegularMembers->filter($filterClosure);
+            $allSubLeaders = $allSubLeaders->filter($filterClosure);
+            $allViceLeaders = $allViceLeaders->filter($filterClosure);
         }
 
         // Final filtering for Vice/Sub/Members based on domain if needed
@@ -210,7 +241,8 @@ class WeeklyEvaluationSystemController extends Controller
         return view('evaluation.index', compact(
             'team', 'allPeriods', 'currentPeriod', 'members', 'subLeaders', 'viceLeaders', 'workshops', 'tasks', 'meetings',
             'viewRole', 'stats', 'softwareStats', 'hardwareStats', 'isLeader', 'isGeneralVice', 'isSoftwareVice', 'isHardwareVice',
-            'isSubLeader', 'myMember', 'myRole', 'allMembers', 'existingRecords', 'unassignedMembersFormatted', 'searchableMembers'
+            'isSubLeader', 'myMember', 'myRole', 'allMembers', 'existingRecords', 'unassignedMembersFormatted', 'searchableMembers',
+            'uniqueTeamNumbers', 'currentSearch', 'currentTeamFilter'
         ));
     }
 

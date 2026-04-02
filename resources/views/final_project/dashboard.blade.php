@@ -1337,7 +1337,7 @@
 
             {{-- 6. Workshops (Workshops System) --}}
             {{-- 🛠️ Domain Workshops (Redesigned) --}}
-            <div id="workshops-section" x-data="{ expanded: true }" class="bg-[#111827] rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden hover-lift w-full mb-10 transition-all">
+            <div id="workshops-section" x-data="{ expanded: false }" class="bg-[#111827] rounded-[2.5rem] border border-white/5 shadow-2xl overflow-hidden hover-lift w-full mb-10 transition-all">
                 <div @click="expanded = !expanded" class="px-8 py-6 border-b border-white/5 bg-white/5 flex justify-between items-center cursor-pointer hover:bg-white/10 transition-colors">
                     <h3 class="font-bold text-white flex items-center gap-3 text-lg">
                         <div class="p-2 bg-indigo-500/20 rounded-xl text-indigo-400 shadow-sm">

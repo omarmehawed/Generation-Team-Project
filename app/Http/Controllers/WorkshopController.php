@@ -85,9 +85,25 @@ class WorkshopController extends Controller
     // ==========================================
     public function getAttendees($id)
     {
-        $workshop = Workshop::with(['attendees.user'])->findOrFail($id);
+        $workshop = Workshop::findOrFail($id);
+        
+        // Check if user is a Sub Leader
+        $teamId = $workshop->team_id;
+        $myMemberRecord = TeamMember::where('team_id', $teamId)->where('user_id', Auth::id())->first();
+        
+        $query = WorkshopAttendee::with(['user'])->where('workshop_id', $id);
 
-        $data = $workshop->attendees->map(function ($a) {
+        if ($myMemberRecord && $myMemberRecord->is_sub_leader && !in_array($myMemberRecord->role, ['leader', 'vice_leader'])) {
+            // Sub Leader can only see their team members
+            $query->whereHas('user.teamMemberships', function($q) use ($teamId, $myMemberRecord) {
+                $q->where('team_id', $teamId)
+                  ->where('parent_id', $myMemberRecord->id);
+            });
+        }
+
+        $attendees = $query->get();
+
+        $data = $attendees->map(function ($a) {
             return [
                 'id'                  => $a->id,
                 'user_id'             => $a->user_id,
@@ -126,7 +142,7 @@ class WorkshopController extends Controller
             if (!$attendee) continue;
 
             // Sub Leader scope check
-            if ($myMemberRecord->is_sub_leader && $myMemberRecord->role !== 'leader' && $myMemberRecord->role !== 'vice_leader') {
+            if ($myMemberRecord->is_sub_leader && !in_array($myMemberRecord->role, ['leader', 'vice_leader'])) {
                 $attendeeMember = TeamMember::where('team_id', $teamId)->where('user_id', $attendee->user_id)->first();
                 if (!$attendeeMember || $attendeeMember->parent_id !== $myMemberRecord->id) {
                     continue;

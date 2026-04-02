@@ -518,9 +518,10 @@ class FinalProjectController extends Controller
             // Update Sub Leader's team number
             $myMemberRecord->update(['team_number' => $request->team_number]);
 
-            // Assign parent_id to selected members
+            // Assign parent_id and team_number to selected members
             TeamMember::whereIn('id', $request->member_ids)->update([
-                'parent_id' => $myMemberRecord->id
+                'parent_id' => $myMemberRecord->id,
+                'team_number' => $request->team_number
             ]);
         });
 

@@ -376,7 +376,7 @@
                                         <div class="flex gap-3">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                                                                            {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
+                                                                                                {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
                                                 <i class="{{ $icon }} text-sm"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
@@ -532,11 +532,10 @@
 
                 @if($myTeamId && (in_array($myRole, ['leader', 'vice_leader']) || $isSubLeader))
                     <li>
-                        <a href="{{ route('evaluation.index', $myTeamId) }}" 
-                           class="sidebar-link {{ request()->routeIs('evaluation.*') ? 'active' : '' }}">
+                        <a href="{{ route('evaluation.index', $myTeamId) }}"
+                            class="sidebar-link {{ request()->routeIs('evaluation.*') ? 'active' : '' }}">
                             <i class="fas fa-clipboard-check text-indigo-500"></i>
-                            <span>Weekly Evaluation</span>
-                            <span class="inline-flex items-center justify-center px-1.5 py-0.5 ms-2 text-[10px] font-bold text-indigo-800 bg-indigo-100 rounded border border-indigo-200">CORE</span>
+                            <span> Weekly Evaluation</span>
                         </a>
                     </li>
                 @endif
@@ -549,13 +548,13 @@
                         <button type="submit"
                             class="sidebar-link w-full text-red-500 hover:bg-red-500/10 hover:text-red-500 hover:border-l-4 hover:border-red-500 transition-all">
                             <i class="fas fa-power-off"></i>
-                            <span>Terminate Session</span>
+                            <span>Sign Out</span>
                         </button>
                     </form>
                 </li>
                 <li class="mt-4 px-4 text-center">
                     <p class="text-[10px] opacity-40 font-mono" style="color: var(--text-muted)">GENERATION TEAM SYSTEM
-                        v2.1</p>
+                        v2.5</p>
                 </li>
             </ul>
         </div>
