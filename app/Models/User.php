@@ -151,6 +151,11 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'deleted_by_id');
     }
 
+    public function teamMemberships()
+    {
+        return $this->hasMany(TeamMember::class, 'user_id');
+    }
+
     protected static function booted()
     {
         // 1️⃣ مراقبة الإنشاء (Create)

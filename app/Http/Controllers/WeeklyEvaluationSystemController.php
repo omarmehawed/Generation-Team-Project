@@ -195,12 +195,12 @@ class WeeklyEvaluationSystemController extends Controller
         $rawTasks = $tasksQuery->get();
         
         $groupedTasksCollection = $rawTasks->groupBy(function($t) use ($team) {
-            $m = $t->user->teamMemberships->first();
+            $m = $t->user ? $t->user->teamMemberships->first() : null;
             $techStr = strtolower($m->technical_role ?? 'general');
             return $t->title . '|' . ($t->deadline ? (is_string($t->deadline) ? $t->deadline : $t->deadline->toDateString()) : 'no-date') . '|' . $techStr;
         })->map(function($group) use ($team) {
             $first = $group->first();
-            $m = $first->user->teamMemberships->first();
+            $m = $first->user ? $first->user->teamMemberships->first() : null;
             return (object)[
                 'title' => $first->title,
                 'deadline' => $first->deadline,
