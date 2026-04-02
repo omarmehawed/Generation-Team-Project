@@ -171,17 +171,21 @@ class WeeklyEvaluationSystemController extends Controller
         $meetings = $meetingsQuery->get();
 
         // 6. Tasks (Grouped logic + Pagination)
-        $tasksQuery = \App\Models\Task::with('user')->where('team_id', $team->id)
+        $tasksQuery = \App\Models\Task::with(['user.teamMemberships' => function($q) use ($team) {
+                $q->where('team_id', $team->id);
+            }])
+            ->where('team_id', $team->id)
             ->where(function($q) use ($startDate, $endDate) {
                 $q->whereBetween('deadline', [$startDate, $endDate])
                   ->orWhereBetween('submitted_at', [$startDate, $endDate])
                   ->orWhereBetween('created_at', [$startDate, $endDate]);
             });
         
-        if ($viewRole === 'software_vice_leader') {
-            $tasksQuery->where('technical_role', 'software');
-        } elseif ($viewRole === 'hardware_vice_leader') {
-            $tasksQuery->where('technical_role', 'hardware');
+        if ($viewRole === 'software_vice_leader' || $viewRole === 'hardware_vice_leader') {
+            $domainType = ($viewRole === 'software_vice_leader') ? 'software' : 'hardware';
+            $tasksQuery->whereHas('user.teamMemberships', function($q) use ($team, $domainType) {
+                $q->where('team_id', $team->id)->where('technical_role', $domainType);
+            });
         } elseif ($viewRole === 'sub_leader') {
              // For sub-leaders, we only show tasks related to their team members
              $myTeamIds = $allRegularMembers->pluck('user_id');
@@ -190,14 +194,17 @@ class WeeklyEvaluationSystemController extends Controller
         
         $rawTasks = $tasksQuery->get();
         
-        $groupedTasksCollection = $rawTasks->groupBy(function($t) {
-            return $t->title . '|' . ($t->deadline ? (is_string($t->deadline) ? $t->deadline : $t->deadline->toDateString()) : 'no-date') . '|' . strtolower($t->technical_role);
-        })->map(function($group) {
+        $groupedTasksCollection = $rawTasks->groupBy(function($t) use ($team) {
+            $m = $t->user->teamMemberships->first();
+            $techStr = strtolower($m->technical_role ?? 'general');
+            return $t->title . '|' . ($t->deadline ? (is_string($t->deadline) ? $t->deadline : $t->deadline->toDateString()) : 'no-date') . '|' . $techStr;
+        })->map(function($group) use ($team) {
             $first = $group->first();
+            $m = $first->user->teamMemberships->first();
             return (object)[
                 'title' => $first->title,
                 'deadline' => $first->deadline,
-                'technical_role' => $first->technical_role,
+                'technical_role' => $m->technical_role ?? 'general',
                 'status' => $group->every(fn($t) => $t->status === 'approved') ? 'approved' : 
                            ($group->contains(fn($t) => $t->status === 'rejected') ? 'rejected' : 'pending'),
                 'members' => $group->map(fn($t) => $t->user->name ?? 'Unknown')->unique()->values(),
