@@ -1437,10 +1437,18 @@
 
                             {{-- زرار السوفتوير: يظهر لليدر أو نائب السوفتوير --}}
                             @if ($isLeader || $isSoftVice)
-                                <button onclick="openAddTaskModal('software')"
-                                    class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow hover:bg-blue-700 transition font-bold hover:scale-105 transform">
-                                    <i class="fas fa-plus"></i> Assign
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    @if($isLeader)
+                                        <button onclick="openBulkDeleteModal('software')"
+                                            class="text-[10px] bg-red-50 text-red-600 px-3 py-1.5 rounded-lg border border-red-100 hover:bg-red-600 hover:text-white transition font-black uppercase tracking-wider shadow-sm">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    @endif
+                                    <button onclick="openAddTaskModal('software')"
+                                        class="text-xs bg-blue-600 text-white px-3 py-1.5 rounded-lg shadow hover:bg-blue-700 transition font-bold hover:scale-105 transform">
+                                        <i class="fas fa-plus"></i> Assign
+                                    </button>
+                                </div>
                             @endif
                         </div>
 
@@ -3642,10 +3650,77 @@
         openModal('submitTaskModal');
     }
 
-    function openRejectTaskModal(taskId) {
+    function openRejectTaskModal(taskId, hasBeenRejected = false) {
         const form = document.getElementById('rejectTaskForm');
         form.action = `/tasks/${taskId}/reject`;
+        
+        const deadlineSection = document.getElementById('rejectDeadlineSection');
+        const deadlineInput = document.getElementById('rejectDeadlineInput');
+        const modalDesc = document.getElementById('rejectModalDesc');
+
+        if (hasBeenRejected) {
+            if (deadlineSection) deadlineSection.classList.add('hidden');
+            if (deadlineInput) deadlineInput.required = false;
+            if (modalDesc) {
+                modalDesc.innerText = "Final Rejection: No further deadlines allowed.";
+                modalDesc.classList.remove('text-gray-500');
+                modalDesc.classList.add('text-red-600', 'font-black');
+            }
+        } else {
+            if (deadlineSection) deadlineSection.classList.remove('hidden');
+            if (deadlineInput) deadlineInput.required = true;
+            if (modalDesc) {
+                modalDesc.innerText = "Requires feedback & new deadline.";
+                modalDesc.classList.remove('text-red-600', 'font-black');
+                modalDesc.classList.add('text-gray-500');
+            }
+        }
+        
         openModal('rejectTaskModal');
+    }
+
+    function openBulkDeleteModal(role) {
+        const modal = document.getElementById('bulkDeleteModal');
+        const roleInput = document.getElementById('bulkDeleteRole');
+        const roleDisplay = document.getElementById('bulkDeleteRoleDisplay');
+        const titleSelect = document.getElementById('bulkDeleteTitle');
+        
+        if (!roleInput || !titleSelect) return;
+
+        roleInput.value = role;
+        if (roleDisplay) roleDisplay.innerText = role.toUpperCase();
+        
+        titleSelect.innerHTML = '<option value="">Searching tasks...</option>';
+        
+        const section = document.getElementById('tasks-section');
+        if (!section) return;
+
+        const titles = new Set();
+        // Find task titles in the correct sub-section
+        const searchAreaIndex = role === 'software' ? 0 : 1;
+        const columns = section.querySelectorAll('.grid.grid-cols-1 > div');
+        const searchArea = columns[searchAreaIndex];
+        
+        if (searchArea) {
+            searchArea.querySelectorAll('h4.text-sm.font-bold').forEach(h4 => {
+                const title = h4.innerText.trim();
+                if (title) titles.add(title);
+            });
+        }
+
+        titleSelect.innerHTML = '<option value="">Select a task title to delete...</option>';
+        if (titles.size === 0) {
+            titleSelect.innerHTML = '<option value="">No tasks found in this section.</option>';
+        } else {
+            titles.forEach(title => {
+                const opt = document.createElement('option');
+                opt.value = title;
+                opt.innerText = title;
+                titleSelect.appendChild(opt);
+            });
+        }
+
+        openModal('bulkDeleteModal');
     }
 
     function openUploadOnBehalfModal(taskId, userName) {

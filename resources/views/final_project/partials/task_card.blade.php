@@ -60,7 +60,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                         <span
                             class="text-[9px] bg-red-50 text-red-700 border border-red-100 px-2 py-0.5 rounded-full font-bold flex items-center gap-1">
                             <i class="fas fa-exclamation-circle"></i>
-                            Changes Requested
+                            {{ $task->new_deadline ? 'Changes Requested' : 'Final Rejection' }}
                         </span>
                         @if($task->new_deadline)
                             <span class="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">
@@ -97,8 +97,8 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
             --}}
             <div class="flex items-center gap-2 self-start pt-0.5">
 
-                {{-- [CASE A]: Member -> Submit Task (Pending or Rejected) --}}
-                @if (in_array($task->status, ['pending', 'rejected']) && Auth::id() == $task->user_id)
+                {{-- [CASE A]: Member -> Submit Task (Pending or First Rejected) --}}
+                @if (($task->status == 'pending' || ($task->status == 'rejected' && $task->new_deadline)) && Auth::id() == $task->user_id)
                     <button onclick="openSubmitTaskModal('{{ $task->id }}', '{{ addslashes($task->title) }}')"
                         class="group/btn relative overflow-hidden bg-{{ $color ?? 'blue' }}-600 text-white text-[10px] font-bold px-4 py-2 rounded-xl transition-all hover:shadow-md hover:shadow-{{ $color ?? 'blue' }}-500/20 active:scale-95">
                         <span class="relative z-10 flex items-center gap-1.5">
@@ -157,7 +157,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                         </form>
 
                         {{-- 3. Reject (Opens Modal) --}}
-                        <button type="button" onclick="openRejectTaskModal('{{ $task->id }}')"
+                        <button type="button" onclick="openRejectTaskModal('{{ $task->id }}', {{ !empty($task->rejection_feedback) ? 'true' : 'false' }})"
                             class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-500 hover:text-white hover:shadow-md hover:shadow-red-500/20 transition-all duration-200"
                             title="Request Changes / Reject">
                             <i class="fas fa-times text-xs"></i>

@@ -2335,7 +2335,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             <div class="p-3 bg-red-50 rounded-2xl shadow-sm"><i class="fas fa-times-circle text-2xl"></i></div>
                             <div>
                                 <h3 class="text-xl font-black text-gray-900 tracking-tight">Reject Submission</h3>
-                                <p class="text-xs text-gray-500 font-bold">Requires feedback & new deadline.</p>
+                                <p id="rejectModalDesc" class="text-xs text-gray-500 font-bold">Requires feedback & new deadline.</p>
                             </div>
                         </div>
 
@@ -2347,10 +2347,10 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                     placeholder="Explain why the submission was rejected and what needs to be fixed..."></textarea>
                             </div>
 
-                            <div>
+                            <div id="rejectDeadlineSection">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">New Submission Deadline</label>
                                 <div class="relative">
-                                    <input type="datetime-local" name="new_deadline" required class="input-classic">
+                                    <input type="datetime-local" id="rejectDeadlineInput" name="new_deadline" required class="input-classic">
                                 </div>
                                 <p class="text-[9px] text-gray-400 mt-1 ml-1 italic">The member will be notified of this new deadline.</p>
                             </div>
@@ -2402,6 +2402,51 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
                         <button type="submit" class="bg-indigo-600 text-white font-black py-3 px-8 rounded-2xl text-xs uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20 active:scale-95"> Complete Upload </button>
                         <button type="button" onclick="closeModal('uploadOnBehalfModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- 26. Bulk Delete Tasks Modal (Leader Only) --}}
+    <div id="bulkDeleteModal" class="hidden relative z-[1003]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('bulkDeleteModal')"></div>
+            <div class="modal-content !max-w-md border-t-8 border-red-600 shadow-2xl">
+                <form action="{{ route('tasks.bulkDestroy') }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <input type="hidden" name="team_id" value="{{ $team->id }}">
+                    <input type="hidden" name="technical_role" id="bulkDeleteRole">
+                    
+                    <div class="bg-white px-8 pt-8 pb-6">
+                        <div class="flex items-center gap-4 text-red-600 mb-6">
+                            <div class="p-3 bg-red-50 rounded-2xl shadow-sm"><i class="fas fa-trash-alt text-2xl"></i></div>
+                            <div>
+                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Bulk Delete Tasks</h3>
+                                <p class="text-xs text-gray-500 font-bold">Remove a task from the whole sub-team.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-amber-50 p-4 rounded-xl border border-amber-100 flex items-start gap-3">
+                                <i class="fas fa-exclamation-triangle text-amber-500 mt-0.5"></i>
+                                <p class="text-[11px] text-amber-800 leading-normal font-bold uppercase">
+                                    Warning: This will delete ALL tasks with the selected title for all members in the <span id="bulkDeleteRoleDisplay" class="underline decoration-2"></span> domain.
+                                </p>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Select Task Title</label>
+                                <select name="title" id="bulkDeleteTitle" required class="input-classic !appearance-none">
+                                    <option value="">Loading tasks...</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                        <button type="submit" class="bg-red-600 text-white font-black py-4 px-10 rounded-2xl text-xs uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-600/20 active:scale-95"> Mass Delete Tasks </button>
+                        <button type="button" onclick="closeModal('bulkDeleteModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
                     </div>
                 </form>
             </div>

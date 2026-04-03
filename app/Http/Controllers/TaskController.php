@@ -334,18 +334,20 @@ class TaskController extends Controller
             }
         }
 
-        // 3. التحقق من المدخلات الجديدة (الديدلاين والسبب)
+        // 3. التحقق من المدخلات الجديدة (بالتعديل الجديد: الديدلاين مرة واحدة فقط)
+        $isSecondRejection = !empty($task->rejection_feedback);
+
         $request->validate([
             'feedback' => 'required|string|min:5',
-            'new_deadline' => 'required|date|after:now',
+            'new_deadline' => $isSecondRejection ? 'nullable|date' : 'required|date|after:now',
         ]);
 
-        // 4. التنفيذ
+        // 4. التنفيذ (لو ثانـي رفض مفيش ديدلاين جديد)
         $task->update([
             'status' => 'rejected',
             'rejection_feedback' => $request->feedback,
-            'new_deadline' => $request->new_deadline,
-            'deadline' => $request->new_deadline, // نحدث الديدلاين الأساسي كمان عشان يظهر للطالب
+            'new_deadline' => $isSecondRejection ? null : $request->new_deadline,
+            'deadline' => $isSecondRejection ? $task->deadline : $request->new_deadline, // لو ثاني رفض نسيب الديدلاين زي ما هو
             'graded_at' => now(),
             'graded_by' => \Illuminate\Support\Facades\Auth::id()
         ]);
@@ -533,5 +535,35 @@ class TaskController extends Controller
             \Illuminate\Support\Facades\Log::error('Upload on behalf failed: ' . $e->getMessage());
             return back()->with('error', 'Upload failed.');
         }
+    }
+    // 8. حذف جماعي لمهام مخصصة لكل الفريق (ليدر فقط)
+    public function bulkDestroy(Request $request)
+    {
+        $request->validate([
+            'team_id' => 'required|exists:teams,id',
+            'technical_role' => 'required|string',
+            'title' => 'required|string',
+        ]);
+
+        // 🛡️ التأكد أن المستخدم هو الليدر
+        $currentMember = \App\Models\TeamMember::where('team_id', $request->team_id)
+            ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->first();
+
+        if (!$currentMember || $currentMember->role !== 'leader') {
+            return back()->with('error', 'Unauthorized: Only the Team Leader can perform bulk deletions. ❌');
+        }
+
+        // 🗑️ تنفيذ الحذف
+        $deletedCount = \App\Models\Task::where('team_id', $request->team_id)
+            ->where('technical_role', strtolower($request->technical_role))
+            ->where('title', $request->title)
+            ->delete();
+
+        if ($deletedCount > 0) {
+            return back()->with('success', "Bulk Delete Success: {$deletedCount} tasks titled '{$request->title}' were removed from the {$request->technical_role} team. 🗑️");
+        }
+
+        return back()->with('warning', "No tasks found with the title '{$request->title}' in the {$request->technical_role} category.");
     }
 }
