@@ -2303,4 +2303,89 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     }
 </script>
 
+    {{-- 24. Reject Task Modal (Modern) --}}
+    <div id="rejectTaskModal" class="hidden relative z-[1001]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('rejectTaskModal')"></div>
+            <div class="modal-content !max-w-md border-t-8 border-red-600">
+                <form id="rejectTaskForm" method="POST">
+                    @csrf
+                    <div class="bg-white px-8 pt-8 pb-6">
+                        <div class="flex items-center gap-4 text-red-600 mb-6">
+                            <div class="p-3 bg-red-50 rounded-2xl shadow-sm"><i class="fas fa-times-circle text-2xl"></i></div>
+                            <div>
+                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Reject Submission</h3>
+                                <p class="text-xs text-gray-500 font-bold">Requires feedback & new deadline.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Rejection Feedback</label>
+                                <textarea name="feedback" required rows="4" 
+                                    class="input-classic resize-none"
+                                    placeholder="Explain why the submission was rejected and what needs to be fixed..."></textarea>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">New Submission Deadline</label>
+                                <div class="relative">
+                                    <input type="datetime-local" name="new_deadline" required class="input-classic">
+                                </div>
+                                <p class="text-[9px] text-gray-400 mt-1 ml-1 italic">The member will be notified of this new deadline.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                        <button type="submit" class="bg-red-600 text-white font-black py-3 px-8 rounded-2xl text-xs uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-600/20 active:scale-95"> Confirm Rejection </button>
+                        <button type="button" onclick="closeModal('rejectTaskModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    {{-- 25. Upload on Behalf Modal (Vice Leader Feature) --}}
+    <div id="uploadOnBehalfModal" class="hidden relative z-[1002]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('uploadOnBehalfModal')"></div>
+            <div class="modal-content !max-w-md border-t-8 border-indigo-600">
+                <form id="uploadOnBehalfForm" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="bg-white px-8 pt-8 pb-6">
+                        <div class="flex items-center gap-4 text-indigo-600 mb-6">
+                            <div class="p-3 bg-indigo-50 rounded-2xl shadow-sm"><i class="fas fa-upload text-2xl"></i></div>
+                            <div>
+                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Upload for Member</h3>
+                                <p class="text-xs text-gray-500 font-bold">Assist member by uploading their work.</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div
+                                class="text-sm text-gray-500 mb-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 flex items-center gap-2">
+                                <i class="fas fa-user-check text-indigo-400"></i>
+                                <span>Target: <span id="uploadBehalfMemberName" class="font-black text-indigo-900"></span></span>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">The File (Up to 1GB)</label>
+                                <input type="file" name="submission_file" required class="input-classic">
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Internal Note / Comment</label>
+                                <textarea name="submission_comment" rows="3" class="input-classic resize-none" placeholder="Optional: Describe why you are uploading for them..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                        <button type="submit" class="bg-indigo-600 text-white font-black py-3 px-8 rounded-2xl text-xs uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20 active:scale-95"> Complete Upload </button>
+                        <button type="button" onclick="closeModal('uploadOnBehalfModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 </div> {{-- End of royal-modals-container --}}

@@ -1392,15 +1392,16 @@
 
                 {{-- تجهيز المتغيرات عشان نتفادى مشاكل الحروف الكابيتال والسمول --}}
                 @php
-                    $myTechRole = strtolower($myMember->technical_role ?? ''); // بنحولها حروف صغيرة
+                    $myTechRole = strtolower($myMemberRecord->technical_role ?? ''); // بنحولها حروف صغيرة
                     $isLeader = $myRole === 'leader';
                     $isSoftVice = $myRole === 'vice_leader' && $myTechRole === 'software';
                     $isHardVice = $myRole === 'vice_leader' && $myTechRole === 'hardware';
                 @endphp
 
-                <div class="grid grid-cols-1 xl:grid-cols-2 divide-y xl:divide-y-0 xl:divide-x divide-gray-100">
+                <div class="grid grid-cols-1 {{ ($isLeader || ($myRole === 'vice_leader' && $myTechRole === 'general')) ? 'xl:grid-cols-2 divide-x' : '' }} divide-y xl:divide-y-0 divide-gray-100">
 
                     {{-- 💻 الجزء الأول: Software Team --}}
+                    @if($isLeader || $isSoftVice || ($myRole === 'vice_leader' && $myTechRole === 'general') || ($myRole === 'member' && $myTechRole === 'software'))
                     <div class="p-6 bg-blue-50/30">
                         <div class="flex justify-between items-center mb-6">
                             <h4 class="font-black text-blue-800 text-lg flex items-center gap-2">
@@ -1422,7 +1423,7 @@
                                 $softMembers = $softMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div class="space-y-4">
+                        <div class="space-y-4 max-h-[600px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($softMembers as $member)
                                 @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
                                 <div
@@ -1457,8 +1458,10 @@
                             @endif
                         </div>
                     </div>
+                    @endif
 
                     {{-- 🔌 الجزء الثاني: Hardware Team --}}
+                    @if($isLeader || $isHardVice || ($myRole === 'vice_leader' && $myTechRole === 'general') || ($myRole === 'member' && $myTechRole === 'hardware'))
                     <div class="p-6 bg-orange-50/30">
                         <div class="flex justify-between items-center mb-6">
                             <h4 class="font-black text-orange-800 text-lg flex items-center gap-2">
@@ -1480,7 +1483,7 @@
                                 $hardMembers = $hardMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div class="space-y-4">
+                        <div class="space-y-4 max-h-[600px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($hardMembers as $member)
                                 @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
                                 <div
@@ -1515,6 +1518,82 @@
                             @endif
                         </div>
                     </div>
+                    @endif
+                </div>
+
+                {{-- ✅ 📜 Task Log / History Section ✅ --}}
+                <div class="p-8 border-t border-gray-100 bg-gray-50/30">
+                    <div class="flex items-center gap-2 mb-6">
+                        <div class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
+                            <i class="fas fa-history"></i>
+                        </div>
+                        <h4 class="font-bold text-gray-700">Task Log / History</h4>
+                    </div>
+
+                    @if(isset($tasksHistory) && $tasksHistory->count() > 0)
+                        <div class="space-y-4">
+                            @foreach($tasksHistory as $title => $tasks)
+                                <div x-data="{ expanded: false }" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                    <div @click="expanded = !expanded" class="px-5 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors">
+                                        <div class="flex items-center gap-3">
+                                            <div class="w-2 h-2 rounded-full bg-green-400"></div>
+                                            <p class="font-bold text-gray-800 text-sm">{{ $title }}</p>
+                                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{ $tasks->count() }} Record(s)</span>
+                                        </div>
+                                        <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform" :class="expanded ? 'rotate-180' : ''"></i>
+                                    </div>
+                                    <div x-show="expanded" x-transition class="p-5 border-t border-gray-50 space-y-4">
+                                        @foreach($tasks as $t)
+                                            <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                                <div class="flex justify-between items-start mb-3">
+                                                    <div class="flex items-center gap-2">
+                                                        <img class="w-6 h-6 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($t->user->name) }}">
+                                                        <span class="text-xs font-bold text-gray-700">{{ $t->user->name }}</span>
+                                                    </div>
+                                                    <span class="text-[10px] text-gray-400">{{ $t->graded_at ? $t->graded_at->format('M d, H:i') : '' }}</span>
+                                                </div>
+                                                
+                                                <div class="flex flex-wrap gap-2 mb-3">
+                                                    @if($t->submission_file)
+                                                        <a href="{{ $t->submission_file }}" target="_blank" class="text-[10px] bg-blue-50 text-blue-600 px-3 py-1 rounded-lg font-bold hover:bg-blue-600 hover:text-white transition">
+                                                            <i class="fas fa-eye mr-1"></i> View File
+                                                        </a>
+                                                    @endif
+                                                    @if($t->submission_value)
+                                                        <a href="{{ $t->submission_value }}" target="_blank" class="text-[10px] bg-indigo-50 text-indigo-600 px-3 py-1 rounded-lg font-bold hover:bg-indigo-600 hover:text-white transition">
+                                                            <i class="fas fa-link mr-1"></i> View Link
+                                                        </a>
+                                                    @endif
+                                                </div>
+
+                                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                                    @if($t->submission_comment)
+                                                        <div class="p-2 bg-white rounded-lg border border-gray-50">
+                                                            <p class="text-[9px] font-bold text-gray-400 mb-1">Comment:</p>
+                                                            <p class="text-[10px] text-gray-600 italic">"{{ $t->submission_comment }}"</p>
+                                                        </div>
+                                                    @endif
+                                                    @if($t->feedback)
+                                                        <div class="p-2 bg-green-50 rounded-lg border border-green-100">
+                                                            <p class="text-[9px] font-bold text-green-600 mb-1">Manager Feedback:</p>
+                                                            <p class="text-[10px] text-green-700 font-medium">{{ $t->feedback }}</p>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-8">
+                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                <i class="fas fa-clipboard-list text-gray-200 text-3xl"></i>
+                            </div>
+                            <p class="text-xs text-gray-400 italic">No completed tasks in history yet.</p>
+                        </div>
+                    @endif
                 </div>
                 </div> {{-- End Collapsible Body --}}
             </div>
@@ -3513,6 +3592,19 @@
         document.getElementById('submitTaskTitle').innerText = title;
         document.getElementById('submissionForm').action = "/tasks/" + taskId + "/submit";
         openModal('submitTaskModal');
+    }
+
+    function openRejectTaskModal(taskId) {
+        const form = document.getElementById('rejectTaskForm');
+        form.action = `/tasks/${taskId}/reject`;
+        openModal('rejectTaskModal');
+    }
+
+    function openUploadOnBehalfModal(taskId, userName) {
+        const form = document.getElementById('uploadOnBehalfForm');
+        form.action = `/tasks/${taskId}/upload-on-behalf`;
+        document.getElementById('uploadBehalfMemberName').innerText = userName;
+        openModal('uploadOnBehalfModal');
     }
 
     // 6. Visual Effects

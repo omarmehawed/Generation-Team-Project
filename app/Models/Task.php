@@ -11,13 +11,14 @@ class Task extends Model
 
     protected $table = 'tasks';
 
-    //  الحل هنا: ضفتلك كل الحقول الناقصة
     protected $fillable = [
-        'team_id',      // <--- كان ناقص
-        'title',        // <--- كان ناقص
-        'description',  // <--- كان ناقص
-        'deadline',     // <--- كان ناقص
-        'assigned_by',  // <--- كان ناقص
+        'team_id',
+        'technical_role', // <--- NEW (domain-based filtering)
+        'title',
+        'description',
+        'deadline',
+        'new_deadline', // <--- NEW (for re-submissions)
+        'assigned_by',
         'user_id',
         'submission_type',
         'submission_value', // (اللينك)
@@ -27,6 +28,7 @@ class Task extends Model
         'submitted_at',
         'grade',
         'feedback',
+        'rejection_feedback', // <--- NEW (reason)
         'graded_at',
         'graded_by'
     ];
@@ -34,23 +36,26 @@ class Task extends Model
     protected $casts = [
         'submitted_at' => 'datetime',
         'graded_at' => 'datetime',
-        'deadline' => 'datetime', // <--- يفضل تضيف دي كمان
+        'deadline' => 'datetime',
+        'new_deadline' => 'datetime',
         'grade' => 'decimal:2',
     ];
 
-    // علاقة بالمهمة
-    public function task()
+    public function submissions()
     {
-        return $this->belongsTo(Task::class);
+        return $this->hasMany(TaskSubmission::class);
     }
 
-    // علاقة بالمستخدم الذي قام بالتسليم
+    public function latestSubmission()
+    {
+        return $this->hasOne(TaskSubmission::class)->latestOfMany();
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // علاقة بالمستخدم الذي قام بالتصحيح
     public function grader()
     {
         return $this->belongsTo(User::class, 'graded_by');

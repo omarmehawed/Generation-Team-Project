@@ -338,16 +338,37 @@ class FinalProjectController extends Controller
         // 7. Workshops
         $workshops = \App\Models\Workshop::where('team_id', $team->id)->with('creator')->latest()->get();
 
-        // 8. Task Filtering
-        if (in_array($myRole, ['vice_leader'])) {
+        // 8. Task Filtering & History
+        $allTasksQuery = \App\Models\Task::where('team_id', $team->id)
+            ->with(['user', 'submissions.user', 'submissions.reviewer'])
+            ->latest();
+
+        if ($myRole === 'member') {
+            // Members only see their own tasks
+            $allTasksQuery->where('user_id', Auth::id());
+        } elseif ($myRole === 'vice_leader') {
             $myDomain = strtolower($myMemberRecord->technical_role);
             if (in_array($myDomain, ['software', 'hardware'])) {
-                $filteredTasks = $team->tasks->filter(function($t) use ($myDomain) {
-                    return strtolower($t->technical_role) === $myDomain;
+                // بنجيب التاسكات اللي فيها الدومين ده، 
+                // أو التاسكات اللي الدومين فيها فاضي (القديمة) بس اليوزر بتاعها في الدومين ده
+                $allTasksQuery->where(function($q) use ($myDomain, $team) {
+                    $q->where('technical_role', $myDomain)
+                      ->orWhere(function($sq) use ($myDomain, $team) {
+                          $sq->whereNull('technical_role')
+                             ->whereHas('user.teamMemberships', function($mq) use ($myDomain, $team) {
+                                 $mq->where('team_id', $team->id)
+                                    ->where('technical_role', $myDomain);
+                             });
+                      });
                 });
-                $team->setRelation('tasks', $filteredTasks);
             }
         }
+
+        $allTasks = $allTasksQuery->get();
+        $team->setRelation('tasks', $allTasks);
+
+        // Group tasks by Title for History Log
+        $tasksHistory = $allTasks->where('status', 'completed')->groupBy('title');
 
         return view('final_project.dashboard', compact(
             'team',
@@ -361,7 +382,8 @@ class FinalProjectController extends Controller
             'components',
             'needsSubLeaderSetup',
             'availableMembers',
-            'workshops'
+            'workshops',
+            'tasksHistory'
         ));
     }
 
@@ -607,8 +629,7 @@ class FinalProjectController extends Controller
     // 9. Create Team View (Unused if using modal, but kept for reference)
     public function createTeamView($projectId)
     {
-        $project = Project::findOrFail($projectId);
-        return view('final_project.dashboard', compact('project'));
+        return redirect()->route('final_project.start');
     }
 
     // ==========================================

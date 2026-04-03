@@ -80,6 +80,7 @@ class TaskController extends Controller
                     'title' => $request->title,
                     'user_id' => $userId,
                     'team_id' => $request->team_id,
+                    'technical_role' => $targetMember->technical_role, // <--- NEW (Save domain)
                     'deadline' => $request->deadline,
                     'status' => 'pending'
                 ]);
@@ -129,17 +130,15 @@ class TaskController extends Controller
             'task_id' => 'required|exists:tasks,id',
             'submission_type' => 'required|in:file,link',
 
-            // الشرط السحري: الملف مطلوب فقط لو النوع "file"
-            'submission_file' => 'required_if:submission_type,file|nullable|file|mimes:pdf,zip,rar,doc,docx,png,jpg|max:102400',
+            // 1GB limit = 1048576 KB
+            'submission_file' => 'required_if:submission_type,file|nullable|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,png,jpg,jpeg,gif,webp,svg|max:1048576',
 
-            // الشرط السحري: اللينك مطلوب فقط لو النوع "link"
             'link' => 'required_if:submission_type,link|nullable|url',
 
-            'submission_comment' => 'nullable|string|max:1000'
+            'submission_comment' => 'nullable|string|max:2000'
         ], [
-            'submission_file.file' => 'The file could not be uploaded. It might be too large (exceeds PHP limits) or corrupted.',
-            'submission_file.max' => 'The file size cannot exceed 100MB.',
-            'submission_file.uploaded' => 'The submission file failed to upload. This usually happens if the file exceeds the server\'s upload limit (upload_max_filesize).',
+            'submission_file.max' => 'The file size cannot exceed 1GB.',
+            'submission_file.uploaded' => 'The file failed to upload. Ensure it is under 1GB and your server allows large uploads.',
         ]);
 
         try {
@@ -185,8 +184,19 @@ class TaskController extends Controller
                 $updateData['submission_file'] = null; // Clear file if link is submitted
             }
 
-            // 5. الحفظ النهائي
+            // 5. الحفظ النهائي للتاسك (الحالة الحالية)
             $task->update($updateData);
+
+            // 6. الحفظ في لوج التسليمات (Version History)
+            \App\Models\TaskSubmission::create([
+                'task_id' => $task->id,
+                'user_id' => \Illuminate\Support\Facades\Auth::id(),
+                'submission_type' => $request->submission_type,
+                'submission_value' => $updateData['submission_value'] ?? null,
+                'submission_file' => $updateData['submission_file'] ?? null,
+                'submission_comment' => $request->submission_comment,
+                'status' => 'pending' // Pending review
+            ]);
 
             // 🔍 LOG ACTIVITY
             ActivityLogger::log(
@@ -251,8 +261,18 @@ class TaskController extends Controller
         $task->update([
             'status' => 'completed',
             'graded_at' => now(),
-            'graded_by' => \Illuminate\Support\Facades\Auth::id() // بنسجل مين اللي قبلها
+            'graded_by' => \Illuminate\Support\Facades\Auth::id()
         ]);
+
+        // تحديث حالة آخر تسليم في اللوج
+        $latestSubmission = $task->submissions()->latest()->first();
+        if ($latestSubmission) {
+            $latestSubmission->update([
+                'status' => 'completed',
+                'reviewed_at' => now(),
+                'reviewed_by' => \Illuminate\Support\Facades\Auth::id()
+            ]);
+        }
 
         // Notify the task owner that their work was approved
         $taskOwner = \App\Models\User::find($task->user_id);
@@ -280,7 +300,7 @@ class TaskController extends Controller
     }
 
     // ❌ رفض التاسك (ليدر + فايس ليدر)
-    public function reject($id)
+    public function reject(Request $request, $id)
     {
         $task = \App\Models\Task::findOrFail($id);
 
@@ -305,12 +325,32 @@ class TaskController extends Controller
             }
         }
 
-        // 3. التنفيذ
+        // 3. التحقق من المدخلات الجديدة (الديدلاين والسبب)
+        $request->validate([
+            'feedback' => 'required|string|min:5',
+            'new_deadline' => 'required|date|after:now',
+        ]);
+
+        // 4. التنفيذ
         $task->update([
-            'status' => 'rejected', // أو 'returned' لو عايز ترجعها للتعديل
+            'status' => 'rejected',
+            'rejection_feedback' => $request->feedback,
+            'new_deadline' => $request->new_deadline,
+            'deadline' => $request->new_deadline, // نحدث الديدلاين الأساسي كمان عشان يظهر للطالب
             'graded_at' => now(),
             'graded_by' => \Illuminate\Support\Facades\Auth::id()
         ]);
+
+        // تحديث حالة آخر تسليم في اللوج
+        $latestSubmission = $task->submissions()->latest()->first();
+        if ($latestSubmission) {
+            $latestSubmission->update([
+                'status' => 'rejected',
+                'feedback' => $request->feedback,
+                'reviewed_at' => now(),
+                'reviewed_by' => \Illuminate\Support\Facades\Auth::id()
+            ]);
+        }
 
         // Notify the task owner that their work was rejected
         $taskOwner = \App\Models\User::find($task->user_id);
@@ -350,6 +390,16 @@ class TaskController extends Controller
         return back();
     }
 
+    // دالة تحميل الملف (Force Download)
+    public function download($id)
+    {
+        $task = Task::findOrFail($id);
+        if (!$task->submission_file || $task->submission_type != 'file') {
+            return back()->withErrors(['msg' => 'No file attached to this task.']);
+        }
+        return redirect($task->submission_file);
+    }
+
     // 6. حذف المهمة
     public function destroy($id)
     {
@@ -358,18 +408,71 @@ class TaskController extends Controller
         return back()->with('success', 'Task deleted');
     }
 
-    // دالة تحميل الملف (Force Download)
-    public function download($id)
+    // 7. الرفع بالنيابة (Upload on Behalf)
+    public function uploadOnBehalf(Request $request, $id)
     {
-        $task = Task::findOrFail($id);
+        $request->validate([
+            'submission_file' => 'required|file|mimes:pdf,zip,rar,doc,docx,xls,xlsx,ppt,pptx,png,jpg,jpeg,gif,webp,svg|max:1048576',
+            'submission_comment' => 'nullable|string|max:2000'
+        ]);
 
-        // التأكد إن فيه ملف أصلاً
-        if (!$task->submission_file || $task->submission_type != 'file') {
-            return back()->withErrors(['msg' => 'No file attached to this task.']);
+        try {
+            $task = Task::findOrFail($id);
+            $currentUser = Auth::user();
+
+            // Check permissions
+            $currentMember = \App\Models\TeamMember::where('team_id', $task->team_id)
+                ->where('user_id', $currentUser->id)
+                ->first();
+
+            if (!$currentMember || !in_array($currentMember->role, ['leader', 'vice_leader'])) {
+                return back()->with('error', 'Unauthorized: Only Leader or Vice Leader can upload on behalf.');
+            }
+
+            // Domain Check for Vice Leader
+            if ($currentMember->role === 'vice_leader') {
+                $taskOwnerMember = \App\Models\TeamMember::where('team_id', $task->team_id)
+                    ->where('user_id', $task->user_id)
+                    ->first();
+                
+                if (!$taskOwnerMember || strtolower($currentMember->technical_role) !== strtolower($taskOwnerMember->technical_role)) {
+                    return back()->with('error', 'Unauthorized: You can only upload for members in your own domain.');
+                }
+            }
+
+            // Upload File
+            $file = $request->file('submission_file');
+            $storedPath = $file->store('submissions', 'r2');
+            $path = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+
+            // Update Task
+            $task->update([
+                'submission_type' => 'file',
+                'submission_file' => $path,
+                'submission_comment' => $request->submission_comment . ' (Uploaded by ' . $currentUser->name . ')',
+                'status' => 'completed', // Automatically complete if leader uploads? Or stay reviewing? 
+                'submitted_at' => now(),
+                'graded_at' => now(),
+                'graded_by' => $currentUser->id
+            ]);
+
+            // Create Log
+            \App\Models\TaskSubmission::create([
+                'task_id' => $task->id,
+                'user_id' => $task->user_id,
+                'submission_type' => 'file',
+                'submission_file' => $path,
+                'submission_comment' => $request->submission_comment . ' (Uploaded by Leader: ' . $currentUser->name . ')',
+                'status' => 'completed',
+                'reviewed_by' => $currentUser->id,
+                'reviewed_at' => now()
+            ]);
+
+            return back()->with('success', 'File uploaded on behalf of member successfully! ✅');
+
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Upload on behalf failed: ' . $e->getMessage());
+            return back()->with('error', 'Upload failed.');
         }
-
-        // التأكد إن الملف موجود (طالما هو رابط Cloudinary يعتبر موجود)
-        // أمر التحميل المباشر للرابط الخارجي
-        return redirect($task->submission_file);
     }
 }

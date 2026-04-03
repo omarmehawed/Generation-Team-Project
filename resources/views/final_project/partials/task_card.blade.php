@@ -62,6 +62,11 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                             <i class="fas fa-exclamation-circle"></i>
                             Changes Requested
                         </span>
+                        @if($task->new_deadline)
+                            <span class="text-[9px] bg-orange-100 text-orange-700 px-2 py-0.5 rounded-full font-bold">
+                                New: {{ \Carbon\Carbon::parse($task->new_deadline)->format('M d, H:i') }}
+                            </span>
+                        @endif
                     @endif
 
 
@@ -141,21 +146,34 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                             </button>
                         </form>
 
-                        {{-- 3. Reject --}}
-                        <form action="{{ route('tasks.reject', $task->id) }}" method="POST" class="m-0">
-                            @csrf
-                            <button
-                                class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-500 hover:text-white hover:shadow-md hover:shadow-red-500/20 transition-all duration-200"
-                                title="Request Changes">
-                                <i class="fas fa-times text-xs"></i>
-                            </button>
-                        </form>
+                        {{-- 3. Reject (Opens Modal) --}}
+                        <button type="button" onclick="openRejectTaskModal('{{ $task->id }}')"
+                            class="w-8 h-8 flex items-center justify-center rounded-full text-red-500 hover:bg-red-500 hover:text-white hover:shadow-md hover:shadow-red-500/20 transition-all duration-200"
+                            title="Request Changes / Reject">
+                            <i class="fas fa-times text-xs"></i>
+                        </button>
                     </div>
+
+                {{-- [CASE B2]: Leader/Vice -> Upload on Behalf (Pending/Rejected) --}}
+                @elseif(in_array($task->status, ['pending', 'rejected']) && ($myRole == 'leader' || $myRole == 'vice_leader'))
+                    <button type="button" onclick="openUploadOnBehalfModal('{{ $task->id }}', '{{ addslashes($task->user->name) }}')"
+                        class="text-[9px] bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-100 font-bold transition flex items-center gap-1.5 active:scale-95">
+                        <i class="fas fa-user-plus"></i> Upload for Mem
+                    </button>
 
                 {{-- [CASE C]: Completed State for Admin --}}
                 @elseif($task->status == 'completed' && ($myRole == 'leader' || $myRole == 'vice_leader'))
-                    <div class="w-8 h-8 flex items-center justify-center bg-green-50 rounded-full border border-green-100">
-                        <i class="fas fa-check text-green-600 text-sm"></i>
+                    <div class="flex items-center gap-2">
+                        @if ($task->submission_file)
+                            <a href="{{ $task->submission_file }}" target="_blank"
+                                class="w-8 h-8 flex items-center justify-center rounded-full bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
+                                title="View Winner File">
+                                <i class="fas fa-eye text-xs"></i>
+                            </a>
+                        @endif
+                        <div class="w-8 h-8 flex items-center justify-center bg-green-50 rounded-full border border-green-100">
+                            <i class="fas fa-check text-green-600 text-sm"></i>
+                        </div>
                     </div>
                 @endif
             </div>
@@ -166,9 +184,23 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
         # 💬 SECTION 3: SUBMISSION COMMENTS #
         #############################################
         --}}
+        {{-- Rejection Feedback display --}}
+        @if ($task->status == 'rejected' && $task->rejection_feedback)
+            <div class="mt-4 pl-3">
+                <div class="relative bg-red-50/50 p-3 rounded-xl border border-dashed border-red-200">
+                    <p class="text-[10px] font-black text-red-700 uppercase mb-1 flex items-center gap-1">
+                        <i class="fas fa-reply-all"></i> Rejection Reason:
+                    </p>
+                    <p class="text-xs text-red-600 italic leading-relaxed">
+                        {{ $task->rejection_feedback }}
+                    </p>
+                </div>
+            </div>
+        @endif
+
         @if ($task->submission_comment)
             <div class="mt-4 pl-3">
-                <div class="relative bg-gray-50/80 p-3 rounded-xl border border-dashed border-gray-200">
+                <div class="relative {{ $task->status == 'completed' ? 'bg-green-50/50 border-green-100' : 'bg-gray-50/80 border-gray-200' }} p-3 rounded-xl border border-dashed">
                     <i class="fas fa-quote-left text-gray-300 absolute -top-2 left-3 bg-white px-1 text-xs"></i>
                     <p class="text-xs text-gray-600 italic leading-relaxed">
                         {{ $task->submission_comment }}

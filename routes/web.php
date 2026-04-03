@@ -97,6 +97,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/tasks/{id}/toggle', [TaskController::class, 'toggle'])->name('tasks.toggle');
     Route::delete('/tasks/{id}', [TaskController::class, 'destroy'])->name('tasks.destroy');
     Route::get('/tasks/{id}/download', [TaskController::class, 'download'])->name('tasks.download');
+    Route::post('/tasks/{id}/upload-on-behalf', [TaskController::class, 'uploadOnBehalf'])->name('tasks.uploadOnBehalf');
     // 5. نظام الإشعارات (Notifications)
     Route::get('/notifications/{id}/accept', [TeamController::class, 'acceptInvite'])->name('notifications.accept');
     Route::get('/notifications/{id}/reject', [TeamController::class, 'rejectInvite'])->name('notifications.reject');

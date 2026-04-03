@@ -501,20 +501,38 @@ class StaffController extends Controller
                 ->get();
         }
 
-        // 4. التاسكات
+        // 4. التاسكات والتاريخ
+        $tasksHistory = $team->tasks->where('status', 'completed')->groupBy('title');
         $myTasks = $team->tasks;
         $canReport = false;
+        
+        // 5. باقي الأقسام
+        $components = \App\Models\ProjectComponent::where('team_id', $team->id)->latest()->get();
+        $workshops = \App\Models\Workshop::where('team_id', $team->id)->with('creator')->latest()->get();
+        $pendingMembers = collect();
+        $membersDebts = [];
+        $myMemberRecord = $team->members->where('user_id', Auth::id())->first();
+        $needsSubLeaderSetup = false;
+        $availableMembers = collect();
 
         return view('final_project.dashboard', compact(
             'team',
             'project',
             'isViewAs',
             'myRole',
-            'fundsHistory',     // ✅ دي بتشغل مودال الـ Funds History
-            'expensesHistory',  // ✅ دي زيادة عشان لو عايز تعرض المصاريف في مكان تاني
+            'fundsHistory',
+            'expensesHistory',
             'activeFund',
             'canReport',
-            'myTasks'
+            'myTasks',
+            'tasksHistory',
+            'components',
+            'workshops',
+            'pendingMembers',
+            'membersDebts',
+            'myMemberRecord',
+            'needsSubLeaderSetup',
+            'availableMembers'
         ));
     }
 
