@@ -218,5 +218,34 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                 </div>
             </div>
         @endif
+
+        {{-- Leader Actions Section (Strictly for Leader only) --}}
+        @if($myRole === 'leader')
+            <div class="mt-5 pt-3 border-t border-gray-50 flex items-center justify-end gap-4">
+                {{-- 1. Delete File Only --}}
+                @if($task->submission_file || $task->submission_value || in_array($task->status, ['reviewing', 'completed']))
+                    <form action="{{ route('tasks.deleteSubmission', $task->id) }}" method="POST" 
+                        onsubmit="return confirm('⚠️ RESTORE STATUS?\nThis will delete the submitted file/link and revert the member to their previous state (Pending or Rejected). Continue?')">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" 
+                            class="text-[10px] font-black uppercase tracking-widest text-amber-600 hover:text-amber-700 transition-colors flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-amber-50">
+                            <i class="fas fa-file-signature"></i> Delete File
+                        </button>
+                    </form>
+                @endif
+
+                {{-- 2. Delete Task Fully --}}
+                <form action="{{ route('tasks.destroy', $task->id) }}" method="POST" 
+                    onsubmit="return confirm('🚫 DELETE TASK?\nThis will remove the task entirely from the member. This cannot be undone. Continue?')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" 
+                        class="text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-red-700 transition-colors flex items-center gap-1.5 py-1 px-2 rounded-lg hover:bg-red-50">
+                        <i class="fas fa-trash-alt"></i> Delete Task
+                    </button>
+                </form>
+            </div>
+        @endif
     </div>
 </div>

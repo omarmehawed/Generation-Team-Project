@@ -1375,7 +1375,7 @@
             </div>
 
             {{-- 2. لوحة المهام المقسمة (Split Tasks Board) --}}
-            <div id="tasks-section" x-data="{ expanded: false }"
+            <div id="tasks-section" x-data="{ expanded: false, taskSearchQuery: '' }"
                 class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift relative mt-10">
                 <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition-colors">
                     <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
@@ -1389,6 +1389,28 @@
                 
                 {{-- Collapsible Body --}}
                 <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;">
+                    
+                    {{-- 🕵️ SEARCH BAR (For Leaders/Vice Leaders) --}}
+                    @if($myRole === 'leader' || $myRole === 'vice_leader')
+                        <div class="px-8 py-5 bg-white border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div class="relative flex-1 max-w-xl">
+                                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                    <i class="fas fa-search text-gray-400 text-sm"></i>
+                                </div>
+                                <input type="text" x-model="taskSearchQuery" 
+                                    placeholder="Search member by Name or Academic ID (e.g. 2420823)..."
+                                    class="w-full pl-11 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:bg-white focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm outline-none font-medium">
+                                <button x-show="taskSearchQuery" @click="taskSearchQuery = ''" 
+                                    class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 transition-colors">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
+                                <i class="fas fa-filter text-orange-400"></i>
+                                <span>Showing: <span class="font-bold text-gray-800" x-text="taskSearchQuery ? 'Filtered Results' : 'All Members'"></span></span>
+                            </div>
+                        </div>
+                    @endif
 
                 {{-- تجهيز المتغيرات عشان نتفادى مشاكل الحروف الكابيتال والسمول --}}
                 @php
@@ -1430,8 +1452,17 @@
                         @endphp
                         <div class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($softMembers as $member)
-                                @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
+                                @php 
+                                    $memberTasks = $team->tasks->where('user_id', $member->user_id);
+                                    $academicId = explode('@', $member->user->university_email ?? $member->user->email)[0];
+                                @endphp
                                 <div
+                                    x-show="taskSearchQuery === '' || 
+                                           '{{ strtolower($member->user->name) }}'.includes(taskSearchQuery.toLowerCase()) || 
+                                           '{{ $academicId }}'.includes(taskSearchQuery)"
+                                    x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0 transform scale-95"
+                                    x-transition:enter-end="opacity-100 transform scale-100"
                                     class="bg-white rounded-xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition">
                                     <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-50">
                                         <img class="w-8 h-8 rounded-full"

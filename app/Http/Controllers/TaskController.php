@@ -409,12 +409,62 @@ class TaskController extends Controller
         return redirect($task->submission_file);
     }
 
-    // 6. حذف المهمة
+    // 6. حذف المهمة بالكامل (ليدر فقط)
     public function destroy($id)
     {
         $task = Task::findOrFail($id);
+        
+        // التحقق من الصلاحيات (ليدر التيم فقط)
+        $currentMember = \App\Models\TeamMember::where('team_id', $task->team_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$currentMember || $currentMember->role !== 'leader') {
+            return back()->with('error', 'Unauthorized: Only the Team Leader can delete tasks. ❌');
+        }
+
         $task->delete();
-        return back()->with('success', 'Task deleted');
+        return back()->with('success', 'Task deleted successfully! 🗑️');
+    }
+
+    // 6.5 حذف ملف التسليم فقط (ليدر فقط)
+    public function deleteSubmission($id)
+    {
+        $task = Task::findOrFail($id);
+
+        // التحقق من الصلاحيات (ليدر التيم فقط)
+        $currentMember = \App\Models\TeamMember::where('team_id', $task->team_id)
+            ->where('user_id', Auth::id())
+            ->first();
+
+        if (!$currentMember || $currentMember->role !== 'leader') {
+            return back()->with('error', 'Unauthorized: Only the Team Leader can delete submissions. ❌');
+        }
+
+        // مسح الملف من الاستورج لو موجود
+        if ($task->submission_file) {
+            $filePath = str_replace(config('filesystems.disks.r2.url') . '/', '', $task->submission_file);
+            Storage::disk('r2')->delete($filePath);
+        }
+
+        // تحديد الحالة اللي هيرجع لها
+        // لو كان فيه ریجكشن فيدباك (يعني كان مرفوض قبل كدة) يرجع لـ Rejected
+        // غير كدة يرجع لـ Pending
+        $newStatus = $task->rejection_feedback ? 'rejected' : 'pending';
+
+        // تصفير بيانات التسليم
+        $task->update([
+            'submission_type' => null,
+            'submission_file' => null,
+            'submission_value' => null,
+            'submission_comment' => null,
+            'submitted_at' => null,
+            'status' => $newStatus,
+            'graded_at' => null,
+            'graded_by' => null,
+        ]);
+
+        return back()->with('success', 'Submission deleted! Member status reverted to: ' . ucfirst($newStatus) . ' 🔙');
     }
 
     // 7. الرفع بالنيابة (Upload on Behalf)
@@ -459,10 +509,10 @@ class TaskController extends Controller
                 'submission_type' => 'file',
                 'submission_file' => $path,
                 'submission_comment' => $request->submission_comment . ' (Uploaded by ' . $currentUser->name . ')',
-                'status' => 'completed', // Automatically complete if leader uploads? Or stay reviewing? 
+                'status' => 'reviewing', 
                 'submitted_at' => now(),
-                'graded_at' => now(),
-                'graded_by' => $currentUser->id
+                'graded_at' => null,
+                'graded_by' => null
             ]);
 
             // Create Log
@@ -472,9 +522,9 @@ class TaskController extends Controller
                 'submission_type' => 'file',
                 'submission_file' => $path,
                 'submission_comment' => $request->submission_comment . ' (Uploaded by Leader: ' . $currentUser->name . ')',
-                'status' => 'completed',
-                'reviewed_by' => $currentUser->id,
-                'reviewed_at' => now()
+                'status' => 'reviewing',
+                'reviewed_by' => null,
+                'reviewed_at' => null
             ]);
 
             return back()->with('success', 'File uploaded on behalf of member successfully! ✅');
