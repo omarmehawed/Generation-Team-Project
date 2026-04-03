@@ -26,17 +26,17 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
             : 'bg-gray-200')) }}">
         </div>
 
-        <div class="flex justify-between items-start pl-3">
+        <div class="flex flex-col sm:flex-row justify-between items-start gap-4 pl-3">
 
             {{--
             #############################################
             # 📝 SECTION 1: TASK INFO (Title & Meta) #
             #############################################
             --}}
-            <div class="flex-1 pr-4">
+            <div class="flex-1 w-full sm:w-auto">
                 {{-- Title --}}
                 <h4
-                    class="text-sm font-bold text-gray-800 leading-snug {{ $task->status == 'completed' ? 'line-through text-gray-400 decoration-gray-300' : '' }}">
+                    class="text-sm font-bold text-gray-800 leading-relaxed mb-1 break-words line-clamp-3 lg:line-clamp-none {{ $task->status == 'completed' ? 'line-through text-gray-400 decoration-gray-300' : '' }}">
                     {{ $task->title }}
                 </h4>
 
@@ -128,7 +128,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
 
                 {{-- [CASE B]: Leader/Vice -> Review Process --}}
                 @elseif($task->status == 'reviewing' && ($myRole == 'leader' || $myRole == 'vice_leader'))
-                    <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded-full border border-gray-100">
+                    <div class="flex flex-wrap items-center gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-100 shadow-sm mt-2 sm:mt-0">
 
                         {{-- 1. View File --}}
                         @if ($task->submission_file)

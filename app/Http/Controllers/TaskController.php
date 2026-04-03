@@ -122,8 +122,17 @@ class TaskController extends Controller
 
     public function submit(Request $request, $id) // لاحظ ضفت $id هنا عشان الراوت بيبعته
     {
-        // 1. دمج الـ ID اللي جاي من الرابط مع الريكويست
-        $request->merge(['task_id' => $id]);
+        // 2. التحقق من أخطاء الرفع الأساسية قبل الـ Validation (عشان نشخص المشكلة لو سيرفر Railway رافض الحجم)
+        if ($request->hasFile('submission_file') && !$request->file('submission_file')->isValid()) {
+            $error = $request->file('submission_file')->getErrorMessage();
+            $errorCode = $request->file('submission_file')->getError();
+            \Illuminate\Support\Facades\Log::error("File upload failed before validation: " . $error . " (Code: " . $errorCode . ")");
+            
+            if ($errorCode === UPLOAD_ERR_INI_SIZE || $errorCode === UPLOAD_ERR_FORM_SIZE) {
+                return back()->with('error', 'The file is too large for the server. Maximum allowed: ' . ini_get('upload_max_filesize'));
+            }
+            return back()->with('error', 'File upload failed: ' . $error);
+        }
 
         // 2. التحقق الذكي (Smart Validation)
         $validated = $request->validate([
@@ -138,7 +147,7 @@ class TaskController extends Controller
             'submission_comment' => 'nullable|string|max:2000'
         ], [
             'submission_file.max' => 'The file size cannot exceed 1GB.',
-            'submission_file.uploaded' => 'The file failed to upload. Ensure it is under 1GB and your server allows large uploads.',
+            'submission_file.uploaded' => 'The file failed to upload. Ensure it is under 1GB and your server allows large uploads. (Check PHP upload_max_filesize)',
         ]);
 
         try {

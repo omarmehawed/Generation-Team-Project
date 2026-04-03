@@ -1728,21 +1728,41 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                     <div class="p-6 space-y-4 bg-white">
 
-                        {{-- 👇 2. أزرار التبديل (Tabs) --}}
+                        {{-- 👆 2. أزرار التبديل (Tabs) --}}
                         <div class="flex p-1 bg-gray-100 rounded-xl mb-4">
                             <button type="button" @click="type = 'file'"
-                                :class="{ 'bg-white text-green-700 shadow-sm': type === 'file', 'text-gray-500 hover:text-gray-700': type !== 'file' }"
-                                class="flex-1 py-2 text-xs font-bold rounded-lg transition-all duration-200">
-                                <i class="fas fa-file-alt mr-1"></i> Upload File
+                                :class="{ 'bg-blue-600 text-white shadow-md shadow-blue-200': type === 'file', 'text-gray-500 hover:text-gray-700': type !== 'file' }"
+                                class="flex-1 py-3 text-xs font-black rounded-lg transition-all duration-200 uppercase tracking-widest">
+                                <i class="fas fa-file-pdf mr-1"></i> PDF / Archive
                             </button>
-
+                            <button type="button" @click="type = 'link'"
+                                :class="{ 'bg-blue-600 text-white shadow-md shadow-blue-200': type === 'link', 'text-gray-500 hover:text-gray-700': type !== 'link' }"
+                                class="flex-1 py-3 text-xs font-black rounded-lg transition-all duration-200 uppercase tracking-widest">
+                                <i class="fas fa-link mr-1"></i> Submission Link
+                            </button>
                         </div>
 
                         {{-- 3. منطقة رفع الملف (تظهر فقط لما نختار File) --}}
                         <div x-show="type === 'file'" x-transition>
-                            <label class="block text-xs font-bold text-gray-700 mb-2">Upload File</label>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Upload Submission File (Max 1GB)</label>
                             <input type="file" name="submission_file" :required="type === 'file'"
-                                class="w-full text-xs text-gray-500 border rounded-lg p-2 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                                class="w-full text-xs text-gray-500 border rounded-lg p-2 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition shadow-sm">
+                            <p class="text-[10px] text-gray-400 mt-2 italic flex items-center gap-1">
+                                <i class="fas fa-info-circle"></i> Supported: PDF, ZIP, RAR, Images, Docs.
+                            </p>
+                        </div>
+
+                        {{-- 4. منطقة اللينك (تظهر فقط لما نختار Link) --}}
+                        <div x-show="type === 'link'" x-transition>
+                            <label class="block text-xs font-bold text-gray-700 mb-2">Submission Link (Drive/GitHub)</label>
+                            <div class="relative">
+                                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <i class="fas fa-link text-gray-400"></i>
+                                </div>
+                                <input type="url" name="link" :required="type === 'link'"
+                                    class="w-full pl-10 border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition text-sm outline-none"
+                                    placeholder="https://docs.google.com/...">
+                            </div>
                         </div>
 
 
