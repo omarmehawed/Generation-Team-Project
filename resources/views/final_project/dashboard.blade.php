@@ -1390,9 +1390,19 @@
                 {{-- Collapsible Body --}}
                 <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;">
                     
-                    {{-- 🕵️ SEARCH BAR (For Leaders/Vice Leaders) --}}
-                    @if($myRole === 'leader' || $myRole === 'vice_leader')
-                        <div class="px-8 py-5 bg-white border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                {{-- تجهيز المتغيرات عشان نتفادى مشاكل الحروف الكابيتال والسمول --}}
+                @php
+                    $myTechRole = strtolower($myMemberRecord->technical_role ?? ''); // بنحولها حروف صغيرة
+                    $isLeader = $myRole === 'leader';
+                    $isSoftVice = $myRole === 'vice_leader' && $myTechRole === 'software';
+                    $isHardVice = $myRole === 'vice_leader' && $myTechRole === 'hardware';
+                    $isDualView = $isLeader || ($myRole === 'vice_leader' && $myTechRole === 'general');
+                @endphp
+
+                {{-- 🕵️ SEARCH BAR (For Leaders/Vice Leaders) --}}
+                @if($myRole === 'leader' || $myRole === 'vice_leader')
+                    <div class="px-8 py-5 bg-white border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex flex-col md:flex-row md:items-center gap-4 flex-1">
                             <div class="relative flex-1 max-w-xl">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                     <i class="fas fa-search text-gray-400 text-sm"></i>
@@ -1410,20 +1420,16 @@
                                 <span>Showing: <span class="font-bold text-gray-800" x-text="taskSearchQuery ? 'Filtered Results' : 'All Members'"></span></span>
                             </div>
                         </div>
-                    @endif
-
-                {{-- تجهيز المتغيرات عشان نتفادى مشاكل الحروف الكابيتال والسمول --}}
-                @php
-                    $myTechRole = strtolower($myMemberRecord->technical_role ?? ''); // بنحولها حروف صغيرة
-                    $isLeader = $myRole === 'leader';
-                    $isSoftVice = $myRole === 'vice_leader' && $myTechRole === 'software';
-                    $isHardVice = $myRole === 'vice_leader' && $myTechRole === 'hardware';
-                @endphp
-
-                {{-- Determine if we should show two columns (for Leaders or General Vice Leaders) --}}
-                @php
-                    $isDualView = $isLeader || ($myRole === 'vice_leader' && $myTechRole === 'general');
-                @endphp
+                        
+                        @if($isLeader)
+                            <a href="{{ route('tasks.export', ['team_id' => $team->id]) }}" 
+                               class="inline-flex items-center gap-2 bg-green-50 text-green-700 px-5 py-3 rounded-2xl border border-green-100 hover:bg-green-600 hover:text-white transition-all duration-300 font-bold text-xs uppercase tracking-widest shadow-sm active:scale-95">
+                                <i class="fas fa-file-excel text-base"></i>
+                                Export Excel Sheet
+                            </a>
+                        @endif
+                    </div>
+                @endif
 
                 <div class="grid grid-cols-1 {{ $isDualView ? 'lg:grid-cols-2 divide-gray-100 lg:divide-x' : '' }}">
 
@@ -1520,10 +1526,18 @@
 
                             {{-- زرار الهاردوير: يظهر لليدر أو نائب الهاردوير --}}
                             @if ($isLeader || $isHardVice)
-                                <button onclick="openAddTaskModal('hardware')"
-                                    class="text-xs bg-orange-600 text-white px-3 py-1.5 rounded-lg shadow hover:bg-orange-700 transition font-bold hover:scale-105 transform">
-                                    <i class="fas fa-plus"></i> Assign
-                                </button>
+                                <div class="flex items-center gap-2">
+                                    @if($isLeader)
+                                        <button onclick="openBulkDeleteModal('hardware')"
+                                            class="text-[10px] bg-red-50 text-red-600 px-3 py-1.5 rounded-lg border border-red-100 hover:bg-red-600 hover:text-white transition font-black uppercase tracking-wider shadow-sm">
+                                            <i class="fas fa-trash-alt"></i> Delete
+                                        </button>
+                                    @endif
+                                    <button onclick="openAddTaskModal('hardware')"
+                                        class="text-xs bg-orange-600 text-white px-3 py-1.5 rounded-lg shadow hover:bg-orange-700 transition font-bold hover:scale-105 transform">
+                                        <i class="fas fa-plus"></i> Assign
+                                    </button>
+                                </div>
                             @endif
                         </div>
 
@@ -1535,8 +1549,17 @@
                         @endphp
                         <div class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($hardMembers as $member)
-                                @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
+                                @php 
+                                    $memberTasks = $team->tasks->where('user_id', $member->user_id);
+                                    $academicId = explode('@', $member->user->university_email ?? $member->user->email)[0];
+                                @endphp
                                 <div
+                                    x-show="taskSearchQuery === '' || 
+                                           '{{ strtolower($member->user->name) }}'.includes(taskSearchQuery.toLowerCase()) || 
+                                           '{{ $academicId }}'.includes(taskSearchQuery)"
+                                    x-transition:enter="transition ease-out duration-300"
+                                    x-transition:enter-start="opacity-0 transform scale-95"
+                                    x-transition:enter-end="opacity-100 transform scale-100"
                                     class="bg-white rounded-xl p-4 border border-orange-100 shadow-sm hover:shadow-md transition">
                                     <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-50">
                                         <img class="w-8 h-8 rounded-full"
@@ -3566,12 +3589,19 @@
         openModal('markAttendanceModal');
     }
 
-    const teamMembers = @json(isset($team) && $team
+    @php
+        $membersData = (isset($team) && $team)
             ? $team->members->map(function ($m) {
-                return ['id' => $m->user->id, 'name' => $m->user->name, 'tech' => strtolower($m->technical_role ?? '')];
-            })
-            : []
-    );
+                return [
+                    'id' => $m->user->id, 
+                    'name' => $m->user->name, 
+                    'tech' => strtolower($m->technical_role ?? ''),
+                    'is_sub_leader' => (bool)$m->is_sub_leader
+                ];
+            })->values()
+            : [];
+    @endphp
+    const teamMembers = @json($membersData);
     const currentUserRole = "{{ $myRole }}";
     const currentUserTech = "{{ strtolower($myMember->technical_role ?? '') }}";
 
@@ -3635,6 +3665,21 @@
         
         // Get all members of current team type
         const filtered = teamMembers.filter(m => m.tech === data.teamType);
+        
+        // Add them (avoiding duplicates)
+        filtered.forEach(member => {
+            if (!data.selectedTaskMembers.some(m => m.id == member.id)) {
+                data.selectedTaskMembers.push(member);
+            }
+        });
+    }
+
+    function assignSubLeadersToTask(domain) {
+        const modal = document.getElementById('addTaskModal');
+        const data = Alpine.$data(modal);
+        
+        // Get all sub leaders of target domain
+        const filtered = teamMembers.filter(m => m.tech === domain && m.is_sub_leader);
         
         // Add them (avoiding duplicates)
         filtered.forEach(member => {
@@ -3728,6 +3773,33 @@
         form.action = `/tasks/${taskId}/upload-on-behalf`;
         document.getElementById('uploadBehalfMemberName').innerText = userName;
         openModal('uploadOnBehalfModal');
+    }
+
+    // Modern Confirmation Helper
+    function confirmTaskAction(formId, title, text, icon = 'warning') {
+        Swal.fire({
+            title: title || 'Are you sure?',
+            text: text || "You won't be able to revert this!",
+            icon: icon,
+            showCancelButton: true,
+            confirmButtonColor: '#ff4d4d',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Yes, proceed!',
+            cancelButtonText: 'Cancel',
+            padding: '2rem',
+            background: '#fff',
+            borderRadius: '1.5rem',
+            customClass: {
+                title: 'font-black text-gray-900',
+                popup: 'rounded-3xl shadow-2xl',
+                confirmButton: 'rounded-xl px-8 py-3 font-bold uppercase tracking-wider text-xs',
+                cancelButton: 'rounded-xl px-8 py-3 font-bold uppercase tracking-wider text-xs'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                document.getElementById(formId).submit();
+            }
+        });
     }
 
     // 6. Visual Effects

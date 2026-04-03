@@ -99,6 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/tasks/{id}/submission', [TaskController::class, 'deleteSubmission'])->name('tasks.deleteSubmission');
     Route::get('/tasks/{id}/download', [TaskController::class, 'download'])->name('tasks.download');
     Route::delete('/tasks/bulk-delete', [TaskController::class, 'bulkDestroy'])->name('tasks.bulkDestroy');
+    Route::get('/tasks/export', [TaskController::class, 'exportReport'])->name('tasks.export');
     Route::post('/tasks/{id}/upload-on-behalf', [TaskController::class, 'uploadOnBehalf'])->name('tasks.uploadOnBehalf');
     // 5. نظام الإشعارات (Notifications)
     Route::get('/notifications/{id}/accept', [TeamController::class, 'acceptInvite'])->name('notifications.accept');

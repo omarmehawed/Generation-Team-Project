@@ -1632,6 +1632,24 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                 <i class="fas fa-users-cog text-sm"></i>
                                 Assign to All <span x-text="teamType"></span> Team
                             </button>
+
+                            {{-- Sub Leaders Options (Domain Specific) --}}
+                            <div class="mt-3 grid grid-cols-2 gap-3">
+                                @if($isLeader || $isSoftVice || ($myRole === 'vice_leader' && $myTechRole === 'general'))
+                                    <button type="button" @click="assignSubLeadersToTask('software')"
+                                        class="bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl font-black text-[9px] uppercase tracking-wider shadow transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+                                        <i class="fas fa-star text-xs"></i> Sub Leaders Soft
+                                    </button>
+                                @endif
+
+                                @if($isLeader || $isHardVice || ($myRole === 'vice_leader' && $myTechRole === 'general'))
+                                    <button type="button" @click="assignSubLeadersToTask('hardware')"
+                                        class="bg-purple-600 hover:bg-purple-700 text-white py-2.5 rounded-xl font-black text-[9px] uppercase tracking-wider shadow transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-1.5">
+                                        <i class="fas fa-star text-xs"></i> Sub Leaders Hard
+                                    </button>
+                                @endif
+                            </div>
+
                             <div class="relative flex py-3 items-center">
                                 <div class="flex-grow border-t border-gray-100"></div>
                                 <span class="flex-shrink mx-4 text-[10px] font-bold text-gray-300 uppercase">OR SELECT

@@ -566,4 +566,28 @@ class TaskController extends Controller
 
         return back()->with('warning', "No tasks found with the title '{$request->title}' in the {$request->technical_role} category.");
     }
+
+    // 9. تصدير تقرير الإكسل (ليدر فقط)
+    public function exportReport(Request $request)
+    {
+        $teamId = $request->query('team_id');
+        
+        if (!$teamId) {
+            return back()->with('error', 'Team ID is required for export.');
+        }
+
+        // 🛡️ التأكد أن المستخدم هو الليدر
+        $currentMember = \App\Models\TeamMember::where('team_id', $teamId)
+            ->where('user_id', \Illuminate\Support\Facades\Auth::id())
+            ->first();
+
+        if (!$currentMember || $currentMember->role !== 'leader') {
+            return back()->with('error', 'Unauthorized: Only the Team Leader can export reports. 🚫');
+        }
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\TaskExport($teamId), 
+            'TaskStatusReport_' . date('Y-m-d') . '.xlsx'
+        );
+    }
 }
