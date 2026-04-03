@@ -1398,7 +1398,12 @@
                     $isHardVice = $myRole === 'vice_leader' && $myTechRole === 'hardware';
                 @endphp
 
-                <div class="grid grid-cols-1 {{ ($isLeader || ($myRole === 'vice_leader' && $myTechRole === 'general')) ? 'xl:grid-cols-2 divide-x' : '' }} divide-y xl:divide-y-0 divide-gray-100">
+                {{-- Determine if we should show two columns (for Leaders or General Vice Leaders) --}}
+                @php
+                    $isDualView = $isLeader || ($myRole === 'vice_leader' && $myTechRole === 'general');
+                @endphp
+
+                <div class="grid grid-cols-1 {{ $isDualView ? 'lg:grid-cols-2 divide-gray-100 lg:divide-x' : '' }}">
 
                     {{-- 💻 الجزء الأول: Software Team --}}
                     @if($isLeader || $isSoftVice || ($myRole === 'vice_leader' && $myTechRole === 'general') || ($myRole === 'member' && $myTechRole === 'software'))
@@ -1423,7 +1428,7 @@
                                 $softMembers = $softMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div class="space-y-4 max-h-[600px] overflow-y-auto custom-scroll pr-1">
+                        <div class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($softMembers as $member)
                                 @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
                                 <div
@@ -1454,7 +1459,13 @@
                             @endforeach
 
                             @if ($softMembers->count() == 0)
-                                <p class="text-center text-xs text-gray-400 py-4">No Software members assigned yet.</p>
+                                <div class="col-span-full text-center py-12 bg-white/50 rounded-2xl border-2 border-dashed border-blue-100">
+                                    <div class="w-16 h-16 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-4 text-blue-300">
+                                        <i class="fas fa-users-slash text-2xl"></i>
+                                    </div>
+                                    <p class="text-sm text-blue-800 font-bold">No Software members assigned yet.</p>
+                                    <p class="text-[10px] text-blue-400 mt-1">Assign tasks to members to see them here.</p>
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -1483,7 +1494,7 @@
                                 $hardMembers = $hardMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div class="space-y-4 max-h-[600px] overflow-y-auto custom-scroll pr-1">
+                        <div class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($hardMembers as $member)
                                 @php $memberTasks = $team->tasks->where('user_id', $member->user_id); @endphp
                                 <div
@@ -1514,7 +1525,13 @@
                             @endforeach
 
                             @if ($hardMembers->count() == 0)
-                                <p class="text-center text-xs text-gray-400 py-4">No Hardware members assigned yet.</p>
+                                <div class="col-span-full text-center py-12 bg-white/50 rounded-2xl border-2 border-dashed border-orange-100">
+                                    <div class="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mx-auto mb-4 text-orange-300">
+                                        <i class="fas fa-microchip text-2xl"></i>
+                                    </div>
+                                    <p class="text-sm text-orange-800 font-bold">No Hardware members assigned yet.</p>
+                                    <p class="text-[10px] text-orange-400 mt-1">Hardware tasks will appear here when assigned.</p>
+                                </div>
                             @endif
                         </div>
                     </div>

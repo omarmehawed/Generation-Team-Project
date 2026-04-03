@@ -107,14 +107,24 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                         <div class="absolute inset-0 bg-white/20 translate-y-full group-hover/btn:translate-y-0 transition-transform duration-300"></div>
                     </button>
                     
-                {{-- [CASE A2]: Member -> Edit Submission (Reviewing or Completed) --}}
+                {{-- [CASE A2]: Member -> View & Edit Submission (Reviewing or Completed) --}}
                 @elseif(in_array($task->status, ['reviewing', 'completed']) && Auth::id() == $task->user_id)
-                    <button onclick="openSubmitTaskModal('{{ $task->id }}', '{{ addslashes($task->title) }}')"
-                        class="group/btn relative overflow-hidden bg-white border border-gray-200 text-gray-700 hover:text-indigo-600 hover:border-indigo-300 text-[10px] font-bold px-3 py-2 rounded-xl transition-all hover:bg-indigo-50 active:scale-95">
-                        <span class="relative z-10 flex items-center gap-1.5">
-                            <i class="fas fa-edit"></i> Edit Submission
-                        </span>
-                    </button>
+                    <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-100">
+                        @if ($task->submission_file || $task->submission_value)
+                            <a href="{{ $task->submission_file ?? $task->submission_value }}" target="_blank"
+                                class="w-8 h-8 flex items-center justify-center rounded-full text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
+                                title="View My Submission">
+                                <i class="fas fa-eye text-xs"></i>
+                            </a>
+                            <div class="w-px h-4 bg-gray-200"></div>
+                        @endif
+                        
+                        <button onclick="openSubmitTaskModal('{{ $task->id }}', '{{ addslashes($task->title) }}')"
+                            class="text-[10px] font-bold px-3 py-2 text-gray-700 hover:text-indigo-600 transition-colors"
+                            title="Edit Submission">
+                            <i class="fas fa-edit"></i> Edit
+                        </button>
+                    </div>
 
                 {{-- [CASE B]: Leader/Vice -> Review Process --}}
                 @elseif($task->status == 'reviewing' && ($myRole == 'leader' || $myRole == 'vice_leader'))
@@ -154,11 +164,11 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                         </button>
                     </div>
 
-                {{-- [CASE B2]: Leader/Vice -> Upload on Behalf (Pending/Rejected) --}}
-                @elseif(in_array($task->status, ['pending', 'rejected']) && ($myRole == 'leader' || $myRole == 'vice_leader'))
+                {{-- [CASE B2]: Leader/Vice -> Upload on Behalf (Pending, Rejected, or Late Reviewing) --}}
+                @elseif((in_array($task->status, ['pending', 'rejected']) || ($task->status == 'reviewing' && $task->is_submitted_late)) && ($myRole == 'leader' || $myRole == 'vice_leader'))
                     <button type="button" onclick="openUploadOnBehalfModal('{{ $task->id }}', '{{ addslashes($task->user->name) }}')"
-                        class="text-[9px] bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-100 font-bold transition flex items-center gap-1.5 active:scale-95">
-                        <i class="fas fa-user-plus"></i> Upload for Mem
+                        class="text-[9px] bg-indigo-50 text-indigo-600 hover:bg-indigo-600 hover:text-white px-3 py-1.5 rounded-lg border border-indigo-100 font-bold transition flex items-center gap-1.5 active:scale-95 shadow-sm">
+                        <i class="fas fa-user-plus text-[8px]"></i> Upload for Mem
                     </button>
 
                 {{-- [CASE C]: Completed State for Admin --}}
