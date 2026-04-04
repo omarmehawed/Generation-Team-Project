@@ -2029,13 +2029,15 @@ class FinalProjectController extends Controller
 
         $request->validate([
             'team_id' => 'required|exists:teams,id',
-            'columns' => 'required|array|min:1'
+            'columns' => 'required|array|min:1',
+            'technical_role' => 'nullable|string|in:all,software,hardware'
         ]);
 
-        $fileName = 'team_members.xlsx';
+        $technicalRole = $request->input('technical_role', 'all');
+        $fileName = 'team_members' . ($technicalRole !== 'all' ? '_' . $technicalRole : '') . '.xlsx';
 
         return \Maatwebsite\Excel\Facades\Excel::download(
-            new \App\Exports\MembersExport($request->columns, $request->team_id),
+            new \App\Exports\MembersExport($request->columns, $request->team_id, $technicalRole),
             $fileName
         );
     }

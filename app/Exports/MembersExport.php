@@ -11,16 +11,23 @@ class MembersExport implements FromCollection, WithHeadings, WithMapping
 {
     protected $columns;
     protected $teamId;
+    protected $technicalRole;
 
-    public function __construct(array $columns, $teamId)
+    public function __construct(array $columns, $teamId, $technicalRole = 'all')
     {
         $this->columns = $columns;
         $this->teamId = $teamId;
+        $this->technicalRole = $technicalRole;
     }
 
     public function collection()
     {
         $query = TeamMember::with('user')->where('team_id', $this->teamId);
+
+        if ($this->technicalRole && $this->technicalRole !== 'all') {
+            $query->where('technical_role', $this->technicalRole);
+        }
+
         return $query->get();
     }
 

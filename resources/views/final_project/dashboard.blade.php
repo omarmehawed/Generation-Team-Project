@@ -1464,7 +1464,7 @@
                                 $softMembers = $softMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
+                        <div id="software-tasks-area" class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($softMembers as $member)
                                 @php 
                                     $memberTasks = $team->tasks->where('user_id', $member->user_id);
@@ -1547,7 +1547,7 @@
                                 $hardMembers = $hardMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
+                        <div id="hardware-tasks-area" class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($hardMembers as $member)
                                 @php 
                                     $memberTasks = $team->tasks->where('user_id', $member->user_id);
@@ -3692,6 +3692,7 @@
     function openSubmitTaskModal(taskId, title) {
         document.getElementById('submitTaskTitle').innerText = title;
         document.getElementById('submissionForm').action = "/tasks/" + taskId + "/submit";
+        document.getElementById('submitTaskId').value = taskId;
         openModal('submitTaskModal');
     }
 
@@ -3737,14 +3738,10 @@
         
         titleSelect.innerHTML = '<option value="">Searching tasks...</option>';
         
-        const section = document.getElementById('tasks-section');
-        if (!section) return;
-
         const titles = new Set();
-        // Find task titles in the correct sub-section
-        const searchAreaIndex = role === 'software' ? 0 : 1;
-        const columns = section.querySelectorAll('.grid.grid-cols-1 > div');
-        const searchArea = columns[searchAreaIndex];
+        // Find task titles in the correct sub-section using explicit IDs
+        const searchAreaId = role === 'software' ? 'software-tasks-area' : 'hardware-tasks-area';
+        const searchArea = document.getElementById(searchAreaId);
         
         if (searchArea) {
             searchArea.querySelectorAll('h4.text-sm.font-bold').forEach(h4 => {
@@ -3896,7 +3893,34 @@
             <input type="hidden" name="team_id" value="{{ $team->id }}">
             <input type="hidden" name="group_id" value="all" id="exportGroupId">
 
-            <p class="text-sm border-l-4 border-green-500 bg-green-50 p-3 rounded text-green-800 mb-6 font-semibold" id="exportGroupText">Exporting entire team.</p>
+            <div class="mb-6">
+                <label class="font-bold text-gray-700 mb-3 text-sm flex items-center gap-2">
+                    <i class="fas fa-layer-group text-green-500"></i> Select Team Scope:
+                </label>
+                <div class="grid grid-cols-3 gap-2">
+                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-green-300 transition-all cursor-pointer group">
+                        <input type="radio" name="technical_role" value="all" checked class="hidden peer">
+                        <div class="w-full h-full absolute inset-0 rounded-xl peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/50 pointer-events-none"></div>
+                        <i class="fas fa-users text-lg text-gray-400 group-hover:text-green-500 peer-checked:text-green-600 z-10"></i>
+                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 peer-checked:text-green-700 z-10">All Team</span>
+                    </label>
+
+                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-green-300 transition-all cursor-pointer group relative">
+                        <input type="radio" name="technical_role" value="software" class="hidden peer">
+                        <div class="w-full h-full absolute inset-0 rounded-xl peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/50 pointer-events-none"></div>
+                        <i class="fas fa-code text-lg text-gray-400 group-hover:text-green-500 peer-checked:text-green-600 z-10"></i>
+                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 peer-checked:text-green-700 z-10">Software</span>
+                    </label>
+
+                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-green-300 transition-all cursor-pointer group relative">
+                        <input type="radio" name="technical_role" value="hardware" class="hidden peer">
+                        <div class="w-full h-full absolute inset-0 rounded-xl peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/50 pointer-events-none"></div>
+                        <i class="fas fa-microchip text-lg text-gray-400 group-hover:text-green-500 peer-checked:text-green-600 z-10"></i>
+                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 peer-checked:text-green-700 z-10">Hardware</span>
+                    </label>
+                </div>
+                <p class="text-[10px] text-gray-400 mt-2 italic px-1" id="exportGroupText">Exporting entire team.</p>
+            </div>
 
             <div class="space-y-3 mb-8">
                 <label class="font-bold text-gray-700 block mb-2">Select Columns to Export:</label>

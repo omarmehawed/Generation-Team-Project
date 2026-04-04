@@ -1733,6 +1733,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 <form id="submissionForm" method="POST" enctype="multipart/form-data" class="space-y-4"
                     x-data="{ type: 'file' }">
                     @csrf
+                    <input type="hidden" name="task_id" id="submitTaskId">
 
                     {{-- 👇 1. حقل مخفي بيحدد نوع التسليم بناء على التاب المختار --}}
                     <input type="hidden" name="submission_type" x-model="type">
