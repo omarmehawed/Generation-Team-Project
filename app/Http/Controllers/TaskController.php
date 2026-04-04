@@ -122,6 +122,8 @@ class TaskController extends Controller
 
     public function submit(Request $request, $id) // لاحظ ضفت $id هنا عشان الراوت بيبعته
     {
+        // 🛠 Ensure task_id is present for validation (even if front-end is cached)
+        $request->merge(['task_id' => $id]);
         // 2. التحقق من أخطاء الرفع الأساسية قبل الـ Validation (عشان نشخص المشكلة لو سيرفر Railway رافض الحجم)
         if ($request->hasFile('submission_file') && !$request->file('submission_file')->isValid()) {
             $error = $request->file('submission_file')->getErrorMessage();
