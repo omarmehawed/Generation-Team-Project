@@ -60,7 +60,7 @@
                 @endif
 
                 @if($isLeader || $isGeneralVice || $isSoftwareVice || $isHardwareVice)
-                <a href="{{ route('evaluation.export', $team->id) }}" class="rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 text-sm font-medium shadow hover:bg-gray-200 dark:hover:bg-gray-700 transition">
+                <a href="{{ route('evaluation.export', ['team' => $team->id, 'period_id' => request('period_id')]) }}" class="rounded-xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 text-sm font-medium shadow hover:bg-gray-200 dark:hover:bg-gray-700 transition">
                     <i class="fas fa-file-csv mr-1"></i> Export Summary
                 </a>
                 @if($currentPeriod)
@@ -246,8 +246,18 @@
                                 <select name="team_filter" onchange="this.form.submit()" 
                                     class="rounded-xl border border-gray-300 dark:border-gray-700 bg-white dark:bg-[#0b1220] px-3 py-2 text-xs font-bold text-indigo-600 focus:ring-2 focus:ring-indigo-500 outline-none transition-all">
                                     <option value="">All Teams (Filter)</option>
-                                    @foreach($uniqueTeamNumbers as $tn)
-                                        <option value="{{ $tn }}" {{ ($currentTeamFilter ?? '') == $tn ? 'selected' : '' }}>Team {{ $tn }} Only</option>
+                                    @foreach($uniqueTeams as $ut)
+                                        @php
+                                            $val = $ut['number'] . '-' . $ut['role'];
+                                            $showOption = true;
+                                            if ($isSoftwareVice && $ut['role'] !== 'software') $showOption = false;
+                                            if ($isHardwareVice && $ut['role'] !== 'hardware') $showOption = false;
+                                        @endphp
+                                        @if($showOption)
+                                            <option value="{{ $val }}" {{ ($currentTeamFilter ?? '') == $val ? 'selected' : '' }}>
+                                                {{ $ut['label'] }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                             @endif

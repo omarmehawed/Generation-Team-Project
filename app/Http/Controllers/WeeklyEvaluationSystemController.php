@@ -59,8 +59,21 @@ class WeeklyEvaluationSystemController extends Controller
         // 1. Fetch ALL relevant items
         $allMembers = TeamMember::with('user')->where('team_id', $team->id)->get();
 
-        // Unique team numbers for the filter dropdown
-        $uniqueTeamNumbers = $allMembers->whereNotNull('team_number')->pluck('team_number')->unique()->sort()->values();
+        // Unique team numbers + technical role pairs for the filter dropdown
+        $uniqueTeams = $allMembers->whereNotNull('team_number')
+            ->map(function($m) {
+                return [
+                    'number' => $m->team_number,
+                    'role' => strtolower($m->technical_role ?? 'general'),
+                    'label' => 'Team ' . $m->team_number . ' ' . ucfirst($m->technical_role ?? 'General')
+                ];
+            })
+            ->unique(fn($item) => $item['number'] . '-' . $item['role'])
+            ->sort(function($a, $b) {
+                if ($a['number'] === $b['number']) return strcmp($a['role'], $b['role']);
+                return $a['number'] <=> $b['number'];
+            })
+            ->values();
 
         // 2. Filter Lists based on Role Visibility Rules
         if ($isLeader) {
@@ -105,7 +118,12 @@ class WeeklyEvaluationSystemController extends Controller
                          str_contains($userUniEmail, $q);
             }
             if ($match && $currentTeamFilter) {
-                $match = (string)$m->team_number === (string)$currentTeamFilter;
+                if (str_contains($currentTeamFilter, '-')) {
+                    [$tNumber, $tRole] = explode('-', $currentTeamFilter);
+                    $match = (string)$m->team_number === (string)$tNumber && strtolower($m->technical_role ?? 'general') === strtolower($tRole);
+                } else {
+                    $match = (string)$m->team_number === (string)$currentTeamFilter;
+                }
             }
             return $match;
         };
@@ -249,7 +267,7 @@ class WeeklyEvaluationSystemController extends Controller
             'team', 'allPeriods', 'currentPeriod', 'members', 'subLeaders', 'viceLeaders', 'workshops', 'tasks', 'meetings',
             'viewRole', 'stats', 'softwareStats', 'hardwareStats', 'isLeader', 'isGeneralVice', 'isSoftwareVice', 'isHardwareVice',
             'isSubLeader', 'myMember', 'myRole', 'allMembers', 'existingRecords', 'unassignedMembersFormatted', 'searchableMembers',
-            'uniqueTeamNumbers', 'currentSearch', 'currentTeamFilter'
+            'uniqueTeams', 'currentSearch', 'currentTeamFilter'
         ));
     }
 
@@ -435,7 +453,7 @@ class WeeklyEvaluationSystemController extends Controller
         return back()->with('success', "Week #{$period->week_number} has been finalized. A new week will start on next evaluation.");
     }
 
-    public function export(Team $team)
+    public function export(Request $request, Team $team)
     {
         $userId = Auth::id();
         $myMember = TeamMember::where('team_id', $team->id)->where('user_id', $userId)->firstOrFail();
@@ -444,32 +462,68 @@ class WeeklyEvaluationSystemController extends Controller
             return back()->with('error', 'Unauthorized.');
         }
 
-        $periods = WeeklyEvaluationPeriod::where('team_id', $team->id)->with(['records.evaluatee.user'])->get();
-
-        $rows = [];
-        $rows[] = ['Week', 'Member Name', 'Academic Number', 'Domain', 'Task Score (/10)', 'Workshop Score (/10)', 'Meeting Score (/10)', 'Total (/30)', 'Notes'];
-
-        foreach ($periods as $period) {
-            foreach ($period->records as $record) {
-                $member = $record->evaluatee;
-                $user = $member->user;
-                $academicNumber = ($user && $user->email) ? explode('@', $user->email)[0] : 'N/A';
-
-                $rows[] = [
-                    'Week ' . $period->week_number,
-                    $user->name ?? 'N/A',
-                    $academicNumber,
-                    ucfirst($member->technical_role ?? 'General'),
-                    number_format($record->total_task_score, 1),
-                    number_format($record->total_workshop_score, 1),
-                    number_format($record->total_meeting_score, 1),
-                    number_format($record->total_overall_score, 1),
-                    $record->general_notes ?? '',
-                ];
-            }
+        // Determine current period for context
+        $periodId = $request->query('period_id');
+        if ($periodId && $periodId !== 'null') {
+            $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->find($periodId);
+        } else {
+            $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->where('status', 'open')->first() 
+                      ?? WeeklyEvaluationPeriod::where('team_id', $team->id)->orderBy('week_number', 'desc')->first();
         }
 
-        $filename = 'weekly_evaluation_' . $team->name . '_' . now()->format('Y-m-d') . '.csv';
+        if (!$period) {
+            return back()->with('error', 'No evaluation period found to export.');
+        }
+
+        // 1. Fetch ALL members associated with this project
+        $allMembers = TeamMember::with('user')->where('team_id', $team->id)->get();
+
+        // 2. Filter members based on role visibility (Matching the index logic)
+        $myRole = $myMember->role;
+        $technicalRole = strtolower($myMember->technical_role ?? 'general');
+        $isLeader = $myRole === 'leader';
+        $isGeneralVice = $myRole === 'vice_leader' && $technicalRole === 'general';
+        $isSoftwareVice = $myRole === 'vice_leader' && $technicalRole === 'software';
+        $isHardwareVice = $myRole === 'vice_leader' && $technicalRole === 'hardware';
+
+        if ($isLeader || $isGeneralVice) {
+            $membersToExport = $allMembers;
+        } elseif ($isSoftwareVice || $isHardwareVice) {
+            $domain = $isSoftwareVice ? 'software' : 'hardware';
+            $membersToExport = $allMembers->filter(fn($m) => strtolower($m->technical_role) === $domain || $m->id === $myMember->id);
+        } else {
+            $membersToExport = collect([$myMember]);
+        }
+
+        // 3. Fetch existing records for this period to populate scores
+        $records = WeeklyEvaluationRecord::where('evaluation_period_id', $period->id)
+            ->get()
+            ->keyBy('evaluatee_id');
+
+        $rows = [];
+        $rows[] = ['Week', 'Member Name', 'Academic Number', 'Domain', 'Team #', 'Task (/10)', 'Workshop (/10)', 'Meeting (/10)', 'Total (/30)', 'Notes', 'Evaluation Status'];
+
+        foreach ($membersToExport as $member) {
+            $user = $member->user;
+            $academicNumber = ($user && $user->email) ? explode('@', $user->email)[0] : 'N/A';
+            $record = $records->get($member->id);
+
+            $rows[] = [
+                'Week ' . $period->week_number,
+                $user->name ?? 'N/A',
+                $academicNumber,
+                ucfirst($member->technical_role ?? 'General'),
+                $member->team_number ?? '-',
+                $record ? number_format($record->total_task_score, 1) : '0.0',
+                $record ? number_format($record->total_workshop_score, 1) : '0.0',
+                $record ? number_format($record->total_meeting_score, 1) : '0.0',
+                $record ? number_format($record->total_overall_score, 1) : '0.0',
+                $record->general_notes ?? '',
+                $record ? 'Evaluated' : 'Pending',
+            ];
+        }
+
+        $filename = 'weekly_eval_W' . $period->week_number . '_' . str_replace(' ', '_', $team->name) . '_' . now()->format('Ymd') . '.csv';
 
         $headers = [
             'Content-Type' => 'text/csv',
@@ -478,6 +532,8 @@ class WeeklyEvaluationSystemController extends Controller
 
         $callback = function () use ($rows) {
             $file = fopen('php://output', 'w');
+            // Add BOM for Excel UTF-8 support
+            fprintf($file, chr(0xEF).chr(0xBB).chr(0xBF));
             foreach ($rows as $row) {
                 fputcsv($file, $row);
             }
