@@ -24,11 +24,32 @@ class JoinRequestController extends Controller
     }
 
     /**
+     * Toggle the Join Request system status (ON/OFF).
+     */
+    public function toggleStatus(Request $request)
+    {
+        $this->authorizeAdminEmails();
+        
+        $status = $request->input('status', 'off');
+        \App\Models\Setting::set('join_request_enabled', $status);
+
+        return response()->json(['success' => true, 'status' => $status]);
+    }
+
+    /**
      * Show the form for creating a new resource.
      */
     public function create()
     {
-        return view('join_requests.create');
+        if (\App\Models\Setting::get('join_request_enabled', 'on') !== 'on') {
+            return redirect('/')->with('error', 'نعتذر، باب الانضمام مغلق حالياً. يرجى المتابعة لاحقاً.');
+        }
+
+        $questions = \App\Models\JoinRequestQuestion::where('is_active', true)
+            ->orderBy('order_priority')
+            ->get();
+
+        return view('join_requests.create', compact('questions'));
     }
 
     /**
@@ -98,12 +119,12 @@ class JoinRequestController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created Join Request
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            // Section 1: Basic Info
+        // 1. Basic Rules
+        $rules = [
             'full_name' => 'required|string|max:255',
             'date_of_birth' => 'required|date|before_or_equal:-17 years',
             'national_id' => 'required|string|max:20',
@@ -113,110 +134,55 @@ class JoinRequestController extends Controller
             'whatsapp_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
             'is_dorm' => 'required|boolean',
-            'photo' => 'required|image|max:102400', // 100MB Max
+            'photo' => 'required|image|max:102400',
+        ];
 
-            // Section 2: Questions (Answers array)
-            // Section 2: Questions (Answers array)
-            'answers' => 'required|array',
+        // 2. Fetch Active Questions for dynamic validation
+        $questions = \App\Models\JoinRequestQuestion::where('is_active', true)->get();
+        
+        foreach ($questions as $q) {
+            $field = "answers." . $q->id;
+            $qRules = [];
             
-            // 1. Experience Field
-            'answers.experience_field' => 'required|string',
-            
-            // 2. Large Team
-            'answers.large_team_experience' => 'required|in:Yes,No',
-            
-            // 3. Start Date
-            'answers.start_date' => 'required|date',
-            
-            // 4. Weekly Hours
-            'answers.weekly_hours' => 'required|string',
-            
-            // 5. Best Project
-            'answers.best_project' => 'required|string',
-            
-            // 6. Confidence Scale
-            'answers.confidence_scale' => 'required|integer|min:1|max:5',
-            
-            // 7. Team Skills (Matrix)
-            'answers.team_skills' => 'required|array',
-            'answers.team_skills.*' => 'required|string', // Check all skills are answered
-            
-            // 8. Programming Language
-            'answers.programming_language' => 'required|string',
-            
-            // 9. Prototyping Skills (Matrix)
-            'answers.prototyping_skills' => 'required|array',
-            'answers.prototyping_skills.*' => 'required|string',
-            
-            // 10. Funding
-            'answers.funding_experience' => 'required|in:Yes,No',
-            
-            // 11. Tools Usage (Matrix)
-            'answers.tools_usage' => 'required|array',
-            'answers.tools_usage.*' => 'required|string',
-            
-            // 12. Voice Assistants
-            'answers.voice_assistants_realtime' => 'required|in:Yes,No',
-            
-            // 13. Importance
-            'answers.project_importance' => 'required|integer|min:1|max:5',
-            
-            // 14. Stress
-            'answers.stress_handling' => 'required|string',
-        ], [
-            'full_name.required' => 'Full Name is required',
-            'national_id.required' => 'National ID is required',
-            'academic_id.required' => 'Academic ID is required',
-            'date_of_birth.required' => 'Date of Birth is required',
+            if ($q->is_required) {
+                $qRules[] = 'required';
+            } else {
+                $qRules[] = 'nullable';
+            }
+
+            if ($q->question_type === 'matrix' || $q->question_type === 'checkbox') {
+                $qRules[] = 'array';
+            } elseif ($q->question_type === 'scale') {
+                $qRules[] = 'integer';
+            } else {
+                $qRules[] = 'string';
+            }
+
+            $rules[$field] = $qRules;
+        }
+
+        $validated = $request->validate($rules, [
             'date_of_birth.before_or_equal' => 'يجب أن لا يقل العمر عن 17 عاماً للتسجيل',
-            'group.required' => 'Please select your Group (G1-G4)',
-            'phone_number.required' => 'Phone Number is required',
-            'whatsapp_number.required' => 'WhatsApp Number is required',
-            'address.required' => 'Address is required',
-            'photo.required' => 'A formal photo is required',
-            'photo.image' => 'The file must be an image',
-            'photo.max' => 'The photo size must not exceed 100MB',
-            'answers.experience_field.required' => 'Please select your Experience Field',
-            'answers.large_team_experience.required' => 'Please answer the Team Experience question',
-            'answers.start_date.required' => 'Please specify when you can start',
-            'answers.weekly_hours.required' => 'Please select your Weekly Hours availability',
-            'answers.best_project.required' => 'Please describe your Best Project',
-            'answers.confidence_scale.required' => 'Please rate your Confidence',
-            'answers.team_skills.required' => 'Please complete the Team Skills matrix',
-            'answers.programming_language.required' => 'Please select your Primary Programming Language',
-            'answers.prototyping_skills.required' => 'Please complete the Prototyping Skills matrix',
-            'answers.funding_experience.required' => 'Please answer the Funding Experience question',
-            'answers.tools_usage.required' => 'Please complete the Tools Usage matrix',
-            'answers.voice_assistants_realtime.required' => 'Please answer the Voice Assistants question',
-            'answers.project_importance.required' => 'Please rate the Project Importance',
-            'answers.stress_handling.required' => 'Please explain how you handle stress',
         ]);
 
-        // Custom Duplicate Check
+        // 3. Custom Duplicate Check
         $existingRequest = JoinRequest::where('national_id', $validated['national_id'])
                                         ->orWhere('academic_id', $validated['academic_id'])
                                         ->first();
 
-        $existingUser = User::where('national_id', $validated['national_id'])->first();
+        $existingUser = \App\Models\User::where('national_id', $validated['national_id'])->first();
 
-        if ($existingRequest) {
-            $msg = 'تم تسجيل طلبك بالفعل بالرقم الأكاديمي: ' . $existingRequest->academic_id . '. يرجى انتظار المراجعة.';
-            return back()->withInput()->with('error', $msg)->with('error_title', 'عفواً! لقد قمت بالتسجيل مسبقاً.');
+        if ($existingRequest || $existingUser) {
+            return back()->withInput()->with('error', 'بياناتك مسجلة بالفعل في النظام.')->with('error_title', 'عفواً! لقد قمت بالتسجيل مسبقاً.');
         }
 
-        if ($existingUser) {
-            $msg = 'لديك حساب فعال بالفعل في النظام.';
-            return back()->withInput()->with('error', $msg)->with('error_title', 'عفواً! لقد قمت بالتسجيل مسبقاً.');
-        }
-
-        // Handle File Upload
+        // 4. Handle File Upload
         $photoPath = null;
         if ($request->hasFile('photo')) {
-            $storedPath = $request->file('photo')->store('join_requests_photos', 'r2');
-            $photoPath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+            $photoPath = $request->file('photo')->store('join_requests/photos', 'public');
         }
 
-        // Create Join Request
+        // 5. Create Join Request
         JoinRequest::create([
             'full_name' => $validated['full_name'],
             'date_of_birth' => $validated['date_of_birth'],
@@ -228,11 +194,11 @@ class JoinRequestController extends Controller
             'address' => $validated['address'],
             'is_dorm' => $validated['is_dorm'],
             'photo_path' => $photoPath,
-            'answers' => $validated['answers'],
+            'answers' => $validated['answers'] ?? [],
             'status' => 'pending',
         ]);
 
-        return redirect()->route('join.success');
+        return redirect('/')->with('success', 'Application Submitted! We have received your request.');
     }
 
     /**
@@ -285,7 +251,10 @@ class JoinRequestController extends Controller
         $approvedCount = JoinRequest::where('status', 'approved')->count();
         $rejectedCount = JoinRequest::where('status', 'rejected')->count();
 
-        return view('join_requests.index', compact('requests', 'totalCount', 'pendingCount', 'approvedCount', 'rejectedCount'));
+        $joinRequestEnabled = \App\Models\Setting::get('join_request_enabled', 'on');
+        $questions = \App\Models\JoinRequestQuestion::all();
+
+        return view('join_requests.index', compact('requests', 'totalCount', 'pendingCount', 'approvedCount', 'rejectedCount', 'joinRequestEnabled', 'questions'));
     }
 
     /**

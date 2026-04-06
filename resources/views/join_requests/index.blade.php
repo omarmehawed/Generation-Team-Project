@@ -7,6 +7,7 @@
                 rejectModalOpen: false,
                 exportModal: false,
                 selectedRequest: null,
+                questionsMap: {{ json_encode($questions->pluck('question_text', 'id')) }},
 
                 openViewModal(req) {
                     this.selectedRequest = req;
@@ -108,12 +109,48 @@
                     <input type="date" name="date" value="{{ request('date') }}" onchange="this.form.submit()"
                         class="bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-500 dark:focus:border-cyan-500 transition-colors cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-800">
 
-                    <!-- Export Button -->
-                    <button type="button" @click="exportModal = true"
-                        class="px-6 py-3 bg-slate-800 dark:bg-slate-700 text-white rounded-xl hover:bg-slate-700 dark:hover:bg-slate-600 transition-all flex items-center gap-2 border border-amber-500/30 shadow-lg shadow-amber-500/20">
-                        <i class="fas fa-file-export"></i>
-                        <span class="font-bold">Export</span>
-                    </button>
+                    <!-- Actions Group -->
+                    <div class="flex items-center gap-2">
+                        <!-- Export Button -->
+                        <button type="button" @click="exportModal = true"
+                            class="px-3 py-1.5 bg-slate-800 dark:bg-slate-700 text-white rounded-xl hover:bg-slate-700 dark:hover:bg-slate-600 transition-all flex items-center gap-2 border border-amber-500/30 shadow-sm text-xs font-bold">
+                            <i class="fas fa-file-export"></i>
+                            <span>Export</span>
+                        </button>
+    
+                        <!-- Question Settings Button -->
+                        <a href="{{ route('join-questions.index') }}" 
+                            class="px-3 py-1.5 bg-blue-600 dark:bg-blue-700 text-white rounded-xl hover:bg-blue-700 dark:hover:bg-blue-600 transition-all flex items-center gap-2 border border-blue-500/30 shadow-sm text-xs font-bold">
+                            <i class="fas fa-tasks"></i>
+                            <span>Settings</span>
+                        </a>
+                    </div>
+
+                    <!-- ON/OFF Toggle -->
+                    <div class="flex items-center gap-3 bg-gray-100 dark:bg-gray-800/50 px-4 py-2.5 rounded-xl border border-gray-200 dark:border-gray-700" 
+                         x-data="{ 
+                            enabled: '{{ $joinRequestEnabled }}' === 'on',
+                            toggle() {
+                                this.enabled = !this.enabled;
+                                fetch('{{ route('join.toggle') }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    body: JSON.stringify({ status: this.enabled ? 'on' : 'off' })
+                                });
+                            }
+                         }">
+                        <span class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-tighter">System</span>
+                        <button type="button" @click="toggle()" 
+                                :class="enabled ? 'bg-green-500 shadow-green-500/50' : 'bg-gray-400 dark:bg-gray-600 shadow-gray-500/30'"
+                                class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-lg">
+                            <span :class="enabled ? 'translate-x-5' : 'translate-x-0'"
+                                  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                        </button>
+                        <span class="text-xs font-bold" :class="enabled ? 'text-green-500' : 'text-gray-500'" x-text="enabled ? 'OPEN' : 'CLOSED'"></span>
+                    </div>
                 </form>
             </div>
 
@@ -540,7 +577,7 @@
                                                 class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-transparent shrink-0 flex items-center justify-center text-purple-500 dark:text-purple-400 mt-0.5 shadow-sm">
                                                 <i class="fas fa-map-marker-alt"></i>
                                             </div>
-                                            <span x-text="selectedRequest.home_address" class="break-words"></span>
+                                            <span x-text="selectedRequest.address" class="break-words"></span>
                                         </div>
 
                                         <!-- Dorm Status -->
@@ -573,11 +610,11 @@
                                             class="fas fa-comments text-blue-500 dark:text-cyan-500"></i> Questionnaire Responses</h5>
                                     <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700/50 rounded-xl p-4 custom-scrollbar"
                                         style="max-height: 500px; overflow-y: auto;">
-                                        <template x-for="(value, key) in selectedRequest.answers" :key="key">
+                                        <template x-for="(value, id) in selectedRequest.answers" :key="id">
                                             <div class="mb-5 last:mb-0">
                                                 <label
                                                     class="text-[10px] text-blue-500/80 dark:text-blue-300/70 uppercase font-bold tracking-wider mb-1 block"
-                                                    x-text="key.replace(/_/g, ' ')"></label>
+                                                    x-text="questionsMap[id] || (id.replace(/_/g, ' '))"></label>
 
                                                 <!-- Simple Value -->
                                                 <template x-if="typeof value !== 'object' || value === null">

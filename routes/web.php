@@ -55,9 +55,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Join Requests (Restricted by Email)
     Route::get('/join-requests/export', [JoinRequestController::class, 'export'])->name('join.export');
     Route::get('/join-requests', [JoinRequestController::class, 'adminIndex'])->name('join.admin');
+    Route::post('/join-requests/toggle', [JoinRequestController::class, 'toggleStatus'])->name('join.toggle');
     Route::get('/join-requests/{id}/approve', [JoinRequestController::class, 'approve'])->name('join.approve');
     Route::post('/join-requests/{id}/reject', [JoinRequestController::class, 'reject'])->name('join.reject');
     Route::post('/join-requests/{id}/store-user', [JoinRequestController::class, 'storeUser'])->name('join.storeUser');
+
+    // Dynamic Questions Management
+    Route::prefix('join-questions')->name('join-questions.')->group(function() {
+        Route::get('/', [\App\Http\Controllers\JoinRequestQuestionController::class, 'index'])->name('index');
+        Route::post('/', [\App\Http\Controllers\JoinRequestQuestionController::class, 'store'])->name('store');
+        Route::get('/{id}/edit', [\App\Http\Controllers\JoinRequestQuestionController::class, 'edit'])->name('edit');
+        Route::put('/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'update'])->name('update');
+        Route::delete('/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'destroy'])->name('destroy');
+        Route::post('/reorder', [\App\Http\Controllers\JoinRequestQuestionController::class, 'reorder'])->name('reorder');
+    });
 
     // 1. الداشبورد والبروفايل
     Route::get('/dashboard', function () {

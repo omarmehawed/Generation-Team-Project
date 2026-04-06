@@ -338,368 +338,137 @@
                         @enderror
                     </div>
 
-
-
                     <div class="border-t border-gray-700 my-8"></div>
 
-                    <!-- Section 2: Technical Information -->
-                    <div>
+                    <!-- Section 2: Technical & Custom Questions -->
+                    <div x-data="{ 
+                        answers: {},
+                        shouldShow(q) {
+                            if (!q.conditional_logic || !q.conditional_logic.show_if_question_id) return true;
+                            const targetId = q.conditional_logic.show_if_question_id;
+                            const targetValue = q.conditional_logic.show_if_value;
+                            return this.answers[targetId] == targetValue;
+                        }
+                    }">
                         <h3 class="text-xl font-bold mb-6 flex items-center gap-2 text-blue-500">
                             <i class="fas fa-cogs"></i> Technical & Team Questions
                         </h3>
-
-                        <div class="space-y-8">
-
-                            <!-- 1. Experience Field -->
-                            <div>
-                                <label class="block text-sm font-bold mb-3"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "عندك خبرة في اي"
+                        @foreach ($questions as $q)
+                            <div x-show="shouldShow({{ $q->toJson() }})" class="mb-8" x-transition>
+                                <label class="block text-sm font-bold mb-3" :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
+                                    {{ $q->question_text }}
+                                    @if($q->is_required) <span class="text-red-500">*</span> @endif
                                 </label>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    @foreach(['Embedded Systems / Microcontrollers', 'Robotics & Actuators', 'Mechanical Design & 3D Printing', 'Power Systems & Battery Management', 'Chemistry / Materials Science'] as $option)
-                                        <label
-                                            class="flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer"
-                                            :class="darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'">
-                                            <input type="radio" name="answers[experience_field]" value="{{ $option }}" {{ old('answers.experience_field') == $option ? 'checked' : '' }}
-                                                class="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500">
-                                            <span class="text-sm font-medium"
-                                                :class="darkMode ? 'text-gray-300' : 'text-gray-700'">{{ $option }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                                @error('answers.experience_field')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
 
-                            <!-- 2. Large Team Experience -->
-                            <div>
-                                <label class="block text-sm font-bold mb-3"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "هل لديك أي تجربة في العمل ضمن فريق كبير (أكثر من 10 أفراد)؟"
-                                </label>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="answers[large_team_experience]" value="Yes" {{ old('answers.large_team_experience') == 'Yes' ? 'checked' : '' }}
-                                            class="w-5 h-5 text-blue-600 bg-transparent border-gray-500">
-                                        <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="answers[large_team_experience]" value="No" {{ old('answers.large_team_experience') == 'No' ? 'checked' : '' }}
-                                            class="w-5 h-5 text-blue-600 bg-transparent border-gray-500">
-                                        <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">No</span>
-                                    </label>
-                                </div>
-                                @error('answers.large_team_experience')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
+                                @if($q->question_type === 'text')
+                                    <input type="text" name="answers[{{ $q->id }}]" 
+                                        @input="answers[{{ $q->id }}] = $event.target.value"
+                                        class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
+                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        {{ $q->is_required ? 'required' : '' }}>
 
-                            <!-- 3. Start Date -->
-                            <div>
-                                <label class="block text-sm font-bold mb-2"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "في حال تم قبولك، متى يمكنك البدء بشكل فعلي للعمل على المشروع (بعد الميد مباشرة)؟"
-                                </label>
-                                <input type="date" name="answers[start_date]" value="{{ old('answers.start_date') }}"
-                                    class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('answers.start_date') border-red-500 @enderror"
-                                    :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
-                            </div>
-                            @error('answers.start_date')
-                                <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                            @enderror
+                                @elseif($q->question_type === 'textarea')
+                                    <textarea name="answers[{{ $q->id }}]" rows="3"
+                                        @input="answers[{{ $q->id }}] = $event.target.value"
+                                        class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
+                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        {{ $q->is_required ? 'required' : '' }}></textarea>
 
-                            <!-- 4. Weekly Hours -->
-                            <div>
-                                <label class="block text-sm font-bold mb-3"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "ما هي الفترة الزمنية التي يمكنك تخصيصها للعمل على هذا المشروع أسبوعيًا؟"
-                                </label>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    @foreach(['أقل من 5 ساعات', '5 - 10 ساعات', '10 - 20 ساعة', 'أكثر من 20 ساعة'] as $option)
-                                        <label
-                                            class="flex items-center gap-3 p-3 rounded-lg border transition-all cursor-pointer"
-                                            :class="darkMode ? 'border-gray-700 hover:bg-gray-700' : 'border-gray-200 hover:bg-gray-50'">
-                                            <input type="radio" name="answers[weekly_hours]" value="{{ $option }}" {{ old('answers.weekly_hours') == $option ? 'checked' : '' }}
-                                                class="w-5 h-5 text-blue-600">
-                                            <span class="text-sm font-medium"
-                                                :class="darkMode ? 'text-gray-300' : 'text-gray-700'">{{ $option }}</span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                                @error('answers.weekly_hours')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- 5. Best Project -->
-                            <div>
-                                <label class="block text-sm font-bold mb-2"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "اذكر أبرز مشروع سابق عملته"
-                                </label>
-                                <textarea name="answers[best_project]" rows="4"
-                                    class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('answers.best_project') border-red-500 @enderror"
-                                    :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">{{ old('answers.best_project') }}</textarea>
-                                @error('answers.best_project')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- 6. Confidence Scale -->
-                            <div>
-                                <label class="block text-sm font-bold mb-4"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "على مقياس من 1 إلى 5، ما مدى ثقتك بقدرتك على إحداث فرق كبير في المشروع؟"
-                                </label>
-                                <div class="flex justify-between items-center px-2">
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <label class="flex flex-col items-center cursor-pointer gap-2">
-                                            <span class="text-xs font-bold"
-                                                :class="darkMode ? 'text-gray-400' : 'text-gray-600'">{{ $i }}</span>
-                                            <input type="radio" name="answers[confidence_scale]" value="{{ $i }}" {{ old('answers.confidence_scale') == $i ? 'checked' : '' }}
-                                                class="w-6 h-6 text-blue-600 bg-transparent border-gray-500 focus:ring-blue-500">
-                                        </label>
-                                    @endfor
-                                </div>
-                                @error('answers.confidence_scale')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- 7. Team Skills Matrix -->
-                            <div class="overflow-x-auto">
-                                <label class="block text-sm font-bold mb-4"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "يرجى تحديد مدى إتقانك للعمل ضمن فريق في الجوانب التالية:"
-                                </label>
-                                <table class="w-full text-sm text-left min-w-[600px]">
-                                    <thead class="text-xs uppercase"
-                                        :class="darkMode ? 'text-gray-400 bg-gray-700' : 'text-gray-700 bg-gray-100'">
-                                        <tr>
-                                            <th class="px-4 py-3 rounded-l-lg">Skill</th>
-                                            <th class="px-4 py-3 text-center">ضعيف</th>
-                                            <th class="px-4 py-3 text-center">مقبول</th>
-                                            <th class="px-4 py-3 text-center">جيد</th>
-                                            <th class="px-4 py-3 text-center rounded-r-lg">ممتاز</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody :class="darkMode ? 'divide-gray-700' : 'divide-gray-200'">
-                                        @foreach(['Communication', 'Team Problem Solving', 'Meeting Deadlines'] as $skill)
-                                            <tr class="border-b" :class="darkMode ? 'border-gray-700' : 'border-gray-200'">
-                                                <td class="px-4 py-4 font-medium"
-                                                    :class="darkMode ? 'text-white' : 'text-gray-900'">{{ $skill }}</td>
-                                                @foreach(['ضعيف', 'مقبول', 'جيد', 'ممتاز'] as $level)
-                                                    <td class="px-4 py-4 text-center">
-                                                        <input type="radio" name="answers[team_skills][{{ $skill }}]"
-                                                            value="{{ $level }}" {{ old("answers.team_skills.$skill") == $level ? 'checked' : '' }}
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                                                    </td>
-                                                @endforeach
-                                            </tr>
+                                @elseif($q->question_type === 'radio')
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                        @foreach($q->options as $opt)
+                                            <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-blue-600/10"
+                                                :class="darkMode ? 'border-gray-700 bg-gray-800/40 text-gray-300' : 'border-gray-200 bg-white text-gray-700'">
+                                                <input type="radio" name="answers[{{ $q->id }}]" value="{{ $opt }}"
+                                                    @change="answers[{{ $q->id }}] = '{{ $opt }}'"
+                                                    class="w-5 h-5 text-blue-600" {{ $q->is_required ? 'required' : '' }}>
+                                                <span class="text-sm font-medium">{{ $opt }}</span>
+                                            </label>
                                         @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if($errors->has('answers.team_skills'))
-                                <p class="text-red-500 text-xs mt-1">{{ $errors->first('answers.team_skills') }}</p>
-                            @endif
-                            @foreach(['Communication', 'Team Problem Solving', 'Meeting Deadlines'] as $skill)
-                                @error("answers.team_skills.$skill")
-                                    <p class="text-red-500 text-xs mt-1">{{ $skill }}: {{ $message }}</p>
-                                @enderror
-                            @endforeach
+                                    </div>
 
-                            <!-- 8. Programming Language -->
-                            <div>
-                                <label class="block text-sm font-bold mb-3"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "ما هي اللغة البرمجية التي تتقنها وتستخدمها بشكل أساسي في مجال خبرتك المذكورة؟"
-                                </label>
-                                <select name="answers[programming_language]"
-                                    class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
-                                    :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500 bg-gray-800' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
-                                    <option value="" disabled selected>Select Language</option>
-                                    @foreach(['C/C++', 'Python', 'Java', 'MATLAB/Simulink', 'Other'] as $lang)
-                                        <option value="{{ $lang }}" {{ old('answers.programming_language') == $lang ? 'selected' : '' }}>{{ $lang }}</option>
-                                    @endforeach
-                                </select>
-                                @error('answers.programming_language')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- 9. Prototyping Skills Matrix -->
-                            <div class="overflow-x-auto">
-                                <label class="block text-sm font-bold mb-4"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "يرجى تحديد مدى إتقانك للمهارات التالية المتعلقة بتصنيع النماذج الأولية
-                                    (Prototyping):"
-                                </label>
-                                <table class="w-full text-sm text-left min-w-[600px]">
-                                    <thead class="text-xs uppercase"
-                                        :class="darkMode ? 'text-gray-400 bg-gray-700' : 'text-gray-700 bg-gray-100'">
-                                        <tr>
-                                            <th class="px-4 py-3 rounded-l-lg">Skill</th>
-                                            <th class="px-4 py-3 text-center">ضعيف</th>
-                                            <th class="px-4 py-3 text-center">متوسط</th>
-                                            <th class="px-4 py-3 text-center">جيد</th>
-                                            <th class="px-4 py-3 text-center">ممتاز</th>
-                                            <th class="px-4 py-3 text-center rounded-r-lg">لا اعرف</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody :class="darkMode ? 'divide-gray-700' : 'divide-gray-200'">
-                                        @foreach(['3D Printing', 'Soldering', 'PCB Design', 'Electrical Testing'] as $skill)
-                                            <tr class="border-b" :class="darkMode ? 'border-gray-700' : 'border-gray-200'">
-                                                <td class="px-4 py-4 font-medium"
-                                                    :class="darkMode ? 'text-white' : 'text-gray-900'">{{ $skill }}</td>
-                                                @foreach(['ضعيف', 'متوسط', 'جيد', 'ممتاز', 'لا اعرف'] as $level)
-                                                    <td class="px-4 py-4 text-center">
-                                                        <input type="radio" name="answers[prototyping_skills][{{ $skill }}]"
-                                                            value="{{ $level }}" {{ old("answers.prototyping_skills.$skill") == $level ? 'checked' : '' }}
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                                                    </td>
-                                                @endforeach
-                                            </tr>
+                                @elseif($q->question_type === 'select')
+                                    <select name="answers[{{ $q->id }}]"
+                                        @change="answers[{{ $q->id }}] = $event.target.value"
+                                        class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
+                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        {{ $q->is_required ? 'required' : '' }}>
+                                        <option value="">Select an option</option>
+                                        @foreach($q->options as $opt)
+                                            <option value="{{ $opt }}">{{ $opt }}</option>
                                         @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if($errors->has('answers.prototyping_skills'))
-                                <p class="text-red-500 text-xs mt-1">{{ $errors->first('answers.prototyping_skills') }}</p>
-                            @endif
-                            @foreach(['3D Printing', 'Soldering', 'PCB Design', 'Electrical Testing'] as $skill)
-                                @error("answers.prototyping_skills.$skill")
-                                    <p class="text-red-500 text-xs mt-1">{{ $skill }}: {{ $message }}</p>
-                                @enderror
-                            @endforeach
+                                    </select>
 
-                            <!-- 10. Funding Experience -->
-                            <div>
-                                <label class="block text-sm font-bold mb-3"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "هل لديك أي تجربة سابقة في تأمين تمويل أو التعامل مع مستثمرين لمشاريعك؟"
-                                </label>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="answers[funding_experience]" value="Yes" {{ old('answers.funding_experience') == 'Yes' ? 'checked' : '' }}
-                                            class="w-5 h-5 text-blue-600">
-                                        <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="answers[funding_experience]" value="No" {{ old('answers.funding_experience') == 'No' ? 'checked' : '' }}
-                                            class="w-5 h-5 text-blue-600">
-                                        <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">No</span>
-                                    </label>
-                                </div>
-                                @error('answers.funding_experience')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- 11. Tools Matrix -->
-                            <div class="overflow-x-auto">
-                                <label class="block text-sm font-bold mb-4"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "أي من الأدوات أو البرامج التالية تستخدمها بشكل متكرر في مجال خبرتك؟"
-                                </label>
-                                <table class="w-full text-sm text-left min-w-[600px]">
-                                    <thead class="text-xs uppercase"
-                                        :class="darkMode ? 'text-gray-400 bg-gray-700' : 'text-gray-700 bg-gray-100'">
-                                        <tr>
-                                            <th class="px-4 py-3 rounded-l-lg">Tool</th>
-                                            <th class="px-4 py-3 text-center">قليلًا</th>
-                                            <th class="px-4 py-3 text-center">أحياناً</th>
-                                            <th class="px-4 py-3 text-center rounded-r-lg">بشكل متكرر</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody :class="darkMode ? 'divide-gray-700' : 'divide-gray-200'">
-                                        @foreach(['SolidWorks / Fusion 360', 'Arduino / Raspberry Pi IDE', 'TensorFlow / PyTorch', 'Altium Designer / Eagle'] as $tool)
-                                            <tr class="border-b" :class="darkMode ? 'border-gray-700' : 'border-gray-200'">
-                                                <td class="px-4 py-4 font-medium"
-                                                    :class="darkMode ? 'text-white' : 'text-gray-900'">{{ $tool }}</td>
-                                                @foreach(['قليلًا', 'أحياناً', 'بشكل متكرر'] as $level)
-                                                    <td class="px-4 py-4 text-center">
-                                                        <input type="radio" name="answers[tools_usage][{{ $tool }}]"
-                                                            value="{{ $level }}" {{ old("answers.tools_usage.$tool") == $level ? 'checked' : '' }}
-                                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300">
-                                                    </td>
-                                                @endforeach
-                                            </tr>
+                                @elseif($q->question_type === 'checkbox')
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" x-data="{ selected: [] }">
+                                        @foreach($q->options as $opt)
+                                            <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-blue-600/10"
+                                                :class="darkMode ? 'border-gray-700 bg-gray-800/40 text-gray-300' : 'border-gray-200 bg-white text-gray-700'">
+                                                <input type="checkbox" name="answers[{{ $q->id }}][]" value="{{ $opt }}"
+                                                    @change="if($event.target.checked) selected.push('{{ $opt }}'); else selected = selected.filter(v => v !== '{{ $opt }}'); answers[{{ $q->id }}] = selected"
+                                                    class="w-5 h-5 text-blue-600 rounded">
+                                                <span class="text-sm font-medium">{{ $opt }}</span>
+                                            </label>
                                         @endforeach
-                                    </tbody>
-                                </table>
-                            </div>
-                            @if($errors->has('answers.tools_usage'))
-                                <p class="text-red-500 text-xs mt-1">{{ $errors->first('answers.tools_usage') }}</p>
-                            @endif
-                            @foreach(['SolidWorks / Fusion 360', 'Arduino / Raspberry Pi IDE', 'TensorFlow / PyTorch', 'Altium Designer / Eagle'] as $tool)
-                                @error("answers.tools_usage.$tool")
-                                    <p class="text-red-500 text-xs mt-1">{{ $tool }}: {{ $message }}</p>
-                                @enderror
-                            @endforeach
+                                    </div>
 
-                            <!-- 12. Voice Assistants -->
-                            <div>
-                                <label class="block text-sm font-bold mb-3"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "هل لديك خبرة في تطوير مساعدات صوتية (Voice Assistants) تتفاعل بشكل لحظي
-                                    (Real-time)؟"
-                                </label>
-                                <div class="flex gap-6">
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="answers[voice_assistants_realtime]" value="Yes" {{ old('answers.voice_assistants_realtime') == 'Yes' ? 'checked' : '' }}
-                                            class="w-5 h-5 text-blue-600">
-                                        <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Yes</span>
-                                    </label>
-                                    <label class="flex items-center gap-2 cursor-pointer">
-                                        <input type="radio" name="answers[voice_assistants_realtime]" value="No" {{ old('answers.voice_assistants_realtime') == 'No' ? 'checked' : '' }}
-                                            class="w-5 h-5 text-blue-600">
-                                        <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">No</span>
-                                    </label>
-                                </div>
-                                @error('answers.voice_assistants_realtime')
+                                @elseif($q->question_type === 'date')
+                                    <input type="date" name="answers[{{ $q->id }}]"
+                                        @input="answers[{{ $q->id }}] = $event.target.value"
+                                        class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
+                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        {{ $q->is_required ? 'required' : '' }}>
+
+                                @elseif($q->question_type === 'scale')
+                                    <div class="flex items-center justify-between bg-slate-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                                        <span class="text-xs text-gray-500">Poor</span>
+                                        <div class="flex gap-4">
+                                            @for($i=1; $i<=5; $i++)
+                                                <label class="flex flex-col items-center gap-1 cursor-pointer">
+                                                    <input type="radio" name="answers[{{ $q->id }}]" value="{{ $i }}"
+                                                        @change="answers[{{ $q->id }}] = '{{ $i }}'"
+                                                        class="w-6 h-6 text-blue-600" {{ $q->is_required ? 'required' : '' }}>
+                                                    <span class="text-xs font-bold" :class="darkMode ? 'text-gray-400' : 'text-gray-600'">{{ $i }}</span>
+                                                </label>
+                                            @endfor
+                                        </div>
+                                        <span class="text-xs text-gray-500">Excellent</span>
+                                    </div>
+
+                                @elseif($q->question_type === 'matrix')
+                                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                                        <table class="w-full text-sm">
+                                            <thead :class="darkMode ? 'bg-gray-800' : 'bg-gray-50'">
+                                                <tr>
+                                                    <th class="p-3 text-left">Item</th>
+                                                    @foreach($q->options['cols'] as $col)
+                                                        <th class="p-3 text-center">{{ $col }}</th>
+                                                    @endforeach
+                                                </tr>
+                                            </thead>
+                                            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                                                @foreach($q->options['rows'] as $row)
+                                                    <tr>
+                                                        <td class="p-3 font-bold" :class="darkMode ? 'text-gray-300' : 'text-gray-700'">{{ $row }}</td>
+                                                        @foreach($q->options['cols'] as $col)
+                                                            <td class="p-3 text-center">
+                                                                <input type="radio" name="answers[{{ $q->id }}][{{ $row }}]" value="{{ $col }}" 
+                                                                    {{ $q->is_required ? 'required' : '' }}
+                                                                    class="w-5 h-5 text-blue-600">
+                                                            </td>
+                                                        @endforeach
+                                                    </tr>
+                                                @endforeach
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                @endif
+
+                                @error('answers.'.$q->id)
                                     <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                                 @enderror
                             </div>
-
-                            <!-- 13. Importance Scale -->
-                            <div>
-                                <label class="block text-sm font-bold mb-4"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "ما هي درجة أهمية المشروع بالنسبة لأهدافك المهنية والشخصية؟"
-                                </label>
-                                <div class="flex justify-between items-center px-2">
-                                    @for ($i = 1; $i <= 5; $i++)
-                                        <label class="flex flex-col items-center cursor-pointer gap-2">
-                                            <span class="text-xs font-bold"
-                                                :class="darkMode ? 'text-gray-400' : 'text-gray-600'">{{ $i }}</span>
-                                            <input type="radio" name="answers[project_importance]" value="{{ $i }}" {{ old('answers.project_importance') == $i ? 'checked' : '' }}
-                                                class="w-6 h-6 text-blue-600 bg-transparent border-gray-500 focus:ring-blue-500">
-                                        </label>
-                                    @endfor
-                                </div>
-                                @error('answers.project_importance')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                            <!-- 14. Stress Handling -->
-                            <div>
-                                <label class="block text-sm font-bold mb-2"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
-                                    "في حال وجود ضغط أو تحديات غير متوقعة في المشروع، كيف تتعامل معها؟"
-                                </label>
-                                <textarea name="answers[stress_handling]" rows="4"
-                                    class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('answers.stress_handling') border-red-500 @enderror"
-                                    :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">{{ old('answers.stress_handling') }}</textarea>
-                                @error('answers.stress_handling')
-                                    <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
-                                @enderror
-                            </div>
-
-                        </div>
+                        @endforeach
                     </div>
 
                     <!-- Submit Button -->

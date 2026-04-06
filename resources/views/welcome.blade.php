@@ -300,11 +300,13 @@
         <div class="relative z-10 text-center px-4 max-w-5xl mx-auto">
             <div class="animate-fade-in space-y-8">
                 <!-- Branding Badge -->
+                @if(\App\Models\Setting::get('join_request_enabled', 'on') === 'on')
                 <div
                     class="inline-flex items-center gap-2 px-4 py-2 rounded-full glass border border-amber-500/30 text-amber-400 text-sm font-bold mb-4 animate-slide-up">
                     <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
                     GENERATION TEAM IS HIRING
                 </div>
+                @endif
 
                 <!-- Main Title -->
                 <h1 class="text-5xl md:text-7xl font-black leading-tight mb-6 animate-slide-up"
@@ -325,6 +327,16 @@
                 <!-- CTAs -->
                 <div class="flex flex-col sm:flex-row items-center justify-center gap-6 animate-slide-up"
                     style="animation-delay: 0.6s">
+                    @if(\App\Models\Setting::get('join_request_enabled', 'on') === 'on')
+                    <a href="{{ route('join.create') }}"
+                        class="group relative px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white rounded-full font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(37,99,235,0.5)] font-amiri border-0 cursor-pointer">
+                        <span class="relative z-10 flex items-center gap-3">
+                            سجل الآن في الفريق
+                            <i class="fas fa-paper-plane group-hover:translate-x-1 transition-transform"></i>
+                        </span>
+                    </a>
+                    @endif
+
                     <button @click="statusModalOpen = true"
                         class="group relative px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-full font-bold text-lg transition-all hover:scale-105 shadow-[0_0_30px_rgba(245,158,11,0.5)] font-amiri border-0 cursor-pointer">
                         <span class="relative z-10 flex items-center gap-3">
