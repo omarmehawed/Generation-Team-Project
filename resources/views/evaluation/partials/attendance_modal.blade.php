@@ -70,7 +70,7 @@
                             </div>
 
                             {{-- Score Input --}}
-                            <div class="w-full sm:w-24">
+                            <div class="w-full sm:w-24" x-show="canScore">
                                 <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-1.5 ml-1">Score / 10</label>
                                 <input type="number" x-model.number="a.participation_score" min="0" max="10" step="0.5" 
                                     :disabled="a.status === 'absent'"
@@ -105,6 +105,7 @@
             workshopId: null,
             isLoading: false,
             isSaving: false,
+            canScore: true, // Default to true until fetched
             searchQuery: '',
             attendees: [],
 
@@ -148,7 +149,8 @@
                 fetch(`/final-project/workshops/${this.workshopId}/attendees`)
                     .then(r => r.json())
                     .then(data => {
-                        this.attendees = data.attendees;
+                        this.attendees = data.attendees || [];
+                        this.canScore = data.can_score ?? true;
                         this.isLoading = false;
                     })
                     .catch(e => {

@@ -124,13 +124,23 @@
     <div
         class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl relative z-10 overflow-hidden border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col">
         <div
-            class="p-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900/50">
-            <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
-                <i class="fas fa-list-alt text-indigo-500"></i> Pending Deposit Requests
-            </h3>
-            <button onclick="closeRequestsListModal()" class="text-gray-400 hover:text-red-500 transition-colors">
-                <i class="fas fa-times text-xl"></i>
-            </button>
+            class="p-6 border-b border-gray-100 dark:border-gray-700 space-y-4 bg-gray-50 dark:bg-gray-900/50">
+            <div class="flex justify-between items-center">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    <i class="fas fa-list-alt text-indigo-500"></i> Pending Deposit Requests
+                </h3>
+                <button onclick="closeRequestsListModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            {{-- Search Bar --}}
+            <div class="relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" x-model="searchQuery" 
+                       placeholder="Search by Name or Academic Number..."
+                       class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-gray-700 dark:text-gray-200 transition-all">
+            </div>
         </div>
 
         <div class="overflow-y-auto flex-1 p-6">
@@ -147,9 +157,16 @@
                 </div>
             </template>
 
-            <template x-if="!loading && requests.length > 0">
+            <template x-if="!loading && requests.length > 0 && filteredRequests.length === 0">
+                <div class="text-center p-12 text-gray-400">
+                    <i class="fas fa-search text-5xl mb-4 opacity-20"></i>
+                    <p class="font-bold uppercase tracking-widest text-[10px]">No matching results found</p>
+                </div>
+            </template>
+
+            <template x-if="!loading && filteredRequests.length > 0">
                 <div class="space-y-4">
-                    <template x-for="req in requests" :key="req.id">
+                    <template x-for="req in filteredRequests" :key="req.id">
                         <div
                             class="p-4 bg-gray-50 dark:bg-gray-700/30 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4">
                             <div class="flex items-center gap-4 w-full md:w-auto">
@@ -520,8 +537,21 @@
         return {
             loading: false,
             requests: [],
+            searchQuery: '',
+            get filteredRequests() {
+                if (!this.searchQuery) return this.requests;
+                const q = this.searchQuery.toLowerCase().trim();
+                return this.requests.filter(req => {
+                    const name = (req.user?.name || '').toLowerCase();
+                    const email = (req.user?.email || '').toLowerCase(); // Email contains academic ID
+                    return name.includes(q) || email.includes(q);
+                });
+            },
             init() {
-                window.addEventListener('fetch-requests', () => this.fetchRequests());
+                window.addEventListener('fetch-requests', () => {
+                    this.fetchRequests();
+                    this.searchQuery = '';
+                });
             },
             async fetchRequests() {
                 this.loading = true;

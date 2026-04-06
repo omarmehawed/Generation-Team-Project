@@ -494,7 +494,7 @@
                 <div class="rounded-2xl bg-white dark:bg-[#111827] border border-gray-200 dark:border-gray-800 shadow-sm overflow-hidden">
                     <div class="p-6 border-b border-gray-200 dark:border-gray-800 flex justify-between items-center">
                         <h2 class="text-xl font-black">Tasks Overview</h2>
-                        @if(in_array($viewRole, ['leader', 'software_vice_leader', 'hardware_vice_leader', 'general_vice_leader', 'sub_leader']))
+                        @if(in_array($viewRole, ['leader', 'software_vice_leader', 'hardware_vice_leader', 'general_vice_leader']))
                         <button onclick="openEvalAssignTaskModal()"
                             class="flex items-center gap-2 bg-gray-900 dark:bg-white hover:bg-gray-700 dark:hover:bg-gray-100 text-white dark:text-gray-900 font-black text-xs uppercase tracking-widest px-4 py-2.5 rounded-xl shadow-md transition transform hover:-translate-y-0.5">
                             <i class="fas fa-plus text-xs"></i> Assign Task

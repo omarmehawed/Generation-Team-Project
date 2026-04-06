@@ -91,13 +91,26 @@ class WorkshopController extends Controller
         $teamId = $workshop->team_id;
         $myMemberRecord = TeamMember::where('team_id', $teamId)->where('user_id', Auth::id())->first();
         
-        $query = WorkshopAttendee::with(['user'])->where('workshop_id', $id);
+        $canScore = $myMemberRecord && in_array($myMemberRecord->role, ['leader', 'vice_leader']);
+        
+        $query = WorkshopAttendee::with(['user.teamMemberships' => function($q) use ($teamId) {
+                $q->where('team_id', $teamId);
+            }])
+            ->where('workshop_id', $id);
 
         if ($myMemberRecord && $myMemberRecord->is_sub_leader && !in_array($myMemberRecord->role, ['leader', 'vice_leader'])) {
             // Sub Leader can only see their team members
             $query->whereHas('user.teamMemberships', function($q) use ($teamId, $myMemberRecord) {
                 $q->where('team_id', $teamId)
                   ->where('parent_id', $myMemberRecord->id);
+            });
+        }
+        
+        // Ensure domain filtering for all (though records should already be filtered during store, 
+        // we enforce it here for accuracy if a general workshop is later changed or manually assigned)
+        if ($workshop->domain !== 'general') {
+            $query->whereHas('user.teamMemberships', function($q) use ($teamId, $workshop) {
+                $q->where('team_id', $teamId)->where('technical_role', $workshop->domain);
             });
         }
 
@@ -117,6 +130,7 @@ class WorkshopController extends Controller
         return response()->json([
             'workshop_id'   => $workshop->id,
             'workshop_title'=> $workshop->title,
+            'can_score'     => $canScore,
             'attendees'     => $data,
         ]);
     }
@@ -150,12 +164,19 @@ class WorkshopController extends Controller
             }
 
             $status = $data['status'] ?? 'pending';
-            $score  = ($status === 'absent') ? 0 : (float) ($data['participation_score'] ?? 0);
-
-            $attendee->update([
-                'status'              => $status,
-                'participation_score' => $score,
-            ]);
+            
+            // Sub Leaders cannot update participation_score
+            if ($myMemberRecord->is_sub_leader && !in_array($myMemberRecord->role, ['leader', 'vice_leader'])) {
+                $attendee->update([
+                    'status' => $status,
+                ]);
+            } else {
+                $score = ($status === 'absent') ? 0 : (float) ($data['participation_score'] ?? 0);
+                $attendee->update([
+                    'status'              => $status,
+                    'participation_score' => $score,
+                ]);
+            }
         }
 
         if ($request->isJson() || $request->wantsJson()) {

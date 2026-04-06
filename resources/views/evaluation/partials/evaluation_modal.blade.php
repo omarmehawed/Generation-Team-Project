@@ -18,6 +18,9 @@
             @csrf
             <input type="hidden" name="evaluatee_id" id="evalTargetId">
             <input type="hidden" name="evaluation_type" id="evalTargetType">
+            <input type="hidden" name="has_tasks" id="hasTasksInput">
+            <input type="hidden" name="has_workshops" id="hasWorkshopsInput">
+            <input type="hidden" name="has_meetings" id="hasMeetingsInput">
             
             <div class="p-8 space-y-6 overflow-y-auto custom-scroll bg-white dark:bg-[#0f172a] flex-1">
 
@@ -47,20 +50,11 @@
                     </div>
                 </div>
 
-                {{-- No tasks placeholder --}}
+                {{-- No tasks placeholder (Hidden by default, only shown if explicitly needed) --}}
                 <div id="evalNoTasks" class="hidden">
                     <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 text-center">
                         <i class="fas fa-inbox text-gray-400 text-2xl mb-2"></i>
-                        <p class="text-sm text-gray-500 font-medium">No tasks assigned this week</p>
-                        <div class="mt-3 flex items-center justify-between">
-                            <span class="text-sm font-bold text-gray-600 dark:text-gray-300">Task Score</span>
-                            <div class="flex items-center gap-2">
-                                <input type="number" name="task_score" id="taskScoreInputFallback" min="0" max="10" step="0.5" value="0"
-                                    class="w-20 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] px-3 py-1.5 text-center text-sm font-black"
-                                    onchange="updateTotalScore()">
-                                <span class="text-sm text-gray-500">/ 10</span>
-                            </div>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">No tasks assigned this week</p>
                     </div>
                 </div>
 
@@ -88,16 +82,7 @@
                 <div id="evalNoWorkshops" class="hidden">
                     <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 text-center">
                         <i class="fas fa-chalkboard text-gray-400 text-2xl mb-2"></i>
-                        <p class="text-sm text-gray-500 font-medium">No workshops this week</p>
-                        <div class="mt-3 flex items-center justify-between">
-                            <span class="text-sm font-bold text-gray-600 dark:text-gray-300">Workshop Score</span>
-                            <div class="flex items-center gap-2">
-                                <input type="number" name="workshop_score" id="workshopScoreInputFallback" min="0" max="10" step="0.5" value="0"
-                                    class="w-20 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] px-3 py-1.5 text-center text-sm font-black"
-                                    onchange="updateTotalScore()">
-                                <span class="text-sm text-gray-500">/ 10</span>
-                            </div>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">No workshops relevant this week</p>
                     </div>
                 </div>
 
@@ -125,16 +110,7 @@
                 <div id="evalNoMeetings" class="hidden">
                     <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 text-center">
                         <i class="fas fa-calendar-times text-gray-400 text-2xl mb-2"></i>
-                        <p class="text-sm text-gray-500 font-medium">No meetings this week</p>
-                        <div class="mt-3 flex items-center justify-between">
-                            <span class="text-sm font-bold text-gray-600 dark:text-gray-300">Meeting Score</span>
-                            <div class="flex items-center gap-2">
-                                <input type="number" name="meeting_score" id="meetingScoreInputFallback" min="0" max="10" step="0.5" value="0"
-                                    class="w-20 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-[#111827] px-3 py-1.5 text-center text-sm font-black"
-                                    onchange="updateTotalScore()">
-                                <span class="text-sm text-gray-500">/ 10</span>
-                            </div>
-                        </div>
+                        <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">No meetings relevant this week</p>
                     </div>
                 </div>
 
@@ -146,7 +122,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-xs opacity-70 font-bold">Out of</p>
-                        <p class="text-3xl font-black">30</p>
+                        <p class="text-3xl font-black" id="possibleScoreDisplay">30</p>
                     </div>
                 </div>
 
@@ -181,31 +157,38 @@
 </style>
 
 <script>
-    function getScoreInputValue(primaryId, fallbackId) {
+    function getScoreInputValue(primaryId) {
         const el = document.getElementById(primaryId);
-        const fb = document.getElementById(fallbackId);
         if (el && !el.closest('.hidden')) return parseFloat(el.value) || 0;
-        if (fb && !fb.closest('.hidden')) return parseFloat(fb.value) || 0;
         return 0;
     }
 
     function updateTotalScore() {
-        const t = getScoreInputValue('taskScoreInput', 'taskScoreInputFallback');
-        const w = getScoreInputValue('workshopScoreInput', 'workshopScoreInputFallback');
-        const m = getScoreInputValue('meetingScoreInput', 'meetingScoreInputFallback');
+        const t = getScoreInputValue('taskScoreInput');
+        const w = getScoreInputValue('workshopScoreInput');
+        const m = getScoreInputValue('meetingScoreInput');
         document.getElementById('totalScoreDisplay').innerText = (t + w + m).toFixed(1);
+        
+        let possible = 0;
+        if (!document.getElementById('evalTaskSection').classList.contains('hidden')) possible += 10;
+        if (!document.getElementById('evalWorkshopSection').classList.contains('hidden')) possible += 10;
+        if (!document.getElementById('evalMeetingSection').classList.contains('hidden')) possible += 10;
+        
+        if (possible === 0) {
+           // If somehow NOTHING is assigned, default to 30 or show warning
+           possible = 30;
+        }
+        document.getElementById('possibleScoreDisplay').innerText = possible;
     }
 
-    function syncScoreInputs(primaryId, fallbackId) {
+    function syncScoreInputs(primaryId) {
         const primary = document.getElementById(primaryId);
-        const fallback = document.getElementById(fallbackId);
-        if (primary) primary.addEventListener('change', () => { if (fallback) fallback.value = primary.value; updateTotalScore(); });
-        if (fallback) fallback.addEventListener('change', () => { if (primary) primary.value = fallback.value; updateTotalScore(); });
+        if (primary) primary.addEventListener('change', () => { updateTotalScore(); });
     }
 
-    syncScoreInputs('taskScoreInput', 'taskScoreInputFallback');
-    syncScoreInputs('workshopScoreInput', 'workshopScoreInputFallback');
-    syncScoreInputs('meetingScoreInput', 'meetingScoreInputFallback');
+    syncScoreInputs('taskScoreInput');
+    syncScoreInputs('workshopScoreInput');
+    syncScoreInputs('meetingScoreInput');
 
     function openEvaluationModal(id, name, type, periodId, existingRecord = null) {
         // Show modal
@@ -227,24 +210,26 @@
         });
         
         // Reset inputs
-        ['taskScoreInput','taskScoreInputFallback','workshopScoreInput','workshopScoreInputFallback','meetingScoreInput','meetingScoreInputFallback'].forEach(i => {
+        ['taskScoreInput','workshopScoreInput','meetingScoreInput'].forEach(i => {
             const el = document.getElementById(i);
             if (el) el.value = 0;
         });
         
         document.getElementById('evalGeneralNotes').value = '';
         document.getElementById('totalScoreDisplay').innerText = '0';
+        document.getElementById('possibleScoreDisplay').innerText = '30';
+        
+        document.getElementById('hasTasksInput').value = '0';
+        document.getElementById('hasWorkshopsInput').value = '0';
+        document.getElementById('hasMeetingsInput').value = '0';
 
         // Pre-fill if editing existing record
         if (existingRecord) {
             document.getElementById('taskScoreInput').value = existingRecord.task_score || 0;
-            document.getElementById('taskScoreInputFallback').value = existingRecord.task_score || 0;
             document.getElementById('workshopScoreInput').value = existingRecord.workshop_score || 0;
-            document.getElementById('workshopScoreInputFallback').value = existingRecord.workshop_score || 0;
             document.getElementById('meetingScoreInput').value = existingRecord.meeting_score || 0;
-            document.getElementById('meetingScoreInputFallback').value = existingRecord.meeting_score || 0;
             document.getElementById('evalGeneralNotes').value = existingRecord.notes || '';
-            updateTotalScore();
+            // Note: We'll call updateTotalScore AFTER fetching auto-score to know which sections are visible
         }
 
         // Fetch auto-score data using the passed periodId
@@ -252,6 +237,10 @@
             .then(res => res.json())
             .then(data => {
                 document.getElementById('evalLoadingState').classList.add('hidden');
+                
+                document.getElementById('hasTasksInput').value = data.has_tasks ? '1' : '0';
+                document.getElementById('hasWorkshopsInput').value = data.has_workshops ? '1' : '0';
+                document.getElementById('hasMeetingsInput').value = data.has_meetings ? '1' : '0';
 
                 // ---- TASKS ----
                 if (data.tasks && data.tasks.length > 0) {

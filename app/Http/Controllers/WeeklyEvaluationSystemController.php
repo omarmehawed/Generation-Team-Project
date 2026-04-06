@@ -94,6 +94,7 @@ class WeeklyEvaluationSystemController extends Controller
             $allSubLeaders = collect();
             $allRegularMembers = $allMembers->where('role', 'member')
                                  ->where('team_number', $myMember->team_number)
+                                 ->filter(fn($m) => strtolower($m->technical_role ?? 'general') === strtolower($myMember->technical_role ?? 'general'))
                                  ->where('id', '!=', $myMember->id);
         } else {
             $allViceLeaders = collect();
@@ -181,9 +182,16 @@ class WeeklyEvaluationSystemController extends Controller
             $meetingsQuery->where(function($q) use ($domainType) { $q->whereNull('domain')->orWhere('domain', $domainType); });
         } elseif ($viewRole === 'sub_leader' || $viewRole === 'member') {
             $meetingsQuery->where(function($q) use ($myMember, $technicalRole) {
-                $q->whereNull('domain')->whereNull('team_number')
-                  ->orWhere(function($sub) use ($technicalRole) { $sub->where('domain', $technicalRole)->whereNull('team_number'); });
-                if ($myMember->team_number) { $q->orWhere('team_number', $myMember->team_number); }
+                // Should see:
+                // 1. General meetings (null domain, null team)
+                // 2. Domain-wide meetings (correct domain, null team)
+                // 3. Team-specific meetings (null domain, correct team)
+                // 4. Specific Team+Domain meetings (correct domain, correct team)
+                $q->where(function($subQ) use ($technicalRole) {
+                    $subQ->whereNull('domain')->orWhere('domain', $technicalRole);
+                })->where(function($subQ) use ($myMember) {
+                    $subQ->whereNull('team_number')->orWhere('team_number', $myMember->team_number);
+                });
             });
         }
         $meetings = $meetingsQuery->get();
@@ -392,7 +400,26 @@ class WeeklyEvaluationSystemController extends Controller
         $taskScore    = (float) ($request->task_score    ?? 0);
         $workshopScore = (float) ($request->workshop_score ?? 0);
         $meetingScore  = (float) ($request->meeting_score  ?? 0);
-        $totalScore    = $taskScore + $workshopScore + $meetingScore;
+        
+        // Dynamic Denominator Calculation
+        $hasTasks = (bool)$request->has_tasks;
+        $hasWorkshops = (bool)$request->has_workshops;
+        $hasMeetings = (bool)$request->has_meetings;
+        
+        $possibleScore = 0;
+        if ($hasTasks) $possibleScore += 10;
+        if ($hasWorkshops) $possibleScore += 10;
+        if ($hasMeetings) $possibleScore += 10;
+        
+        // Baseline if nothing is assigned (fallback to 10 or 30?) 
+        // User says: "if he had only Workshop → his total should be out of 10"
+        $totalScore = $taskScore + $workshopScore + $meetingScore;
+        
+        $activeCategories = [];
+        if ($hasTasks) $activeCategories[] = 'tasks';
+        if ($hasWorkshops) $activeCategories[] = 'workshops';
+        if ($hasMeetings) $activeCategories[] = 'meetings';
+        $activeCategoriesStr = implode(',', $activeCategories);
 
         // Store the evaluation record
         $record = WeeklyEvaluationRecord::updateOrCreate(
@@ -402,10 +429,12 @@ class WeeklyEvaluationSystemController extends Controller
             ],
             [
                 'evaluator_id'        => $evaluator->id,
-                'total_task_score'    => $taskScore,
-                'total_workshop_score' => $workshopScore,
-                'total_meeting_score'  => $meetingScore,
+                'total_task_score'    => $hasTasks ? $taskScore : 0,
+                'total_workshop_score' => $hasWorkshops ? $workshopScore : 0,
+                'total_meeting_score'  => $hasMeetings ? $meetingScore : 0,
                 'total_overall_score' => $totalScore,
+                'total_possible_score' => $possibleScore,
+                'active_categories'   => $activeCategoriesStr,
                 'general_notes'       => $request->general_notes,
                 'evaluation_type'     => $request->evaluation_type,
             ]
@@ -501,12 +530,13 @@ class WeeklyEvaluationSystemController extends Controller
             ->keyBy('evaluatee_id');
 
         $rows = [];
-        $rows[] = ['Week', 'Member Name', 'Academic Number', 'Domain', 'Team #', 'Task (/10)', 'Workshop (/10)', 'Meeting (/10)', 'Total (/30)', 'Notes', 'Evaluation Status'];
+        $rows[] = ['Week', 'Member Name', 'Academic Number', 'Domain', 'Team #', 'Task (/10)', 'Workshop (/10)', 'Meeting (/10)', 'Overall Score', 'Notes', 'Evaluation Status'];
 
         foreach ($membersToExport as $member) {
             $user = $member->user;
             $academicNumber = ($user && $user->email) ? explode('@', $user->email)[0] : 'N/A';
             $record = $records->get($member->id);
+            $active = $record ? explode(',', $record->active_categories ?? '') : [];
 
             $rows[] = [
                 'Week ' . $period->week_number,
@@ -514,10 +544,10 @@ class WeeklyEvaluationSystemController extends Controller
                 $academicNumber,
                 ucfirst($member->technical_role ?? 'General'),
                 $member->team_number ?? '-',
-                $record ? number_format($record->total_task_score, 1) : '0.0',
-                $record ? number_format($record->total_workshop_score, 1) : '0.0',
-                $record ? number_format($record->total_meeting_score, 1) : '0.0',
-                $record ? number_format($record->total_overall_score, 1) : '0.0',
+                ($record && in_array('tasks', $active)) ? number_format($record->total_task_score, 1) : '-',
+                ($record && in_array('workshops', $active)) ? number_format($record->total_workshop_score, 1) : '-',
+                ($record && in_array('meetings', $active)) ? number_format($record->total_meeting_score, 1) : '-',
+                $record ? (number_format($record->total_overall_score, 1) . ' / ' . number_format($record->total_possible_score, 0)) : 'Pending',
                 $record->general_notes ?? '',
                 $record ? 'Evaluated' : 'Pending',
             ];
@@ -594,14 +624,9 @@ class WeeklyEvaluationSystemController extends Controller
         $tasks = \App\Models\Task::where('user_id', $userId)
             ->where('team_id', $team->id)
             ->where(function($q) use ($startDate, $endDate) {
+                // STRICT FILTERING: Only tasks created or due in this week
                 $q->whereBetween('created_at', [$startDate, $endDate])
-                  ->orWhereBetween('deadline', [$startDate, $endDate])
-                  ->orWhereBetween('submitted_at', [$startDate, $endDate])
-                  ->orWhereBetween('updated_at', [$startDate, $endDate])
-                  ->orWhere(function($sub) use ($endDate) {
-                      $sub->where('created_at', '<=', $endDate)
-                          ->whereNotIn('status', ['completed', 'approved']);
-                  });
+                  ->orWhereBetween('deadline', [$startDate, $endDate]);
             })
             ->get();
 
@@ -635,8 +660,14 @@ class WeeklyEvaluationSystemController extends Controller
         }
 
         // 3. COLLECT WORKSHOPS
+        $techRole = strtolower($member->technical_role ?? 'general');
         $workshops = \App\Models\Workshop::where('team_id', $team->id)
             ->whereBetween('workshop_date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->when($techRole !== 'general', function($q) use ($techRole) {
+                return $q->where(function($sub) use ($techRole) {
+                    $sub->where('domain', 'general')->orWhere('domain', $techRole);
+                });
+            })
             ->get();
 
         $workshopAttendances = \App\Models\WorkshopAttendee::where('user_id', $userId)
@@ -680,7 +711,10 @@ class WeeklyEvaluationSystemController extends Controller
             'tasks'                     => $taskData,
             'workshops'                 => $workshopData,
             'meetings'                  => $meetingData,
-            'suggested_task_score'      => (float)max(0, 10 - $taskPenalty),
+            'has_tasks'                 => count($taskData) > 0,
+            'has_workshops'             => count($workshopData) > 0,
+            'has_meetings'              => count($meetingData) > 0,
+            'suggested_task_score'      => count($taskData) > 0 ? (float)max(0, 10 - $taskPenalty) : 0,
             'suggested_workshop_score'  => count($workshopData) > 0 ? (float)round(collect($workshopData)->avg('score'), 1) : 0,
             'suggested_meeting_score'   => count($meetingData) > 0 ? (float)round(collect($meetingData)->avg('score'), 1) : 0,
             'total_penalty'             => $taskPenalty,
