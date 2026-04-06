@@ -311,10 +311,16 @@
                     </div>
                 </div>
                 @if(!empty($weeklyEvalHistory) && count($weeklyEvalHistory) > 0)
+                @php
+                    $allRecs = collect($weeklyEvalHistory)->flatten();
+                    $avgScore = $allRecs->avg('total_overall_score');
+                    $avgPossible = $allRecs->avg('total_possible_score');
+                    if (!$avgPossible || $avgPossible <= 0) $avgPossible = 30;
+                @endphp
                 <div class="bg-indigo-50 dark:bg-indigo-900/40 px-4 py-2 rounded-xl border border-indigo-100 dark:border-indigo-800">
                      <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-300 uppercase tracking-widest">Avg. Score</span>
                      <p class="text-lg font-black text-indigo-700 dark:text-indigo-200 leading-none mt-1">
-                        {{ number_format(collect($weeklyEvalHistory)->flatten()->avg('total_overall_score'), 1) }} <span class="text-xs opacity-60">/ 30</span>
+                        {{ number_format($avgScore, 1) }} <span class="text-xs opacity-60">/ {{ number_format($avgPossible, 0) }}</span>
                      </p>
                 </div>
                 @endif
@@ -335,29 +341,42 @@
                                     <div class="text-left">
                                         <p class="font-black text-gray-800 dark:text-gray-200 leading-tight">Week {{ $weekNumber ?? '?' }}</p>
                                         <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
-                                            {{ $record->period?->start_date?->format('M d') }} — {{ $record->period?->end_date?->format('M d, Y') }}
+                                            {{ $record->period?->start_date?->format('M d') }} — {{ $record->period?->end_date ? $record->period->end_date->format('M d, Y') : 'Active' }}
                                         </p>
                                     </div>
                                 </div>
+                                @php
+                                    $active = $record->active_categories ? explode(',', $record->active_categories) : ['tasks', 'workshops', 'meetings'];
+                                    $possible = (float)($record->total_possible_score ?: 30);
+                                @endphp
                                 <div class="flex items-center gap-6">
                                     <div class="hidden md:flex gap-6">
+                                        @if(in_array('tasks', $active))
                                         <div class="text-center">
                                             <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-0.5">Tasks</p>
                                             <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_task_score, 1) }}</p>
                                         </div>
+                                        @endif
+                                        @if(in_array('workshops', $active))
                                         <div class="text-center">
                                             <p class="text-[8px] font-black text-amber-500 uppercase tracking-widest mb-0.5">Workshops</p>
                                             <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_workshop_score, 1) }}</p>
                                         </div>
+                                        @endif
+                                        @if(in_array('meetings', $active))
                                         <div class="text-center">
                                             <p class="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-0.5">Meetings</p>
                                             <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_meeting_score, 1) }}</p>
                                         </div>
+                                        @endif
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <div class="text-right">
                                             <p class="text-[8px] font-black text-indigo-500 uppercase tracking-widest mb-0.5">Overall</p>
-                                            <p class="text-base font-black text-indigo-600 dark:text-indigo-400 leading-tight">{{ number_format($record->total_overall_score, 1) }}</p>
+                                            <p class="text-base font-black text-indigo-600 dark:text-indigo-400 leading-tight">
+                                                {{ number_format($record->total_overall_score, 1) }}
+                                                <span class="text-[10px] opacity-50">/ {{ number_format($possible, 0) }}</span>
+                                            </p>
                                         </div>
                                         <i class="fas fa-chevron-down text-gray-400 transition-transform duration-300"
                                             :class="openWeek === {{ $weekNumber }} ? 'rotate-180' : ''"></i>
@@ -366,21 +385,27 @@
                             </button>
                             <div x-show="openWeek === {{ $weekNumber }}" x-collapse class="px-6 py-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                                    @if(in_array('tasks', $active))
                                     <div class="rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50 p-4 relative overflow-hidden group">
                                         <i class="fas fa-tasks absolute -right-2 -bottom-2 text-4xl opacity-5 text-blue-500 group-hover:scale-125 transition-transform"></i>
                                         <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2"><i class="fas fa-tasks mr-2"></i>Task Score</p>
                                         <p class="text-2xl font-black text-blue-700 dark:text-blue-300">{{ number_format($record->total_task_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
                                     </div>
+                                    @endif
+                                    @if(in_array('workshops', $active))
                                     <div class="rounded-2xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50 p-4 relative overflow-hidden group">
                                         <i class="fas fa-chalkboard-teacher absolute -right-2 -bottom-2 text-4xl opacity-5 text-amber-500 group-hover:scale-125 transition-transform"></i>
                                         <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2"><i class="fas fa-chalkboard-teacher mr-2"></i>Workshop Score</p>
                                         <p class="text-2xl font-black text-amber-700 dark:text-amber-300">{{ number_format($record->total_workshop_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
                                     </div>
+                                    @endif
+                                    @if(in_array('meetings', $active))
                                     <div class="rounded-2xl bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50 p-4 relative overflow-hidden group">
                                         <i class="fas fa-users absolute -right-2 -bottom-2 text-4xl opacity-5 text-emerald-500 group-hover:scale-125 transition-transform"></i>
                                         <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2"><i class="fas fa-users mr-2"></i>Meeting Attendance</p>
                                         <p class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ number_format($record->total_meeting_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
                                     </div>
+                                    @endif
                                 </div>
                                 @if($record->general_notes)
                                 <div class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-inner">

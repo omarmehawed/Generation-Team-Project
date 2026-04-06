@@ -312,9 +312,13 @@
                                             {{ $member?->team_number ?? '-' }}
                                         </td>
                                         <td class="px-4 py-3 text-center">
-                                            @php $rec = $existingRecords[$member->id] ?? null; @endphp
+                                            @php 
+                                                $rec = $existingRecords[$member->id] ?? null; 
+                                                $possible = $rec ? (float)$rec->total_possible_score : 30;
+                                                if ($possible == 0) $possible = 30;
+                                            @endphp
                                             <span class="inline-flex items-center rounded-xl px-3 py-1.5 text-xs font-black {{ $rec ? 'bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 border border-green-100' : 'bg-indigo-50 dark:bg-indigo-900/20 text-indigo-700 dark:text-indigo-300 border border-indigo-100' }} dark:border-indigo-900/30">
-                                                {{ $rec ? number_format($rec->total_overall_score, 1) : '0' }} / 30
+                                                {{ $rec ? number_format($rec->total_overall_score, 1) : '0' }} / {{ number_format($possible, 0) }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 text-right">
@@ -408,10 +412,22 @@
                             </div>
                             <div class="flex items-center justify-between mt-6">
                                 <div class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Performance</div>
-                                <div class="font-black text-purple-600 dark:text-purple-400">{{ $sl?->weekly_score ?? 'Pending' }}</div>
+                                <div class="font-black text-purple-600 dark:text-purple-400">
+                                    @php
+                                        // Try to find the record for the current period for this sub leader
+                                        $slRec = \App\Models\WeeklyEvaluationRecord::where('evaluation_period_id', $currentPeriod->id ?? 0)
+                                            ->where('evaluatee_id', $sl->id)
+                                            ->first();
+                                        $slScore = $slRec ? $slRec->total_overall_score : 0;
+                                        $slPossible = $slRec ? $slRec->total_possible_score : 30;
+                                        if ($slPossible <= 0) $slPossible = 30;
+                                        $slPercent = ($slScore / $slPossible) * 100;
+                                    @endphp
+                                    {{ $slRec ? number_format($slScore, 1) . ' / ' . number_format($slPossible, 0) : 'Pending' }}
+                                </div>
                             </div>
                             <div class="w-full bg-gray-200 dark:bg-gray-800 h-1.5 rounded-full mt-2 overflow-hidden">
-                                <div class="bg-purple-500 h-full rounded-full transition-all duration-1000" style="width: {{ $sl?->weekly_score ?? 0 }}%"></div>
+                                <div class="bg-purple-500 h-full rounded-full transition-all duration-1000" style="width: {{ $slPercent }}%"></div>
                             </div>
                             <button onclick="openEvaluationModal('{{ $sl?->id }}', '{{ addslashes($sl?->user?->name ?? 'Unknown') }}', 'sub_leader', '{{ $currentPeriod->id ?? '' }}')"
                                 class="w-full mt-6 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-black py-3 text-xs shadow-lg shadow-purple-500/20 transition-all opacity-0 group-hover:opacity-100">
