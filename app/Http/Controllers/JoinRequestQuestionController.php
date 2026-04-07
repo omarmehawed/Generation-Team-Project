@@ -10,7 +10,8 @@ class JoinRequestQuestionController extends Controller
     public function index()
     {
         $questions = JoinRequestQuestion::orderBy('order_priority')->get();
-        return view('join_requests.questions.index', compact('questions'));
+        $success_message = \App\Models\Setting::get('join_request_success_message', 'Application Submitted! We have received your request.');
+        return view('join_requests.questions.index', compact('questions', 'success_message'));
     }
 
     public function store(Request $request)

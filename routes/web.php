@@ -56,6 +56,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/join-requests/export', [JoinRequestController::class, 'export'])->name('join.export');
     Route::get('/join-requests', [JoinRequestController::class, 'adminIndex'])->name('join.admin');
     Route::post('/join-requests/toggle', [JoinRequestController::class, 'toggleStatus'])->name('join.toggle');
+    Route::post('/join-requests/settings', [JoinRequestController::class, 'updateSettings'])->name('join.settings.update');
     Route::get('/join-requests/{id}/approve', [JoinRequestController::class, 'approve'])->name('join.approve');
     Route::post('/join-requests/{id}/reject', [JoinRequestController::class, 'reject'])->name('join.reject');
     Route::post('/join-requests/{id}/store-user', [JoinRequestController::class, 'storeUser'])->name('join.storeUser');

@@ -34,6 +34,48 @@
         </div>
     </div>
 
+    <!-- Form Configuration Settings -->
+    <div class="mb-10 bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-[2rem] p-8 shadow-xl overflow-hidden relative group">
+        <div class="absolute top-0 right-0 p-8 opacity-5 group-hover:opacity-10 transition-opacity">
+            <i class="fas fa-cog text-8xl text-slate-400"></i>
+        </div>
+        <div class="relative">
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <h3 class="text-xl font-black text-slate-900 dark:text-white">Form Configuration</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="space-y-4">
+                    <label class="block text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-widest">Completion Message</label>
+                    <textarea x-model="successMessage" rows="3"
+                        class="w-full bg-slate-50 dark:bg-gray-800 border-2 border-slate-100 dark:border-gray-700 rounded-2xl px-5 py-4 focus:ring-0 focus:border-purple-500 outline-none transition-all text-slate-800 dark:text-white font-bold placeholder:font-normal"
+                        placeholder="Message shown after applicant clicks submit..."></textarea>
+                    <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-500 font-medium italic">This message appears on the success page after final submission.</p>
+                        <button @click="saveSettings()" :disabled="savingSettings"
+                            class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-black transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 disabled:opacity-50">
+                            <i class="fas" :class="savingSettings ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                            <span x-text="savingSettings ? 'Saving...' : 'Save Configuration'"></span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="hidden lg:flex items-center justify-center p-6 bg-purple-500/5 rounded-3xl border border-dashed border-purple-500/20">
+                    <div class="text-center space-y-2">
+                        <div class="w-12 h-12 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto shadow-sm text-purple-500">
+                            <i class="fas fa-info-circle"></i>
+                        </div>
+                        <p class="text-xs text-purple-700 dark:text-purple-400 font-bold">Applicant Flow Tip</p>
+                        <p class="text-[11px] text-slate-500 max-w-[200px]">The form is now automatically paginated into groups of 10 questions for better UX.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Questions list -->
     <div class="space-y-6 relative">
         <!-- Visual Connector Line for Logic (Optional aesthetic choice) -->
@@ -382,6 +424,8 @@
 function formBuilder() {
     return {
         questions: @json($questions),
+        successMessage: '{{ $success_message }}',
+        savingSettings: false,
         modalOpen: false,
         isEdit: false,
         editingId: null,
@@ -542,6 +586,27 @@ function formBuilder() {
                 },
                 body: JSON.stringify({ orders })
             });
+        },
+
+        async saveSettings() {
+            this.savingSettings = true;
+            try {
+                await fetch('{{ route('join.settings.update') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({
+                        join_request_success_message: this.successMessage
+                    })
+                });
+                // Small toast or visual feedback
+                const btn = event.currentTarget;
+                const originalText = this.successMessage;
+            } finally {
+                this.savingSettings = false;
+            }
         }
     }
 }

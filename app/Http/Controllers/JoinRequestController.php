@@ -49,7 +49,9 @@ class JoinRequestController extends Controller
             ->orderBy('order_priority')
             ->get();
 
-        return view('join_requests.create', compact('questions'));
+        $success_message = \App\Models\Setting::get('join_request_success_message', 'Application Submitted! We have received your request.');
+ 
+        return view('join_requests.create', compact('questions', 'success_message'));
     }
 
     /**
@@ -63,7 +65,21 @@ class JoinRequestController extends Controller
             abort(403, 'Unauthorized.');
         }
     }
-
+ 
+    /**
+     * Update Join Request Settings
+     */
+    public function updateSettings(Request $request)
+    {
+        $this->authorizeAdminEmails();
+ 
+        if ($request->has('join_request_success_message')) {
+            \App\Models\Setting::set('join_request_success_message', $request->input('join_request_success_message'));
+        }
+ 
+        return response()->json(['success' => true]);
+    }
+ 
     /**
      * Store a newly created resource in storage.
      */
@@ -198,7 +214,8 @@ class JoinRequestController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect('/')->with('success', 'Application Submitted! We have received your request.');
+        $successMessage = \App\Models\Setting::get('join_request_success_message', 'Application Submitted! We have received your request.');
+        return redirect('/')->with('success', $successMessage);
     }
 
     /**
