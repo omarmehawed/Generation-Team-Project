@@ -1884,6 +1884,10 @@
                                 @endif
 
                                 @if ($myRole == 'leader')
+                                    <button @click.stop onclick="openModal('paymentSettingsModal')"
+                                        class="flex-1 sm:flex-none text-[10px] bg-gray-800 text-white px-3 py-2 rounded-xl font-bold hover:bg-black transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                        <i class="fas fa-cog text-xs"></i>
+                                    </button>
                                     <button @click.stop onclick="openModal('exportFundModal')"
                                         class="flex-1 sm:flex-none text-[10px] bg-green-500 text-white px-3 py-2 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
                                         <i class="fas fa-file-excel text-xs"></i> Export
@@ -1973,7 +1977,7 @@
                                                         <span
                                                             class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-lg font-bold block mb-0.5"><i
                                                                 class="fas fa-check-circle"></i> Paid</span>
-                                                        @if ($contrib->payment_method == 'transfer' && $contrib->payment_proof)
+                                                        @if (in_array($contrib->payment_method, ['transfer', 'vodafone_cash', 'instapay']) && $contrib->payment_proof)
                                                             <a href="{{ $contrib->payment_proof }}"
                                                                 target="_blank"
                                                                 class="text-[9px] text-blue-500 underline">View Proof</a>
@@ -3032,14 +3036,26 @@
                                         <label class="block text-sm font-medium text-gray-700">Payment Method</label>
                                         <select name="payment_method" id="payment_method_select" onchange="togglePaymentFields(this.value)"
                                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm rounded-md">
-                                            <option value="transfer">Vodafone Cash / InstaPay</option>
-                                            <option value="cash">Cash (Hand to Hand)</option>
-                                            <option value="wallet">My Wallet Balance</option>
+                                            @php
+                                                $enabledMethods = $team->payment_methods ?? ['vodafone_cash', 'instapay', 'cash', 'wallet'];
+                                            @endphp
+                                            @if(in_array('vodafone_cash', $enabledMethods))
+                                                <option value="vodafone_cash">Vodafone Cash</option>
+                                            @endif
+                                            @if(in_array('instapay', $enabledMethods))
+                                                <option value="instapay">InstaPay</option>
+                                            @endif
+                                            @if(in_array('cash', $enabledMethods))
+                                                <option value="cash">Cash (Hand to Hand)</option>
+                                            @endif
+                                            @if(in_array('wallet', $enabledMethods))
+                                                <option value="wallet">My Wallet Balance</option>
+                                            @endif
                                         </select>
                                     </div>
 
                                     {{-- Transfer Fields --}}
-                                    <div id="transfer_fields" class="space-y-4">
+                                    <div id="transfer_fields" class="hidden space-y-4">
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700">Amount Transferred (EGP)</label>
                                             <input type="number" step="0.01" name="amount_transferred" id="default_amount_input"
@@ -3243,10 +3259,8 @@
             document.getElementById('wallet_request_amount').innerText = currentAmount.toLocaleString();
             document.getElementById('wallet_after_balance').innerText = (currentUserBalance - currentAmount).toLocaleString();
             
-            // Initial check if wallet is default
-            if (document.getElementById('payment_method_select').value === 'wallet') {
-                validateWalletPayment();
-            }
+            // Ensure correct fields are visible based on default selected method
+            togglePaymentFields(document.getElementById('payment_method_select').value);
 
             openModal('paymentSubmissionModal');
         }
@@ -3276,7 +3290,7 @@
             submitBtn.disabled = false;
             submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
 
-            if (method === 'transfer') {
+            if (method === 'vodafone_cash' || method === 'instapay') {
                 document.getElementById('transfer_fields').classList.remove('hidden');
             } else if (method === 'cash') {
                 document.getElementById('cash_fields').classList.remove('hidden');
@@ -3290,7 +3304,13 @@
             // Data is an object with all details
             document.getElementById('review_contribution_id').value = data.id;
             document.getElementById('review_member_name').innerText = data.member_name;
-            document.getElementById('review_method').innerText = data.payment_method;
+            const methodNames = {
+                'vodafone_cash': 'Vodafone Cash',
+                'instapay': 'InstaPay',
+                'cash': 'Cash',
+                'wallet': 'Wallet'
+            };
+            document.getElementById('review_method').innerText = methodNames[data.payment_method] || data.payment_method.replace('_', ' ');
 
             // Reset UI
             document.getElementById('review_transfer_details').classList.add('hidden');
@@ -3301,7 +3321,7 @@
             document.getElementById('reject_btn').classList.remove('hidden');
             document.getElementById('confirm_reject_btn').classList.add('hidden');
 
-            if (data.payment_method === 'transfer') {
+            if (data.payment_method === 'vodafone_cash' || data.payment_method === 'instapay' || data.payment_method === 'transfer') {
                 document.getElementById('review_transfer_details').classList.remove('hidden');
                 document.getElementById('review_amount').innerText = data.amount;
                 document.getElementById('review_from').innerText = data.from_number;
@@ -3381,6 +3401,106 @@
             </div>
         </div>
     </div>
+    
+    {{-- Payment Methods Settings Modal --}}
+    @if ($myRole == 'leader')
+    <div id="paymentSettingsModal" class="modal fixed inset-0 z-[100] hidden">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('paymentSettingsModal')"></div>
+        <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6">
+            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+                <form action="{{ route('final_project.update_payment_settings', $team->id) }}" method="POST">
+                    @csrf
+                    <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                        <h3 class="text-xl font-black text-gray-800 flex items-center gap-3">
+                            <i class="fas fa-cog text-gray-400"></i> Payment Settings
+                        </h3>
+                        <button type="button" onclick="closeModal('paymentSettingsModal')" class="text-gray-400 hover:text-red-500 transition-colors">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div class="p-8">
+                        <p class="text-sm text-gray-400 mb-6 font-bold uppercase tracking-wider">Enabled Payment Methods</p>
+                        
+                        <div class="space-y-4">
+                            @php
+                                $methods = $team->payment_methods ?? ['vodafone_cash', 'instapay', 'cash', 'wallet'];
+                            @endphp
+                            
+                            {{-- Vodafone Cash --}}
+                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shadow-sm">
+                                        <i class="fas fa-mobile-alt"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800">Vodafone Cash</p>
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase">Digital Transfer</p>
+                                    </div>
+                                </div>
+                                <input type="checkbox" name="payment_methods[]" value="vodafone_cash" 
+                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    {{ in_array('vodafone_cash', $methods) ? 'checked' : '' }}>
+                            </label>
+
+                            {{-- InstaPay --}}
+                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm">
+                                        <i class="fas fa-university"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800">InstaPay</p>
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase">Bank Transfer</p>
+                                    </div>
+                                </div>
+                                <input type="checkbox" name="payment_methods[]" value="instapay" 
+                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    {{ in_array('instapay', $methods) ? 'checked' : '' }}>
+                            </label>
+
+                            {{-- Cash --}}
+                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shadow-sm">
+                                        <i class="fas fa-hand-holding-usd"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800">Cash</p>
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase">Hand to Hand</p>
+                                    </div>
+                                </div>
+                                <input type="checkbox" name="payment_methods[]" value="cash" 
+                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    {{ in_array('cash', $methods) ? 'checked' : '' }}>
+                            </label>
+
+                            {{-- Wallet --}}
+                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                                <div class="flex items-center gap-4">
+                                    <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shadow-sm">
+                                        <i class="fas fa-wallet"></i>
+                                    </div>
+                                    <div>
+                                        <p class="font-bold text-gray-800">Wallet</p>
+                                        <p class="text-[10px] text-gray-400 font-bold uppercase">In-App Credit</p>
+                                    </div>
+                                </div>
+                                <input type="checkbox" name="payment_methods[]" value="wallet" 
+                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    {{ in_array('wallet', $methods) ? 'checked' : '' }}>
+                            </label>
+                        </div>
+
+                        <button type="submit" class="w-full mt-8 py-4 bg-black text-[#FFD700] rounded-2xl font-black shadow-lg hover:bg-gray-900 transition-all flex items-center justify-center gap-2">
+                            <i class="fas fa-save"></i> Save Settings
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    @endif
     @if(isset($needsSubLeaderSetup) && $needsSubLeaderSetup)
     <!-- Forced Sub Leader Setup Modal -->
     <div id="subLeaderSetupModal" class="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6" aria-modal="true">

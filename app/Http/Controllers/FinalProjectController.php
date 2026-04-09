@@ -1174,7 +1174,7 @@ class FinalProjectController extends Controller
     {
         $request->validate([
             'contribution_id' => 'required|exists:fund_contributions,id',
-            'payment_method' => 'required|in:cash,transfer,wallet',
+            'payment_method' => 'required|in:cash,vodafone_cash,instapay,wallet',
         ]);
 
         $contrib = \App\Models\FundContribution::findOrFail($request->contribution_id);
@@ -1185,7 +1185,7 @@ class FinalProjectController extends Controller
         }
 
         // Specific Validations based on Method
-        if ($request->payment_method == 'transfer') {
+        if (in_array($request->payment_method, ['vodafone_cash', 'instapay'])) {
             $request->validate([
                 'amount_transferred' => 'required|numeric',
                 'from_number' => 'required|string',
@@ -1206,7 +1206,7 @@ class FinalProjectController extends Controller
             'rejection_reason' => null, // Clear any previous rejection
         ];
 
-        if ($request->payment_method == 'transfer') {
+        if (in_array($request->payment_method, ['vodafone_cash', 'instapay'])) {
             // Upload Proof
             if ($request->hasFile('proof_image')) {
                 $storedPath = $request->file('proof_image')->store('payment_proofs', 'r2');
@@ -1319,6 +1319,24 @@ class FinalProjectController extends Controller
 
             return back()->with('success', 'Payment rejected.');
         }
+    }
+
+    public function updatePaymentSettings(Request $request, Team $team)
+    {
+        if (Auth::id() != $team->leader_id) {
+            abort(403, 'Unauthorized');
+        }
+
+        $request->validate([
+            'payment_methods' => 'nullable|array',
+            'payment_methods.*' => 'in:vodafone_cash,instapay,cash,wallet'
+        ]);
+
+        $team->update([
+            'payment_methods' => $request->payment_methods ?? []
+        ]);
+
+        return back()->with('success', 'Payment settings updated successfully! ⚙️');
     }
 
     // ==========================================

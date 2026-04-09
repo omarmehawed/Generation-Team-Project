@@ -236,6 +236,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/funds/submit', [FinalProjectController::class, 'submitPayment'])->name('final_project.submitPayment');
             Route::get('/final-project/funds/export', [FinalProjectController::class, 'exportFunds'])->name('funds.export');
             Route::post('/final-project/funds/review', [FinalProjectController::class, 'reviewPayment'])->name('final_project.reviewPayment');
+            Route::post('/final-project/teams/{team}/payment-settings', [FinalProjectController::class, 'updatePaymentSettings'])->name('final_project.update_payment_settings');
             // Route::post('/final-project/funds/pay', [FinalProjectController::class, 'markPaid'])->name('final_project.markPaid'); // Deprecated
 
 

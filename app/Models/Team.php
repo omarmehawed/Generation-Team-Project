@@ -11,6 +11,10 @@ use App\Models\ProjectGallery;
 class Team extends Model
 {
     use HasFactory;
+    
+    protected $casts = [
+        'payment_methods' => 'array',
+    ];
 
     protected $guarded = []; // السماح بكل البيانات
 
@@ -75,6 +79,7 @@ class Team extends Model
         'project_phase',
         'project_score',      // الدرجة اللي جابها
         'project_max_score',  // الدرجة النهائية (من كام)
+        'payment_methods',
     ];
 
     // علاقة التقارير الأسبوعية
