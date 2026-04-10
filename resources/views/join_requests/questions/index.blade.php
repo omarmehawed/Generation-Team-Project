@@ -142,7 +142,7 @@
                                 <div class="space-y-4">
                                     <template x-if="q.question_type !== 'matrix'">
                                         <div class="flex flex-wrap gap-2">
-                                            <template x-for="opt in q.options" :key="opt">
+                                            <template x-for="(opt, i) in (Array.isArray(q.options) ? q.options : [])" :key="i">
                                                 <div class="flex items-center gap-2 px-3 py-1.5 bg-slate-50 dark:bg-gray-800/80 rounded-xl border border-slate-100 dark:border-gray-700/50 text-[11px] text-slate-600 dark:text-slate-300 font-medium">
                                                     <div class="w-1.5 h-1.5 rounded-full" :class="getTypeColor(q.question_type)"></div>
                                                     <span x-text="opt"></span>
@@ -156,7 +156,7 @@
                                             <div>
                                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2">Rows</p>
                                                 <div class="space-y-1">
-                                                    <template x-for="row in q.options.rows" :key="row">
+                                                    <template x-for="(row, i) in (q.options?.rows || [])" :key="i">
                                                         <div class="text-[11px] text-slate-600 dark:text-slate-400 truncate" x-text="row"></div>
                                                     </template>
                                                 </div>
@@ -164,7 +164,7 @@
                                             <div class="border-l border-slate-200 dark:border-gray-700 pl-4">
                                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2">Columns</p>
                                                 <div class="flex flex-wrap gap-1">
-                                                    <template x-for="col in q.options.cols" :key="col">
+                                                    <template x-for="(col, i) in (q.options?.cols || [])" :key="i">
                                                         <span class="px-1.5 py-0.5 bg-white dark:bg-gray-700 rounded text-[9px] text-slate-500" x-text="col"></span>
                                                     </template>
                                                 </div>
@@ -423,9 +423,10 @@
 <script>
 function formBuilder() {
     return {
-        questions: @json($questions),
-        successMessage: '{{ $success_message }}',
+        questions: @json($questions) || [],
+        successMessage: @json($success_message),
         savingSettings: false,
+        savingOrder: false,
         modalOpen: false,
         isEdit: false,
         editingId: null,
@@ -577,6 +578,8 @@ function formBuilder() {
         },
 
         async saveOrder() {
+            if (this.savingOrder) return;
+            this.savingOrder = true;
             try {
                 const orders = this.questions.map((q, i) => ({ id: q.id, order: i + 1 }));
                 await fetch('{{ route('join-questions.reorder') }}', {
@@ -589,6 +592,8 @@ function formBuilder() {
                 });
             } catch (e) {
                 console.error('Failed to save order', e);
+            } finally {
+                this.savingOrder = false;
             }
         },
 
