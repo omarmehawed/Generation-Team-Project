@@ -495,170 +495,174 @@
 
         <!-- Modals (Placed Outside Table for Z-Index Safety) -->
 
-        <!-- 1. VIEW MODAL (Same Logic, Polished UI) -->
-        <div x-show="viewModalOpen" class="fixed inset-0 z-50 overflow-y-auto" style="display: none;">
-            <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="fixed inset-0 bg-gray-900/90 backdrop-blur-sm transition-opacity"
-                    @click="viewModalOpen = false"></div>
-                <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
-                <div
-                    class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl dark:shadow-2xl transform transition-all sm:my-8 sm:align-middle sm:max-w-4xl sm:w-full border border-gray-200 dark:border-gray-700">
-                    <!-- Modal Content -->
-                    <div class="bg-white dark:bg-gray-800 px-6 py-6 sm:p-8">
-                        <div class="flex justify-between items-start mb-6 border-b border-gray-100 dark:border-gray-700/50 pb-4">
-                            <div>
-                                <h3 class="text-2xl font-bold text-gray-900 dark:text-white font-tech">Application Details</h3>
-                                <p class="text-gray-500 dark:text-gray-400 text-xs">Review full applicant information.</p>
-                            </div>
-                            <button @click="viewModalOpen = false"
-                                class="bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-500 dark:text-white w-8 h-8 rounded-full flex items-center justify-center transition-colors"><i
-                                    class="fas fa-times"></i></button>
-                        </div>
+        <!-- 1. VIEW MODAL (Redesigned for Premium Look) -->
+        <div x-show="viewModalOpen" 
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 scale-95"
+             x-transition:enter-end="opacity-100 scale-100"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="fixed inset-0 z-50 overflow-y-auto px-4 py-6" style="display: none;">
+            
+            <div class="flex items-center justify-center min-h-screen">
+                <div class="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity" @click="viewModalOpen = false"></div>
+                
+                <div class="relative bg-white dark:bg-slate-900 w-full max-w-4xl rounded-[3rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800 transform transition-all">
+                    
+                    <!-- Decorative Background Gradients -->
+                    <div class="absolute top-0 inset-x-0 h-40 bg-gradient-to-r from-blue-600/10 via-purple-600/10 to-cyan-600/10"></div>
+                    <div class="absolute -top-24 -right-24 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl"></div>
+                    <div class="absolute -top-24 -left-24 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl"></div>
 
-                        <template x-if="selectedRequest">
-                            <div class="row g-4">
-                                <!-- Sidebar Info -->
-                                <div class="col-md-4 text-center border-r border-gray-100 dark:border-gray-700/50 pr-6">
-                                    <div class="relative w-32 h-32 mx-auto mb-4">
-                                        <div
-                                            class="absolute inset-0 bg-blue-500 dark:bg-cyan-500 rounded-full blur opacity-20 animate-pulse">
-                                        </div>
-                                        <div
-                                            class="avatar w-full h-full rounded-full border-4 border-gray-100 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 relative z-10 overflow-hidden shadow-lg">
-                                            <div class="w-full h-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
-                                                <template x-if="selectedRequest.photo_path">
-                                                    <img :src="'/storage/' + selectedRequest.photo_path"
-                                                         x-on:error="$el.style.display='none'; $el.nextElementSibling.style.display='flex'"
-                                                         class="w-full h-full object-cover">
-                                                </template>
-                                                <div class="w-full h-full flex items-center justify-center text-4xl font-bold text-gray-400 dark:text-gray-500 absolute inset-0 bg-gray-100 dark:bg-gray-800"
-                                                     :style="selectedRequest.photo_path ? 'display: none' : 'display: flex'"
-                                                     x-text="selectedRequest.full_name.charAt(0)">
-                                                </div>
+                    <!-- Close Button -->
+                    <button @click="viewModalOpen = false" 
+                            class="absolute top-6 right-6 z-20 w-10 h-10 rounded-full bg-white/50 dark:bg-slate-800/50 backdrop-blur-md flex items-center justify-center text-slate-500 hover:text-red-500 transition-all active:scale-95 shadow-lg">
+                        <i class="fas fa-times"></i>
+                    </button>
+
+                    <template x-if="selectedRequest">
+                        <div class="relative p-6 sm:p-10">
+                            <!-- Header / Profile Section -->
+                            <div class="flex flex-col items-center text-center mb-10">
+                                <div class="relative mb-6">
+                                    <div class="absolute inset-0 bg-blue-500 rounded-full blur-2xl opacity-20 animate-pulse"></div>
+                                    <div class="relative w-32 h-32 sm:w-40 sm:h-40 rounded-full p-1.5 bg-gradient-to-tr from-blue-600 via-purple-500 to-cyan-400 shadow-2xl">
+                                        <div class="w-full h-full rounded-full bg-white dark:bg-slate-900 overflow-hidden flex items-center justify-center border-2 border-white dark:border-slate-800">
+                                            <template x-if="selectedRequest.photo_path">
+                                                <img :src="selectedRequest.photo_path.startsWith('http') ? selectedRequest.photo_path : (selectedRequest.photo_path.startsWith('storage/') ? '/' + selectedRequest.photo_path : '/storage/' + selectedRequest.photo_path)"
+                                                     class="w-full h-full object-cover"
+                                                     x-on:error="$el.style.display='none'; $el.nextElementSibling.style.display='flex'">
+                                            </template>
+                                            <div class="w-full h-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-5xl font-black text-slate-400 dark:text-slate-500"
+                                                 x-text="selectedRequest.full_name.charAt(0)">
                                             </div>
                                         </div>
                                     </div>
-
-                                    <h5 class="text-xl font-bold text-gray-900 dark:text-white mb-1" x-text="selectedRequest.full_name"></h5>
-                                    <p class="text-blue-500 dark:text-cyan-400 font-mono text-sm mb-4" x-text="selectedRequest.academic_id">
-                                    </p>
-
-                                    <span
-                                        class="inline-block px-4 py-1.5 rounded-full bg-blue-50 dark:bg-blue-500/20 text-blue-600 dark:text-blue-400 text-xs font-bold border border-blue-200 dark:border-blue-500/30 mb-6"
-                                        x-text="selectedRequest.group"></span>
-
-                                    <div
-                                        class="text-left bg-gray-50 dark:bg-gray-900/50 rounded-xl p-4 space-y-3 border border-gray-100 dark:border-gray-700/50">
-                                        <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                            <div
-                                                class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-transparent flex items-center justify-center text-blue-500 dark:text-blue-400 shadow-sm">
-                                                <i class="fas fa-phone"></i>
-                                            </div>
-                                            <span x-text="selectedRequest.phone_number"></span>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                            <div
-                                                class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-transparent flex items-center justify-center text-green-500 dark:text-green-400 shadow-sm">
-                                                <i class="fab fa-whatsapp"></i>
-                                            </div>
-                                            <span x-text="selectedRequest.whatsapp_number"></span>
-                                        </div>
-                                        <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                            <div
-                                                class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-transparent flex items-center justify-center text-gray-400 dark:text-gray-400 shadow-sm">
-                                                <i class="fas fa-id-card"></i>
-                                            </div>
-                                            <span x-text="selectedRequest.national_id"></span>
-                                        </div>
-
-                                        <!-- Address -->
-                                        <div class="flex items-start gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                            <div
-                                                class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-transparent shrink-0 flex items-center justify-center text-purple-500 dark:text-purple-400 mt-0.5 shadow-sm">
-                                                <i class="fas fa-map-marker-alt"></i>
-                                            </div>
-                                            <span x-text="selectedRequest.address" class="break-words"></span>
-                                        </div>
-
-                                        <!-- Dorm Status -->
-                                        <div class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300">
-                                            <span x-text="selectedRequest.is_dorm == 1 ? 'مغترب' : 'غير مغترب'"></span>
-                                        </div>
-
-                                        <!-- University Email (Synced from User) -->
-                                        <template x-if="selectedRequest.user">
-                                            <div
-                                                class="flex items-center gap-3 text-sm text-gray-600 dark:text-gray-300 pt-3 border-t border-gray-200 dark:border-gray-800 mt-3">
-                                                <div
-                                                    class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-100 dark:border-transparent shrink-0 flex items-center justify-center text-cyan-500 dark:text-cyan-400 shadow-sm">
-                                                    <i class="fas fa-envelope"></i>
-                                                </div>
-                                                <div>
-                                                    <div class="text-[10px] text-gray-400 dark:text-gray-500 uppercase font-bold">University
-                                                        Email</div>
-                                                    <span x-text="selectedRequest.user.email"
-                                                        class="text-xs break-all font-mono text-cyan-600 dark:text-cyan-400"></span>
-                                                </div>
-                                            </div>
-                                        </template>
+                                    <div class="absolute -bottom-2 -right-2 bg-white dark:bg-slate-800 p-2.5 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700">
+                                        <div class="px-3 py-1 bg-blue-600 rounded-lg text-[10px] font-black text-white uppercase tracking-wider" x-text="selectedRequest.group"></div>
                                     </div>
                                 </div>
 
-                                <!-- Answers -->
-                                <div class="col-md-8 pl-6">
-                                    <h5 class="text-gray-900 dark:text-white font-bold mb-4 flex items-center gap-2"><i
-                                            class="fas fa-comments text-blue-500 dark:text-cyan-500"></i> Questionnaire Responses</h5>
-                                    <div class="bg-gray-50 dark:bg-gray-900/50 border border-gray-200 dark:border-gray-700/50 rounded-xl p-4 custom-scrollbar"
-                                        style="max-height: 500px; overflow-y: auto;">
-                                        <template x-for="(value, id) in selectedRequest.answers" :key="id">
-                                            <div class="mb-5 last:mb-0">
-                                                <label
-                                                    class="text-[10px] text-blue-500/80 dark:text-blue-300/70 uppercase font-bold tracking-wider mb-1 block"
-                                                    x-text="questionsMap[id] || (id.replace(/_/g, ' '))"></label>
+                                <h3 class="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white mb-2" x-text="selectedRequest.full_name"></h3>
+                                <div class="flex flex-wrap items-center justify-center gap-3">
+                                    <span class="text-blue-600 dark:text-blue-400 font-mono font-bold px-3 py-1 bg-blue-50 dark:bg-blue-500/10 rounded-xl" x-text="selectedRequest.academic_id"></span>
+                                    <div class="w-1.5 h-1.5 rounded-full bg-slate-300 dark:bg-slate-600"></div>
+                                    <span class="text-slate-500 dark:text-slate-400 font-bold" x-text="selectedRequest.is_dorm == 1 ? 'Magnificent Dorm' : 'Offline Residence'"></span>
+                                </div>
+                            </div>
 
-                                                <!-- Simple Value -->
-                                                <template x-if="typeof value !== 'object' || value === null">
-                                                    <div class="text-gray-800 dark:text-gray-200 text-sm bg-white dark:bg-gray-800/80 px-3 py-2 rounded-lg border border-gray-100 dark:border-transparent border-l-2 border-l-blue-500 shadow-sm dark:shadow-none"
-                                                        x-text="value"></div>
-                                                </template>
+                            <!-- Content Grid -->
+                            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 max-h-[50vh] overflow-y-auto custom-scrollbar pr-2">
+                                <!-- Contact & Basic Info (Left) -->
+                                <div class="lg:col-span-5 space-y-6">
+                                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50">
+                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-200 dark:border-slate-700 pb-2">Reach Out & Identity</h4>
+                                        <div class="space-y-4">
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-10 h-10 rounded-xl bg-blue-500/10 text-blue-600 flex items-center justify-center shadow-sm">
+                                                    <i class="fas fa-phone"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[10px] text-slate-400 font-bold uppercase">Phone Number</p>
+                                                    <p class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="selectedRequest.phone_number"></p>
+                                                </div>
+                                            </div>
+                                            <div class="flex items-center gap-4">
+                                                <div class="w-10 h-10 rounded-xl bg-green-500/10 text-green-600 flex items-center justify-center shadow-sm">
+                                                    <i class="fab fa-whatsapp"></i>
+                                                </div>
+                                                <div>
+                                                    <p class="text-[10px] text-slate-400 font-bold uppercase">WhatsApp</p>
+                                                    <p class="text-sm font-bold text-slate-700 dark:text-slate-200" x-text="selectedRequest.whatsapp_number"></p>
+                                                </div>
+                                            </div>
+                                            <template x-if="selectedRequest.user">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="w-10 h-10 rounded-xl bg-cyan-500/10 text-cyan-600 flex items-center justify-center shadow-sm">
+                                                        <i class="fas fa-envelope"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-[10px] text-slate-400 font-bold uppercase">University Mail</p>
+                                                        <p class="text-sm font-bold text-cyan-600 dark:text-cyan-400 break-all" x-text="selectedRequest.user.email"></p>
+                                                    </div>
+                                                </div>
+                                            </template>
+                                            <div class="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
+                                                <div class="flex items-start gap-4">
+                                                    <div class="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-600 flex items-center justify-center shadow-sm shrink-0">
+                                                        <i class="fas fa-map-marked-alt"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-[10px] text-slate-400 font-bold uppercase">Home Address</p>
+                                                        <p class="text-sm font-bold text-slate-700 dark:text-slate-200 leading-relaxed" x-text="selectedRequest.address"></p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
 
-                                                <!-- Nested Object/Array (Matrices) -->
-                                                <template x-if="typeof value === 'object' && value !== null">
-                                                    <div
-                                                        class="mt-1 bg-white dark:bg-gray-800/50 rounded-lg p-3 border border-gray-100 dark:border-transparent border-l-2 border-l-purple-500 shadow-sm dark:shadow-none">
-                                                        <template x-for="(subValue, subKey) in value" :key="subKey">
-                                                            <div
-                                                                class="flex justify-between items-center text-xs py-1.5 border-b border-gray-100 dark:border-gray-700/50 last:border-0">
-                                                                <span class="text-gray-500 dark:text-gray-400 font-medium"
-                                                                    x-text="subKey"></span>
-                                                                <span
-                                                                    class="text-gray-800 dark:text-white font-bold bg-gray-100 dark:bg-gray-700 px-2.5 py-0.5 rounded-md text-[10px]"
-                                                                    x-text="subValue"></span>
+                                <!-- Questionnaire Responses (Right) -->
+                                <div class="lg:col-span-7">
+                                    <div class="bg-slate-50 dark:bg-slate-800/50 p-6 rounded-3xl border border-slate-100 dark:border-slate-700/50">
+                                        <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 border-b border-slate-200 dark:border-slate-700 pb-2 flex items-center gap-2">
+                                            <i class="fas fa-comments text-amber-500"></i> Questionnaire Analysis
+                                        </h4>
+                                        <div class="space-y-6">
+                                            <template x-for="(value, id) in selectedRequest.answers" :key="id">
+                                                <div class="relative pl-6 border-l-2 border-blue-500/20">
+                                                    <div class="absolute -left-[5px] top-0 w-2 h-2 rounded-full bg-blue-500"></div>
+                                                    <p class="text-[11px] text-blue-600 dark:text-blue-400 font-black mb-1.5 uppercase tracking-wide" 
+                                                       x-text="questionsMap[id] || (id.replace(/_/g, ' '))"></p>
+                                                    
+                                                    <div class="bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 p-3 rounded-2xl shadow-sm">
+                                                        <!-- Simple Answer -->
+                                                        <template x-if="typeof value !== 'object' || value === null">
+                                                            <p class="text-slate-700 dark:text-slate-200 text-sm leading-relaxed" x-text="value || 'No response'"></p>
+                                                        </template>
+
+                                                        <!-- Matrix/List Answer -->
+                                                        <template x-if="typeof value === 'object' && value !== null">
+                                                            <div class="space-y-2">
+                                                                <template x-for="(subVal, subKey) in value" :key="subKey">
+                                                                    <div class="flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 px-3 py-1.5 rounded-lg border border-slate-100 dark:border-slate-700">
+                                                                        <span class="text-[11px] text-slate-500 font-bold" x-text="subKey"></span>
+                                                                        <span class="text-xs font-black text-blue-600 dark:text-blue-400" x-text="subVal"></span>
+                                                                    </div>
+                                                                </template>
                                                             </div>
                                                         </template>
                                                     </div>
-                                                </template>
-                                            </div>
-                                        </template>
+                                                </div>
+                                            </template>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </template>
-                    </div>
 
-                    <!-- Footer -->
-                    <div class="bg-gray-50 dark:bg-gray-900/50 px-6 py-4 sm:px-8 sm:flex sm:flex-row-reverse border-t border-gray-100 dark:border-gray-700/50">
-                        <button type="button" @click="viewModalOpen = false"
-                            class="btn bg-white dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-white rounded-xl px-6 border border-gray-200 dark:border-transparent">Close</button>
-                        <template x-if="selectedRequest && selectedRequest.status === 'pending'">
-                            <div class="sm:mr-3 flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
-                                <button @click="viewModalOpen = false; openApproveModal(selectedRequest)"
-                                    class="btn bg-green-500 hover:bg-green-600 text-white rounded-xl px-6 flex-1 sm:flex-none">Approve</button>
-                                <button @click="viewModalOpen = false; openRejectModal(selectedRequest)"
-                                    class="btn bg-red-500 hover:bg-red-600 text-white rounded-xl px-6 flex-1 sm:flex-none">Reject</button>
+                            <!-- Footer Actions -->
+                            <div class="mt-10 flex flex-wrap items-center justify-end gap-4 border-t border-slate-100 dark:border-slate-800 pt-8">
+                                <button type="button" @click="viewModalOpen = false" 
+                                        class="px-8 py-3 bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 rounded-2xl font-black hover:bg-slate-200 dark:hover:bg-slate-700 transition-all active:scale-95">
+                                    Close Review
+                                </button>
+                                
+                                <template x-if="selectedRequest.status === 'pending'">
+                                    <div class="flex items-center gap-3">
+                                        <button @click="viewModalOpen = false; openRejectModal(selectedRequest)"
+                                                class="px-8 py-3 bg-red-500/10 text-red-500 rounded-2xl font-black border border-red-500/20 hover:bg-red-500 hover:text-white transition-all shadow-lg shadow-red-500/10 active:scale-95">
+                                            Reject
+                                        </button>
+                                        <button @click="viewModalOpen = false; openApproveModal(selectedRequest)"
+                                                class="px-8 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-2xl font-black hover:shadow-2xl hover:shadow-blue-600/30 transition-all transform hover:-translate-y-0.5 active:scale-95">
+                                            Approve Member
+                                        </button>
+                                    </div>
+                                </template>
                             </div>
-                        </template>
-                    </div>
+                        </div>
+                    </template>
                 </div>
             </div>
         </div>

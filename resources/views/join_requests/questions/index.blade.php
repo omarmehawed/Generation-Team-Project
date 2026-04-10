@@ -55,8 +55,8 @@
                         placeholder="Message shown after applicant clicks submit..."></textarea>
                     <div class="flex items-center justify-between">
                         <p class="text-xs text-slate-500 font-medium italic">This message appears on the success page after final submission.</p>
-                        <button @click="saveSettings()" :disabled="savingSettings"
-                            class="px-6 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-black transition-all shadow-lg shadow-purple-500/20 flex items-center gap-2 disabled:opacity-50">
+                        <button @click="saveSettings($event)" :disabled="savingSettings"
+                            class="min-w-[180px] h-11 px-6 bg-purple-600 hover:bg-purple-700 text-white rounded-xl font-black transition-all shadow-lg shadow-purple-500/20 flex items-center justify-center gap-2 disabled:opacity-50 active:scale-95">
                             <i class="fas" :class="savingSettings ? 'fa-spinner fa-spin' : 'fa-save'"></i>
                             <span x-text="savingSettings ? 'Saving...' : 'Save Configuration'"></span>
                         </button>
@@ -577,21 +577,26 @@ function formBuilder() {
         },
 
         async saveOrder() {
-            const orders = this.questions.map((q, i) => ({ id: q.id, order: i + 1 }));
-            await fetch('{{ route('join-questions.reorder') }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: JSON.stringify({ orders })
-            });
+            try {
+                const orders = this.questions.map((q, i) => ({ id: q.id, order: i + 1 }));
+                await fetch('{{ route('join-questions.reorder') }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ orders })
+                });
+            } catch (e) {
+                console.error('Failed to save order', e);
+            }
         },
 
-        async saveSettings() {
+        async saveSettings(event) {
+            if (this.savingSettings) return;
             this.savingSettings = true;
             try {
-                await fetch('{{ route('join.settings.update') }}', {
+                const response = await fetch('{{ route('join.settings.update') }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -601,9 +606,23 @@ function formBuilder() {
                         join_request_success_message: this.successMessage
                     })
                 });
-                // Small toast or visual feedback
-                const btn = event.currentTarget;
-                const originalText = this.successMessage;
+                
+                if (response.ok) {
+                    const btn = event?.currentTarget;
+                    if (btn) {
+                        const originalHtml = btn.innerHTML;
+                        btn.innerHTML = '<i class="fas fa-check"></i> Saved!';
+                        btn.classList.remove('bg-purple-600');
+                        btn.classList.add('bg-green-500');
+                        setTimeout(() => {
+                            btn.innerHTML = originalHtml;
+                            btn.classList.add('bg-purple-600');
+                            btn.classList.remove('bg-green-500');
+                        }, 2000);
+                    }
+                }
+            } catch (e) {
+                console.error('Failed to save settings', e);
             } finally {
                 this.savingSettings = false;
             }
