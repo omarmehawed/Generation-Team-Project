@@ -38,6 +38,7 @@ class TeamMember extends Model
         'status', // Added status
         'can_manage_components',
         'can_manage_expenses',
+        'can_access_join_requests',
     ];
 
 }

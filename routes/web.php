@@ -69,6 +69,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'update'])->name('update');
         Route::delete('/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'destroy'])->name('destroy');
         Route::post('/reorder', [\App\Http\Controllers\JoinRequestQuestionController::class, 'reorder'])->name('reorder');
+        Route::post('/{id}/toggle-visibility', [\App\Http\Controllers\JoinRequestQuestionController::class, 'toggleVisibility'])->name('toggle-visibility');
+        Route::post('/{id}/add-to-archive', [\App\Http\Controllers\JoinRequestQuestionController::class, 'addToArchive'])->name('add-to-archive');
+        
+        // Archive Routes
+        Route::post('/archives', [\App\Http\Controllers\JoinRequestQuestionController::class, 'storeArchive'])->name('archives.store');
+        Route::get('/archives/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'showArchive'])->name('archives.show');
+        Route::post('/archives/{id}/toggle-visibility', [\App\Http\Controllers\JoinRequestQuestionController::class, 'toggleArchiveVisibility'])->name('archives.toggle');
+        Route::delete('/archives/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'destroyArchive'])->name('archives.destroy');
     });
 
     // 1. الداشبورد والبروفايل

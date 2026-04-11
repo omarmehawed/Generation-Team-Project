@@ -84,11 +84,6 @@ class User extends Authenticatable
     // ✅ دالة سحرية عشان نفحص الصلاحية في السايد بار
     public function hasPermission($permission)
     {
-        // 1. Super Admin Bypass (Specific Email Only)
-        $superAdminEmail = '2420823@batechu.com';
-        if ($this->email === $superAdminEmail) {
-            return true;
-        }
 
         // 2. Explicit check for backup_db (Even for other Admins)
         if ($permission === 'backup_db') {
@@ -108,6 +103,28 @@ class User extends Authenticatable
             return false;
         }
         return in_array($permission, $this->permissions);
+    }
+
+    /**
+     * Centralized check for Join Request administration access.
+     * Logic: System Owner OR Admin Role OR Team-level Permission.
+     */
+    public function canManageJoinRequests()
+    {
+        // 1. System Owner Bypass
+        if ($this->email === '2420823@batechu.com') {
+            return true;
+        }
+
+        // 2. Global Admin Bypass
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        // 3. Team-level Permission Check
+        return $this->teamMemberships()
+            ->where('can_access_join_requests', true)
+            ->exists();
     }
 
     // العلاقات القديمة زي ما هي

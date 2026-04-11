@@ -20,7 +20,7 @@
             </div>
 
             @if(in_array($myRole, ['leader', 'vice_leader']))
-                <form action="{{ route('workshops.destroy', $workshop->id) }}" method="POST" class="m-0" onsubmit="return confirm('Are you sure you want to delete this workshop?');">
+                <form action="{{ route('workshops.destroy', $workshop->id) }}" method="POST" class="m-0" onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to delete this workshop?');">
                     @csrf
                     @method('DELETE')
                     <button type="submit" class="w-8 h-8 flex items-center justify-center rounded-xl text-gray-300 hover:text-red-500 hover:bg-red-50 transition-all border border-transparent hover:border-red-100">

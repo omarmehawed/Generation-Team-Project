@@ -28,7 +28,9 @@ class JoinRequestController extends Controller
      */
     public function toggleStatus(Request $request)
     {
-        $this->authorizeAdminEmails();
+        if (!Auth::user()->canManageJoinRequests()) {
+            abort(403);
+        }
         
         $status = $request->input('status', 'off');
         \App\Models\Setting::set('join_request_enabled', $status);
@@ -46,6 +48,12 @@ class JoinRequestController extends Controller
         }
 
         $questions = \App\Models\JoinRequestQuestion::where('is_active', true)
+            ->where(function($q) {
+                $q->whereNull('archive_id')
+                  ->orWhereHas('archive', function($aq) {
+                      $aq->where('is_active', true);
+                  });
+            })
             ->orderBy('order_priority')
             ->get();
 
@@ -54,24 +62,15 @@ class JoinRequestController extends Controller
         return view('join_requests.create', compact('questions', 'success_message'));
     }
 
-    /**
-     * Check Admin Access (Email Based)
-     */
-    private function authorizeAdminEmails()
-    {
-        $allowedEmails = ['2420823@batechu.com', '2420324@batechu.com'];
-
-        if (!Auth::check() || !in_array(Auth::user()->email, $allowedEmails)) {
-            abort(403, 'Unauthorized.');
-        }
-    }
  
     /**
      * Update Join Request Settings
      */
     public function updateSettings(Request $request)
     {
-        $this->authorizeAdminEmails();
+        if (!Auth::user()->canManageJoinRequests()) {
+            abort(403);
+        }
  
         if ($request->has('join_request_success_message')) {
             \App\Models\Setting::set('join_request_success_message', $request->input('join_request_success_message'));
@@ -145,8 +144,6 @@ class JoinRequestController extends Controller
             'date_of_birth' => 'required|date|before_or_equal:-17 years',
             'national_id' => 'required|string|max:20',
             'academic_id' => 'required|string|max:20',
-            'group' => 'required|in:G1,G2,G3,G4',
-            'phone_number' => 'required|string|max:20',
             'whatsapp_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
             'is_dorm' => 'required|boolean',
@@ -154,7 +151,14 @@ class JoinRequestController extends Controller
         ];
 
         // 2. Fetch Active Questions for dynamic validation
-        $questions = \App\Models\JoinRequestQuestion::where('is_active', true)->get();
+        $questions = \App\Models\JoinRequestQuestion::where('is_active', true)
+            ->where(function($q) {
+                $q->whereNull('archive_id')
+                  ->orWhereHas('archive', function($aq) {
+                      $aq->where('is_active', true);
+                  });
+            })
+            ->get();
         
         foreach ($questions as $q) {
             $field = "answers." . $q->id;
@@ -204,7 +208,6 @@ class JoinRequestController extends Controller
             'date_of_birth' => $validated['date_of_birth'],
             'national_id' => $validated['national_id'],
             'academic_id' => $validated['academic_id'],
-            'group' => $validated['group'],
             'phone_number' => $validated['phone_number'],
             'whatsapp_number' => $validated['whatsapp_number'],
             'address' => $validated['address'],
@@ -223,7 +226,9 @@ class JoinRequestController extends Controller
      */
     public function adminIndex(Request $request)
     {
-        $this->authorizeAdminEmails();
+        if (!Auth::user()->canManageJoinRequests()) {
+            abort(403);
+        }
 
         $query = JoinRequest::with(['user', 'approver']);
 
@@ -252,7 +257,7 @@ class JoinRequestController extends Controller
         $sortDirection = $request->input('sort_order', 'desc');
 
         // Allow sorting only on specific columns
-        $allowedSorts = ['full_name', 'group', 'status', 'created_at'];
+        $allowedSorts = ['full_name', 'status', 'created_at'];
         if (in_array($sortColumn, $allowedSorts)) {
             $query->orderBy($sortColumn, $sortDirection);
         } else {
@@ -279,7 +284,9 @@ class JoinRequestController extends Controller
      */
     public function approve($id)
     {
-        $this->authorizeAdminEmails();
+        if (!Auth::user()->canManageJoinRequests()) {
+            abort(403);
+        }
         $joinRequest = JoinRequest::findOrFail($id);
         return view('join_requests.approve', compact('joinRequest'));
     }
@@ -289,7 +296,9 @@ class JoinRequestController extends Controller
      */
     public function storeUser(Request $request, $id)
     {
-        $this->authorizeAdminEmails();
+        if (!Auth::user()->canManageJoinRequests()) {
+            abort(403);
+        }
         $joinRequest = JoinRequest::findOrFail($id);
         
         $validated = $request->validate([
@@ -336,7 +345,9 @@ class JoinRequestController extends Controller
      */
     public function reject($id)
     {
-        $this->authorizeAdminEmails();
+        if (!Auth::user()->canManageJoinRequests()) {
+            abort(403);
+        }
         $joinRequest = JoinRequest::findOrFail($id);
         
         $joinRequest->update([
@@ -351,7 +362,9 @@ class JoinRequestController extends Controller
      */
     public function export(Request $request)
     {
-        $this->authorizeAdminEmails();
+        if (!Auth::user()->canManageJoinRequests()) {
+            abort(403);
+        }
 
         $status = $request->input('status', 'all'); // all, pending, approved, rejected
         $columns = $request->input('columns', ['full_name', 'status']); // Default columns
@@ -364,7 +377,6 @@ class JoinRequestController extends Controller
             'phone_number' => 'Phone Number',
             'whatsapp_number' => 'WhatsApp Number',
             'address' => 'Home Address',
-            'group' => 'Group',
             'date_of_birth' => 'Date of Birth',
             'is_dorm' => 'Dorm Status',
             'status' => 'Status',

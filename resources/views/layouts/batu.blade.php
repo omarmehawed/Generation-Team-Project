@@ -485,7 +485,7 @@
                 <li><a href="https://batu-service.vercel.app/token/verify" class="sidebar-link"><i
                             class="fas fa-server"></i><span>Services</span></a></li>
 
-                @if(auth()->check() && in_array(auth()->user()->email, ['2420823@batechu.com', '2420324@batechu.com']))
+                @if(auth()->check() && auth()->user()->canManageJoinRequests())
                     <li>
                         <a href="{{ route('join.admin') }}"
                             class="sidebar-link {{ request()->routeIs('join.admin') ? 'active' : '' }}">
@@ -619,6 +619,72 @@
     {{-- 🔔 Notification JS: mark-all (AJAX), click-redirect, highlight --}}
     {{-- ============================================================== --}}
     <script>
+        /**
+         * Global SweetAlert Confirmation for Forms
+         * Use: onsubmit="return confirmFormSubmit(event, this, 'Are you sure?')"
+         */
+        function confirmFormSubmit(event, form, message) {
+            event.preventDefault();
+            const isDark = document.body.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark');
+            Swal.fire({
+                title: 'Confirmation Required',
+                text: message || 'Are you sure you want to perform this action?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                cancelButtonColor: isDark ? '#374151' : '#e5e7eb',
+                confirmButtonText: 'Yes, Proceed',
+                cancelButtonText: 'Cancel',
+                background: isDark ? '#1f2937' : '#ffffff',
+                color: isDark ? '#f3f4f6' : '#111827',
+                customClass: {
+                    cancelButton: isDark ? 'text-white' : 'text-gray-900',
+                    confirmButton: 'text-white font-bold',
+                    popup: 'rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit();
+                }
+            });
+            return false;
+        }
+
+        /**
+         * Global SweetAlert Confirmation for Links/Buttons
+         * Use: onclick="return confirmAction(event, 'Message', 'url')"
+         */
+        function confirmAction(event, message, urlOrCallback) {
+            event.preventDefault();
+            const isDark = document.body.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark');
+            Swal.fire({
+                title: 'Action Required',
+                text: message || 'Are you sure?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: isDark ? '#374151' : '#e5e7eb',
+                confirmButtonText: 'Confirm',
+                background: isDark ? '#1f2937' : '#ffffff',
+                color: isDark ? '#f3f4f6' : '#111827',
+                customClass: {
+                    cancelButton: isDark ? 'text-white' : 'text-gray-900',
+                    popup: 'rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    if (typeof urlOrCallback === 'string') {
+                        window.location.href = urlOrCallback;
+                    } else if (typeof urlOrCallback === 'function') {
+                        urlOrCallback();
+                    } else if (event.target.href) {
+                        window.location.href = event.target.href;
+                    }
+                }
+            });
+            return false;
+        }
+
         const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')?.content
             || '{{ csrf_token() }}';
 

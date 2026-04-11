@@ -16,6 +16,7 @@ class JoinRequestQuestion extends Model
         'placeholder',
         'section',
         'is_active',
+        'archive_id',
     ];
 
     protected $casts = [
@@ -24,4 +25,9 @@ class JoinRequestQuestion extends Model
         'is_required' => 'boolean',
         'is_active' => 'boolean',
     ];
+
+    public function archive()
+    {
+        return $this->belongsTo(QuestionArchive::class, 'archive_id');
+    }
 }

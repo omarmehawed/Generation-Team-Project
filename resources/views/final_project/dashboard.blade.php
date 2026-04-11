@@ -952,7 +952,7 @@
                             </div>
 
                             <div class="flex items-center gap-4">
-                                @if(auth()->user()->email === '2420823@batechu.com')
+                                @if(auth()->user()->role === 'admin')
                                     <button @click.stop onclick="openExportModal('all')" class="bg-green-50 text-green-600 border border-green-200 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-green-500 hover:text-white transition flex items-center gap-2">
                                         <i class="fas fa-file-excel text-base"></i> Export Excel
                                     </button>
@@ -1065,7 +1065,7 @@
                                                     @if ($myRole == 'leader' && $member->role != 'leader')
                                                         <form action="{{ route('final_project.remove_member') }}"
                                                             method="POST" class="inline-block"
-                                                            onsubmit="return confirmAction(event, 'Remove this member?')">
+                                                            onsubmit="return confirmFormSubmit(event, this, 'Remove this member?')">
                                                             @csrf
                                                             <input type="hidden" name="team_id" value="{{ $team->id }}">
                                                             <input type="hidden" name="user_id" value="{{ $member->user_id }}">
@@ -1732,11 +1732,10 @@
                                                                 class="p-1.5 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors" title="Edit">
                                                                 <i class="fas fa-edit text-xs"></i>
                                                             </button>
-                                                            <form action="{{ route('final_project.destroyComponent', $comp->id) }}" method="POST" id="delete-comp-{{ $comp->id }}">
+                                                            <form action="{{ route('final_project.destroyComponent', $comp->id) }}" method="POST" id="delete-comp-{{ $comp->id }}" onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to delete this component? This action cannot be undone.')">
                                                                 @csrf
                                                                 @method('DELETE')
-                                                                <button type="button" @click.stop 
-                                                                    onclick="showDeleteConfirm(document.getElementById('delete-comp-{{ $comp->id }}'), 'Are you sure you want to delete this component? This action cannot be undone.')"
+                                                                <button type="submit" @click.stop 
                                                                     class="p-1.5 text-red-500 hover:bg-red-100 rounded-lg transition-colors" title="Delete">
                                                                     <i class="fas fa-trash text-xs"></i>
                                                                 </button>
@@ -1840,11 +1839,10 @@
                                                                     class="p-1 text-gray-400 hover:text-blue-500 transition-colors" title="Edit">
                                                                     <i class="fas fa-edit text-[10px]"></i>
                                                                 </button>
-                                                                <form action="{{ route('final_project.deleteExpense', $expense->id) }}" method="POST" id="delete-exp-{{ $expense->id }}">
+                                                                <form action="{{ route('final_project.deleteExpense', $expense->id) }}" method="POST" id="delete-exp-{{ $expense->id }}" onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to delete this expense?')">
                                                                     @csrf
                                                                     @method('DELETE')
-                                                                    <button type="button" @click.stop 
-                                                                        onclick="showDeleteConfirm(document.getElementById('delete-exp-{{ $expense->id }}'), 'Are you sure you want to delete this expense?')"
+                                                                    <button type="submit" @click.stop 
                                                                         class="p-1 text-gray-400 hover:text-red-500 transition-colors" title="Delete">
                                                                         <i class="fas fa-trash text-[10px]"></i>
                                                                     </button>
@@ -2191,7 +2189,7 @@
                                                 @if ($myRole == 'leader')
                                                     <form action="{{ route('final_project.deleteGallery', $item->id) }}"
                                                         method="POST"
-                                                        onsubmit="return confirm('Are you sure you want to delete this item?');">
+                                                        onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to delete this item?');">
                                                         @csrf
                                                         <button type="submit"
                                                             class="text-red-400 hover:text-red-500 bg-white/10 p-2 rounded-full backdrop-blur-md transition hover:bg-white/20"
@@ -2460,8 +2458,8 @@
                                 <div class="bg-gray-50 px-8 py-6 border-t border-gray-100 flex flex-col gap-4">
                                     @if ($isLeader)
                                         {{-- زر التسليم النهائي --}}
-                                        <button type="submit" name="submit_finish" value="1"
-                                            onclick="return confirmAction(event, 'WARNING: This is the Final Submission. You cannot undo this action!')"
+                                        <button type="button" name="submit_finish" value="1"
+                                            onclick="confirmAction(event, 'WARNING: This is the Final Submission. You cannot undo this action!', () => { const f = this.closest('form'); f.insertAdjacentHTML('beforeend', '<input type=\'hidden\' name=\'submit_finish\' value=\'1\'>'); f.submit(); })"
                                             class="w-full group relative px-8 py-4 rounded-xl font-bold text-white shadow-lg overflow-hidden transition-all transform hover:-translate-y-1"
                                             style="background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%);">
                                             <span class="relative z-10 flex items-center justify-center gap-2">
@@ -3992,7 +3990,7 @@
 </script>
 
 {{-- Export Excel Modal (Team Leader Only) --}}
-@if(auth()->user()->email === '2420823@batechu.com')
+@if(auth()->user()->role === 'admin')
 <div id="exportMembersModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('exportMembersModal')"></div>
     <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md mx-4 relative z-10 overflow-hidden transform transition-all p-8" x-data="{

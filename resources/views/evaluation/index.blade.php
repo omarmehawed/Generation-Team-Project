@@ -64,7 +64,7 @@
                     <i class="fas fa-file-csv mr-1"></i> Export Summary
                 </a>
                 @if($currentPeriod)
-                <form method="POST" action="{{ route('evaluation.completeWeek', $team->id) }}" onsubmit="return confirm('Finalize Week #{{ $currentPeriod->week_number }}? This cannot be undone.')">
+                <form method="POST" action="{{ route('evaluation.completeWeek', $team->id) }}" onsubmit="return confirmFormSubmit(event, this, 'Finalize Week #{{ $currentPeriod->week_number }}? This cannot be undone.')">
                     @csrf
                     <button type="submit" class="rounded-xl bg-green-600 hover:bg-green-700 text-white px-4 py-2 text-sm font-medium shadow transition">
                         <i class="fas fa-check-double mr-1"></i> Complete Week
@@ -389,7 +389,7 @@
                                 </button>
 
                                 {{-- Remove Role --}}
-                                <form action="{{ route('evaluation.remove-sub-leader', $team->id) }}" method="POST" onsubmit="return confirm('Remove as Sub Leader? They will become a normal member.')">
+                                <form action="{{ route('evaluation.remove-sub-leader', $team->id) }}" method="POST" onsubmit="return confirmFormSubmit(event, this, 'Remove as Sub Leader? They will become a normal member.')">
                                     @csrf
                                     <input type="hidden" name="member_id" value="{{ $sl->id }}">
                                     <button type="submit" class="w-8 h-8 rounded-lg flex items-center justify-center bg-red-50 text-red-500 hover:bg-red-500 hover:text-white transition-all shadow-sm" title="Remove Sub Leader Role">

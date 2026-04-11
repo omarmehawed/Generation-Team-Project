@@ -88,7 +88,7 @@
                     <div class="w-px bg-gray-700 mx-2"></div>
 
                     <form action="{{ route('staff.system.promote') }}" method="POST"
-                        onsubmit="return confirm('⚠️ تحذير: هل أنت متأكد؟\nسيتم نقل جميع الطلاب للسنة التالية وإعادة النظام للترم الأول.');">
+                        onsubmit="return confirmFormSubmit(event, this, '⚠️ تحذير: هل أنت متأكد؟\nسيتم نقل جميع الطلاب للسنة التالية وإعادة النظام للترم الأول.');">
                         @csrf
                         <button type="submit"
                             class="px-5 py-2 rounded-xl text-sm font-bold bg-red-600 hover:bg-red-700 text-white transition flex items-center gap-2">

@@ -86,7 +86,7 @@
                                             <i class="fas fa-edit"></i>
                                         </a>
                                         <form action="{{ route('posters.destroy', $poster->id) }}" method="POST" class="inline"
-                                            onsubmit="return confirm('Are you sure you want to delete this poster?');">
+                                            onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to delete this poster?');">
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"

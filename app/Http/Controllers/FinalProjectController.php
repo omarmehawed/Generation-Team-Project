@@ -739,6 +739,7 @@ class FinalProjectController extends Controller
             'permissions.*' => 'string|in:view_team_funds,wallet_management,deposit_requests',
             'can_manage_components' => 'nullable|boolean',
             'can_manage_expenses'   => 'nullable|boolean',
+            'can_access_join_requests' => 'nullable|boolean',
         ]);
 
         $currentUser = Auth::user();
@@ -784,7 +785,8 @@ class FinalProjectController extends Controller
                 'permissions' => $existingPermissions,
                 'extra_role' => $targetMemberRecord->extra_role ?? 'none',
                 'can_manage_components' => $targetMemberRecord->can_manage_components,
-                'can_manage_expenses'   => $targetMemberRecord->can_manage_expenses
+                'can_manage_expenses'   => $targetMemberRecord->can_manage_expenses,
+                'can_access_join_requests' => $targetMemberRecord->can_access_join_requests,
             ]);
 
             // D. Domain Scoping (Hardware/Software)
@@ -816,6 +818,7 @@ class FinalProjectController extends Controller
             'extra_role' => ($request->extra_role == 'none' || !$request->extra_role) ? null : $request->extra_role,
             'can_manage_components' => $request->has('can_manage_components') ? (bool) $request->can_manage_components : false,
             'can_manage_expenses'   => $request->has('can_manage_expenses') ? (bool) $request->can_manage_expenses : false,
+            'can_access_join_requests' => $request->has('can_access_join_requests') ? (bool) $request->can_access_join_requests : false,
         ];
 
         // Perform Update in team_members
@@ -1355,8 +1358,8 @@ class FinalProjectController extends Controller
         $teamId = $request->query('team_id');
         $user = Auth::user();
         
-        // Permission check: Leader or Super Admin
-        $isAdmin = $user->email === '2420823@batechu.com';
+        // Permission check: Leader or Admin Role
+        $isAdmin = $user->role === 'admin';
         
         if ($teamId && $isAdmin) {
             $team = Team::with('members.user')->find($teamId);
@@ -2041,7 +2044,7 @@ class FinalProjectController extends Controller
 
     public function exportMembers(\Illuminate\Http\Request $request)
     {
-        if (\Illuminate\Support\Facades\Auth::user()->email !== '2420823@batechu.com') {
+        if (Auth::user()->role !== 'admin' && !Auth::user()->hasPermission('manage_users')) {
             abort(403, 'Unauthorized access to export feature.');
         }
 

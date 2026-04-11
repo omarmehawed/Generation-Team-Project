@@ -491,7 +491,7 @@
                                                     class="flex items-center justify-end gap-2 opacity-60 hover:opacity-100 transition-opacity">
                                                     @if($myRole == 'leader' && $member->role != 'leader')
                                                         <form action="{{ route('teams.removeMember') }}" method="POST"
-                                                            class="inline-block" onsubmit="return confirm('Remove this member?')">
+                                                            class="inline-block" onsubmit="return confirmFormSubmit(event, this, 'Remove this member?')">
                                                             @csrf
                                                             <input type="hidden" name="team_id" value="{{ $myTeam->id }}">
                                                             <input type="hidden" name="user_id" value="{{ $member->user_id }}">
@@ -667,7 +667,7 @@
                                                         {{-- زر الحذف --}}
                                                         @if($myRole == 'leader')
                                                             <form action="{{ route('tasks.destroy', $task->id) }}" method="POST"
-                                                                onsubmit="return confirm('Delete task?')">
+                                                                onsubmit="return confirmFormSubmit(event, this, 'Delete task?')">
                                                                 @csrf @method('DELETE')
                                                                 <button
                                                                     class="w-8 h-8 rounded-full hover:bg-red-50 text-gray-300 hover:text-red-500 transition flex items-center justify-center"><i
@@ -783,7 +783,7 @@
 
                                         <button type="submit"
                                             class="w-full bg-gradient-to-r from-[#266963] to-[#1e524d] hover:from-[#1e524d] hover:to-[#163C38] text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1"
-                                            onclick="return confirm('Confirm Final Submission?')">
+                                            onclick="return confirmFormSubmit(event, this.closest('form'), 'Confirm Final Submission?')">
                                             Submit Project <i class="fas fa-paper-plane ml-2"></i>
                                         </button>
                                     </form>

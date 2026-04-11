@@ -3,8 +3,8 @@
 @section('content')
     <div class="max-w-7xl mx-auto py-8">
 
-        {{-- Join Request Answers (Specific Emails Only) --}}
-        @if(auth()->check() && in_array(auth()->user()->email, ['2420823@batechu.com', '2420324@batechu.com']) && $user->joinRequest)
+        {{-- Join Request Answers (Permission Based) --}}
+        @if(auth()->check() && (auth()->user()->role === 'admin' || auth()->user()->hasPermission('join_request_access')) && $user->joinRequest)
             <div x-data="{ open: false }" class="mt-8 bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-xl dark:shadow-2xl">
                 <button @click="open = !open" class="w-full flex justify-between items-center text-left focus:outline-none">
                     <h3 class="text-xl font-bold text-gray-900 dark:text-white font-tech flex items-center gap-3">
@@ -72,7 +72,7 @@
             // Permission check: Leader or Vice Leader (General/Software/Hardware)
             // Note: The actual domain scoping happens inside the modal and backend
             $isLeaderOfStudent = $managedTeam && ($managedTeam->leader_id == auth()->id() || ($viewerMemberRecord && $viewerMemberRecord->role == 'vice_leader'));
-            $hasWalletManagement = auth()->check() && (auth()->user()->hasPermission('wallet_management') || auth()->user()->email === '2420823@batechu.com');
+            $hasWalletManagement = auth()->check() && (auth()->user()->hasPermission('wallet_management') || auth()->user()->role === 'admin');
         @endphp
 
         {{-- 1. User Info Section --}}
@@ -151,7 +151,7 @@
                                             <span class="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 text-[10px] font-bold px-3 py-1 rounded-full border border-green-200 dark:border-green-500/30 whitespace-nowrap self-start sm:self-center shadow-sm">Connected</span>
                                         </div>
                                         
-                                        <form action="{{ route('auth.google.unlink') }}" method="POST" class="w-full m-0">
+                                        <form action="{{ route('auth.google.unlink') }}" method="POST" class="w-full m-0" onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to unlink your Google account? You will no longer be able to log in with it.');">
                                             @csrf
                                             <div class="mb-3">
                                                 <input type="password" name="password" placeholder="Confirm password to unlink" required
@@ -160,7 +160,7 @@
                                                     <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p>
                                                 @enderror
                                             </div>
-                                            <button type="submit" onclick="return confirm('Are you sure you want to unlink your Google account? You will no longer be able to log in with it.');"
+                                            <button type="submit" 
                                                 class="w-full flex justify-center items-center gap-2 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
                                                 <i class="fas fa-unlink"></i> Unlink Account
                                             </button>

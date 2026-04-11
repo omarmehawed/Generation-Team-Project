@@ -14,7 +14,6 @@ class JoinRequest extends Model
         'date_of_birth',
         'national_id',
         'academic_id',
-        'group',
         'phone_number',
         'whatsapp_number',
 

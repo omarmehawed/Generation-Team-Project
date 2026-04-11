@@ -260,6 +260,7 @@
                                         </div>
                                     </div>
                                 </label>
+
                                 {{-- ================= 🔥 USER MANAGEMENT 🔥 ================= --}}
                                 <div class="col-span-1 sm:col-span-2 border-2 border-blue-100 rounded-xl bg-white overflow-hidden transition-all duration-300"
                                     id="userMgmtContainer">
@@ -616,6 +617,7 @@
                                     class="rounded text-blue-600 focus:ring-blue-500">
                                 <span class="text-sm font-medium text-gray-700">Time table Defence</span>
                             </label>
+
                             {{-- New Permission: Teams Database (Bulk) --}}
                             <label
                                 class="col-span-2 flex items-center gap-2 bg-gray-100 p-2 rounded border border-gray-200 hover:bg-gray-200 transition cursor-pointer mt-1">

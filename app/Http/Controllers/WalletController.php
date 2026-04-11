@@ -20,7 +20,7 @@ class WalletController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $hasManagement = $user->hasPermission('wallet_management') || $user->email === '2420823@batechu.com';
+        $hasManagement = $user->hasPermission('wallet_management');
 
         $pendingCount = 0;
 
@@ -125,7 +125,7 @@ class WalletController extends Controller
                 $q->where('user_id', $user->id);
             })->exists();
 
-        if (Auth::user()->email !== '2420823@batechu.com' && !Auth::user()->hasPermission('wallet_management') && !$isLeader) {
+        if (!Auth::user()->hasPermission('wallet_management') && !$isLeader) {
             abort(403, 'Unauthorized access to make transactions for this student.');
         }
 
@@ -394,7 +394,7 @@ class WalletController extends Controller
     private function authorizeAccess()
     {
         $user = Auth::user();
-        if ($user->email === '2420823@batechu.com' || $user->hasPermission('wallet_management')) {
+        if ($user->hasPermission('wallet_management')) {
             return;
         }
         abort(403, 'Unauthorized access.');
