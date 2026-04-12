@@ -19,7 +19,7 @@
             <div class="flex flex-wrap items-center gap-3 w-full xl:w-auto">
                 @if($hasManagement)
                     <div class="flex flex-wrap items-center gap-2 w-full sm:w-auto order-2 sm:order-1">
-                        @if(auth()->user()->hasPermission('deposit_requests'))
+                        @if($hasManagement)
                             <button @click="openDepositRequestsModal()"
                                 class="flex-1 sm:flex-none px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold text-xs md:text-sm shadow-lg shadow-indigo-500/20 transition-all flex items-center justify-center gap-2 relative">
                                 <i class="fas fa-list-alt"></i> Requests

@@ -20,7 +20,11 @@ class WalletController extends Controller
     public function index(Request $request)
     {
         $user = Auth::user();
-        $hasManagement = $user->hasPermission('wallet_management');
+        
+        $isGlobalAdmin = $user->hasPermission('wallet_management');
+        $isLeader = \App\Models\Team::where('leader_id', $user->id)->exists();
+        
+        $hasManagement = $isGlobalAdmin || $isLeader;
 
         $pendingCount = 0;
 
@@ -45,9 +49,21 @@ class WalletController extends Controller
                 $query->whereDate('created_at', '<=', $request->date_to);
             }
 
+            if (!$isGlobalAdmin && $isLeader) {
+                // Scope everything strictly to the Leader's Team
+                $teamMemberIds = \App\Models\TeamMember::whereIn('team_id', function($q) use ($user) {
+                    $q->select('id')->from('teams')->where('leader_id', $user->id);
+                })->pluck('user_id');
+
+                $query->whereIn('user_id', $teamMemberIds);
+                $totalBalance = User::whereIn('id', $teamMemberIds)->sum('wallet_balance');
+                $pendingCount = WalletDepositRequest::whereIn('user_id', $teamMemberIds)->where('status', 'pending')->count();
+            } else {
+                $totalBalance = User::sum('wallet_balance');
+                $pendingCount = WalletDepositRequest::where('status', 'pending')->count();
+            }
+
             $transactions = $query->paginate(20);
-            $totalBalance = User::sum('wallet_balance');
-            $pendingCount = WalletDepositRequest::where('status', 'pending')->count();
 
             return view('wallet.index', compact('transactions', 'totalBalance', 'hasManagement', 'pendingCount'));
         } else {
@@ -170,7 +186,19 @@ class WalletController extends Controller
     {
         $this->authorizeAccess();
 
-        $users = User::where('wallet_balance', '>', 0)->get();
+        $user = Auth::user();
+        $isGlobalAdmin = $user->hasPermission('wallet_management');
+        
+        $query = User::where('wallet_balance', '>', 0);
+        
+        if (!$isGlobalAdmin) {
+            $teamMemberIds = \App\Models\TeamMember::whereIn('team_id', function($q) use ($user) {
+                $q->select('id')->from('teams')->where('leader_id', $user->id);
+            })->pluck('user_id');
+            $query->whereIn('id', $teamMemberIds);
+        }
+
+        $users = $query->get();
 
         return response()->json([
             'users' => $users->map(fn($u) => [
@@ -191,9 +219,19 @@ class WalletController extends Controller
         $query = $request->get('query');
         if (empty($query)) return response()->json(null);
 
-        $user = User::where('university_email', 'like', $query . '%')
-                    ->orWhere('email', 'like', $query . '%')
-                    ->first();
+        $user = User::where(function($q) use ($query) {
+            $q->where('university_email', 'like', $query . '%')
+              ->orWhere('email', 'like', $query . '%');
+        });
+
+        if (!Auth::user()->hasPermission('wallet_management')) {
+            $teamMemberIds = \App\Models\TeamMember::whereIn('team_id', function($q) {
+                $q->select('id')->from('teams')->where('leader_id', Auth::id());
+            })->pluck('user_id');
+            $user->whereIn('id', $teamMemberIds);
+        }
+
+        $user = $user->first();
 
         if (!$user) return response()->json(null);
 
@@ -224,7 +262,18 @@ class WalletController extends Controller
         $type = $request->type;
         $adminId = Auth::id();
 
-        $users = User::whereIn('id', $userIds)->get();
+        $adminUser = Auth::user();
+        
+        $query = User::whereIn('id', $userIds);
+        
+        if (!$adminUser->hasPermission('wallet_management')) {
+            $teamMemberIds = \App\Models\TeamMember::whereIn('team_id', function($q) use ($adminUser) {
+                $q->select('id')->from('teams')->where('leader_id', $adminUser->id);
+            })->pluck('user_id');
+            $query->whereIn('id', $teamMemberIds);
+        }
+
+        $users = $query->get();
         
         if ($users->isEmpty()) {
             return back()->with('error', 'No valid members selected.');
@@ -301,11 +350,24 @@ class WalletController extends Controller
      */
     public function getDepositRequests()
     {
-        if (!Auth::user()->hasPermission('deposit_requests')) {
+        $user = Auth::user();
+        $isGlobalAdmin = $user->hasPermission('deposit_requests') || $user->hasPermission('wallet_management');
+        $isLeader = \App\Models\Team::where('leader_id', $user->id)->exists();
+
+        if (!$isGlobalAdmin && !$isLeader) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $requests = WalletDepositRequest::with('user')->where('status', 'pending')->latest()->get();
+        $query = WalletDepositRequest::with('user')->where('status', 'pending')->latest();
+        
+        if (!$isGlobalAdmin && $isLeader) {
+            $teamMemberIds = \App\Models\TeamMember::whereIn('team_id', function($q) use ($user) {
+                $q->select('id')->from('teams')->where('leader_id', $user->id);
+            })->pluck('user_id');
+            $query->whereIn('user_id', $teamMemberIds);
+        }
+
+        $requests = $query->get();
         return response()->json($requests);
     }
 
@@ -314,8 +376,20 @@ class WalletController extends Controller
      */
     public function processDepositRequest(Request $request, $id)
     {
-        if (!Auth::user()->hasPermission('deposit_requests')) {
-            abort(403, 'Unauthorized');
+        $user = Auth::user();
+        $depositRequest = WalletDepositRequest::findOrFail($id);
+        
+        $isGlobalAdmin = $user->hasPermission('deposit_requests') || $user->hasPermission('wallet_management');
+        
+        if (!$isGlobalAdmin) {
+            $isLeader = \App\Models\Team::where('leader_id', $user->id)
+                ->whereHas('members', function($q) use ($depositRequest) {
+                    $q->where('user_id', $depositRequest->user_id);
+                })->exists();
+                
+            if (!$isLeader) {
+                abort(403, 'Unauthorized');
+            }
         }
 
         $request->validate([
@@ -397,6 +471,11 @@ class WalletController extends Controller
         if ($user->hasPermission('wallet_management')) {
             return;
         }
+        
+        if (\App\Models\Team::where('leader_id', $user->id)->exists()) {
+            return;
+        }
+        
         abort(403, 'Unauthorized access.');
     }
 }

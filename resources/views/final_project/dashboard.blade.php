@@ -952,7 +952,7 @@
                             </div>
 
                             <div class="flex items-center gap-4">
-                                @if(auth()->user()->role === 'admin')
+                                @if(auth()->user()->role === 'admin' || $myRole == 'leader')
                                     <button @click.stop onclick="openExportModal('all')" class="bg-green-50 text-green-600 border border-green-200 px-4 py-2.5 rounded-xl text-xs font-bold shadow-sm hover:bg-green-500 hover:text-white transition flex items-center gap-2">
                                         <i class="fas fa-file-excel text-base"></i> Export Excel
                                     </button>
