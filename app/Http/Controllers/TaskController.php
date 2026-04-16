@@ -116,6 +116,14 @@ class TaskController extends Controller
             return back()->withErrors(['msg' => 'No tasks were assigned. Check permissions or selections.']);
         }
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Task assigned to {$taskCount} member(s) successfully!",
+                'redirect' => route('final_project.dashboard', $team->id) . '#tasks-section'
+            ]);
+        }
+
         return back()->with('success', "Task assigned to {$taskCount} member(s) successfully!");
     }
 
@@ -233,6 +241,14 @@ class TaskController extends Controller
                 return back()->with('warning', 'Task submitted successfully, but it is marked as LATE because the deadline has passed. 🕒');
             }
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Task submitted successfully!',
+                    'redirect' => route('final_project.dashboard', $task->team_id) . '#tasks-section'
+                ]);
+            }
+
             return back()->with('success', 'Task submitted successfully!');
         } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
             return back()->with('error', 'Task not found.');
@@ -306,6 +322,14 @@ class TaskController extends Controller
             teamId: $task->team_id,
             targetUserId: $task->user_id // The student who did the task
         );
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task approved successfully! ✅',
+                'redirect' => route('final_project.dashboard', $task->team_id) . '#tasks-section'
+            ]);
+        }
 
         return back()->with('success', 'Task approved successfully! ✅');
     }
@@ -387,6 +411,14 @@ class TaskController extends Controller
             targetUserId: $task->user_id
         );
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task rejected ❌',
+                'redirect' => route('final_project.dashboard', $task->team_id) . '#tasks-section'
+            ]);
+        }
+
         return back()->with('error', 'Task rejected ❌');
     }
     // 5. تبديل الحالة السريع (Toggle)
@@ -428,6 +460,14 @@ class TaskController extends Controller
         }
 
         $task->delete();
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task deleted successfully! 🗑️',
+                'redirect' => route('final_project.dashboard', $task->team_id) . '#tasks-section'
+            ]);
+        }
+
         return back()->with('success', 'Task deleted successfully! 🗑️');
     }
 
@@ -467,6 +507,14 @@ class TaskController extends Controller
             'graded_at' => null,
             'graded_by' => null,
         ]);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Submission deleted! Member status reverted to: ' . ucfirst($newStatus) . ' 🔙',
+                'redirect' => route('final_project.dashboard', $task->team_id) . '#tasks-section'
+            ]);
+        }
 
         return back()->with('success', 'Submission deleted! Member status reverted to: ' . ucfirst($newStatus) . ' 🔙');
     }
@@ -531,6 +579,14 @@ class TaskController extends Controller
                 'reviewed_at' => null
             ]);
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'File uploaded on behalf of member successfully! ✅',
+                    'redirect' => route('final_project.dashboard', $task->team_id) . '#tasks-section'
+                ]);
+            }
+
             return back()->with('success', 'File uploaded on behalf of member successfully! ✅');
 
         } catch (\Exception $e) {
@@ -563,6 +619,14 @@ class TaskController extends Controller
             ->delete();
 
         if ($deletedCount > 0) {
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => "Bulk Delete Success: {$deletedCount} tasks titled '{$request->title}' were removed from the {$request->technical_role} team. 🗑️",
+                    'redirect' => route('final_project.dashboard', $request->team_id) . '#tasks-section'
+                ]);
+            }
+
             return back()->with('success', "Bulk Delete Success: {$deletedCount} tasks titled '{$request->title}' were removed from the {$request->technical_role} team. 🗑️");
         }
 

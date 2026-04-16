@@ -385,7 +385,7 @@
                         Confirm <span x-text="txnType"></span>
                     </h3>
 
-                    <form action="{{ route('wallet.transact') }}" method="POST">
+                    <form action="{{ route('wallet.transact') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                         @csrf
                         <input type="hidden" name="user_id" :value="user?.id">
                         <input type="hidden" name="type" :value="txnType">

@@ -10,7 +10,7 @@
             <i class="fas fa-hand-holding-usd text-amber-500"></i> Request Wallet Deposit
         </h3>
 
-        <form action="{{ route('wallet.request.submit') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route('wallet.request.submit') }}" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
             @csrf
 
             <div class="mb-5">
@@ -267,7 +267,7 @@
                 </div>
 
                 <form :action="'{{ url('wallet/requests') }}/' + request?.id + '/process'" method="POST"
-                    class="space-y-4">
+                    class="space-y-4" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <div x-show="action === 'reject'">
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Rejection
@@ -322,7 +322,7 @@
             </div>
 
             <form action="{{ route('wallet.bulk_transact') }}" method="POST"
-                class="overflow-y-auto flex-1 pr-2 custom-scroll">
+                class="overflow-y-auto flex-1 pr-2 custom-scroll" onsubmit="handleAjaxFormSubmit(event)">
                 @csrf
 
                 {{-- Student Selector --}}

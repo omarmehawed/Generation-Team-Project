@@ -268,7 +268,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('createTeamModal')"></div>
             <div class="modal-content border-t-4 border-royal-gold">
-                <form action="{{ route('final_project.store') }}" method="POST">
+                <form action="{{ route('final_project.store') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     @if (isset($project) && $project)
                         <input type="hidden" name="project_id" value="{{ $project->id }}">
@@ -325,7 +325,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             <div class="modal-centering-wrapper">
                 <div class="modal-overlay" onclick="closeModal('editLogoModal')"></div>
                 <div class="modal-content border-t-4 border-royal-gold w-full max-w-lg">
-                    <form action="{{ route('final_project.update_logo') }}" method="POST">
+                    <form action="{{ route('final_project.update_logo') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                         @csrf
                         <input type="hidden" name="team_id" value="{{ $team->id }}">
 
@@ -436,7 +436,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('joinTeamModal')"></div>
             <div class="modal-content">
-                <form action="{{ route('final_project.join') }}" method="POST">
+                <form action="{{ route('final_project.join') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     @if (isset($project) && $project)
                         <input type="hidden" name="project_id" value="{{ $project->id }}">
@@ -470,7 +470,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('inviteMemberModal')"></div>
             <div class="modal-content">
-                <form action="{{ route('final_project.invite') }}" method="POST">
+                <form action="{{ route('final_project.invite') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
                     <div class="bg-white px-8 pt-8 pb-6">
@@ -500,7 +500,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('leaveTeamModal')"></div>
             <div class="modal-content border-t-4 border-red-600 !border-t-red-600">
-                <form action="{{ route('final_project.leave') }}" method="POST">
+                <form action="{{ route('final_project.leave') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     {{-- تأكد أن المتغير $team متاح هنا، أو استخدم $myTeam حسب الكود عندك --}}
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
@@ -582,7 +582,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('manageMemberModal')"></div>
             <div class="modal-content border-t-8 border-[#D4AF37] !border-t-[#D4AF37]">
-                <form action="{{ route('final_project.updateMember') }}" method="POST">
+                <form action="{{ route('final_project.updateMember') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
                     <input type="hidden" name="user_id" id="manageUserId">
@@ -693,7 +693,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     </button>
                 </div>
 
-                <form action="{{ route('final_project.reportMember') }}" method="POST" class="p-6 bg-white">
+                <form action="{{ route('final_project.reportMember') }}" method="POST" class="p-6 bg-white" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="reported_user_id" id="reported_user_id_input">
 
@@ -739,7 +739,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         official approval.</p>
                 </div>
 
-                <form action="{{ route('final_project.submitProposal') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('final_project.submitProposal') }}" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -800,7 +800,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('addExpenseModal')"></div>
             <div class="modal-content">
-                <form action="{{ route('final_project.storeExpense') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('final_project.storeExpense') }}" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -860,7 +860,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('createFundModal')"></div>
             <div class="modal-content border border-yellow-500/30">
-                <form action="{{ route('final_project.storeFund') }}" method="POST">
+                <form action="{{ route('final_project.storeFund') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -1033,7 +1033,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('addReportModal')"></div>
             <div class="modal-content !max-w-xl">
-                <form action="{{ route('final_project.storeReport') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('final_project.storeReport') }}" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -1110,7 +1110,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('bookSupervisionModal')"></div>
             <div class="modal-content !max-w-lg">
-                <form action="{{ route('final_project.requestSupervision') }}" method="POST">
+                <form action="{{ route('final_project.requestSupervision') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -1194,7 +1194,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('internalMeetingModal')"></div>
             <div class="modal-content !max-w-md" x-data="{ mode: 'online', locationType: 'college' }">
-                <form action="{{ route('final_project.storeInternalMeeting') }}" method="POST">
+                <form action="{{ route('final_project.storeInternalMeeting') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -1273,7 +1273,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             <div class="modal-overlay" onclick="closeModal('markAttendanceModal')"></div>
             <div class="modal-content !max-w-xl" x-data="attendanceManager()"
                 @load-attendees.window="loadExisting($event)">
-                <form action="{{ route('final_project.markAttendance') }}" method="POST">
+                <form action="{{ route('final_project.markAttendance') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="meeting_id" id="attendanceMeetingId">
 
@@ -1511,7 +1511,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('uploadGalleryModal')"></div>
             <div class="modal-content !max-w-lg">
-                <form action="{{ route('final_project.uploadGallery') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('final_project.uploadGallery') }}" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -1612,7 +1612,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('addTaskModal')"></div>
             <div class="modal-content !max-w-md">
-                <form action="{{ route('tasks.store') }}" method="POST">
+                <form action="{{ route('tasks.store') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -1731,7 +1731,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             <div class="modal-content !max-w-lg">
                 {{-- Form with ID and Enctype for Files --}}
                 <form id="submissionForm" method="POST" enctype="multipart/form-data" class="space-y-4"
-                    x-data="{ type: 'file' }">
+                    x-data="{ type: 'file' }" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="task_id" id="submitTaskId">
 
@@ -2048,7 +2048,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     <div id="addWorkshopModalContent"
          class="relative w-full max-w-lg transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-indigo-600 scale-95 opacity-0 duration-300">
 
-        <form action="{{ route('workshops.store') }}" method="POST">
+        <form action="{{ route('workshops.store') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
             @csrf
             <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
@@ -2347,7 +2347,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('rejectTaskModal')"></div>
             <div class="modal-content !max-w-md border-t-8 border-red-600">
-                <form id="rejectTaskForm" method="POST">
+                <form id="rejectTaskForm" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <div class="bg-white px-8 pt-8 pb-6">
                         <div class="flex items-center gap-4 text-red-600 mb-6">
@@ -2389,7 +2389,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('uploadOnBehalfModal')"></div>
             <div class="modal-content !max-w-md border-t-8 border-indigo-600">
-                <form id="uploadOnBehalfForm" method="POST" enctype="multipart/form-data">
+                <form id="uploadOnBehalfForm" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <div class="bg-white px-8 pt-8 pb-6">
                         <div class="flex items-center gap-4 text-indigo-600 mb-6">

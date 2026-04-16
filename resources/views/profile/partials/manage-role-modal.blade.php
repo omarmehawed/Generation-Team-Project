@@ -14,7 +14,7 @@
         {{-- Modal Content --}}
         <div
             class="relative w-full max-w-lg transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-[#D4AF37] !border-t-[#D4AF37]">
-            <form action="{{ route('final_project.updateMember') }}" method="POST">
+            <form action="{{ route('final_project.updateMember') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                 @csrf
                 <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
                 <input type="hidden" name="user_id" value="{{ $user->id }}">
@@ -46,22 +46,22 @@
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Administrative Role</label>
                             <div class="grid grid-cols-3 gap-3">
                                 <label class="cursor-pointer relative">
-                                    <input type="radio" name="role" value="leader" class="peer hidden" {{ $isMainLeaderOfTeam ? 'checked' : 'disabled' }}>
-                                    <div class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-yellow-500 peer-checked:bg-yellow-50 transition-all hover:bg-gray-50 {{ !$isMainLeaderOfTeam ? 'bg-gray-50 opacity-50 cursor-not-allowed' : '' }}">
+                                    <input type="radio" name="role" value="leader" class="peer hidden" {{ $currentRole === 'leader' ? 'checked' : '' }}>
+                                    <div class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-yellow-500 peer-checked:bg-yellow-50 transition-all hover:bg-gray-50">
                                         <p class="text-sm font-bold text-gray-600 peer-checked:text-yellow-700">Leader</p>
                                     </div>
                                 </label>
 
                                 <label class="cursor-pointer relative">
-                                    <input type="radio" name="role" value="vice_leader" class="peer hidden" {{ $currentRole === 'vice_leader' ? 'checked' : '' }} {{ $isMainLeaderOfTeam ? 'disabled' : '' }}>
-                                    <div class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:bg-gray-50 {{ $isMainLeaderOfTeam ? 'bg-gray-50 opacity-50 cursor-not-allowed' : '' }}">
+                                    <input type="radio" name="role" value="vice_leader" class="peer hidden" {{ $currentRole === 'vice_leader' ? 'checked' : '' }}>
+                                    <div class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:bg-gray-50">
                                         <p class="text-sm font-bold text-gray-600 peer-checked:text-purple-700">Vice Leader 🎖️</p>
                                     </div>
                                 </label>
 
                                 <label class="cursor-pointer relative">
-                                    <input type="radio" name="role" value="member" class="peer hidden" {{ $currentRole === 'member' || (!$isMainLeaderOfTeam && !in_array($currentRole, ['leader', 'vice_leader'])) ? 'checked' : '' }} {{ $isMainLeaderOfTeam ? 'disabled' : '' }}>
-                                    <div class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-[#D4AF37] peer-checked:bg-[#FFF8E1] transition-all hover:bg-gray-50 {{ $isMainLeaderOfTeam ? 'bg-gray-50 opacity-50 cursor-not-allowed' : '' }}">
+                                    <input type="radio" name="role" value="member" class="peer hidden" {{ $currentRole === 'member' || !in_array($currentRole, ['leader', 'vice_leader']) ? 'checked' : '' }}>
+                                    <div class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-[#D4AF37] peer-checked:bg-[#FFF8E1] transition-all hover:bg-gray-50">
                                         <p class="text-sm font-bold text-gray-600 peer-checked:text-[#AA8A26]">Member 👤</p>
                                     </div>
                                 </label>

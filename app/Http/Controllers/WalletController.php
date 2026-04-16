@@ -179,7 +179,17 @@ class WalletController extends Controller
             'type' => 'info'
         ]));
 
-        return back()->with('success', ucfirst($type) . " of {$amount} completed for {$user->name}.");
+        $message = ucfirst($type) . " of {$amount} completed for {$user->name}.";
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'redirect' => route('wallet.index')
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     public function activeBalances(Request $request)
@@ -313,7 +323,17 @@ class WalletController extends Controller
             $count++;
         }
 
-        return back()->with('success', "Bulk " . ucfirst($type) . " applied to {$count} members.");
+        $message = "Bulk " . ucfirst($type) . " applied to {$count} members.";
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'redirect' => route('wallet.index')
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
@@ -342,7 +362,17 @@ class WalletController extends Controller
 
         WalletDepositRequest::create($data);
 
-        return back()->with('success', 'Deposit request submitted successfully! Waiting for review.');
+        $message = 'Deposit request submitted successfully! Waiting for review.';
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'redirect' => route('wallet.index')
+            ]);
+        }
+
+        return back()->with('success', $message);
     }
 
     /**
@@ -439,7 +469,15 @@ class WalletController extends Controller
                 'type' => 'success'
             ]));
 
-            return back()->with('success', 'Deposit request accepted and balance updated.');
+            $message = 'Deposit request accepted and balance updated.';
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'redirect' => route('wallet.index')
+                ]);
+            }
+            return back()->with('success', $message);
         } else {
             $depositRequest->update([
                 'status' => 'rejected',
@@ -458,7 +496,15 @@ class WalletController extends Controller
                 'type' => 'alert'
             ]));
 
-            return back()->with('success', 'Deposit request rejected.');
+            $message = 'Deposit request rejected.';
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => $message,
+                    'redirect' => route('wallet.index')
+                ]);
+            }
+            return back()->with('success', $message);
         }
     }
 

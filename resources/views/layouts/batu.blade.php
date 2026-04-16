@@ -644,7 +644,8 @@
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    form.submit();
+                    // Trigger AJAX submission
+                    handleAjaxFormSubmit({ preventDefault: () => {}, target: form });
                 }
             });
             return false;
@@ -753,6 +754,145 @@
         /**
          * On page load: check URL hash → scroll to element → apply 30-second highlight.
          */
+        /**
+         * GLOBAL AJAX HANDLER
+         * Intercepts form submissions and performs them via fetch()
+         */
+        async function handleAjaxFormSubmit(event) {
+            event.preventDefault();
+            const form = event.target;
+            const submitBtn = event.submitter || form.querySelector('[type="submit"]');
+            const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+            const formData = new FormData(form);
+            
+            // If the submission was triggered by a specific button, include its name/value
+            if (event.submitter && event.submitter.name) {
+                formData.append(event.submitter.name, event.submitter.value);
+            }
+
+            const isDark = document.documentElement.classList.contains('dark');
+
+            // Show Loading State
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                // Keep the original width if possible to avoid layout shift
+                submitBtn.style.minWidth = `${submitBtn.offsetWidth}px`;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+            }
+            showTopLoading();
+
+            try {
+                // IMPORTANT: Use getAttribute('action') because if an input has name="action", 
+                // form.action will return the input element instead of the URL string.
+                const url = form.getAttribute('action') || window.location.href;
+                const method = form.getAttribute('method') || 'POST';
+
+                const response = await fetch(url, {
+                    method: method.toUpperCase(),
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF_TOKEN,
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: formData
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Toast.fire({ icon: 'success', title: result.message || 'Action completed!' });
+                    
+                    // Close Modals if any
+                    if (typeof closeModal === 'function') {
+                        const modalId = form.closest('[role="dialog"]')?.id;
+                        if (modalId) closeModal(modalId);
+                    }
+
+                    // Redirection or Reloading Partial
+                    if (result.redirect) {
+                        // Smoothly transition if it's the same page
+                        const currentUrl = new URL(window.location.href);
+                        const nextUrl = new URL(result.redirect);
+                        
+                        if (currentUrl.pathname === nextUrl.pathname) {
+                            // If same page, just reload to update UI (simplest for now)
+                            // In a more advanced version, we could fetch the HTML and swap the container
+                            window.location.href = result.redirect; 
+                        } else {
+                            window.location.href = result.redirect;
+                        }
+                    } else {
+                         window.location.reload();
+                    }
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: result.message || 'Something went wrong!',
+                        background: isDark ? '#1f2937' : '#ffffff',
+                        color: isDark ? '#f3f4f6' : '#111827',
+                    });
+                }
+            } catch (error) {
+                console.error('AJAX Error:', error);
+                Toast.fire({ icon: 'error', title: 'Network error or session expired.' });
+            } finally {
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalBtnHtml;
+                }
+                hideTopLoading();
+            }
+        }
+
+        /**
+         * Top Loading Bar Controls
+         */
+        function showTopLoading() {
+            let bar = document.getElementById('top-loading-bar');
+            if (!bar) {
+                bar = document.createElement('div');
+                bar.id = 'top-loading-bar';
+                bar.style = 'position: fixed; top: 0; left: 0; height: 3px; background: #fbbf24; z-index: 9999; transition: width 0.3s ease; width: 0; box-shadow: 0 0 10px #fbbf24;';
+                document.body.appendChild(bar);
+            }
+            bar.style.width = '30%';
+            setTimeout(() => { if(bar.style.width === '30%') bar.style.width = '70%'; }, 500);
+        }
+
+        function hideTopLoading() {
+            const bar = document.getElementById('top-loading-bar');
+            if (bar) {
+                bar.style.width = '100%';
+                setTimeout(() => { bar.style.opacity = '0'; setTimeout(() => bar.remove(), 300); }, 500);
+            }
+        }
+
+        /**
+         * Global AJAX confirm wrapper
+         */
+        function handleAjaxAction(event, form, message) {
+            event.preventDefault();
+            const isDark = document.documentElement.classList.contains('dark');
+            Swal.fire({
+                title: 'Are you sure?',
+                text: message || 'You are about to perform this action.',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: 'Yes, proceed',
+                background: isDark ? '#1f2937' : '#ffffff',
+                color: isDark ? '#f3f4f6' : '#111827',
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Use the AJAX submit handler
+                    const fakeEvent = { preventDefault: () => {}, target: form };
+                    handleAjaxFormSubmit(fakeEvent);
+                }
+            });
+            return false;
+        }
+
         (function applyNotifHighlight() {
             const hash = window.location.hash; // e.g. "#budget-section"
             if (!hash) return;

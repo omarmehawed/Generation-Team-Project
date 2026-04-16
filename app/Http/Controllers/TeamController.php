@@ -245,6 +245,14 @@ class TeamController extends Controller
             'file_path' => $path
         ]);
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Report sent successfully.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
+
         return back()->with('success', 'Report sent successfully.');
     }
 
@@ -266,6 +274,14 @@ class TeamController extends Controller
 
         // (اختياري) حذف المهام المسندة للعضو ده في التيم عشان متبقاش معلقة
         Task::where('team_id', $team->id)->where('user_id', $request->user_id)->delete();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Member removed successfully.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
 
         return back()->with('success', 'Member removed successfully.');
     }
@@ -343,6 +359,14 @@ class TeamController extends Controller
                     'type'    => 'info'
                 ]));
             }
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Project submitted successfully! Good luck 🍀',
+                'redirect' => route('projects.show', $team->project_id)
+            ]);
         }
 
         return back()->with('success', 'Project submitted successfully! Good luck 🍀');

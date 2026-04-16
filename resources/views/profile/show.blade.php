@@ -52,7 +52,7 @@
         @php
             $managedTeam = null;
             $viewerMemberRecord = null;
-            if(auth()->check() && auth()->id() != $user->id) {
+            if(auth()->check()) {
                 // Find a team where the viewer is either the Leader OR a Vice Leader
                 // and the target profile user is a member of that same team.
                 $managedTeam = \App\Models\Team::whereHas('members', function($q) use ($user) {

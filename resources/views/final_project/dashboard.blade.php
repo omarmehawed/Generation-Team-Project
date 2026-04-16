@@ -903,14 +903,14 @@
                                     </div>
 
                                     <div class="flex gap-2">
-                                        <form action="{{ route('final_project.approve_member', $req->id) }}" method="POST">
+                                        <form action="{{ route('final_project.approve_member', $req->id) }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                                             @csrf
                                             <button type="submit" class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-colors shadow-sm" title="Accept">
                                                 <i class="fas fa-check text-xs"></i>
                                             </button>
                                         </form>
                                         
-                                        <form action="{{ route('final_project.reject_member', $req->id) }}" method="POST">
+                                        <form action="{{ route('final_project.reject_member', $req->id) }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                                             @csrf
                                             <button type="submit" class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center hover:bg-red-500 hover:text-white transition-colors shadow-sm" title="Reject">
                                                 <i class="fas fa-times text-xs"></i>
@@ -1732,7 +1732,7 @@
                                                                 class="p-1.5 text-blue-500 hover:bg-blue-100 rounded-lg transition-colors" title="Edit">
                                                                 <i class="fas fa-edit text-xs"></i>
                                                             </button>
-                                                            <form action="{{ route('final_project.destroyComponent', $comp->id) }}" method="POST" id="delete-comp-{{ $comp->id }}" onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to delete this component? This action cannot be undone.')">
+                                                            <form action="{{ route('final_project.destroyComponent', $comp->id) }}" method="POST" id="delete-comp-{{ $comp->id }}" onsubmit="return handleAjaxAction(event, this, 'Are you sure you want to delete this component? This action cannot be undone.')">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button type="submit" @click.stop 
@@ -1839,7 +1839,7 @@
                                                                     class="p-1 text-gray-400 hover:text-blue-500 transition-colors" title="Edit">
                                                                     <i class="fas fa-edit text-[10px]"></i>
                                                                 </button>
-                                                                <form action="{{ route('final_project.deleteExpense', $expense->id) }}" method="POST" id="delete-exp-{{ $expense->id }}" onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to delete this expense?')">
+                                                                <form action="{{ route('final_project.deleteExpense', $expense->id) }}" method="POST" id="delete-exp-{{ $expense->id }}" onsubmit="return handleAjaxAction(event, this, 'Are you sure you want to delete this expense?')">
                                                                     @csrf
                                                                     @method('DELETE')
                                                                     <button type="submit" @click.stop 
@@ -2643,7 +2643,7 @@
                     </button>
                 </div>
 
-                <form action="{{ route('final_project.storeComponent') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                <form action="{{ route('final_project.storeComponent') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4" id="addComponentForm" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
 
@@ -2720,9 +2720,12 @@
                         if (!compId) return;
                         const comp = this.availableComponents.find(c => c.id == compId);
                         if (comp && !this.selectedItems.find(i => i.id == compId)) {
-                            this.selectedItems.push({ id: comp.id, name: comp.name, price: 0, qty: 1 });
+                            this.selectedItems.push({ id: comp.id, name: comp.name, price: 0, qty: 1, custom: false });
                         }
                         this.$refs.compSelect.value = '';
+                    },
+                    addCustomItem() {
+                        this.selectedItems.push({ id: 'custom', name: '', price: 0, qty: 1, custom: true });
                     },
                     removeItem(index) {
                         this.selectedItems.splice(index, 1);
@@ -2731,42 +2734,50 @@
                         return this.selectedItems.reduce((sum, item) => sum + (parseFloat(item.price) || 0) * (parseInt(item.qty) || 0), 0);
                     }
                 }">
-                    <form action="{{ route('final_project.storeExpense') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                    <form action="{{ route('final_project.storeExpense') }}" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4" id="addExpenseForm" onsubmit="handleAjaxFormSubmit(event)">
                         @csrf
                         <input type="hidden" name="team_id" value="{{ $team->id }}">
 
                         {{-- Choose components to add --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Add Components to Invoice <span class="text-red-500">*</span></label>
-                            @if (isset($components) && $components->count() > 0)
-                                <div class="flex gap-2">
-                                    <select x-ref="compSelect"
-                                        @change="addItem($event.target.value)"
-                                        class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white">
-                                        <option value="">-- Choose a component --</option>
-                                        <template x-for="comp in availableComponents" :key="comp.id">
-                                            <option :value="comp.id" x-text="comp.name"></option>
-                                        </template>
-                                    </select>
-                                </div>
-                            @else
-                                <div class="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-sm text-yellow-700 font-bold">
-                                    <i class="fas fa-exclamation-triangle mr-1"></i> No components added yet.
-                                </div>
-                            @endif
+                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Add Items to Invoice <span class="text-red-500">*</span></label>
+                            <div class="flex gap-2">
+                                <select x-ref="compSelect"
+                                    @change="addItem($event.target.value)"
+                                    class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white">
+                                    <option value="">-- Choose a component --</option>
+                                    <template x-for="comp in availableComponents" :key="comp.id">
+                                        <option :value="comp.id" x-text="comp.name"></option>
+                                    </template>
+                                </select>
+                                <button type="button" @click="addCustomItem()" 
+                                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-xl text-xs transition border border-gray-200">
+                                    + Custom
+                                </button>
+                            </div>
                         </div>
 
-                        {{-- List of selected components with their prices --}}
+                        {{-- List of selected items with their prices --}}
                         <div class="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
-                            <template x-for="(item, index) in selectedItems" :key="item.id">
+                            <template x-for="(item, index) in selectedItems" :key="index">
                                 <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 relative group animate-in fade-in slide-in-from-top-2">
                                     <div class="flex justify-between items-start mb-3">
-                                        <h4 class="text-sm font-black text-gray-800" x-text="item.name"></h4>
+                                        <div class="flex-grow mr-4">
+                                            <h4 x-show="!item.custom" class="text-sm font-black text-gray-800" x-text="item.name"></h4>
+                                            <div x-show="item.custom">
+                                                <input type="text" name="custom_item_name[]" x-model="item.name" required
+                                                    class="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition"
+                                                    placeholder="e.g. Transportation, Printing...">
+                                            </div>
+                                            <input type="hidden" name="component_id[]" :value="item.id">
+                                            <template x-if="!item.custom">
+                                                <input type="hidden" name="custom_item_name[]" value="">
+                                            </template>
+                                        </div>
                                         <button type="button" @click="removeItem(index)" class="text-gray-400 hover:text-red-500 transition">
                                             <i class="fas fa-times-circle"></i>
                                         </button>
                                     </div>
-                                    <input type="hidden" name="component_id[]" :value="item.id">
                                     <div class="grid grid-cols-2 gap-3">
                                         <div>
                                             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Unit Price</label>
@@ -2789,7 +2800,7 @@
                             <template x-if="selectedItems.length === 0">
                                 <div class="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl">
                                     <i class="fas fa-shopping-cart text-gray-200 text-3xl mb-2"></i>
-                                    <p class="text-xs text-gray-400">No components selected yet.</p>
+                                    <p class="text-xs text-gray-400">No items selected yet.</p>
                                 </div>
                             </template>
                         </div>
@@ -2843,7 +2854,7 @@
                     <h3 class="text-lg font-black flex items-center gap-2"><i class="fas fa-edit"></i> Edit Component</h3>
                     <button onclick="closeModal('editComponentModal')" class="hover:rotate-90 transition-transform"><i class="fas fa-times text-xl"></i></button>
                 </div>
-                <form id="editComponentForm" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                <form id="editComponentForm" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     @method('PUT')
                     <div>
@@ -2879,9 +2890,13 @@
                     <h3 class="text-lg font-black flex items-center gap-2"><i class="fas fa-edit"></i> Edit Expense</h3>
                     <button onclick="closeModal('editExpenseModal')" class="hover:rotate-90 transition-transform"><i class="fas fa-times text-xl"></i></button>
                 </div>
-                <form id="editExpenseForm" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4">
+                <form id="editExpenseForm" method="POST" enctype="multipart/form-data" class="px-6 py-5 space-y-4" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     @method('PUT')
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Item Name</label>
+                        <input type="text" name="item" id="edit_expense_item" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                    </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Shop/Store Name</label>
                         <input type="text" name="shop_name" id="edit_expense_shop" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
@@ -2953,6 +2968,7 @@
         function openEditExpenseModal(expense) {
             const form = document.getElementById('editExpenseForm');
             form.action = `/final-project/expenses/${expense.id}`;
+            document.getElementById('edit_expense_item').value = expense.item;
             document.getElementById('edit_expense_shop').value = expense.shop_name;
             document.getElementById('edit_expense_price').value = expense.price_per_unit;
             document.getElementById('edit_expense_qty').value = expense.quantity;
@@ -2976,7 +2992,11 @@
         }
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
-            if (formToSubmit) formToSubmit.submit();
+            if (formToSubmit) {
+                const fakeEvent = { preventDefault: () => {}, target: formToSubmit };
+                handleAjaxFormSubmit(fakeEvent);
+                closeDeleteModal();
+            }
         });
 
         function editExpenseUpdateTotal() {
@@ -3014,7 +3034,7 @@
             <div
                 class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 
-                <form action="{{ route('final_project.submitPayment') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('final_project.submitPayment') }}" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="contribution_id" id="submit_contribution_id">
                     
@@ -3148,7 +3168,7 @@
             <div
                 class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 
-                <form action="{{ route('final_project.reviewPayment') }}" method="POST">
+                <form action="{{ route('final_project.reviewPayment') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="contribution_id" id="review_contribution_id">
                     
@@ -3633,7 +3653,9 @@
             background: '#fff url("https://www.transparenttextures.com/patterns/cubes.png")',
         }).then((result) => {
             if (result.isConfirmed) {
-                if (form) form.submit();
+                if (form) {
+                    handleAjaxFormSubmit({ preventDefault: () => {}, target: form });
+                }
             }
         });
         return false;

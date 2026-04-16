@@ -841,15 +841,15 @@ class FinalProjectController extends Controller
     public function storeExpense(Request $request)
     {
         $request->validate([
-            'team_id'          => 'required|exists:teams,id',
-            'component_id'     => 'required|array|min:1',
-            'component_id.*'   => 'exists:project_components,id',
-            'shop_name'        => 'required|string|max:255',
-            'price_per_unit'   => 'required|array',
-            'price_per_unit.*' => 'numeric|min:0.01',
-            'quantity'         => 'required|array',
-            'quantity.*'       => 'integer|min:1',
-            'receipt'          => 'required|image|max:5120',
+            'team_id'           => 'required|exists:teams,id',
+            'component_id'      => 'nullable|array',
+            'custom_item_name'  => 'nullable|array',
+            'shop_name'         => 'required|string|max:255',
+            'price_per_unit'    => 'required|array',
+            'price_per_unit.*'  => 'numeric|min:0.01',
+            'quantity'          => 'required|array',
+            'quantity.*'        => 'integer|min:1',
+            'receipt'           => 'required|image|max:5120',
         ]);
 
         $team = Team::findOrFail($request->team_id);
@@ -857,6 +857,7 @@ class FinalProjectController extends Controller
         // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
         if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_expenses)) {
+            if ($request->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             return back()->with('error', 'You do not have permission to add expenses.');
         }
 
@@ -867,31 +868,44 @@ class FinalProjectController extends Controller
             $receiptPath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
         }
 
-        $componentIds = $request->component_id;
-        $prices       = $request->price_per_unit;
-        $quantities   = $request->quantity;
+        $componentIds    = $request->component_id ?? [];
+        $customItemNames = $request->custom_item_name ?? [];
+        $prices         = $request->price_per_unit;
+        $quantities     = $request->quantity;
 
         DB::beginTransaction();
         try {
             $totalBatchAmount = 0;
             $itemsList = [];
 
-            foreach ($componentIds as $index => $compId) {
-                $comp = \App\Models\ProjectComponent::where('id', $compId)
-                    ->where('team_id', $team->id)
-                    ->firstOrFail();
-
-                $pricePerUnit = (float) $prices[$index];
+            // We iterate based on the number of prices/quantities provided
+            foreach ($prices as $index => $price) {
+                $pricePerUnit = (float) $price;
                 $qty          = (int) $quantities[$index];
                 $amount       = $pricePerUnit * $qty;
                 $totalBatchAmount += $amount;
-                $itemsList[] = "{$comp->name} x{$qty}";
+
+                $compId = $componentIds[$index] ?? null;
+                $itemName = $customItemNames[$index] ?? null;
+
+                if ($compId && $compId != 'custom') {
+                    $comp = \App\Models\ProjectComponent::where('id', $compId)
+                        ->where('team_id', $team->id)
+                        ->first();
+                    if ($comp) {
+                        $itemName = $comp->name;
+                    }
+                }
+
+                if (!$itemName) continue; // Safety check
+
+                $itemsList[] = "{$itemName} x{$qty}";
 
                 DB::table('project_expenses')->insert([
                     'team_id'        => $team->id,
                     'user_id'        => Auth::id(),
-                    'component_id'   => $comp->id,
-                    'item'           => $comp->name,
+                    'component_id'   => ($compId && $compId != 'custom') ? $compId : null,
+                    'item'           => $itemName,
                     'shop_name'      => $request->shop_name,
                     'price_per_unit' => $pricePerUnit,
                     'quantity'       => $qty,
@@ -907,7 +921,7 @@ class FinalProjectController extends Controller
                 action: 'expense_batch_added',
                 description: "Added batch expenses from {$request->shop_name}: " . implode(', ', $itemsList),
                 teamId: $team->id,
-                properties: ['total' => $totalBatchAmount, 'count' => count($componentIds)]
+                properties: ['total' => $totalBatchAmount, 'count' => count($itemsList)]
             );
 
             // 🔔 Notify ALL team members
@@ -1024,6 +1038,14 @@ class FinalProjectController extends Controller
             targetUserId: null
         );
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true, 
+                'message' => 'Component updated successfully!',
+                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+            ]);
+        }
+
         return back()->with('success', 'Component updated successfully! 🛠️');
     }
 
@@ -1035,6 +1057,7 @@ class FinalProjectController extends Controller
         // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
         if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_components)) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             return back()->with('error', 'You do not have permission to manage components.');
         }
 
@@ -1049,11 +1072,20 @@ class FinalProjectController extends Controller
             targetUserId: null
         );
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true, 
+                'message' => 'Component deleted successfully! 🗑️',
+                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+            ]);
+        }
+
         return back()->with('success', 'Component deleted successfully! 🗑️');
     }
     public function updateExpense(Request $request, $id)
     {
         $request->validate([
+            'item'           => 'required|string|max:255',
             'amount'         => 'required|numeric|min:0.01',
             'shop_name'      => 'required|string|max:255',
             'receipt'        => 'nullable|image|max:5120',
@@ -1067,6 +1099,7 @@ class FinalProjectController extends Controller
         // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
         if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_expenses)) {
+            if ($request->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             return back()->with('error', 'You do not have permission to manage expenses.');
         }
 
@@ -1081,6 +1114,7 @@ class FinalProjectController extends Controller
         }
 
         $expense->update([
+            'item'           => $request->item,
             'amount'         => $totalAmount,
             'shop_name'      => $request->shop_name,
             'receipt_path'   => $receiptPath,
@@ -1096,6 +1130,14 @@ class FinalProjectController extends Controller
             targetUserId: null
         );
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true, 
+                'message' => 'Expense updated successfully! 💸',
+                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+            ]);
+        }
+
         return back()->with('success', 'Expense updated successfully! 💸');
     }
 
@@ -1107,10 +1149,13 @@ class FinalProjectController extends Controller
         // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
         if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_expenses)) {
-            return back()->with('error', 'You do not have permission to manage expenses.');
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
+            return back()->with('error', 'You do not have permission to delete expenses.');
         }
 
         $itemName = $expense->item;
+        $amount = $expense->amount;
+
         $expense->delete();
 
         ActivityLogger::log(
@@ -1165,6 +1210,14 @@ class FinalProjectController extends Controller
             'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
             'type'       => 'warning'
         ], [Auth::id()]);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Funding round started! Members notified to pay.',
+                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+            ]);
+        }
 
         return back()->with('success', 'Funding round started! Members notified to pay.');
     }
@@ -1244,6 +1297,14 @@ class FinalProjectController extends Controller
             ]));
         }
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment submitted! Waiting for leader approval.',
+                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+            ]);
+        }
+
         return back()->with('success', 'Payment submitted! Waiting for leader approval.');
     }
 
@@ -1302,6 +1363,14 @@ class FinalProjectController extends Controller
                 'type'       => 'success'
             ]));
 
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Payment approved successfully.',
+                    'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+                ]);
+            }
+
             return back()->with('success', 'Payment approved successfully.');
 
         } else {
@@ -1319,6 +1388,14 @@ class FinalProjectController extends Controller
                 'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
                 'type'       => 'alert'
             ]));
+
+            if ($request->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Payment rejected.',
+                    'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+                ]);
+            }
 
             return back()->with('success', 'Payment rejected.');
         }

@@ -65,6 +65,14 @@ class AdminTeamController extends Controller
             ->where('user_id', $user_id)
             ->delete();
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Member removed from team successfully.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
+
         return back()->with('success', 'Member removed from team successfully.');
     }
 
@@ -72,7 +80,15 @@ class AdminTeamController extends Controller
     public function destroy($id)
     {
         $team = Team::findOrFail($id);
-        $team->delete(); // Soft Delete لو مفعلها، أو Hard Delete
+        $team->delete();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Team deleted successfully.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
         return back()->with('success', 'Team deleted successfully.');
     }
 }
