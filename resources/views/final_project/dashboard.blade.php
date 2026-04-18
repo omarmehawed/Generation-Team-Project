@@ -4011,8 +4011,11 @@
     @endif
 </script>
 
-{{-- Export Excel Modal (Team Leader Only) --}}
-@if(auth()->user()->role === 'admin')
+{{-- Export Excel Modal (Admin & Team Leader Only) --}}
+@php
+    $canExport = auth()->user()->role === 'admin' || (isset($myRole) && $myRole === 'leader');
+@endphp
+@if($canExport)
 <div id="exportMembersModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('exportMembersModal')"></div>
     <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md mx-4 relative z-10 overflow-hidden transform transition-all p-8" x-data="{

@@ -57,8 +57,7 @@ class User extends Authenticatable
         'whatsapp_number',
         'national_id',
         'date_of_birth',
-        'address', // Keep existing address if used elsewhere, or map home_address to it
-        'home_address',
+        'address',
         'is_dorm',
         'profile_photo_path',
         'wallet_balance', // [NEW] Wallet System

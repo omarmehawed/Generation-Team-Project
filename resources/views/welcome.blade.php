@@ -1178,6 +1178,56 @@
         </div>
         </div>
     </section>
+    <!-- Success Modal (Premium UI) -->
+    @if(session('success'))
+    <div x-data="{ show: true }" x-show="show" 
+        class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <!-- Backdrop -->
+        <div class="fixed inset-0 bg-dark/60 backdrop-blur-md" @click="show = false"
+            x-transition:enter="transition ease-out duration-300"
+            x-transition:enter-start="opacity-0"
+            x-transition:enter-end="opacity-100">
+        </div>
+
+        <!-- content -->
+        <div class="relative bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-amber-500/20"
+            x-transition:enter="transition ease-out duration-500"
+            x-transition:enter-start="opacity-0 scale-90 translate-y-10"
+            x-transition:enter-end="opacity-100 scale-100 translate-y-0">
+            
+            <!-- Glow Effect -->
+            <div class="absolute -top-24 -left-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl"></div>
+            <div class="absolute -bottom-24 -right-24 w-48 h-48 bg-blue-500/20 rounded-full blur-3xl"></div>
+
+            <div class="p-8 md:p-12 text-center relative z-10">
+                <!-- Success icon -->
+                <div class="mb-8 relative inline-block">
+                    <div class="w-24 h-24 rounded-full bg-green-500/10 flex items-center justify-center mx-auto mb-4 border border-green-500/20 relative z-10">
+                        <i class="fas fa-check text-4xl text-green-500"></i>
+                    </div>
+                    <!-- Ripple effect -->
+                    <div class="absolute inset-0 w-24 h-24 rounded-full bg-green-500/20 animate-ping opacity-20 mx-auto"></div>
+                </div>
+
+                <h2 class="text-3xl font-black mb-4 font-tech tracking-tighter text-gray-900 dark:text-white">
+                    SUCCESS!
+                </h2>
+                
+                <div class="py-6 px-4 bg-gray-50 dark:bg-black/20 rounded-2xl border border-gray-100 dark:border-white/5 mb-8">
+                    <p class="text-lg md:text-xl font-amiri leading-relaxed text-gray-700 dark:text-gray-200">
+                        {{ session('success') }}
+                    </p>
+                </div>
+
+                <button @click="show = false"
+                    class="w-full py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-white rounded-2xl font-bold font-amiri text-lg shadow-lg shadow-amber-500/30 transition-all hover:scale-[1.02] active:scale-95">
+                    حسناً، فهمت
+                </button>
+            </div>
+        </div>
+    </div>
+    @endif
+
 
     <!-- Footer -->
     <footer

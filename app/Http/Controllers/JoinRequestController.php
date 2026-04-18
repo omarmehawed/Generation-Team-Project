@@ -144,8 +144,10 @@ class JoinRequestController extends Controller
             'date_of_birth' => 'required|date|before_or_equal:-17 years',
             'national_id' => 'required|string|max:20',
             'academic_id' => 'required|string|max:20',
+            'phone_number' => 'required|string|max:20',
             'whatsapp_number' => 'required|string|max:20',
             'address' => 'required|string|max:255',
+            'group' => 'required|in:G1,G2,G3,G4',
             'is_dorm' => 'required|boolean',
             'photo' => 'required|image|max:102400',
         ];
@@ -211,6 +213,7 @@ class JoinRequestController extends Controller
             'phone_number' => $validated['phone_number'],
             'whatsapp_number' => $validated['whatsapp_number'],
             'address' => $validated['address'],
+            'group' => $validated['group'],
             'is_dorm' => $validated['is_dorm'],
             'photo_path' => $photoPath,
             'answers' => $validated['answers'] ?? [],

@@ -16,8 +16,8 @@ class JoinRequest extends Model
         'academic_id',
         'phone_number',
         'whatsapp_number',
-
         'address',
+        'group',
         'is_dorm',
         'photo_path',
         'answers',
