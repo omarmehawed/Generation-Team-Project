@@ -64,6 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dynamic Questions Management
     Route::prefix('join-questions')->name('join-questions.')->group(function() {
         Route::get('/', [\App\Http\Controllers\JoinRequestQuestionController::class, 'index'])->name('index');
+        Route::post('/ai-assistant', [\App\Http\Controllers\AiAssistantController::class, 'handleChat'])->name('ai');
         Route::post('/', [\App\Http\Controllers\JoinRequestQuestionController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [\App\Http\Controllers\JoinRequestQuestionController::class, 'edit'])->name('edit');
         Route::put('/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'update'])->name('update');
@@ -167,44 +168,22 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('posters', \App\Http\Controllers\PosterController::class)->except(['show']);
     });
     Route::middleware(['auth', 'verified'])->group(function () {
-        // 1. زرار البداية
+        // ====================================================
+        // 🎓 Final Project Routes (مشروع التخرج)
+        // ====================================================
+
+        // 1. الصفحات (GET)
         Route::get('/final-project/start', [FinalProjectController::class, 'start'])->name('final_project.start');
-
-        // 2. صفحة إنشاء التيم (لو حبيت تروح لها مباشر)
         Route::get('/final-project/create/{project}', [FinalProjectController::class, 'createTeamView'])->name('final_project.create');
-
-        // 3. داشبورد الفاينل (دي الصفحة الكبيرة اللي هنشتغل عليها بعدين)
         Route::get('/final-project/team/{team}', [FinalProjectController::class, 'dashboard'])->name('final_project.dashboard');
+        Route::get('/final-project/logo/{id}', [FinalProjectController::class, 'getTeamLogo'])->name('final_project.logo');
+
+        // 2. الأكشنز الأساسية (POST)
         Route::post('/final-project/store', [FinalProjectController::class, 'storeTeam'])->name('final_project.store');
+        Route::post('/final-project/join', [FinalProjectController::class, 'joinTeam'])->name('final_project.join');
         Route::post('/final-project/leave', [FinalProjectController::class, 'leaveTeam'])->name('final_project.leave');
-
-        // ضيف دول عشان الزراير تشتغل وما يطلعش الايرور ده تاني
-        // مسارات مشروع التخرج
-        Route::middleware(['auth', 'verified'])->group(function () {
-            Route::get('/final-project/start', [FinalProjectController::class, 'start'])->name('final_project.start');
-
-            // 👇👇 ده السطر اللي ناقص أو اللي الفورم مش لاقيه 👇👇
-            Route::post('/final-project/store', [FinalProjectController::class, 'storeTeam'])->name('final_project.store');
-
-            // ودول كمان عشان باقي الزراير تشتغل
-            Route::post('/final-project/join', [FinalProjectController::class, 'joinTeam'])->name('final_project.join');
-            Route::post('/final-project/leave', [FinalProjectController::class, 'leaveTeam'])->name('final_project.leave');
-
-            // ====================================================
-            // 🎓 Final Project Routes (مشروع التخرج)
-            // ====================================================
-
-            // 1. الصفحات (GET)
-            Route::get('/final-project/start', [FinalProjectController::class, 'start'])->name('final_project.start');
-            // راوت التعديل (الجديد)
-            Route::post('/final-project/update-logo', [FinalProjectController::class, 'updateLogo'])->name('final_project.update_logo');
-            Route::get('/final-project/team/{team}', [FinalProjectController::class, 'dashboard'])->name('final_project.dashboard');
-            Route::get('/final-project/logo/{id}', [FinalProjectController::class, 'getTeamLogo'])->name('final_project.logo');
-            // 2. الأكشنز الأساسية (POST)
-            Route::post('/final-project/store', [FinalProjectController::class, 'storeTeam'])->name('final_project.store');
-            Route::post('/final-project/join', [FinalProjectController::class, 'joinTeam'])->name('final_project.join');
-            Route::post('/final-project/toggle-group', [FinalProjectController::class, 'toggleGroup'])->name('final_project.toggle_group');
-            Route::post('/final-project/leave', [FinalProjectController::class, 'leaveTeam'])->name('final_project.leave');
+        Route::post('/final-project/toggle-group', [FinalProjectController::class, 'toggleGroup'])->name('final_project.toggle_group');
+        Route::post('/final-project/update-logo', [FinalProjectController::class, 'updateLogo'])->name('final_project.update_logo');
 
             // 3. الأكشنز الخاصة بالأعضاء (Invite, Remove, Report, Approve, Reject)
             Route::post('/final-project/member/{id}/approve', [FinalProjectController::class, 'approveMember'])->name('final_project.approve_member');
@@ -244,8 +223,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/funds/submit', [FinalProjectController::class, 'submitPayment'])->name('final_project.submitPayment');
             Route::get('/final-project/funds/export', [FinalProjectController::class, 'exportFunds'])->name('funds.export');
             Route::post('/final-project/funds/review', [FinalProjectController::class, 'reviewPayment'])->name('final_project.reviewPayment');
+            Route::post('/final-project/funds/force-wallet', [FinalProjectController::class, 'forceWalletPayment'])->name('final_project.forceWalletPayment');
             Route::post('/final-project/teams/{team}/payment-settings', [FinalProjectController::class, 'updatePaymentSettings'])->name('final_project.update_payment_settings');
-            // Route::post('/final-project/funds/pay', [FinalProjectController::class, 'markPaid'])->name('final_project.markPaid'); // Deprecated
+            Route::post('/final-project/funds/pay', [FinalProjectController::class, 'markPaid'])->name('final_project.markPaid');
 
 
             Route::post('/final-project/reports', [FinalProjectController::class, 'storeReport'])->name('final_project.storeReport');
@@ -294,8 +274,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/requests/all', [App\Http\Controllers\WalletController::class, 'getDepositRequests'])->name('wallet.requests.all');
         Route::post('/requests/{id}/process', [App\Http\Controllers\WalletController::class, 'processDepositRequest'])->name('wallet.requests.process');
     });
-
-});
 
 
 
