@@ -3889,12 +3889,6 @@
         openModal('manageMemberModal');
     }
 
-    function openMarkPaidModal(contribId, userName, amount) {
-        document.getElementById('paidContribId').value = contribId;
-        document.getElementById('paidUserName').innerText = userName;
-        document.getElementById('paidAmount').innerText = amount + ' EGP';
-        openModal('markPaidModal');
-    }
 
     function openAttendanceModal(id, topic) {
         document.getElementById('attendanceMeetingId').value = id;
@@ -4276,18 +4270,6 @@
 @endif
 
 <script>
-    function openMarkPaidModal(contribId, amount, userName) {
-        // 1. نحط البيانات في المودال
-        document.getElementById('paidContribId').value = contribId;
-        document.getElementById('paidAmount').innerText = amount + ' EGP';
-        document.getElementById('paidUserName').innerText = userName;
-
-        // 2. نقفل مودال الهيستوري (عشان الزحمة)
-        closeModal('fundsHistoryModal');
-
-        // 3. نفتح مودال الدفع
-        openModal('markPaidModal');
-    }
 
     function openWorkshopModal() {
         const modal = document.getElementById('addWorkshopModal');

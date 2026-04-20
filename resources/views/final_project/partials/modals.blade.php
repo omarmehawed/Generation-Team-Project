@@ -1021,12 +1021,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                                                             @if ($myRole == 'leader')
                                                                 <div class="flex gap-1.5">
-                                                                    <button
-                                                                        onclick="openMarkPaidModal({{ $contrib->id }}, {{ $fund->amount_per_member }}, '{{ $contrib->user->name }}')"
-                                                                        class="bg-gray-900 text-white px-3 py-1 rounded-lg shadow-sm hover:bg-black transition text-[10px] uppercase font-bold flex items-center gap-1"
-                                                                        title="Mark as Paid (Manual)">
-                                                                        <i class="fas fa-hand-holding-usd"></i> Pay
-                                                                    </button>
+
 
                                                                     {{-- Leader Force-Pay History from Wallet --}}
                                                                     @if($contrib->user->wallet_balance >= $fund->amount_per_member)
@@ -1145,58 +1140,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             </div>
         </div>
     </div>
-    {{-- 11.C Mark as Paid Modal (Leader Only - Direct Settlement) --}}
-    <div id="markPaidModal" class="hidden relative z-[1001]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-        <div class="modal-centering-wrapper">
-            <div class="modal-overlay" onclick="closeModal('markPaidModal')"></div>
-            <div class="modal-content !max-w-md border-t-8 border-gray-900 shadow-2xl">
-                <form action="{{ route('final_project.markPaid') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
-                    @csrf
-                    <input type="hidden" name="contribution_id" id="paidContribId">
-                    
-                    <div class="bg-white px-8 pt-8 pb-6">
-                        <div class="flex items-center gap-4 text-gray-900 mb-6">
-                            <div class="p-3 bg-gray-100 rounded-2xl shadow-sm"><i class="fas fa-hand-holding-usd text-2xl"></i></div>
-                            <div>
-                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Manual Settlement</h3>
-                                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Confirming a Cash Payment</p>
-                            </div>
-                        </div>
 
-                        <div class="space-y-4">
-                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-center justify-between">
-                                <div>
-                                    <span class="text-[10px] text-gray-400 font-black uppercase block tracking-tighter">Contributor</span>
-                                    <span id="paidUserName" class="text-sm font-black text-gray-800"></span>
-                                </div>
-                                <div class="text-right">
-                                    <span class="text-[10px] text-gray-400 font-black uppercase block tracking-tighter">Amount</span>
-                                    <span id="paidAmount" class="text-sm font-black text-gray-900 font-mono"></span>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Internal Notes (Optional)</label>
-                                <textarea name="notes" rows="2" class="input-classic resize-none" placeholder="e.g., Member paid cash in person..."></textarea>
-                            </div>
-
-                            <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 flex items-start gap-2">
-                                <i class="fas fa-info-circle text-blue-400 mt-0.5"></i>
-                                <p class="text-[10px] text-blue-700 font-bold leading-relaxed">
-                                    This action will mark the contribution as <span class="underline underline-offset-2">PAID</span> immediately. No further review will be required.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
-                        <button type="submit" class="bg-gray-900 text-white font-black py-3 px-8 rounded-2xl text-xs uppercase tracking-widest hover:bg-black transition shadow-lg shadow-gray-900/20 active:scale-95"> Confirm Payment </button>
-                        <button type="button" onclick="closeModal('markPaidModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
 
 
     {{--
