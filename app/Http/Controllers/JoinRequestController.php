@@ -340,6 +340,14 @@ class JoinRequestController extends Controller
         // Move photo if needed? 
         // For now we keep it in the same path as it's accessible.
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'User created and join request approved successfully!',
+                'redirect' => route('join.admin')
+            ]);
+        }
+
         return redirect()->route('join.admin')->with('success', 'User created successfully!');
     }
 
@@ -356,6 +364,14 @@ class JoinRequestController extends Controller
         $joinRequest->update([
             'status' => 'rejected',
         ]);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Join request rejected.',
+                'redirect' => route('join.admin')
+            ]);
+        }
 
         return redirect()->route('join.admin')->with('error', 'Request rejected.');
     }

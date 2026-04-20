@@ -5,12 +5,12 @@
 
         {{-- Join Request Answers (Permission Based) --}}
         @if(auth()->check() && (auth()->user()->role === 'admin' || auth()->user()->hasPermission('join_request_access')) && $user->joinRequest)
-            <div x-data="{ open: false }" class="mt-8 bg-white dark:bg-gray-900 rounded-3xl p-6 border border-gray-200 dark:border-gray-800 shadow-xl dark:shadow-2xl">
+            <div x-data="{ open: false }" class="mt-8 bg-white rounded-3xl p-6 border border-gray-200 shadow-xl">
                 <button @click="open = !open" class="w-full flex justify-between items-center text-left focus:outline-none">
-                    <h3 class="text-xl font-bold text-gray-900 dark:text-white font-tech flex items-center gap-3">
+                    <h3 class="text-xl font-bold text-gray-900 font-tech flex items-center gap-3">
                         <i class="fas fa-file-contract text-cyan-400"></i> Join Request Answers
                     </h3>
-                    <i class="fas transition-transform duration-300 text-gray-500 dark:text-gray-400" :class="open ? 'fa-chevron-up rotate-180' : 'fa-chevron-down'"></i>
+                    <i class="fas transition-transform duration-300 text-gray-500" :class="open ? 'fa-chevron-up rotate-180' : 'fa-chevron-down'"></i>
                 </button>
                 
                 <div x-show="open" x-collapse class="mt-6 text-gray-300 space-y-4 border-t border-gray-800 pt-6">
@@ -76,7 +76,7 @@
         @endphp
 
         {{-- 1. User Info Section --}}
-        <div class="bg-white dark:bg-gray-900 rounded-3xl p-8 mb-12 relative overflow-hidden shadow-xl dark:shadow-2xl border border-gray-200 dark:border-gray-800">
+        <div class="bg-white rounded-3xl p-8 mb-12 relative overflow-hidden shadow-xl border border-gray-200">
             {{-- Background Pattern --}}
             <div class="absolute inset-0 opacity-20 pointer-events-none"
                 style="background-image: radial-gradient(rgba(0, 243, 255, 0.2) 1px, transparent 1px); background-size: 30px 30px;">
@@ -121,8 +121,8 @@
                 <div class="flex-1 w-full overflow-hidden">
                     <div class="flex flex-col lg:flex-row justify-between items-start mb-6 gap-6">
                         <div class="overflow-hidden">
-                            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white font-tech mb-2 tracking-wider truncate break-words whitespace-normal leading-tight">{{ $user->name }}</h1>
-                            <p class="text-cyan-600 dark:text-cyan-400 font-mono text-sm md:text-base mb-3 truncate">{{ $user->email }}</p>
+                            <h1 class="text-3xl md:text-4xl font-bold text-gray-900 font-tech mb-2 tracking-wider truncate break-words whitespace-normal leading-tight">{{ $user->name }}</h1>
+                            <p class="text-cyan-600 font-mono text-sm md:text-base mb-3 truncate">{{ $user->email }}</p>
                             
                             {{-- Wallet Balance Badge --}}
                             <div class="inline-flex items-center gap-2 bg-gray-800/50 border border-gray-700 rounded-full px-4 py-1.5 shadow-sm">
@@ -137,48 +137,48 @@
                         @if(auth()->id() === $user->id)
                             <div class="flex flex-col gap-3 w-full lg:max-w-sm shrink-0">
                                 @if($user->google_id)
-                                    <div class="flex flex-col bg-white dark:bg-gray-800 border-l-4 border-green-500 border-y border-r border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 rounded-xl p-4 shadow-sm w-full transition-all">
+                                    <div class="flex flex-col bg-white border-l-4 border-green-500 border-y border-r border-y-gray-200 border-r-gray-200 rounded-xl p-4 shadow-sm w-full transition-all">
                                         <div class="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-3">
                                             <div class="flex items-center gap-3 w-full overflow-hidden">
-                                                <div class="p-2 bg-gray-50 dark:bg-gray-700/50 rounded-full shrink-0">
+                                                <div class="p-2 bg-gray-50 rounded-full shrink-0">
                                                     <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-6 h-6">
                                                 </div>
                                                 <div class="overflow-hidden">
-                                                    <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-0.5">Google Account</p>
-                                                    <p class="text-sm font-bold text-gray-900 dark:text-gray-100 truncate w-full" title="{{ $user->google_email ?? 'Linked' }}">{{ $user->google_email ?? 'Linked' }}</p>
+                                                    <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-0.5">Google Account</p>
+                                                    <p class="text-sm font-bold text-gray-900 truncate w-full" title="{{ $user->google_email ?? 'Linked' }}">{{ $user->google_email ?? 'Linked' }}</p>
                                                 </div>
                                             </div>
-                                            <span class="bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400 text-[10px] font-bold px-3 py-1 rounded-full border border-green-200 dark:border-green-500/30 whitespace-nowrap self-start sm:self-center shadow-sm">Connected</span>
+                                            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-3 py-1 rounded-full border border-green-200 whitespace-nowrap self-start sm:self-center shadow-sm">Connected</span>
                                         </div>
                                         
                                         <form action="{{ route('auth.google.unlink') }}" method="POST" class="w-full m-0" onsubmit="return confirmFormSubmit(event, this, 'Are you sure you want to unlink your Google account? You will no longer be able to log in with it.');">
                                             @csrf
                                             <div class="mb-3">
                                                 <input type="password" name="password" placeholder="Confirm password to unlink" required
-                                                    class="w-full text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-red-500 focus:border-red-500 transition-colors">
+                                                    class="w-full text-sm px-3 py-2 rounded-lg border border-gray-300 bg-gray-50 text-gray-900 placeholder-gray-400 focus:ring-red-500 focus:border-red-500 transition-colors">
                                                 @error('password', 'googleUnlink')
                                                     <p class="text-red-500 text-xs mt-1 font-bold">{{ $message }}</p>
                                                 @enderror
                                             </div>
                                             <button type="submit" 
-                                                class="w-full flex justify-center items-center gap-2 text-sm font-bold bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg px-4 py-2.5 text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors">
+                                                class="w-full flex justify-center items-center gap-2 text-sm font-bold bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-red-500 hover:text-red-700 hover:bg-red-50 transition-colors">
                                                 <i class="fas fa-unlink"></i> Unlink Account
                                             </button>
                                         </form>
                                     </div>
                                 @else
-                                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white dark:bg-gray-800 border-l-4 border-amber-500 border-y border-r border-y-gray-200 border-r-gray-200 dark:border-y-gray-700 dark:border-r-gray-700 rounded-xl p-4 shadow-sm w-full gap-4 transition-all hover:shadow-md">
+                                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between bg-white border-l-4 border-amber-500 border-y border-r border-y-gray-200 border-r-gray-200 rounded-xl p-4 shadow-sm w-full gap-4 transition-all hover:shadow-md">
                                         <div class="flex items-center gap-3">
-                                            <div class="p-2 bg-gray-100 dark:bg-gray-700 rounded-full shrink-0">
+                                            <div class="p-2 bg-gray-100 rounded-full shrink-0">
                                                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 grayscale opacity-70">
                                             </div>
                                             <div>
-                                                <p class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Google Account</p>
-                                                <span class="bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-400 text-[10px] font-bold px-2 py-0.5 rounded-md border border-gray-200 dark:border-gray-600">Not connected</span>
+                                                <p class="text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Google Account</p>
+                                                <span class="bg-gray-100 text-gray-600 text-[10px] font-bold px-2 py-0.5 rounded-md border border-gray-200">Not connected</span>
                                             </div>
                                         </div>
                                         
-                                        <a href="{{ route('auth.google') }}" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-600 dark:bg-amber-500/10 dark:hover:bg-amber-500/20 dark:text-amber-400 border border-amber-200 dark:border-amber-500/30 rounded-lg px-5 py-2.5 shadow-sm transition-colors cursor-pointer text-sm font-bold whitespace-nowrap">
+                                        <a href="{{ route('auth.google') }}" class="w-full sm:w-auto inline-flex justify-center items-center gap-2 bg-amber-50 hover:bg-amber-100 text-amber-600 border border-amber-200 rounded-lg px-5 py-2.5 shadow-sm transition-colors cursor-pointer text-sm font-bold whitespace-nowrap">
                                             <i class="fas fa-link"></i> Link Google
                                         </a>
                                     </div>
@@ -204,12 +204,12 @@
                     </div>
 
                     {{-- Static Read-Only Data Grid --}}
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 bg-gray-50 dark:bg-gray-800/30 p-6 rounded-2xl border border-gray-200 dark:border-gray-700/50">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 bg-gray-50 p-6 rounded-2xl border border-gray-200">
                         
                         {{-- Phone --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Phone Number</label>
-                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 font-medium">
                                 <i class="fas fa-phone text-blue-500 text-sm"></i>
                                 {{ $user->phone_number ?? 'Not set' }}
                             </div>
@@ -218,7 +218,7 @@
                         {{-- WhatsApp --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">WhatsApp</label>
-                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 font-medium">
                                 <i class="fab fa-whatsapp text-green-500 text-sm"></i>
                                 {{ $user->whatsapp_number ?? 'Not set' }}
                             </div>
@@ -227,7 +227,7 @@
                         {{-- National ID --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">National ID</label>
-                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 font-medium">
                                 <i class="fas fa-id-card text-purple-500 text-sm"></i>
                                 {{ $user->national_id ?? 'Not set' }}
                             </div>
@@ -236,7 +236,7 @@
                         {{-- Date of Birth --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Date of Birth</label>
-                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 font-medium">
                                 <i class="fas fa-birthday-cake text-pink-500 text-sm"></i>
                                 {{ $user->date_of_birth ? \Carbon\Carbon::parse($user->date_of_birth)->format('d M, Y') : 'Not set' }}
                             </div>
@@ -245,7 +245,7 @@
                         {{-- Academic Year --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Academic Year</label>
-                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 font-medium">
                                 <i class="fas fa-university text-yellow-500 text-sm"></i>
                                 {{ 'Level ' . ($user->academic_year ?? '1') }}
                             </div>
@@ -254,7 +254,7 @@
                         {{-- Department --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Department</label>
-                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 font-medium">
                                 <i class="fas fa-laptop-code text-cyan-500 text-sm"></i>
                                 {{ ucfirst($user->department ?? 'General') }}
                             </div>
@@ -263,7 +263,7 @@
                         {{-- Residence Status --}}
                         <div>
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Residence Status</label>
-                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-center gap-2 text-gray-800 font-medium">
                                 @if($user->is_dorm)
                                     مغترب
                                 @else
@@ -275,7 +275,7 @@
                         {{-- Address --}}
                         <div class="md:col-span-2">
                             <label class="block text-gray-500 text-[10px] uppercase font-bold mb-1 tracking-wider">Home Address</label>
-                            <div class="flex items-start gap-2 text-gray-800 dark:text-gray-300 font-medium">
+                            <div class="flex items-start gap-2 text-gray-800 font-medium">
                                 <i class="fas fa-map-marker-alt text-red-500 text-sm mt-1"></i>
                                 {{ $user->address ?? 'Not set' }}
                             </div>
@@ -296,17 +296,17 @@
         @endif
 
         {{-- Weekly Evaluation History Card --}}
-        <div class="mb-8 bg-white dark:bg-gray-900 rounded-3xl border border-gray-200 dark:border-gray-800 shadow-xl overflow-hidden relative">
+        <div class="mb-8 bg-white rounded-3xl border border-gray-200 shadow-xl overflow-hidden relative">
             {{-- Accent Glow --}}
             <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-500/10 blur-[50px] -mr-16 -mt-16 pointer-events-none"></div>
             
-            <div class="px-8 py-6 border-b border-gray-200 dark:border-gray-800 flex items-center justify-between">
+            <div class="px-8 py-6 border-b border-gray-200 flex items-center justify-between">
                 <div class="flex items-center gap-4">
                     <div class="w-11 h-11 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-500/30">
                         <i class="fas fa-chart-line text-white"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-black text-gray-900 dark:text-white">Weekly Performance</h3>
+                        <h3 class="text-xl font-black text-gray-900">Weekly Performance</h3>
                         <p class="text-xs text-indigo-500 font-bold uppercase tracking-widest mt-0.5">Evaluation Breakdown by Week</p>
                     </div>
                 </div>
@@ -317,9 +317,9 @@
                     $avgPossible = $allRecs->avg('total_possible_score');
                     if (!$avgPossible || $avgPossible <= 0) $avgPossible = 30;
                 @endphp
-                <div class="bg-indigo-50 dark:bg-indigo-900/40 px-4 py-2 rounded-xl border border-indigo-100 dark:border-indigo-800">
-                     <span class="text-[10px] font-black text-indigo-600 dark:text-indigo-300 uppercase tracking-widest">Avg. Score</span>
-                     <p class="text-lg font-black text-indigo-700 dark:text-indigo-200 leading-none mt-1">
+                <div class="bg-indigo-50 px-4 py-2 rounded-xl border border-indigo-100">
+                     <span class="text-[10px] font-black text-indigo-600 uppercase tracking-widest">Avg. Score</span>
+                     <p class="text-lg font-black text-indigo-700 leading-none mt-1">
                         {{ number_format($avgScore, 1) }} <span class="text-xs opacity-60">/ {{ number_format($avgPossible, 0) }}</span>
                      </p>
                 </div>
@@ -331,15 +331,15 @@
                     <div class="space-y-4" x-data="{ openWeek: {{ array_key_first($weeklyEvalHistory->toArray()) }} }">
                         @foreach($weeklyEvalHistory as $weekNumber => $records)
                         @php $record = $records->first(); @endphp
-                        <div class="rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-800/20 overflow-hidden transition-all hover:border-indigo-300 dark:hover:border-indigo-700">
+                        <div class="rounded-2xl border border-gray-100 bg-gray-50/50 overflow-hidden transition-all hover:border-indigo-300">
                             <button @click="openWeek = openWeek === {{ $weekNumber }} ? null : {{ $weekNumber }}"
-                                class="w-full flex items-center justify-between px-6 py-5 hover:bg-indigo-50 dark:hover:bg-indigo-900/10 transition-colors group">
+                                class="w-full flex items-center justify-between px-6 py-5 hover:bg-indigo-50 transition-colors group">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-sm font-black border border-gray-200 dark:border-gray-700 shadow-sm group-hover:scale-110 transition-transform">
+                                    <div class="w-10 h-10 rounded-xl bg-white text-indigo-600 flex items-center justify-center text-sm font-black border border-gray-200 shadow-sm group-hover:scale-110 transition-transform">
                                         {{ $weekNumber ?? '?' }}
                                     </div>
                                     <div class="text-left">
-                                        <p class="font-black text-gray-800 dark:text-gray-200 leading-tight">Week {{ $weekNumber ?? '?' }}</p>
+                                        <p class="font-black text-gray-800 leading-tight">Week {{ $weekNumber ?? '?' }}</p>
                                         <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-1">
                                             {{ $record->period?->start_date?->format('M d') }} — {{ $record->period?->end_date ? $record->period->end_date->format('M d, Y') : 'Active' }}
                                         </p>
@@ -354,26 +354,26 @@
                                         @if(in_array('tasks', $active))
                                         <div class="text-center">
                                             <p class="text-[8px] font-black text-blue-500 uppercase tracking-widest mb-0.5">Tasks</p>
-                                            <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_task_score, 1) }}</p>
+                                            <p class="text-xs font-black text-gray-700">{{ number_format($record->total_task_score, 1) }}</p>
                                         </div>
                                         @endif
                                         @if(in_array('workshops', $active))
                                         <div class="text-center">
                                             <p class="text-[8px] font-black text-amber-500 uppercase tracking-widest mb-0.5">Workshops</p>
-                                            <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_workshop_score, 1) }}</p>
+                                            <p class="text-xs font-black text-gray-700">{{ number_format($record->total_workshop_score, 1) }}</p>
                                         </div>
                                         @endif
                                         @if(in_array('meetings', $active))
                                         <div class="text-center">
                                             <p class="text-[8px] font-black text-emerald-500 uppercase tracking-widest mb-0.5">Meetings</p>
-                                            <p class="text-xs font-black text-gray-700 dark:text-gray-300">{{ number_format($record->total_meeting_score, 1) }}</p>
+                                            <p class="text-xs font-black text-gray-700">{{ number_format($record->total_meeting_score, 1) }}</p>
                                         </div>
                                         @endif
                                     </div>
                                     <div class="flex items-center gap-4">
                                         <div class="text-right">
                                             <p class="text-[8px] font-black text-indigo-500 uppercase tracking-widest mb-0.5">Overall</p>
-                                            <p class="text-base font-black text-indigo-600 dark:text-indigo-400 leading-tight">
+                                            <p class="text-base font-black text-indigo-600 leading-tight">
                                                 {{ number_format($record->total_overall_score, 1) }}
                                                 <span class="text-[10px] opacity-50">/ {{ number_format($possible, 0) }}</span>
                                             </p>
@@ -383,41 +383,41 @@
                                     </div>
                                 </div>
                             </button>
-                            <div x-show="openWeek === {{ $weekNumber }}" x-collapse class="px-6 py-6 bg-white dark:bg-gray-900 border-t border-gray-100 dark:border-gray-800">
+                            <div x-show="openWeek === {{ $weekNumber }}" x-collapse class="px-6 py-6 bg-white border-t border-gray-100">
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                                     @if(in_array('tasks', $active))
-                                    <div class="rounded-2xl bg-blue-50/50 dark:bg-blue-900/10 border border-blue-100 dark:border-blue-800/50 p-4 relative overflow-hidden group">
+                                    <div class="rounded-2xl bg-blue-50/50 border border-blue-100 p-4 relative overflow-hidden group">
                                         <i class="fas fa-tasks absolute -right-2 -bottom-2 text-4xl opacity-5 text-blue-500 group-hover:scale-125 transition-transform"></i>
                                         <p class="text-[10px] font-black text-blue-500 uppercase tracking-widest mb-2"><i class="fas fa-tasks mr-2"></i>Task Score</p>
-                                        <p class="text-2xl font-black text-blue-700 dark:text-blue-300">{{ number_format($record->total_task_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
+                                        <p class="text-2xl font-black text-blue-700">{{ number_format($record->total_task_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
                                     </div>
                                     @endif
                                     @if(in_array('workshops', $active))
-                                    <div class="rounded-2xl bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50 p-4 relative overflow-hidden group">
+                                    <div class="rounded-2xl bg-amber-50/50 border border-amber-100 p-4 relative overflow-hidden group">
                                         <i class="fas fa-chalkboard-teacher absolute -right-2 -bottom-2 text-4xl opacity-5 text-amber-500 group-hover:scale-125 transition-transform"></i>
                                         <p class="text-[10px] font-black text-amber-500 uppercase tracking-widest mb-2"><i class="fas fa-chalkboard-teacher mr-2"></i>Workshop Score</p>
-                                        <p class="text-2xl font-black text-amber-700 dark:text-amber-300">{{ number_format($record->total_workshop_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
+                                        <p class="text-2xl font-black text-amber-700">{{ number_format($record->total_workshop_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
                                     </div>
                                     @endif
                                     @if(in_array('meetings', $active))
-                                    <div class="rounded-2xl bg-emerald-50/50 dark:bg-emerald-900/10 border border-emerald-100 dark:border-emerald-800/50 p-4 relative overflow-hidden group">
+                                    <div class="rounded-2xl bg-emerald-50/50 border border-emerald-100 p-4 relative overflow-hidden group">
                                         <i class="fas fa-users absolute -right-2 -bottom-2 text-4xl opacity-5 text-emerald-500 group-hover:scale-125 transition-transform"></i>
                                         <p class="text-[10px] font-black text-emerald-500 uppercase tracking-widest mb-2"><i class="fas fa-users mr-2"></i>Meeting Attendance</p>
-                                        <p class="text-2xl font-black text-emerald-700 dark:text-emerald-300">{{ number_format($record->total_meeting_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
+                                        <p class="text-2xl font-black text-emerald-700">{{ number_format($record->total_meeting_score, 1) }}<span class="text-xs opacity-60 ml-1">/ 10</span></p>
                                     </div>
                                     @endif
                                 </div>
                                 @if($record->general_notes)
-                                <div class="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-5 border border-gray-100 dark:border-gray-800 shadow-inner">
+                                <div class="bg-gray-50 rounded-2xl p-5 border border-gray-100 shadow-inner">
                                     <div class="flex items-center gap-2 mb-3">
                                         <div class="w-1.5 h-4 bg-indigo-500 rounded-full"></div>
-                                        <p class="text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest">Leader Feedback</p>
+                                        <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Leader Feedback</p>
                                     </div>
-                                    <p class="text-sm text-gray-600 dark:text-gray-300 italic font-medium leading-relaxed">"{{ $record->general_notes }}"</p>
+                                    <p class="text-sm text-gray-600 italic font-medium leading-relaxed">"{{ $record->general_notes }}"</p>
                                 </div>
                                 @endif
                                 
-                                <div class="mt-6 flex justify-between items-center text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-widest">
+                                <div class="mt-6 flex justify-between items-center text-[10px] font-bold text-gray-400 uppercase tracking-widest">
                                     <span>Evaluated by: {{ $record->evaluator->user->name ?? 'Leader' }}</span>
                                     <span>{{ $record->created_at->format('M d, Y') }}</span>
                                 </div>
@@ -426,12 +426,12 @@
                         @endforeach
                     </div>
                 @else
-                    <div class="text-center py-16 bg-gray-50/50 dark:bg-gray-800/10 rounded-3xl border-2 border-dashed border-gray-200 dark:border-gray-800">
-                        <div class="w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mx-auto mb-4 border border-gray-200 dark:border-gray-700">
+                    <div class="text-center py-16 bg-gray-50/50 rounded-3xl border-2 border-dashed border-gray-200">
+                        <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-4 border border-gray-200">
                             <i class="fas fa-chart-line text-2xl text-gray-400"></i>
                         </div>
-                        <h4 class="text-lg font-black text-gray-800 dark:text-gray-200">No Evaluations Yet</h4>
-                        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2 max-w-xs mx-auto">Your weekly performance scores will appear here once your leaders complete their reviews.</p>
+                        <h4 class="text-lg font-black text-gray-800">No Evaluations Yet</h4>
+                        <p class="text-sm text-gray-500 mt-2 max-w-xs mx-auto">Your weekly performance scores will appear here once your leaders complete their reviews.</p>
                     </div>
                 @endif
             </div>
@@ -457,10 +457,10 @@
                 'color' => 'purple'
             ])
         @else
-            <div class="mb-12 p-6 bg-gray-50 dark:bg-gray-900/50 rounded-2xl border border-gray-200 dark:border-gray-800 text-center">
-                <i class="fas fa-graduation-cap text-4xl text-gray-400 dark:text-gray-700 mb-2"></i>
-                <h3 class="text-gray-700 dark:text-gray-400 font-bold">No Graduation Project</h3>
-                <p class="text-gray-500 dark:text-gray-600 text-sm">Join a team to start your journey.</p>
+            <div class="mb-12 p-6 bg-gray-50 rounded-2xl border border-gray-200 text-center">
+                <i class="fas fa-graduation-cap text-4xl text-gray-400 mb-2"></i>
+                <h3 class="text-gray-700 font-bold">No Graduation Project</h3>
+                <p class="text-gray-500 text-sm">Join a team to start your journey.</p>
             </div>
         @endif
 

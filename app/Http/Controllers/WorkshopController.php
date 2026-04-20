@@ -68,6 +68,14 @@ class WorkshopController extends Controller
             ]);
         }
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Workshop created successfully and members assigned!',
+                'redirect' => route('final_project.dashboard', $team->id) . '#workshops-section'
+            ]);
+        }
+
         return back()->with('success', 'Workshop created successfully and members assigned!');
     }
 
@@ -179,8 +187,12 @@ class WorkshopController extends Controller
             }
         }
 
-        if ($request->isJson() || $request->wantsJson()) {
-            return response()->json(['success' => true, 'message' => 'Attendance & scores saved.']);
+        if ($request->ajax() || $request->isJson() || $request->wantsJson()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance & scores saved.',
+                'redirect' => route('final_project.dashboard', $teamId) // Trigger refresh
+            ]);
         }
 
         return back()->with('success', 'Attendance & Scores updated successfully.');
@@ -198,7 +210,17 @@ class WorkshopController extends Controller
             abort(403, 'Unauthorized');
         }
 
+        $teamId = $workshop->team_id;
         $workshop->delete();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Workshop deleted successfully.',
+                'redirect' => route('final_project.dashboard', $teamId) . '#workshops-section'
+            ]);
+        }
+
         return back()->with('success', 'Workshop deleted successfully.');
     }
 }

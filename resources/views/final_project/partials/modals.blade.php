@@ -944,8 +944,10 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                     @if ($fund->contributions && $fund->contributions->count() > 0)
                                         <div class="grid grid-cols-1 gap-2">
                                             @foreach ($fund->contributions as $contrib)
+                                                {{-- 🔒 Visibility Check: Member only sees own record --}}
+                                                @if ($myRole == 'leader' || $contrib->user_id == Auth::id())
                                                 <div
-                                                    class="flex justify-between items-center text-xs p-2.5 rounded-lg {{ $contrib->status == 'paid' ? 'bg-green-50/50 border border-green-100' : 'bg-red-50/50 border border-red-100' }}">
+                                                    class="flex justify-between items-center text-xs p-2.5 rounded-lg {{ $contrib->status == 'paid' ? 'bg-green-50/50 border border-green-100' : ($contrib->status == 'pending_approval' ? 'bg-yellow-50/50 border border-yellow-100' : 'bg-red-50/50 border border-red-100') }}">
 
                                                     {{-- اسم العضو والصورة --}}
                                                     <span class="font-bold text-gray-700 flex items-center gap-2">
@@ -957,42 +959,91 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                     {{-- حالة الدفع والتفاصيل --}}
                                                     <div class="flex items-center gap-2">
                                                         @if ($contrib->status == 'paid')
-                                                            {{-- 1. علامة Paid --}}
-                                                            <span
-                                                                class="text-green-600 font-bold bg-white px-2 py-0.5 rounded shadow-sm border border-green-100 flex items-center gap-1">
-                                                                <i class="fas fa-check"></i> Paid
-                                                            </span>
-
-                                                            {{-- 2. تفاصيل الطريقة (كاش ولا وصل) --}}
-                                                            @if ($contrib->payment_method == 'transfer' && $contrib->payment_proof)
-                                                                {{-- ✅ التعديل: استخدام راوت final_project --}}
-                                                                <a href="{{ $contrib->payment_proof }}" target="_blank"
-                                                                    class="text-[10px] text-blue-600 font-bold bg-blue-50 px-2 py-0.5 rounded hover:bg-blue-100 transition flex items-center gap-1 border border-blue-100 group"
-                                                                    title="View Receipt">
-                                                                    <i class="fas fa-file-invoice group-hover:text-blue-700"></i>
-                                                                    Receipt
-                                                                </a>
-                                                            @elseif ($contrib->payment_method == 'cash')
+                                                            {{-- 1. حالة Paid --}}
+                                                            <div class="text-right">
                                                                 <span
-                                                                    class="text-[10px] text-gray-500 font-bold bg-gray-100 px-2 py-0.5 rounded border border-gray-200 cursor-default">
-                                                                    Cash 💵
+                                                                    class="text-[10px] bg-green-100 text-green-700 px-3 py-1 rounded-lg font-bold flex items-center gap-1.5 shadow-sm border border-green-200">
+                                                                    <i class="fas fa-check-circle"></i> Paid
                                                                 </span>
+
+                                                                <div class="mt-1">
+                                                                    @if (in_array($contrib->payment_method, ['transfer', 'vodafone_cash', 'instapay']) && $contrib->payment_proof)
+                                                                        <a href="{{ $contrib->payment_proof }}" target="_blank"
+                                                                            class="text-[9px] text-blue-500 underline hover:text-blue-700 font-bold">View Proof</a>
+                                                                    @elseif($contrib->payment_method == 'cash')
+                                                                        <span class="text-[9px] text-gray-400 italic font-bold">
+                                                                            Cash Settlement 💵
+                                                                        </span>
+                                                                    @endif
+                                                                </div>
+                                                            </div>
+                                                        @elseif ($contrib->status == 'pending_approval')
+                                                            {{-- ⏳ 2. قيد المراجعة (Pending) --}}
+                                                            <div class="flex items-center gap-2">
+                                                                <span class="text-[10px] bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg font-bold flex items-center gap-1.5 shadow-sm">
+                                                                    <i class="fas fa-clock fa-spin"></i> Under Review
+                                                                </span>
+                                                                @if ($myRole == 'leader')
+                                                                    <button
+                                                                        onclick="closeModal('fundsHistoryModal'); openReviewModal({{ json_encode([
+                                                                            'id' => $contrib->id,
+                                                                            'member_name' => $contrib->user->name,
+                                                                            'member_balance' => $contrib->user->wallet_balance,
+                                                                            'payment_method' => $contrib->payment_method,
+                                                                            'amount' => $contrib->amount ?? $fund->amount_per_member,
+                                                                            'active_fund_amount' => $fund->amount_per_member,
+                                                                            'from_number' => $contrib->from_number,
+                                                                            'transaction_date' => $contrib->transaction_date,
+                                                                            'transaction_time' => $contrib->transaction_time,
+                                                                            'proof_url' => $contrib->payment_proof ? $contrib->payment_proof : '#',
+                                                                            'notes' => $contrib->notes
+                                                                        ]) }})"
+                                                                        class="bg-blue-600 text-white px-2 py-1 rounded-lg shadow-sm hover:bg-blue-700 transition text-[9px] font-black uppercase">
+                                                                        Review
+                                                                    </button>
+                                                                @endif
+                                                            </div>
+                                                        @elseif ($contrib->status == 'rejected')
+                                                             {{-- 3. Rejected --}}
+                                                             <span class="text-[10px] bg-red-100 text-red-700 px-3 py-1 rounded-lg font-bold shadow-sm whitespace-nowrap">
+                                                                <i class="fas fa-times-circle"></i> Rejected
+                                                            </span>
+                                                            @if ($contrib->user_id == Auth::id())
+                                                                <button onclick="closeModal('fundsHistoryModal'); setTimeout(() => openPaymentModal('{{ $contrib->id }}', '{{ $fund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}'), 350)"
+                                                                    class="text-[9px] bg-gray-900 text-white px-2 py-1 rounded hover:bg-black transition font-bold uppercase whitespace-nowrap">
+                                                                    Try Again
+                                                                </button>
                                                             @endif
                                                         @else
-                                                            {{-- 3. حالة Unpaid وزرار الدفع --}}
+                                                            {{-- 4. Unpaid وزرار الدفع --}}
                                                             <span
                                                                 class="text-red-500 font-bold mr-2 bg-white px-2 py-0.5 rounded shadow-sm border border-red-100">Unpaid</span>
 
                                                             @if ($myRole == 'leader')
-                                                                <button
-                                                                    onclick="openMarkPaidModal({{ $contrib->id }}, {{ $fund->amount_per_member }}, '{{ $contrib->user->name }}')"
-                                                                    class="bg-gray-900 text-white px-3 py-1 rounded-lg shadow-sm hover:bg-black transition text-[10px] uppercase font-bold flex items-center gap-1">
-                                                                    <i class="fas fa-hand-holding-usd"></i> Pay
-                                                                </button>
+                                                                <div class="flex gap-1.5">
+                                                                    <button
+                                                                        onclick="openMarkPaidModal({{ $contrib->id }}, {{ $fund->amount_per_member }}, '{{ $contrib->user->name }}')"
+                                                                        class="bg-gray-900 text-white px-3 py-1 rounded-lg shadow-sm hover:bg-black transition text-[10px] uppercase font-bold flex items-center gap-1"
+                                                                        title="Mark as Paid (Manual)">
+                                                                        <i class="fas fa-hand-holding-usd"></i> Pay
+                                                                    </button>
+
+                                                                    {{-- Leader Force-Pay History from Wallet --}}
+                                                                    @if($contrib->user->wallet_balance >= $fund->amount_per_member)
+                                                                        <form action="{{ route('final_project.forceWalletPayment') }}" method="POST" class="inline" onsubmit="return confirmAction(event, 'Force Wallet Payment: Deduct {{ number_format($fund->amount_per_member, 2) }} EGP from {{ $contrib->user->name }}\'s wallet for historical debt?')">
+                                                                            @csrf
+                                                                            <input type="hidden" name="contribution_id" value="{{ $contrib->id }}">
+                                                                            <button type="submit" class="bg-amber-600 text-white px-3 py-1 rounded-lg shadow-sm hover:bg-amber-700 transition text-[10px] uppercase font-bold flex items-center gap-1" title="Deduct from Wallet">
+                                                                                <i class="fas fa-wallet"></i> Force Wallet
+                                                                            </button>
+                                                                        </form>
+                                                                    @endif
+                                                                </div>
                                                             @endif
                                                         @endif
                                                     </div>
                                                 </div>
+                                                @endif
                                             @endforeach
                                         </div>
                                     @endif
@@ -1014,6 +1065,135 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         class="bg-white border border-gray-300 text-gray-700 py-2 px-6 rounded-xl font-bold hover:bg-gray-100 transition shadow-sm text-xs uppercase tracking-wide">Close
                         Log</button>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- 11.B My Unpaid History Modal (Selection Flow) --}}
+    <div id="myUnpaidHistoryModal" class="hidden relative z-50" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('myUnpaidHistoryModal')"></div>
+            <div class="modal-content !max-w-lg flex flex-col max-h-[85vh]">
+                <div class="modal-header-gradient px-8 py-5 rounded-t-[1.3rem] flex-shrink-0">
+                    <h3 class="text-lg font-black text-[#FFD700] flex items-center gap-3"><i class="fas fa-exclamation-circle animate-pulse"></i>
+                        Unpaid Collections History</h3>
+                </div>
+
+                <div class="bg-white p-6 overflow-y-auto custom-scroll flex-grow">
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4 border-b pb-2">Select an item to pay:</p>
+                    
+                    @if (isset($unpaidHistory) && $unpaidHistory->count() > 0)
+                        <div class="space-y-3">
+                            @foreach ($unpaidHistory as $contrib)
+                                <div class="group border border-gray-100 bg-gray-50/50 rounded-2xl p-4 hover:border-amber-200 hover:bg-amber-50/20 transition-all">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <div>
+                                            <h4 class="font-black text-gray-800 text-sm group-hover:text-amber-700 transition-colors">{{ $contrib->fund->title }}</h4>
+                                            <span class="text-[10px] text-gray-400 font-bold block mt-0.5">
+                                                <i class="far fa-calendar-alt mr-1 text-amber-500"></i>
+                                                Due: {{ \Carbon\Carbon::parse($contrib->fund->deadline)->format('d M, Y') }}
+                                            </span>
+                                        </div>
+                                        <div class="text-right">
+                                            <span class="text-xs font-black text-gray-900 block font-mono">{{ number_format($contrib->fund->amount_per_member, 2) }}</span>
+                                            <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">EGP</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex items-center justify-between mt-4 pt-3 border-t border-gray-100/50">
+                                        <div class="flex gap-2">
+                                            @if($contrib->status == 'pending_approval')
+                                                <span class="text-[10px] bg-yellow-100 text-yellow-700 px-3 py-1 rounded-lg font-black flex items-center gap-1.5">
+                                                    <i class="fas fa-clock fa-spin"></i> Under Review
+                                                </span>
+                                            @elseif($contrib->status == 'rejected')
+                                                 <span class="text-[10px] bg-red-100 text-red-700 px-3 py-1 rounded-lg font-black flex items-center gap-1.5">
+                                                    <i class="fas fa-times-circle"></i> Rejected
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        @if($contrib->status == 'pending')
+                                            <button onclick="closeModal('myUnpaidHistoryModal'); setTimeout(() => openPaymentModal('{{ $contrib->id }}', '{{ $contrib->fund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}'), 350)"
+                                                class="bg-gray-900 hover:bg-amber-600 text-white px-5 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all transform hover:-translate-y-0.5 active:scale-95 shadow-md flex items-center gap-2">
+                                                <i class="fas fa-credit-card text-[10px]"></i> Pay Now
+                                            </button>
+                                        @elseif($contrib->status == 'rejected')
+                                            <button onclick="closeModal('myUnpaidHistoryModal'); setTimeout(() => openPaymentModal('{{ $contrib->id }}', '{{ $contrib->fund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}'), 350)"
+                                                class="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-all shadow-md flex items-center gap-2">
+                                                <i class="fas fa-redo text-[10px]"></i> Try Again
+                                            </button>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="text-center py-8">
+                            <i class="fas fa-check-circle text-green-400 text-4xl mb-3"></i>
+                            <p class="font-bold text-gray-800">All caught up!</p>
+                            <p class="text-xs text-gray-400 mt-1">You have no unpaid history items.</p>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="bg-gray-50 px-8 py-4 text-right border-t border-gray-200 flex-shrink-0">
+                    <button type="button" onclick="closeModal('myUnpaidHistoryModal')"
+                        class="bg-white border border-gray-300 text-gray-700 py-2.5 px-6 rounded-xl font-black hover:bg-gray-100 transition shadow-sm text-[11px] uppercase tracking-widest">Dismiss</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {{-- 11.C Mark as Paid Modal (Leader Only - Direct Settlement) --}}
+    <div id="markPaidModal" class="hidden relative z-[1001]" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+        <div class="modal-centering-wrapper">
+            <div class="modal-overlay" onclick="closeModal('markPaidModal')"></div>
+            <div class="modal-content !max-w-md border-t-8 border-gray-900 shadow-2xl">
+                <form action="{{ route('final_project.markPaid') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
+                    @csrf
+                    <input type="hidden" name="contribution_id" id="paidContribId">
+                    
+                    <div class="bg-white px-8 pt-8 pb-6">
+                        <div class="flex items-center gap-4 text-gray-900 mb-6">
+                            <div class="p-3 bg-gray-100 rounded-2xl shadow-sm"><i class="fas fa-hand-holding-usd text-2xl"></i></div>
+                            <div>
+                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Manual Settlement</h3>
+                                <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Confirming a Cash Payment</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-center justify-between">
+                                <div>
+                                    <span class="text-[10px] text-gray-400 font-black uppercase block tracking-tighter">Contributor</span>
+                                    <span id="paidUserName" class="text-sm font-black text-gray-800"></span>
+                                </div>
+                                <div class="text-right">
+                                    <span class="text-[10px] text-gray-400 font-black uppercase block tracking-tighter">Amount</span>
+                                    <span id="paidAmount" class="text-sm font-black text-gray-900 font-mono"></span>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2 ml-1">Internal Notes (Optional)</label>
+                                <textarea name="notes" rows="2" class="input-classic resize-none" placeholder="e.g., Member paid cash in person..."></textarea>
+                            </div>
+
+                            <div class="bg-blue-50 p-3 rounded-xl border border-blue-100 flex items-start gap-2">
+                                <i class="fas fa-info-circle text-blue-400 mt-0.5"></i>
+                                <p class="text-[10px] text-blue-700 font-bold leading-relaxed">
+                                    This action will mark the contribution as <span class="underline underline-offset-2">PAID</span> immediately. No further review will be required.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                        <button type="submit" class="bg-gray-900 text-white font-black py-3 px-8 rounded-2xl text-xs uppercase tracking-widest hover:bg-black transition shadow-lg shadow-gray-900/20 active:scale-95"> Confirm Payment </button>
+                        <button type="button" onclick="closeModal('markPaidModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
+                    </div>
+                </form>
             </div>
         </div>
     </div>
@@ -2316,14 +2496,16 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             },
             body: JSON.stringify({ attendees: payload })
         })
-        .then(res => {
-            if (!res.ok) throw new Error('Network response was not ok');
-            return res.json();
-        })
         .then(() => {
             data.isLoading = false;
             closeAttendanceModal();
             
+            // 🔥 Refresh the page content seamlessly
+            if (window.refreshMainContent) {
+                // If we know the team ID we can use it, otherwise let it infer from URL
+                window.refreshMainContent();
+            }
+
             // Show a simple success toast
             const toast = document.createElement('div');
             toast.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 z-[9999] bg-green-600 text-white px-6 py-3 rounded-2xl font-bold text-sm shadow-xl flex items-center gap-2 fade-in-up';
@@ -2432,7 +2614,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('bulkDeleteModal')"></div>
             <div class="modal-content !max-w-md border-t-8 border-red-600 shadow-2xl">
-                <form action="{{ route('tasks.bulkDestroy') }}" method="POST">
+                <form action="{{ route('tasks.bulkDestroy') }}" method="POST" onsubmit="return handleAjaxFormSubmit(event)">
                     @csrf
                     @method('DELETE')
                     <input type="hidden" name="team_id" value="{{ $team->id }}">

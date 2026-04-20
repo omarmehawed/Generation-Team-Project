@@ -258,7 +258,7 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
                                             <div
-                                                class="flex-shrink-0 h-11 w-11 rounded-full overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm">
+                                                class="flex-shrink-0 h-11 w-11 rounded-full overflow-hidden border border-gray-100 shadow-sm">
                                                 <img src="{{ $user->profile_photo_url }}" class="w-full h-full object-cover"
                                                     alt="{{ $user->name }}">
                                             </div>

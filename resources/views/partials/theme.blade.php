@@ -27,36 +27,6 @@
         --overlay-bg: rgba(255, 255, 255, 0.5);
     }
 
-    [data-theme="dark"] {
-        /* Premium Dark Mode (Deep Space) */
-        --bg-main: #0b0f19;
-        /* Deepest Blue/Black */
-        --bg-panel: #151b2b;
-        /* Elevated Surface */
-        --bg-sidebar: #0f172a;
-        /* Sidebar specific */
-        --bg-header: rgba(11, 15, 25, 0.85);
-        --text-main: #f1f5f9;
-        /* Soft White */
-        --text-muted: #94a3b8;
-        /* Slate 400 */
-        --primary: #00f3ff;
-        /* Brand Cyan Neon */
-        --primary-hover: #22d3ee;
-        --accent: #8b5cf6;
-        /* Violet Secondary */
-        --border: #1e293b;
-        /* Subtle Border */
-        --input-bg: #1e293b;
-        --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-        --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.5);
-        --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
-        --shadow-glow: 0 0 20px rgba(0, 243, 255, 0.15);
-        /* Neon Glow */
-        --grid-color: rgba(0, 243, 255, 0.05);
-        --orb-opacity: 0.15;
-        --overlay-bg: rgba(11, 15, 25, 0.7);
-    }
 
     /* 🌊 GLOBAL RESET & TYPOGRAPHY 🌊 */
     body {
@@ -193,9 +163,6 @@
         overflow: hidden;
     }
 
-    [data-theme="light"] .btn-premium {
-        color: #fff;
-    }
 
     .btn-premium:hover {
         box-shadow: 0 0 20px var(--primary);
@@ -271,28 +238,7 @@
         background-color: rgba(0, 243, 255, 0.02);
     }
 
-    [data-theme="light"] .table-premium tr:hover td {
-        background-color: #f1f5f9;
-    }
 
-    /* Global Overrides for Legacy Classes */
-    [data-theme="dark"] .bg-white {
-        background-color: var(--bg-panel) !important;
-        color: var(--text-main) !important;
-        border-color: var(--border) !important;
-    }
-
-    [data-theme="dark"] .text-gray-900 {
-        color: var(--text-main) !important;
-    }
-
-    [data-theme="dark"] .text-gray-500 {
-        color: var(--text-muted) !important;
-    }
-
-    [data-theme="dark"] .border-gray-200 {
-        border-color: var(--border) !important;
-    }
 
     /* Scrollbar */
     ::-webkit-scrollbar {
@@ -424,10 +370,5 @@
         }, 800); // Slight delay for smoothness
     });
 
-    // Theme Persistence Script for Inline Use
-    if (localStorage.getItem('theme') === 'light') {
-        document.documentElement.setAttribute('data-theme', 'light');
-    } else {
-        document.documentElement.setAttribute('data-theme', 'dark');
-    }
+    // Theme Persistence Script removed (Light Mode Only)
 </script>

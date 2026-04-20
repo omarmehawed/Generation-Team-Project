@@ -3,8 +3,8 @@
 @section('content')
     <div class="p-6">
         <div class="glass-panel p-8 rounded-2xl max-w-4xl mx-auto text-center">
-            <h1 class="text-3xl font-bold mb-4 font-amiri text-slate-800 dark:text-white">Welcome to Dashboard</h1>
-            <p class="text-gray-600 dark:text-gray-300 mb-6 font-amiri text-lg">
+            <h1 class="text-3xl font-bold mb-4 font-amiri text-slate-800">Welcome to Dashboard</h1>
+            <p class="text-gray-600 mb-6 font-amiri text-lg">
                 @if(\Carbon\Carbon::now()->lt(\Carbon\Carbon::create(2026, 3, 26, 23, 59, 59)))
                     Eid Mubarak! 🌙 
                 @else

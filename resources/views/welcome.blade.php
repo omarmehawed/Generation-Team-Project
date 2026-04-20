@@ -140,7 +140,7 @@
 </head>
 
 <body
-    class="font-cairo antialiased transition-colors duration-300 bg-gray-50 text-gray-900 dark:bg-dark dark:text-white"
+    class="font-cairo antialiased transition-colors duration-300 bg-gray-50 text-gray-900"
     x-data="{ 
           darkMode: localStorage.getItem('theme') === 'dark',
           mobileMenuOpen: false,
@@ -192,7 +192,7 @@
 
     <!-- Navigation -->
     <nav
-        class="fixed w-full z-50 transition-all duration-300 bg-white/95 dark:bg-dark/95 backdrop-blur-md text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-800">
+        class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md text-gray-900 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
 
@@ -203,7 +203,7 @@
                             alt="Generation Team">
                     </div>
                     <div class="hidden md:block">
-                        <h1 class="text-2xl font-bold font-tech tracking-wider text-gray-900 dark:text-white">
+                        <h1 class="text-2xl font-bold font-tech tracking-wider text-gray-900">
                             GENERATION <span class="text-amber-500">TEAM</span>
                         </h1>
                     </div>
@@ -212,21 +212,21 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-8 font-amiri">
                     <a href="#home"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">الرئيسية</a>
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">الرئيسية</a>
                     <a href="#team"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">عن
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">عن
                         الفريق</a>
                     <a href="#itclub"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">التعاون
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">التعاون
                         مع IT</a>
                     <a href="#leadership"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">القيادة
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">القيادة
                         والإشراف</a>
                     <a href="#project"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">عن
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">عن
                         المشروع</a>
                     <button @click="statusModalOpen = true"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">متابعة
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">متابعة
                         الطلب</button>
                 </div>
 
@@ -234,19 +234,19 @@
                 <div class="flex items-center gap-4">
                     <!-- Theme Toggle -->
                     <button @click="toggleTheme()"
-                        class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        class="p-2 rounded-full hover:bg-gray-100 transition-colors">
                         <i class="fas fa-sun text-yellow-500" x-show="!darkMode"></i>
                         <i class="fas fa-moon text-blue-400" x-show="darkMode"></i>
                     </button>
 
                     <a href="{{ route('login') }}"
-                        class="px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 border border-amber-500 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] font-amiri text-amber-600 hover:bg-amber-50 dark:text-amber-400 dark:hover:bg-amber-500/10">
+                        class="px-6 py-2 rounded-full font-bold text-sm transition-all duration-300 border border-amber-500 hover:shadow-[0_0_20px_rgba(251,191,36,0.5)] font-amiri text-amber-600 hover:bg-amber-50">
                         تسجيل الدخول
                     </a>
 
                     <!-- Mobile Menu Toggle -->
                     <button @click="mobileMenuOpen = !mobileMenuOpen"
-                        class="md:hidden p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-900 dark:hover:bg-gray-800 dark:text-white">
+                        class="md:hidden p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-900">
                         <i class="fas fa-bars text-xl" x-show="!mobileMenuOpen"></i>
                         <i class="fas fa-times text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
                     </button>
@@ -256,32 +256,32 @@
 
         <!-- Mobile Menu Dropdown -->
         <div x-show="mobileMenuOpen" style="display: none;"
-            class="md:hidden absolute top-20 left-0 w-full border-t shadow-2xl backdrop-blur-md transition-all duration-300 bg-white/95 border-gray-200 dark:bg-dark/95 dark:border-gray-800"
+            class="md:hidden absolute top-20 left-0 w-full border-t shadow-2xl backdrop-blur-md transition-all duration-300 bg-white/95 border-gray-200"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-4"
             x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4">
             <div class="flex flex-col px-6 py-8 space-y-6 font-amiri border-b-4 border-amber-500">
                 <a href="#home" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
                     <span>الرئيسية</span> <i class="fas fa-home text-sm opacity-50"></i>
                 </a>
                 <a href="#team" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
                     <span>عن الفريق</span> <i class="fas fa-users text-sm opacity-50"></i>
                 </a>
                 <a href="#itclub" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
                     <span>التعاون مع IT</span> <i class="fas fa-handshake text-sm opacity-50"></i>
                 </a>
                 <a href="#leadership" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
                     <span>القيادة والإشراف</span> <i class="fas fa-user-tie text-sm opacity-50"></i>
                 </a>
                 <a href="#project" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
                     <span>عن المشروع</span> <i class="fas fa-robot text-sm opacity-50"></i>
                 </a>
-                <hr class="border-gray-200 dark:border-gray-800 mb-2">
+                <hr class="border-gray-200 mb-2">
                 <button @click="statusModalOpen = true; mobileMenuOpen = false"
                     class="w-full text-right text-xl font-bold flex items-center justify-between text-amber-500 hover:text-amber-400 transition-colors">
                     <span>متابعة الطلب</span> <i class="fas fa-search text-sm"></i>
@@ -316,7 +316,7 @@
                 </h1>
 
                 <!-- Quote -->
-                <div class="max-w-3xl mx-auto backdrop-blur-sm p-6 rounded-2xl border-r-4 border-amber-500 mb-8 animate-slide-up font-amiri bg-white/60 text-gray-900 shadow-lg dark:bg-black/40 dark:text-gray-100"
+                <div class="max-w-3xl mx-auto backdrop-blur-sm p-6 rounded-2xl border-r-4 border-amber-500 mb-8 animate-slide-up font-amiri bg-white/60 text-gray-900 shadow-lg"
                     style="animation-delay: 0.4s">
                     <p class="text-xl md:text-3xl font-bold leading-relaxed">
                         "لو نفسك تشتغل على روبوت شبه بني آدم… بس مش أي روبوت 👀 <br>
@@ -345,7 +345,7 @@
                         </span>
                     </button>
                     <a href="#project"
-                        class="px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 glass border-gray-800 text-gray-800 hover:bg-gray-100 dark:border-white/30 dark:text-white dark:hover:bg-white/10">
+                        class="px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 glass border-gray-800 text-gray-800 hover:bg-gray-100">
                         اكتشف المزيد
                     </a>
                 </div>
@@ -366,7 +366,7 @@
     @endphp
 
     @if($posters->count() > 0)
-        <section id="custom-posters" class="py-16 relative overflow-hidden bg-white dark:bg-dark">
+        <section id="custom-posters" class="py-16 relative overflow-hidden bg-white">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
                 @foreach($posters as $poster)
                     <?php
@@ -528,11 +528,11 @@
     @endif
 
     <!-- About Team Section -->
-    <section id="team" class="py-24 relative overflow-hidden bg-white dark:bg-dark">
+    <section id="team" class="py-24 relative overflow-hidden bg-white">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">عن <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900">عن <span
                         class="text-amber-500">الفريق</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
             </div>
@@ -541,27 +541,27 @@
                 <!-- Text Content -->
                 <div class="space-y-6 text-right order-2 lg:order-1 font-amiri">
                     <h3 class="text-2xl font-bold text-amber-500">Generation Team</h3>
-                    <p class="text-lg leading-loose opacity-80 text-gray-700 dark:text-gray-300">
+                    <p class="text-lg leading-loose opacity-80 text-gray-700">
                         "نحن فريق Generation Team، مجموعة من الطلاب الشغوفين بالتكنولوجيا والابتكار.
                         هدفنا ليس مجرد بناء روبوت، بل خلق تجربة هندسية متكاملة تجمع بين التصميم الميكانيكي،
                         الأنظمة المدمجة، والذكاء الاصطناعي."
                     </p>
-                    <p class="text-lg leading-loose opacity-80 text-gray-700 dark:text-gray-300">
+                    <p class="text-lg leading-loose opacity-80 text-gray-700">
                         نؤمن بأن العمل الجماعي هو سر النجاح، ونبحث دائمًا عن العقول المبدعة
                         لتكون جزءًا من رحلتنا نحو المستقبل.
                     </p>
 
                     <div class="grid grid-cols-2 gap-6 mt-8">
                         <div
-                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-slate-900 dark:border-amber-500/30">
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200">
                             <i class="fas fa-users text-3xl text-amber-500 mb-3"></i>
-                            <h4 class="font-bold text-xl text-slate-900 dark:text-gray-200">عمل جماعي</h4>
+                            <h4 class="font-bold text-xl text-slate-900">عمل جماعي</h4>
                             <p class="text-sm opacity-70">بيئة تعاونية محفزة</p>
                         </div>
                         <div
-                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200 dark:bg-slate-900 dark:border-amber-500/30">
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200">
                             <i class="fas fa-lightbulb text-3xl text-amber-500 mb-3"></i>
-                            <h4 class="font-bold text-xl text-slate-900 dark:text-gray-200">ابتكار</h4>
+                            <h4 class="font-bold text-xl text-slate-900">ابتكار</h4>
                             <p class="text-sm opacity-70">أفكار خارج الصندوق</p>
                         </div>
                     </div>
@@ -584,7 +584,7 @@
     </section>
 
     <!-- IT Club Collaboration Section (Slider) -->
-    <section id="itclub" class="py-24 relative overflow-hidden select-none bg-gray-50 dark:bg-gray-900" x-data="{ 
+    <section id="itclub" class="py-24 relative overflow-hidden select-none bg-gray-50" x-data="{ 
             activeSlide: 1, 
             maxSlides: 2, 
             autoInterval: null, 
@@ -636,7 +636,7 @@
         @mouseleave="dragEnd" @touchstart="dragStart" @touchmove="dragMove" @touchend="dragEnd">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">التعاون مع <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900">التعاون مع <span
                         class="text-amber-500">IT Club</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
             </div>
@@ -666,7 +666,7 @@
                                 <h3 class="text-3xl font-bold text-amber-500 mb-2">Collaboration with IT Club</h3>
                             </div>
 
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
                                 <p>Our collaboration with the IT Club at Borg El Arab Technological University has
                                     played a vital role in the success and development of the Generation Team project.
                                     The club provided continuous technical support, professional mentorship, and a
@@ -702,11 +702,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-blue-500 mb-2">About IT Club</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Borg El
+                                <p class="text-xl font-semibold opacity-90 text-gray-800">Borg El
                                     Arab
                                     Technological University (BATU)</p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
                                 <p>The IT Club is a dynamic, student-led organization at Borg El Arab Technological
                                     University (BATU). It focuses on developing students’ technical skills, encouraging
                                     innovation, and building a strong technology community.</p>
@@ -721,7 +721,7 @@
                             <!-- Social Links -->
                             <div class="flex flex-wrap items-center gap-4 mt-8">
                                 <a href="https://www.facebook.com/profile.php?id=100092738074559" target="_blank"
-                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
                                     title="Facebook">
                                     <i class="fab fa-facebook-f text-2xl"></i>
                                 </a>
@@ -731,12 +731,12 @@
                                     <i class="fab fa-instagram text-2xl"></i>
                                 </a>
                                 <a href="https://www.linkedin.com/company/itclub-1/posts/?feedView=all" target="_blank"
-                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-700/10 text-blue-700 dark:text-blue-400 hover:bg-blue-700 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-700/20"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-700/10 text-blue-700 hover:bg-blue-700 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-700/20"
                                     title="LinkedIn">
                                     <i class="fab fa-linkedin-in text-2xl"></i>
                                 </a>
                                 <a href="https://www.tiktok.com/@information.techn92" target="_blank"
-                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-900/10 text-gray-900 dark:text-gray-200 hover:bg-gray-900 dark:hover:bg-gray-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-900/20 dark:border-gray-600/50"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-900/10 text-gray-900 hover:bg-gray-900 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-900/20"
                                     title="TikTok">
                                     <i class="fab fa-tiktok text-2xl"></i>
                                 </a>
@@ -755,7 +755,7 @@
             <!-- Navigation Controls -->
             <div class="flex items-center justify-center gap-6 mt-16 relative z-20" dir="ltr">
                 <button aria-label="Next slide" @click="next()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
                     <i class="fas fa-chevron-right"></i>
                 </button>
                 <div class="flex items-center gap-3">
@@ -767,7 +767,7 @@
                     </template>
                 </div>
                 <button aria-label="Previous slide" @click="prev()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
@@ -775,7 +775,7 @@
     </section>
 
     <!-- Leadership & Supervision Section (Slider) -->
-    <section id="leadership" class="py-24 relative overflow-hidden select-none bg-gray-50 dark:bg-gray-900" x-data="{ 
+    <section id="leadership" class="py-24 relative overflow-hidden select-none bg-gray-50" x-data="{ 
             activeSlide: 1, 
             maxSlides: 4, 
             autoInterval: null, 
@@ -827,7 +827,7 @@
         @mouseleave="dragEnd" @touchstart="dragStart" @touchmove="dragMove" @touchend="dragEnd">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">القيادة <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900">القيادة <span
                         class="text-amber-500">والإشراف</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
             </div>
@@ -855,11 +855,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-amber-500 mb-2">Omar Mehawed</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Project
+                                <p class="text-xl font-semibold opacity-90 text-gray-800">Project
                                     Leader</p>
                             </div>
 
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
                                 <p>Omar Mehawed is an Information Technology student and Project Leader with a strong
                                     passion for software development, cybersecurity, and emerging technologies.</p>
                                 <p>He is an active Head of the IT Club in the PR department and has participated in
@@ -879,7 +879,7 @@
                                     <i class="fab fa-whatsapp text-2xl"></i>
                                 </a>
                                 <a href="https://www.linkedin.com/in/omar-mehawed-861098249/" target="_blank"
-                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
                                     title="LinkedIn">
                                     <i class="fab fa-linkedin-in text-2xl"></i>
                                 </a>
@@ -907,10 +907,10 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-purple-500 mb-2">Jana Tarek</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Vice Leader
+                                <p class="text-xl font-semibold opacity-90 text-gray-800">Vice Leader
                                 </p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
                                 <p>Jana Tarek is the Vice Leader of the project, supporting team management,
                                     coordination, and internal operations. She plays a key role in organizing the
                                     workflow, ensuring smooth communication, and helping achieve the project goals
@@ -938,11 +938,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-blue-500 mb-2">Mohamed El-Fayoumi</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Project
+                                <p class="text-xl font-semibold opacity-90 text-gray-800">Project
                                     Supervisor
                                 </p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
                                 <p>Mohamed El-Fayoumi is a Mechatronics Engineering student with strong interests in
                                     autonomous vehicles and machine learning, aiming to become a Self-Driving Car
                                     Engineer. He has developed professional and leadership experience through his
@@ -953,7 +953,7 @@
                             <!-- Social Links -->
                             <div class="flex items-center gap-4 mt-8">
                                 <a href="https://www.linkedin.com/in/mohamedelfayoumi/" target="_blank"
-                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
                                     title="LinkedIn">
                                     <i class="fab fa-linkedin-in text-2xl"></i>
                                 </a>
@@ -981,11 +981,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-emerald-500 mb-2">Dr. Osama El-Nahhas</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Dean of the
+                                <p class="text-xl font-semibold opacity-90 text-gray-800">Dean of the
                                     Faculty
                                     of Information Technology</p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
                                 <p>Dr. Osama El-Nahhas is the Dean of the Faculty of Information Technology and provides
                                     academic supervision and official support for the project. His leadership ensures
                                     the project aligns with academic standards and institutional excellence.</p>
@@ -993,7 +993,7 @@
                             <!-- Social Links -->
                             <div class="flex items-center gap-4 mt-8">
                                 <a href="https://www.linkedin.com/in/osama-elnahas-37666b127/" target="_blank"
-                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 dark:text-blue-400 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-blue-600/10 text-blue-600 hover:bg-blue-600 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-blue-600/20"
                                     title="LinkedIn">
                                     <i class="fab fa-linkedin-in text-2xl"></i>
                                 </a>
@@ -1007,7 +1007,7 @@
             <!-- Navigation Controls -->
             <div class="flex items-center justify-center gap-6 mt-16 relative z-20">
                 <button aria-label="Next slide" @click="next()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
                     <i class="fas fa-chevron-right"></i>
                 </button>
 
@@ -1021,7 +1021,7 @@
                 </div>
 
                 <button aria-label="Previous slide" @click="prev()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600 dark:border-gray-700 dark:text-gray-400">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
@@ -1030,13 +1030,13 @@
     </section>
 
     <!-- About Project Section -->
-    <section id="project" class="py-24 bg-gray-50 dark:bg-gray-900">
+    <section id="project" class="py-24 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 font-amiri">
-                <h2 class="text-4xl font-bold mb-4 text-slate-900 dark:text-gray-100">عن <span
+                <h2 class="text-4xl font-bold mb-4 text-slate-900">عن <span
                         class="text-amber-500">المشروع</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
-                <p class="mt-6 text-xl max-w-2xl mx-auto opacity-80 text-gray-700 dark:text-gray-300">
+                <p class="mt-6 text-xl max-w-2xl mx-auto opacity-80 text-gray-700">
                     "إحنا شغالين على مشروع ضخم، ومحتاجين ناس جاهزة تتحرك بعد الميد تِرم مباشرة"
                 </p>
             </div>
@@ -1121,7 +1121,7 @@
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;">
 
             <div @click.away="statusModalOpen = false"
-                class="relative w-full max-w-md p-8 rounded-3xl border shadow-2xl transition-all duration-300 bg-white border-gray-200 dark:bg-gray-900 dark:border-gray-700"
+                class="relative w-full max-w-md p-8 rounded-3xl border shadow-2xl transition-all duration-300 bg-white border-gray-200"
                 x-transition:enter="transition ease-out duration-300 transform"
                 x-transition:enter-start="opacity-0 translate-y-8 scale-95"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -1139,14 +1139,14 @@
                         class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
                         <i class="fas fa-search text-2xl text-amber-500"></i>
                     </div>
-                    <h2 class="text-2xl font-bold mb-2 font-amiri text-gray-900 dark:text-white">متابعة حالة الطلب</h2>
+                    <h2 class="text-2xl font-bold mb-2 font-amiri text-gray-900">متابعة حالة الطلب</h2>
                     <p class="text-sm opacity-70">أدخل رقمك الأكاديمي للاستعلام عن حالة طلب الانضمام</p>
                 </div>
 
                 <div class="space-y-4">
                     <div>
                         <input type="text" x-model="academicId" placeholder="الرقم الأكاديمي"
-                            class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-tech text-center text-lg tracking-widest bg-gray-50 border-gray-200 text-gray-900 dark:bg-gray-800 dark:border-gray-700 dark:text-white">
+                            class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-tech text-center text-lg tracking-widest bg-gray-50 border-gray-200 text-gray-900">
                     </div>
 
                     <button @click="checkStatus()" :disabled="isChecking || !academicId"
@@ -1190,7 +1190,7 @@
         </div>
 
         <!-- content -->
-        <div class="relative bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-amber-500/20"
+        <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-amber-500/20"
             x-transition:enter="transition ease-out duration-500"
             x-transition:enter-start="opacity-0 scale-90 translate-y-10"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0">
@@ -1209,12 +1209,12 @@
                     <div class="absolute inset-0 w-24 h-24 rounded-full bg-green-500/20 animate-ping opacity-20 mx-auto"></div>
                 </div>
 
-                <h2 class="text-3xl font-black mb-4 font-tech tracking-tighter text-gray-900 dark:text-white">
+                <h2 class="text-3xl font-black mb-4 font-tech tracking-tighter text-gray-900">
                     SUCCESS!
                 </h2>
                 
-                <div class="py-6 px-4 bg-gray-50 dark:bg-black/20 rounded-2xl border border-gray-100 dark:border-white/5 mb-8">
-                    <p class="text-lg md:text-xl font-amiri leading-relaxed text-gray-700 dark:text-gray-200">
+                <div class="py-6 px-4 bg-gray-50 rounded-2xl border border-gray-100 mb-8">
+                    <p class="text-lg md:text-xl font-amiri leading-relaxed text-gray-700">
                         {{ session('success') }}
                     </p>
                 </div>
@@ -1231,7 +1231,7 @@
 
     <!-- Footer -->
     <footer
-        class="py-8 text-center text-sm border-t bg-white border-amber-100 text-gray-600 dark:bg-dark dark:border-gray-800 dark:text-gray-400">
+        class="py-8 text-center text-sm border-t bg-white border-amber-100 text-gray-600">
         <p class="font-amiri">Copyright © 2026 <span class="text-amber-500 font-bold">Generation Team</span>. All rights
             reserved.</p>
     </footer>

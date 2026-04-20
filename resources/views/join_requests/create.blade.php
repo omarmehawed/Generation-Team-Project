@@ -421,7 +421,7 @@
                                         {{ $q->is_required ? 'required' : '' }}>
 
                                 @elseif($q->question_type === 'scale')
-                                    <div class="flex items-center justify-between bg-slate-50 dark:bg-gray-800/40 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-gray-200">
                                         <span class="text-xs text-gray-500">Poor</span>
                                         <div class="flex gap-4">
                                             @for($i=1; $i<=5; $i++)
@@ -437,7 +437,7 @@
                                     </div>
 
                                 @elseif($q->question_type === 'matrix')
-                                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
+                                    <div class="overflow-x-auto rounded-xl border border-gray-200">
                                         <table class="w-full text-sm">
                                             <thead :class="darkMode ? 'bg-gray-800' : 'bg-gray-50'">
                                                 <tr>
@@ -447,7 +447,7 @@
                                                     @endforeach
                                                 </tr>
                                             </thead>
-                                            <tbody class="divide-y divide-gray-100 dark:divide-gray-800">
+                                            <tbody class="divide-y divide-gray-100">
                                                 @foreach($q->options['rows'] as $row)
                                                     <tr>
                                                         <td class="p-3 font-bold" :class="darkMode ? 'text-gray-300' : 'text-gray-700'">{{ $row }}</td>

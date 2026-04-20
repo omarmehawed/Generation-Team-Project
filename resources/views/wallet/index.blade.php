@@ -6,11 +6,11 @@
         {{-- Page Header --}}
         <div class="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-8 gap-6">
             <div class="w-full xl:w-auto">
-                <h1 class="text-2xl md:text-3xl font-bold text-ramadan-night dark:text-white font-amiri flex items-center">
-                    <i class="fas fa-wallet text-amber-500 dark:text-amber-400 mr-2"></i>
+                <h1 class="text-2xl md:text-3xl font-bold text-ramadan-night font-amiri flex items-center">
+                    <i class="fas fa-wallet text-amber-500 mr-2"></i>
                     @if($hasManagement) Wallet System @else My Wallet @endif
                 </h1>
-                <p class="text-gray-500 dark:text-gray-400 text-xs md:text-sm mt-1">
+                <p class="text-gray-500 text-xs md:text-sm mt-1">
                     @if($hasManagement) Manage student deposits and withdrawals. @else Track your balance and deposit
                     requests. @endif
                 </p>
@@ -25,7 +25,7 @@
                                 <i class="fas fa-list-alt"></i> Requests
                                 @if(isset($pendingCount) && $pendingCount > 0)
                                     <span
-                                        class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full border-2 border-white dark:border-gray-800 animate-pulse">
+                                        class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 text-white text-[10px] flex items-center justify-center rounded-full border-2 border-white animate-pulse">
                                         {{ $pendingCount }}
                                     </span>
                                 @endif
@@ -39,7 +39,7 @@
 
                         {{-- Toggle Users with Balance --}}
                         <button @click="toggleBalanceMode()"
-                            :class="balanceMode ? 'bg-amber-500 text-white' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 border border-gray-200 dark:border-gray-700'"
+                            :class="balanceMode ? 'bg-amber-500 text-white' : 'bg-white text-gray-600 border border-gray-200'"
                             class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl font-bold text-xs md:text-sm shadow-sm transition-all flex items-center justify-center gap-2">
                             <i class="fas fa-filter"></i> <span x-text="balanceMode ? 'All Users' : 'Active Balances'"></span>
                         </button>
@@ -48,7 +48,7 @@
                     {{-- Search Box --}}
                     <form @submit.prevent="searchUser()" class="relative w-full sm:w-64 md:w-80 order-1 sm:order-2">
                         <input type="search" enterkeyhint="search" x-model="searchQuery"
-                            class="w-full pl-10 pr-20 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-white focus:ring-2 focus:ring-amber-500 shadow-sm transition-all placeholder-gray-400 text-sm"
+                            class="w-full pl-10 pr-20 py-3 rounded-xl border border-gray-200 bg-white text-gray-800 focus:ring-2 focus:ring-amber-500 shadow-sm transition-all placeholder-gray-400 text-sm"
                             placeholder="Academic ID..." :disabled="loading">
                         <button type="submit" class="absolute inset-y-0 left-0 pl-3 flex items-center z-10">
                             <i class="fas fa-search text-gray-400 hover:text-amber-500 transition-colors cursor-pointer"></i>
@@ -72,9 +72,9 @@
         @if($hasManagement)
             {{-- Users with Balance Mode --}}
             <div x-show="balanceMode" x-transition class="mb-8">
-                <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-                    <div class="px-8 py-6 border-b border-gray-50 dark:border-gray-700/50 bg-amber-50/30 dark:bg-amber-900/10 flex justify-between items-center text-sm md:text-base">
-                        <h3 class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+                    <div class="px-8 py-6 border-b border-gray-50 bg-amber-50/30 flex justify-between items-center text-sm md:text-base">
+                        <h3 class="font-bold text-gray-800 flex items-center gap-2">
                             <i class="fas fa-coins text-amber-500"></i> Active Balances
                         </h3>
                         <div class="text-right">
@@ -85,23 +85,23 @@
 
                     <div class="overflow-x-auto min-h-[100px]">
                         <table class="w-full text-left border-collapse">
-                            <thead class="bg-gray-50/50 dark:bg-gray-700/20 text-[10px] uppercase text-gray-400 font-black tracking-widest">
+                            <thead class="bg-gray-50/50 text-[10px] uppercase text-gray-400 font-black tracking-widest">
                                 <tr>
                                     <th class="px-8 py-4">Student</th>
                                     <th class="px-6 py-4 hidden sm:table-cell">ID</th>
                                     <th class="px-8 py-4 text-right">Balance</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">
+                            <tbody class="divide-y divide-gray-50">
                                 <template x-for="activeUser in activeUsers" :key="activeUser.id">
-                                    <tr class="hover:bg-amber-50/20 dark:hover:bg-amber-900/5 transition-colors">
+                                    <tr class="hover:bg-amber-50/20 transition-colors">
                                         <td class="px-8 py-4">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-8 h-8 rounded-full overflow-hidden border border-amber-100 flex-shrink-0">
                                                     <img :src="activeUser.avatar" class="w-full h-full object-cover">
                                                 </div>
                                                 <div class="flex flex-col">
-                                                    <span class="text-sm font-bold text-gray-800 dark:text-gray-200" x-text="activeUser.name"></span>
+                                                    <span class="text-sm font-bold text-gray-800" x-text="activeUser.name"></span>
                                                     <span class="text-[10px] text-gray-400 sm:hidden uppercase font-mono" x-text="activeUser.academic_id"></span>
                                                 </div>
                                             </div>
@@ -131,14 +131,14 @@
             {{-- Manage User (Search Result) --}}
             <div x-show="!balanceMode && user" x-transition class="mb-8">
                 {{-- Individual User Card --}}
-                <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl p-6 shadow-xl transform transition-all duration-500 overflow-hidden">
-                    <div class="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start border-b border-gray-100 dark:border-gray-700 bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+                <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xl transform transition-all duration-500 overflow-hidden">
+                    <div class="p-6 md:p-8 flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start border-b border-gray-100 bg-gradient-to-br from-white to-gray-50">
 
                         {{-- Error Message --}}
                         <div x-show="errorMessage" x-transition:enter="transition ease-out duration-300"
                             x-transition:enter-start="opacity-0 transform -translate-y-2"
                             x-transition:enter-end="opacity-100 transform translate-y-0"
-                            class="mb-6 p-4 bg-red-100 dark:bg-red-900/20 border border-red-400 dark:border-red-500/50 text-red-700 dark:text-red-400 rounded-xl flex items-center gap-3"
+                            class="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-xl flex items-center gap-3"
                             style="display: none;">
                             <i class="fas fa-exclamation-circle text-lg"></i>
                             <span x-text="errorMessage" class="font-medium"></span>
@@ -148,24 +148,24 @@
                         {{-- Avatar --}}
                         <div class="flex-shrink-0">
                             <div
-                                class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-inner ring-4 ring-white dark:ring-gray-800">
+                                class="w-20 h-20 md:w-24 md:h-24 rounded-full overflow-hidden shadow-inner ring-4 ring-white">
                                 <img :src="user?.avatar" class="w-full h-full object-cover" :alt="user?.name">
                             </div>
                         </div>
 
                         {{-- User Info --}}
                         <div class="flex-1 text-center md:text-left w-full">
-                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 dark:text-white mb-1" x-text="user?.name">
+                            <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-1" x-text="user?.name">
                             </h2>
-                            <p class="text-gray-500 dark:text-gray-400 font-mono text-sm mb-4" x-text="user?.email"></p>
+                            <p class="text-gray-500 font-mono text-sm mb-4" x-text="user?.email"></p>
 
                             <div class="flex flex-wrap justify-center md:justify-start gap-2">
                                 <span
-                                    class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-600 dark:bg-amber-900/30 dark:text-amber-300 border border-amber-100 dark:border-amber-800">
+                                    class="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-50 text-amber-600 border border-amber-100">
                                     Student
                                 </span>
                                 <span
-                                    class="px-3 py-1 rounded-full text-xs font-bold font-mono bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-600">
+                                    class="px-3 py-1 rounded-full text-xs font-bold font-mono bg-gray-100 text-gray-600 border border-gray-200">
                                     ID: <span x-text="user?.academic_id"></span>
                                 </span>
                             </div>
@@ -175,7 +175,7 @@
                         <div class="flex flex-col items-center md:items-end gap-6 w-full md:w-auto mt-4 md:mt-0">
                             <div class="text-center md:text-right">
                                 <p class="text-xs text-gray-400 uppercase font-bold tracking-widest mb-1">Current Balance</p>
-                                <div class="text-4xl md:text-5xl font-black text-gray-800 dark:text-white font-mono tracking-tight">
+                                <div class="text-4xl md:text-5xl font-black text-gray-800 font-mono tracking-tight">
                                     <span class="text-green-500 text-2xl md:text-3xl align-top">$</span><span x-text="user?.balance"></span>
                                 </div>
                             </div>
@@ -196,15 +196,15 @@
             </div>
 
             {{-- Filters --}}
-            <form method="GET" action="{{ route('wallet.index') }}"
-                class="mb-6 grid grid-cols-1 {{ $hasManagement ? 'md:grid-cols-5' : 'md:grid-cols-4' }} gap-4 bg-white dark:bg-gray-800 p-5 rounded-2xl shadow-sm border border-gray-200 dark:border-gray-700">
+            <form method="GET" action="{{ route('wallet.index') }}" onsubmit="handleAjaxFormSubmit(event)"
+                class="mb-6 grid grid-cols-1 {{ $hasManagement ? 'md:grid-cols-5' : 'md:grid-cols-4' }} gap-4 bg-white p-5 rounded-2xl shadow-sm border border-gray-200">
 
                 @if($hasManagement)
                     <div>
                         <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Search Member</label>
                         <div class="relative">
                             <input type="text" name="search" value="{{ request('search') }}"
-                                class="w-full pl-3 pr-10 py-2.5 rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-sm focus:ring-2 focus:ring-blue-500 text-gray-700 dark:text-gray-200"
+                                class="w-full pl-3 pr-10 py-2.5 rounded-xl border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 text-gray-700"
                                 placeholder="Name or ID...">
                             <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500">
                                 <i class="fas fa-search text-xs"></i>
@@ -218,7 +218,7 @@
                         Type</label>
                     <div class="relative">
                         <select name="type"
-                            class="w-full pl-3 pr-10 py-2.5 rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-sm focus:ring-2 focus:ring-blue-500 appearance-none text-gray-700 dark:text-gray-200">
+                            class="w-full pl-3 pr-10 py-2.5 rounded-xl border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 appearance-none text-gray-700">
                             <option value="">All Transactions</option>
                             <option value="deposit" {{ request('type') == 'deposit' ? 'selected' : '' }}>Deposit</option>
                             <option value="withdrawal" {{ request('type') == 'withdrawal' ? 'selected' : '' }}>Withdrawal
@@ -234,18 +234,18 @@
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Date
                         From</label>
                     <input type="date" name="date_from" value="{{ request('date_from') }}"
-                        class="w-full px-3 py-2.5 rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-sm focus:ring-2 focus:ring-blue-500 text-gray-700 dark:text-gray-200">
+                        class="w-full px-3 py-2.5 rounded-xl border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 text-gray-700">
                 </div>
 
                 <div>
                     <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1.5">Date To</label>
                     <input type="date" name="date_to" value="{{ request('date_to') }}"
-                        class="w-full px-3 py-2.5 rounded-xl border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 text-sm focus:ring-2 focus:ring-blue-500 text-gray-700 dark:text-gray-200">
+                        class="w-full px-3 py-2.5 rounded-xl border-gray-200 bg-gray-50 text-sm focus:ring-2 focus:ring-blue-500 text-gray-700">
                 </div>
 
                 <div class="flex items-end">
                     <button type="submit"
-                        class="w-full py-2.5 bg-gray-900 hover:bg-black dark:bg-gray-700 dark:hover:bg-gray-600 text-white rounded-xl font-bold text-sm transition-colors shadow-lg">
+                        class="w-full py-2.5 bg-gray-900 hover:bg-black text-white rounded-xl font-bold text-sm transition-colors shadow-lg">
                         <i class="fas fa-filter mr-2"></i> Apply Filters
                     </button>
                 </div>
@@ -253,17 +253,17 @@
 
             {{-- History Table --}}
             <div
-                class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-200 dark:border-gray-700">
+                class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
                 <div
-                    class="px-6 py-4 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50 flex justify-between items-center">
-                    <h3 class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                    class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
+                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
                         <i class="fas fa-history text-blue-500"></i> Transaction History
                     </h3>
                 </div>
 
                 <div class="overflow-x-auto custom-scroll">
                     <table class="w-full text-left border-collapse">
-                        <thead class="bg-gray-50 dark:bg-gray-700/30 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                        <thead class="bg-gray-50 text-xs uppercase text-gray-500 font-bold tracking-wider">
                             <tr>
                                 <th class="px-4 md:px-6 py-4 whitespace-nowrap">Student</th>
                                 <th class="px-4 md:px-6 py-4">Details</th>
@@ -274,15 +274,15 @@
                                 <th class="px-4 md:px-6 py-4 text-right whitespace-nowrap">Date</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        <tbody class="divide-y divide-gray-100">
                             @forelse($transactions as $txn)
-                                <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/60 transition-colors group">
+                                <tr class="hover:bg-gray-50 transition-colors group">
                                     <td class="px-4 md:px-6 py-4">
                                         <a href="{{ route('profile.show', $txn->user_id) }}" class="flex items-center gap-3 group/profile">
                                             <x-user-avatar :user="$txn->user" size="w-8 h-8 md:w-10 md:h-10" />
                                             <div>
                                                 <p
-                                                    class="font-bold text-sm text-gray-800 dark:text-gray-200 group-hover/profile:text-blue-600 transition-colors line-clamp-1 max-w-[150px] md:max-w-none">
+                                                    class="font-bold text-sm text-gray-800 group-hover/profile:text-blue-600 transition-colors line-clamp-1 max-w-[150px] md:max-w-none">
                                                     {{ $txn->user->name }}
                                                 </p>
                                                 <p class="text-[10px] md:text-xs text-gray-400 font-mono">
@@ -292,7 +292,7 @@
                                         </a>
                                     </td>
                                     <td class="px-4 md:px-6 py-4">
-                                        <p class="text-xs font-medium text-gray-600 dark:text-gray-400 max-w-[200px] truncate"
+                                        <p class="text-xs font-medium text-gray-600 max-w-[200px] truncate"
                                             title="{{ $txn->notes }}">
                                             {{ $txn->notes ?? 'N/A' }}
                                         </p>
@@ -300,26 +300,26 @@
                                     <td class="px-4 md:px-6 py-4 text-center">
                                         @if($txn->type == 'deposit')
                                             <span
-                                                class="inline-flex items-center px-2.5 py-1 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-400 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide border border-green-100 dark:border-green-800">
+                                                class="inline-flex items-center px-2.5 py-1 bg-green-50 text-green-700 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide border border-green-100">
                                                 <i class="fas fa-arrow-down mr-1.5"></i> Deposit
                                             </span>
                                         @else
                                             <span
-                                                class="inline-flex items-center px-2.5 py-1 bg-red-50 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide border border-red-100 dark:border-red-800">
+                                                class="inline-flex items-center px-2.5 py-1 bg-red-50 text-red-700 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide border border-red-100">
                                                 <i class="fas fa-arrow-up mr-1.5"></i> Withdraw
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-4 md:px-6 py-4 text-right font-bold text-gray-800 dark:text-gray-200">
+                                    <td class="px-4 md:px-6 py-4 text-right font-bold text-gray-800">
                                         {{ $txn->type == 'deposit' ? '+' : '-' }} {{ number_format($txn->amount, 2) }} EGP
                                     </td>
                                     <td
-                                        class="px-4 md:px-6 py-4 text-right font-mono font-bold text-sm md:text-base whitespace-nowrap text-gray-600 dark:text-gray-400">
+                                        class="px-4 md:px-6 py-4 text-right font-mono font-bold text-sm md:text-base whitespace-nowrap text-gray-600">
                                         {{ number_format($txn->balance_after ?? 0, 2) }} EGP
                                     </td>
                                     <td class="px-4 md:px-6 py-4 text-center hidden md:table-cell">
                                         <span
-                                            class="bg-gray-100 dark:bg-gray-700/50 text-gray-600 dark:text-gray-400 px-2 py-1 rounded text-xs border border-gray-200 dark:border-gray-600">
+                                            class="bg-gray-100 text-gray-600 px-2 py-1 rounded text-xs border border-gray-200">
                                             {{ $txn->admin->name ?? 'System' }}
                                         </span>
                                     </td>
@@ -330,21 +330,21 @@
                             @empty
                                 <tr>
                                     <td colspan="6" class="px-6 py-12 text-center">
-                                        <div class="flex flex-col items-center justify-center text-gray-300 dark:text-gray-600">
+                                        <div class="flex flex-col items-center justify-center text-gray-300">
                                             <i class="fas fa-receipt text-5xl mb-4"></i>
-                                            <p class="text-gray-500 dark:text-gray-400 font-medium">No transactions found.</p>
+                                            <p class="text-gray-500 font-medium">No transactions found.</p>
                                         </div>
                                     </td>
                                 </tr>
                             @endforelse
                         </tbody>
-                        <tfoot class="bg-gray-50 dark:bg-gray-700/30 border-t border-gray-200 dark:border-gray-700">
+                        <tfoot class="bg-gray-50 border-t border-gray-200">
                             <tr>
                                 <td colspan="3"
                                     class="px-4 md:px-6 py-4 text-right font-bold text-gray-500 uppercase tracking-wider text-xs">
                                     Total Members Balance:</td>
                                 <td
-                                    class="px-4 md:px-6 py-4 text-right font-mono font-black text-lg text-amber-600 dark:text-amber-400">
+                                    class="px-4 md:px-6 py-4 text-right font-mono font-black text-lg text-amber-600">
                                     {{ number_format($totalBalance, 2) }} EGP
                                 </td>
                                 <td colspan="2"></td>
@@ -353,7 +353,7 @@
                     </table>
                 </div>
 
-                <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
+                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50">
                     {{ $transactions->links() }}
                 </div>
             </div>
@@ -368,7 +368,7 @@
                     x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" @click="modalOpen = false">
                 </div>
 
-                <div class="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-md relative z-10 p-6 md:p-8 border-t md:border border-gray-200 dark:border-gray-700 transform transition-all"
+                <div class="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-md relative z-10 p-6 md:p-8 border-t md:border border-gray-200 transform transition-all"
                     x-show="modalOpen" x-transition:enter="ease-out duration-300"
                     x-transition:enter-start="opacity-0 translate-y-full md:translate-y-4 md:scale-95"
                     x-transition:enter-end="opacity-100 translate-y-0 md:scale-100" x-transition:leave="ease-in duration-200"
@@ -376,10 +376,10 @@
                     x-transition:leave-end="opacity-0 translate-y-full md:translate-y-4 md:scale-95">
 
                     <div
-                        class="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full md:hidden">
+                        class="absolute top-3 left-1/2 transform -translate-x-1/2 w-12 h-1.5 bg-gray-200 rounded-full md:hidden">
                     </div>
 
-                    <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-white capitalize flex items-center gap-2">
+                    <h3 class="text-xl font-bold mb-6 text-gray-800 capitalize flex items-center gap-2">
                         <i
                             :class="txnType == 'deposit' ? 'fas fa-plus-circle text-green-500' : 'fas fa-minus-circle text-red-500'"></i>
                         Confirm <span x-text="txnType"></span>
@@ -393,13 +393,13 @@
                         <div class="mb-5">
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Student</label>
                             <div
-                                class="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-xl border border-gray-100 dark:border-gray-700">
+                                class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
                                 <div class="w-10 h-10 rounded-full overflow-hidden">
                                     <img :src="user?.avatar" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800 dark:text-white text-sm" x-text="user?.name"></p>
-                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-mono" x-text="user?.email"></p>
+                                    <p class="font-bold text-gray-800 text-sm" x-text="user?.name"></p>
+                                    <p class="text-xs text-gray-500 font-mono" x-text="user?.email"></p>
                                 </div>
                             </div>
                         </div>
@@ -410,7 +410,7 @@
                                 <span
                                     class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-xl font-bold">£</span>
                                 <input type="number" name="amount" step="0.01" min="0.1" required autofocus
-                                    class="w-full pl-10 pr-4 py-4 text-2xl font-mono font-bold bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-800 dark:text-white transition-all placeholder-gray-300"
+                                    class="w-full pl-10 pr-4 py-4 text-2xl font-mono font-bold bg-white border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 text-gray-800 transition-all placeholder-gray-300"
                                     placeholder="0.00">
                             </div>
                         </div>
@@ -419,13 +419,13 @@
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notes /
                                 Reason</label>
                             <textarea name="notes" rows="2"
-                                class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-gray-800 dark:text-white text-sm"
+                                class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-gray-800 text-sm"
                                 placeholder="Optional reason for this transaction..."></textarea>
                         </div>
 
                         <div class="flex gap-4">
                             <button type="button" @click="modalOpen = false"
-                                class="flex-1 py-3.5 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-sm transition-colors">
+                                class="flex-1 py-3.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors">
                                 Cancel
                             </button>
                             <button type="submit"
@@ -466,27 +466,27 @@
             {{-- Quick Actions / Stats --}}
             <div class="md:col-span-2 grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+                    class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
                     <div
-                        class="w-14 h-14 bg-blue-50 dark:bg-blue-900/20 rounded-2xl flex items-center justify-center text-blue-600">
+                        class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center text-blue-600">
                         <i class="fas fa-paper-plane text-xl"></i>
                     </div>
                     <div>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Deposits</p>
-                        <p class="text-xl font-black text-gray-800 dark:text-white">
+                        <p class="text-xl font-black text-gray-800">
                             {{ number_format(auth()->user()->walletTransactions()->where('type', 'deposit')->sum('amount'), 2) }}
                             EGP</p>
                     </div>
                 </div>
                 <div
-                    class="bg-white dark:bg-gray-800 rounded-3xl p-6 border border-gray-100 dark:border-gray-700 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
+                    class="bg-white rounded-3xl p-6 border border-gray-100 shadow-sm flex items-center gap-5 hover:shadow-md transition-shadow">
                     <div
-                        class="w-14 h-14 bg-purple-50 dark:bg-purple-900/20 rounded-2xl flex items-center justify-center text-purple-600">
+                        class="w-14 h-14 bg-purple-50 rounded-2xl flex items-center justify-center text-purple-600">
                         <i class="fas fa-shopping-bag text-xl"></i>
                     </div>
                     <div>
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Total Spent</p>
-                        <p class="text-xl font-black text-gray-800 dark:text-white">
+                        <p class="text-xl font-black text-gray-800">
                             {{ number_format(auth()->user()->walletTransactions()->where('type', 'withdrawal')->sum('amount'), 2) }}
                             EGP</p>
                     </div>
@@ -504,14 +504,14 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     @foreach($myRequests as $req)
                         <div
-                            class="bg-amber-50/50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-800/50 rounded-2xl p-4 flex items-center justify-between group">
+                            class="bg-amber-50/50 border border-amber-100 rounded-2xl p-4 flex items-center justify-between group">
                             <div class="flex items-center gap-4">
                                 <div
-                                    class="w-10 h-10 bg-amber-100 dark:bg-amber-900/30 rounded-xl flex items-center justify-center text-amber-600">
+                                    class="w-10 h-10 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600">
                                     <i class="fas fa-clock animate-spin-slow"></i>
                                 </div>
                                 <div>
-                                    <p class="text-sm font-bold text-gray-800 dark:text-gray-200 capitalize">
+                                    <p class="text-sm font-bold text-gray-800 capitalize">
                                         {{ str_replace('_', ' ', $req->payment_method) }} Deposit Request
                                     </p>
                                     <p class="text-[10px] text-amber-600/70 font-medium">Waiting for admin review...</p>
@@ -529,14 +529,14 @@
 
         {{-- Unified Transaction History --}}
         <div
-            class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
+            class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
             <div
-                class="px-8 py-6 border-b border-gray-50 dark:border-gray-700/50 bg-gray-50/50 dark:bg-gray-900/30 flex justify-between items-center">
-                <h3 class="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+                class="px-8 py-6 border-b border-gray-50 bg-gray-50/50 flex justify-between items-center">
+                <h3 class="font-bold text-gray-800 flex items-center gap-2">
                     <i class="fas fa-list-ul text-blue-500"></i> Platform History
                 </h3>
                 <span
-                    class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded-full">
+                    class="text-[10px] font-bold text-gray-400 uppercase tracking-widest bg-gray-100 px-3 py-1 rounded-full">
                     {{ $transactions->count() }} Records
                 </span>
             </div>
@@ -544,7 +544,7 @@
             <div class="overflow-x-auto custom-scroll">
                 <table class="w-full text-left border-collapse">
                     <thead
-                        class="bg-gray-50/30 dark:bg-gray-700/10 text-[10px] uppercase text-gray-400 font-black tracking-[0.1em]">
+                        class="bg-gray-50/30 text-[10px] uppercase text-gray-400 font-black tracking-[0.1em]">
                         <tr>
                             <th class="px-8 py-5">Activity Details</th>
                             <th class="px-6 py-5">Processed By</th>
@@ -553,15 +553,15 @@
                             <th class="px-8 py-5 text-right">Date</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-50 dark:divide-gray-700/50">
+                    <tbody class="divide-y divide-gray-50">
                         @forelse($transactions as $txn)
-                            <tr class="hover:bg-gray-50/50 dark:hover:bg-gray-900/40 transition-colors group">
+                            <tr class="hover:bg-gray-50/50 transition-colors group">
                                 <td class="px-8 py-5">
                                     <div class="flex items-center gap-4">
                                         <div @class([
                                             'w-10 h-10 rounded-xl flex items-center justify-center text-sm',
-                                            'bg-green-50 text-green-600 dark:bg-green-900/20' => $txn->type == 'deposit',
-                                            'bg-red-50 text-red-600 dark:bg-red-900/20' => $txn->type == 'withdrawal',
+                                            'bg-green-50 text-green-600' => $txn->type == 'deposit',
+                                            'bg-red-50 text-red-600' => $txn->type == 'withdrawal',
                                         ])>
                                             <i @class([
                                                 'fas fa-plus' => $txn->type == 'deposit',
@@ -569,7 +569,7 @@
                                             ])></i>
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-gray-800 dark:text-gray-200">
+                                            <p class="text-sm font-bold text-gray-800">
                                                 {{ $txn->notes ?? ($txn->type == 'deposit' ? 'Direct Deposit' : 'Direct Withdrawal') }}
                                             </p>
                                             <div class="flex items-center gap-2 mt-0.5">
@@ -578,7 +578,7 @@
                                                 </span>
                                                 @if($txn->depositRequest && $txn->depositRequest->screenshot_path)
                                                     <a href="{{ $txn->depositRequest->screenshot_path }}" target="_blank"
-                                                        class="text-[10px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1 bg-blue-50 dark:bg-blue-900/20 px-2 py-0.5 rounded">
+                                                        class="text-[10px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded">
                                                         <i class="fas fa-image"></i> View Receipt
                                                     </a>
                                                 @endif
@@ -589,10 +589,10 @@
                                 <td class="px-6 py-5">
                                     <div class="flex items-center gap-2">
                                         <div
-                                            class="w-6 h-6 rounded-full overflow-hidden border border-gray-100 dark:border-gray-700">
+                                            class="w-6 h-6 rounded-full overflow-hidden border border-gray-100">
                                             <img src="{{ $txn->admin->profile_photo_url }}" class="w-full h-full object-cover">
                                         </div>
-                                        <span class="text-xs font-medium text-gray-600 dark:text-gray-400 capitalize">
+                                        <span class="text-xs font-medium text-gray-600 capitalize">
                                             {{ $txn->admin->name ?? 'System' }}
                                         </span>
                                     </div>
@@ -604,11 +604,11 @@
                                 ])>
                                     {{ $txn->type == 'deposit' ? '+' : '-' }}{{ number_format($txn->amount, 2) }}
                                 </td>
-                                <td class="px-6 py-5 text-right font-mono font-bold text-gray-700 dark:text-gray-300">
+                                <td class="px-6 py-5 text-right font-mono font-bold text-gray-700">
                                     {{ number_format($txn->balance_after, 2) }}
                                 </td>
                                 <td class="px-8 py-5 text-right">
-                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200">
+                                    <p class="text-xs font-bold text-gray-800">
                                         {{ $txn->created_at->format('M d, Y') }}</p>
                                     <p class="text-[10px] text-gray-400 mt-0.5">{{ $txn->created_at->format('H:i') }}</p>
                                 </td>

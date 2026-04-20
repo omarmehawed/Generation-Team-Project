@@ -28,19 +28,19 @@
     <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md" @click="closeModal()"></div>
 
     <div id="assignSubLeaderModalContent"
-        class="relative bg-white dark:bg-[#0f172a] rounded-[3rem] w-full max-w-3xl overflow-visible shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100 dark:border-gray-800">
+        class="relative bg-white rounded-[3rem] w-full max-w-3xl overflow-visible shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100">
 
         <div
-            class="px-8 py-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20">
+            class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
             <div>
-                <h3 class="text-xl font-black text-gray-800 dark:text-gray-100">Assign Sub Leader</h3>
-                <p class="text-[10px] text-gray-400 dark:text-gray-500 font-bold uppercase tracking-widest mt-1">
+                <h3 class="text-xl font-black text-gray-800">Assign Sub Leader</h3>
+                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
                     <span x-text="members.length + ' members available'"></span>
                 </p>
             </div>
 
             <button type="button" @click="closeModal()"
-                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+                class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all">
                 <i class="fas fa-times text-xl"></i>
             </button>
         </div>
@@ -53,7 +53,7 @@
                 {{-- Step 1 --}}
                 <div x-show="step === 1" x-transition x-cloak>
                     <div class="relative">
-                        <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-4 ml-1">
+                        <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-4 ml-1">
                             Step 1: Search by Name, Email or Academic ID
                         </label>
 
@@ -64,16 +64,16 @@
                                    x-model="search"
                                    @keydown.enter.prevent="if(filteredMembers.length > 0) selectMember(filteredMembers[0])"
                                    placeholder="Enter name, email or ID..."
-                                   class="w-full rounded-[2rem] border-2 border-gray-100 dark:border-gray-800 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 dark:bg-[#111827] pl-16 pr-8 py-6 text-base font-bold text-gray-800 dark:text-gray-200 transition-all shadow-inner">
+                                   class="w-full rounded-[2rem] border-2 border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 pl-16 pr-8 py-6 text-base font-bold text-gray-800 transition-all shadow-inner">
 
                             <div x-show="search.trim().length > 0 && !selectedMember"
                                  x-cloak
-                                 class="absolute left-0 right-0 top-full mt-3 z-[10010] bg-white dark:bg-[#111827] border-2 border-indigo-500 rounded-[2rem] shadow-2xl overflow-hidden">
+                                 class="absolute left-0 right-0 top-full mt-3 z-[10010] bg-white border-2 border-indigo-500 rounded-[2rem] shadow-2xl overflow-hidden">
                                 <div class="max-h-[450px] overflow-y-auto custom-scroll">
                                     <template x-for="m in filteredMembers" :key="m.id">
                                         <div @click="selectMember(m)"
-                                             class="px-8 py-6 hover:bg-indigo-600 hover:text-white cursor-pointer flex items-center gap-8 transition-all border-b border-gray-50 dark:border-gray-800 last:border-none group">
-                                            <img :src="m.avatar" class="w-14 h-14 rounded-2xl border-2 border-white dark:border-gray-800 shadow-md group-hover:scale-105 transition-transform">
+                                             class="px-8 py-6 hover:bg-indigo-600 hover:text-white cursor-pointer flex items-center gap-8 transition-all border-b border-gray-50 last:border-none group">
+                                            <img :src="m.avatar" class="w-14 h-14 rounded-2xl border-2 border-white shadow-md group-hover:scale-105 transition-transform">
                                             <div class="overflow-hidden flex-1 grid grid-cols-2 gap-6 items-center">
                                                 <div>
                                                     <p class="text-base font-black group-hover:text-white" x-text="m.name"></p>
@@ -88,7 +88,7 @@
                                     </template>
 
                                     <div x-show="search.length > 0 && filteredMembers.length === 0" class="p-16 text-center">
-                                        <p class="text-lg text-gray-500 dark:text-gray-400 font-bold">No members found</p>
+                                        <p class="text-lg text-gray-500 font-bold">No members found</p>
                                     </div>
                                 </div>
                             </div>
@@ -99,13 +99,13 @@
                 {{-- Step 2 --}}
                 <div x-show="step === 2" x-transition x-cloak class="space-y-6">
                     <div
-                        class="p-6 bg-indigo-50/50 dark:bg-indigo-500/5 border border-indigo-100/50 dark:border-indigo-500/10 rounded-[2rem] flex items-center gap-4">
+                        class="p-6 bg-indigo-50/50 border border-indigo-100/50 rounded-[2rem] flex items-center gap-4">
                         <img :src="selectedMember ? selectedMember.avatar : ''"
-                            class="w-16 h-16 rounded-2xl border-2 border-white dark:border-gray-800 shadow-md"
+                            class="w-16 h-16 rounded-2xl border-2 border-white shadow-md"
                             alt="Selected member avatar">
 
                         <div class="flex-1">
-                            <h4 class="font-black text-gray-900 dark:text-white leading-tight"
+                            <h4 class="font-black text-gray-900 leading-tight"
                                 x-text="selectedMember ? selectedMember.name : ''"></h4>
 
                             <p class="text-[10px] text-indigo-500 font-black uppercase tracking-widest mt-1"
@@ -114,7 +114,7 @@
 
                         <div class="text-right">
                             <span
-                                class="rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-700 dark:text-indigo-300 px-3 py-1 text-[8px] font-black uppercase"
+                                class="rounded-full bg-indigo-100 text-indigo-700 px-3 py-1 text-[8px] font-black uppercase"
                                 x-text="technical_role || 'unassigned'"></span>
                         </div>
                     </div>
@@ -125,12 +125,12 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label
-                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 ml-1">
+                                class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">
                                 Step 2: Assign Team Number
                             </label>
 
                             <select name="team_number" x-model="team_number" required
-                                class="w-full rounded-2xl border border-gray-100 dark:border-gray-800 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 dark:bg-[#111827] px-5 py-4 text-sm font-bold text-gray-800 dark:text-gray-200">
+                                class="w-full rounded-2xl border border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 px-5 py-4 text-sm font-bold text-gray-800">
                                 <option value="">Select Team Number</option>
                                 @for($i = 1; $i <= 20; $i++)
                                     <option value="{{ $i }}">Team #{{ $i }}</option>
@@ -140,21 +140,21 @@
 
                         <div x-show="isLeader" x-cloak>
                             <label
-                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 ml-1">
+                                class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">
                                 Step 3: Assign Domain
                             </label>
 
                             <div class="grid grid-cols-2 gap-3">
                                 <button type="button" @click="technical_role = 'software'" :class="technical_role === 'software'
                                             ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-500'"
+                                            : 'bg-gray-100 text-gray-500'"
                                     class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
                                     Software
                                 </button>
 
                                 <button type="button" @click="technical_role = 'hardware'" :class="technical_role === 'hardware'
                                             ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
-                                            : 'bg-gray-100 dark:bg-gray-800 text-gray-500'"
+                                            : 'bg-gray-100 text-gray-500'"
                                     class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
                                     Hardware
                                 </button>
@@ -163,14 +163,14 @@
 
                         <div x-show="!isLeader" x-cloak>
                             <label
-                                class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest mb-3 ml-1">
+                                class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-3 ml-1">
                                 Step 3: Domain
                             </label>
 
                             <div
-                                class="w-full rounded-2xl border border-gray-100 dark:border-gray-800 bg-gray-50/50 dark:bg-[#111827] px-5 py-4 text-sm font-bold text-gray-800 dark:text-gray-200">
+                                class="w-full rounded-2xl border border-gray-100 bg-gray-50/50 px-5 py-4 text-sm font-bold text-gray-800">
                                 Auto selected:
-                                <span class="text-indigo-600 dark:text-indigo-400 uppercase"
+                                <span class="text-indigo-600 uppercase"
                                     x-text="technical_role"></span>
                             </div>
                         </div>
@@ -179,9 +179,9 @@
             </div>
 
             <div
-                class="px-8 py-6 bg-gray-50/50 dark:bg-gray-800/20 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center gap-4">
+                class="px-8 py-6 bg-gray-50/50 border-t border-gray-100 flex justify-between items-center gap-4">
                 <button type="button" @click="step === 1 ? closeModal() : prevStep()"
-                    class="px-6 py-3 rounded-2xl font-bold text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-xs uppercase tracking-widest">
+                    class="px-6 py-3 rounded-2xl font-bold text-gray-400 hover:bg-gray-100 transition-colors text-xs uppercase tracking-widest">
                     <span x-text="step === 1 ? 'Cancel' : 'Back'"></span>
                 </button>
 

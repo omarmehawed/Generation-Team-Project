@@ -149,6 +149,9 @@ class WalletController extends Controller
         $type = $request->type;
 
         if ($type === 'withdrawal' && $user->wallet_balance < $amount) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Insufficient balance for withdrawal!'], 422);
+            }
             return back()->with('error', 'Insufficient balance for withdrawal!');
         }
 
@@ -286,6 +289,9 @@ class WalletController extends Controller
         $users = $query->get();
         
         if ($users->isEmpty()) {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'No valid members selected.'], 422);
+            }
             return back()->with('error', 'No valid members selected.');
         }
 
@@ -430,6 +436,9 @@ class WalletController extends Controller
         $depositRequest = WalletDepositRequest::findOrFail($id);
         
         if ($depositRequest->status !== 'pending') {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Request already processed.'], 422);
+            }
             return back()->with('error', 'Request already processed.');
         }
 

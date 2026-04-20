@@ -1,31 +1,13 @@
-<!DOCTYPE html>
-<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'light' }" :class="{ 'dark': theme === 'dark' }">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Generation Team - System</title>
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <script>
-        (function () {
-            try {
-                var theme = localStorage.getItem('theme');
-                if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                }
-            } catch (e) { }
-        })();
-    </script>
     <link rel="icon" type="image/png" href="{{ asset('assets/gt_logo.jpg') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link
@@ -52,69 +34,6 @@
             /* Gold Glow */
             --nav-bg: rgba(255, 255, 255, 0.90);
             --grid-color: #e2e8f0;
-        }
-
-        .dark {
-            /* Dark Mode (Ramadan Night) */
-            --bg-main: #0f172a;
-            --bg-panel: #1e1b4b;
-            /* Deep Indigo Panel */
-            --bg-sidebar: #0f172a;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --primary: #fbbf24;
-            /* Gold */
-            --primary-hover: #d97706;
-            --accent: #818cf8;
-            /* Soft Indigo */
-            --border: #312e81;
-            /* Indigo Border */
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
-            --glow: 0 0 20px rgba(251, 191, 36, 0.15);
-            --nav-bg: rgba(15, 23, 42, 0.90);
-            --grid-color: #1e293b;
-        }
-
-        /* 
-           🔥 Global Overrides for Legacy Views 🔥 
-           Forces hardcoded Tailwind classes to adapt to Dark Mode
-        */
-        .dark .bg-white {
-            background-color: var(--bg-panel) !important;
-            color: var(--text-main) !important;
-            border-color: var(--border) !important;
-        }
-
-        .dark .bg-gray-50,
-        .dark .bg-gray-100 {
-            background-color: var(--bg-main) !important;
-        }
-
-        .dark .text-gray-900,
-        .dark .text-gray-800,
-        .dark .text-black {
-            color: var(--text-main) !important;
-        }
-
-        .dark .text-gray-700,
-        .dark .text-gray-600,
-        .dark .text-gray-500 {
-            color: var(--text-muted) !important;
-        }
-
-        .dark .border-gray-100,
-        .dark .border-gray-200,
-        .dark .border-gray-300 {
-            border-color: var(--border) !important;
-        }
-
-
-        .dark input,
-        .dark select,
-        .dark textarea {
-            background-color: var(--bg-main) !important;
-            color: var(--text-main) !important;
-            border-color: var(--border) !important;
         }
 
         /* Apply Variables */
@@ -283,7 +202,7 @@
 
                 <div class="flex items-center justify-start">
                     <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" type="button"
-                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600 transition-colors z-50">
+                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors z-50">
                         <i class="fas fa-bars text-xl"></i>
                     </button>
 
@@ -313,14 +232,6 @@
 
                 <div class="flex items-center gap-3 sm:gap-4">
 
-                    <!-- Theme Toggle -->
-                    <button @click="theme = theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('theme', theme)"
-                        class="theme-toggle-btn w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 focus:outline-none">
-                        <i class="fas fa-sun text-yellow-500 text-lg" x-show="theme === 'light'"
-                            style="display: none;"></i>
-                        <i class="fas fa-moon text-cyan-400 text-lg" x-show="theme === 'dark'"
-                            style="display: none;"></i>
-                    </button>
 
                     {{-- Wallet (Always link to index) --}}
                     <a href="{{ route('wallet.index') }}" class="relative group p-2 mx-1" title="Wallet">
@@ -346,10 +257,10 @@
                         </button>
 
                         <div x-show="open" @click.away="open = false" x-transition
-                            class="absolute right-0 mt-4 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100 dark:border-gray-700">
+                            class="absolute right-0 mt-4 w-80 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100">
                             {{-- Header --}}
                             <div
-                                class="p-3 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
+                                class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                                 <span
                                     class="text-xs font-bold uppercase tracking-wider text-gray-500">Notifications</span>
                                 @if(auth()->user()->unreadNotifications->count() > 0)
@@ -371,7 +282,7 @@
                                         $icon = $notification->data['icon'] ?? 'fas fa-bell';
                                     @endphp
                                     <a href="#" onclick="handleNotifClick(event, '{{ $notification->id }}', '{{ $url }}')"
-                                        class="block p-4 border-b border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors {{ $isRead ? 'opacity-60' : '' }}"
+                                        class="block p-4 border-b border-gray-100 hover:bg-gray-50 transition-colors {{ $isRead ? 'opacity-60' : '' }}"
                                         id="notif-{{ $notification->id }}">
                                         <div class="flex gap-3">
                                             <div
@@ -382,7 +293,7 @@
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-start justify-between gap-1">
                                                     <p
-                                                        class="text-sm font-bold text-gray-800 dark:text-gray-100 leading-tight">
+                                                        class="text-sm font-bold text-gray-800 leading-tight">
                                                         {{ $title }}
                                                     </p>
                                                     @if(!$isRead)
@@ -436,7 +347,7 @@
 
                         {{-- Profile Icon with Link --}}
                         <a href="{{ route('profile.show') }}"
-                            class="flex text-sm rounded-full p-0.5 border shadow-sm transition-all hover:scale-110 hover:shadow-[0_0_15px_var(--primary)] focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
+                            class="flex text-sm rounded-full p-0.5 border shadow-sm transition-all hover:scale-110 hover:shadow-[0_0_15px_var(--primary)] focus:ring-4 focus:ring-gray-300"
                             style="background-color: var(--bg-panel); border-color: var(--primary); box-shadow: var(--glow)">
                             <x-user-avatar :user="auth()->user()" size="w-9 h-9" />
                         </a>
@@ -568,7 +479,7 @@
             style="background-image: radial-gradient(var(--grid-color) 1px, transparent 1px); background-size: 20px 20px;">
         </div>
 
-        <div class="relative z-10 transition-all duration-300">
+        <div id="main-content-wrapper" class="relative z-10 transition-all duration-300">
             @yield('content')
         </div>
     </div>
@@ -587,8 +498,8 @@
             showConfirmButton: false,
             timer: 3000,
             timerProgressBar: true,
-            background: document.body.getAttribute('data-theme') === 'dark' ? '#1f2937' : '#ffffff',
-            color: document.body.getAttribute('data-theme') === 'dark' ? '#fff' : '#1f2937',
+            background: '#ffffff',
+            color: '#1f2937',
             didOpen: (toast) => {
                 toast.addEventListener('mouseenter', Swal.stopTimer)
                 toast.addEventListener('mouseleave', Swal.resumeTimer)
@@ -625,22 +536,21 @@
          */
         function confirmFormSubmit(event, form, message) {
             event.preventDefault();
-            const isDark = document.body.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark');
             Swal.fire({
                 title: 'Confirmation Required',
                 text: message || 'Are you sure you want to perform this action?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
-                cancelButtonColor: isDark ? '#374151' : '#e5e7eb',
+                cancelButtonColor: '#e5e7eb',
                 confirmButtonText: 'Yes, Proceed',
                 cancelButtonText: 'Cancel',
-                background: isDark ? '#1f2937' : '#ffffff',
-                color: isDark ? '#f3f4f6' : '#111827',
+                background: '#ffffff',
+                color: '#111827',
                 customClass: {
-                    cancelButton: isDark ? 'text-white' : 'text-gray-900',
+                    cancelButton: 'text-gray-900',
                     confirmButton: 'text-white font-bold',
-                    popup: 'rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl'
+                    popup: 'rounded-3xl border border-gray-100 shadow-xl'
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
@@ -657,29 +567,32 @@
          */
         function confirmAction(event, message, urlOrCallback) {
             event.preventDefault();
-            const isDark = document.body.getAttribute('data-theme') === 'dark' || document.documentElement.classList.contains('dark');
             Swal.fire({
                 title: 'Action Required',
                 text: message || 'Are you sure?',
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3b82f6',
-                cancelButtonColor: isDark ? '#374151' : '#e5e7eb',
+                cancelButtonColor: '#e5e7eb',
                 confirmButtonText: 'Confirm',
-                background: isDark ? '#1f2937' : '#ffffff',
-                color: isDark ? '#f3f4f6' : '#111827',
+                background: '#ffffff',
+                color: '#111827',
                 customClass: {
-                    cancelButton: isDark ? 'text-white' : 'text-gray-900',
-                    popup: 'rounded-3xl border border-gray-100 dark:border-gray-800 shadow-xl'
+                    cancelButton: 'text-gray-900',
+                    popup: 'rounded-3xl border border-gray-100 shadow-xl'
                 }
             }).then((result) => {
                 if (result.isConfirmed) {
-                    if (typeof urlOrCallback === 'string') {
+                    if (typeof urlOrCallback === 'function') {
+                        // If it's a function that tries to submit the form, intercept it
+                        const form = event.target.closest('form');
+                        if (form) {
+                            handleAjaxFormSubmit({ preventDefault: () => {}, target: form });
+                        } else {
+                            urlOrCallback();
+                        }
+                    } else {
                         window.location.href = urlOrCallback;
-                    } else if (typeof urlOrCallback === 'function') {
-                        urlOrCallback();
-                    } else if (event.target.href) {
-                        window.location.href = event.target.href;
                     }
                 }
             });
@@ -758,6 +671,10 @@
          * GLOBAL AJAX HANDLER
          * Intercepts form submissions and performs them via fetch()
          */
+        /**
+         * GLOBAL SEAMLESS AJAX HANDLER
+         * Intercepts form submissions and updates the UI without a full page refresh.
+         */
         async function handleAjaxFormSubmit(event) {
             event.preventDefault();
             const form = event.target;
@@ -765,72 +682,67 @@
             const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
             const formData = new FormData(form);
             
-            // If the submission was triggered by a specific button, include its name/value
             if (event.submitter && event.submitter.name) {
                 formData.append(event.submitter.name, event.submitter.value);
             }
 
-            const isDark = document.documentElement.classList.contains('dark');
-
-            // Show Loading State
             if (submitBtn) {
                 submitBtn.disabled = true;
-                // Keep the original width if possible to avoid layout shift
                 submitBtn.style.minWidth = `${submitBtn.offsetWidth}px`;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
             }
             showTopLoading();
 
             try {
-                // IMPORTANT: Use getAttribute('action') because if an input has name="action", 
-                // form.action will return the input element instead of the URL string.
                 const url = form.getAttribute('action') || window.location.href;
                 const method = form.getAttribute('method') || 'POST';
-
-                const response = await fetch(url, {
+                let fetchUrl = url;
+                let fetchOptions = {
                     method: method.toUpperCase(),
                     headers: {
-                        'X-CSRF-TOKEN': CSRF_TOKEN,
-                        'Accept': 'application/json',
-                        'X-Requested-With': 'XMLHttpRequest'
-                    },
-                    body: formData
-                });
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                        'X-Requested-With': 'XMLHttpRequest',
+                        'Accept': 'application/json'
+                    }
+                };
 
+                if (method.toUpperCase() === 'GET') {
+                    const params = new URLSearchParams(new FormData(form)).toString();
+                    if (params) {
+                        fetchUrl += (fetchUrl.includes('?') ? '&' : '?') + params;
+                    }
+                } else {
+                    fetchOptions.body = formData;
+                }
+
+                const response = await fetch(fetchUrl, fetchOptions);
                 const result = await response.json();
 
                 if (result.success) {
-                    Toast.fire({ icon: 'success', title: result.message || 'Action completed!' });
+                    if (result.message) Toast.fire({ icon: 'success', title: result.message });
                     
-                    // Close Modals if any
+                    // Close Modals
                     if (typeof closeModal === 'function') {
-                        const modalId = form.closest('[role="dialog"]')?.id;
+                        const modalId = form.closest('[role="dialog"]')?.id || form.closest('.royal-modal-active')?.id;
                         if (modalId) closeModal(modalId);
+                    } else {
+                        const modal = form.closest('.royal-modal-active') || form.closest('[x-data]');
+                        if (modal && modal.__x) { modal.__x.$data.open = false; }
+                        else if (modal) { modal.classList.add('hidden'); modal.style.display = 'none'; }
                     }
 
-                    // Redirection or Reloading Partial
-                    if (result.redirect) {
-                        // Smoothly transition if it's the same page
-                        const currentUrl = new URL(window.location.href);
-                        const nextUrl = new URL(result.redirect);
-                        
-                        if (currentUrl.pathname === nextUrl.pathname) {
-                            // If same page, just reload to update UI (simplest for now)
-                            // In a more advanced version, we could fetch the HTML and swap the container
-                            window.location.href = result.redirect; 
-                        } else {
-                            window.location.href = result.redirect;
-                        }
-                    } else {
-                         window.location.reload();
-                    }
+                    // Perform Seamless DOM Swap
+                    const targetUrl = result.redirect || fetchUrl;
+                    await refreshMainContent(targetUrl);
+                    window.history.pushState({}, '', targetUrl);
+
                 } else {
                     Swal.fire({
                         icon: 'error',
                         title: 'Oops...',
                         text: result.message || 'Something went wrong!',
-                        background: isDark ? '#1f2937' : '#ffffff',
-                        color: isDark ? '#f3f4f6' : '#111827',
+                        background: '#ffffff',
+                        color: '#111827',
                     });
                 }
             } catch (error) {
@@ -842,6 +754,41 @@
                     submitBtn.innerHTML = originalBtnHtml;
                 }
                 hideTopLoading();
+            }
+        }
+
+        /**
+         * Re-fetches the current page and swaps the main content area.
+         */
+        async function refreshMainContent(url) {
+            try {
+                const response = await fetch(url, {
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                const newContent = doc.getElementById('main-content-wrapper');
+                const currentContent = document.getElementById('main-content-wrapper');
+
+                if (newContent && currentContent) {
+                    // Update content
+                    currentContent.innerHTML = newContent.innerHTML;
+
+                    // Re-initialize scripts/plugins if necessary
+                    if (typeof applyNotifHighlight === 'function') applyNotifHighlight();
+                    
+                    // Re-trigger Alpine.js if present
+                    if (window.Alpine) {
+                        window.Alpine.discover();
+                    }
+                    
+                    // Dispatch a global event so other components can react
+                    window.dispatchEvent(new CustomEvent('gt-content-updated'));
+                }
+            } catch (error) {
+                console.error('Swap Error:', error);
+                window.location.reload(); // Last resort fallback
             }
         }
 
@@ -873,7 +820,6 @@
          */
         function handleAjaxAction(event, form, message) {
             event.preventDefault();
-            const isDark = document.documentElement.classList.contains('dark');
             Swal.fire({
                 title: 'Are you sure?',
                 text: message || 'You are about to perform this action.',
@@ -881,8 +827,8 @@
                 showCancelButton: true,
                 confirmButtonColor: '#ef4444',
                 confirmButtonText: 'Yes, proceed',
-                background: isDark ? '#1f2937' : '#ffffff',
-                color: isDark ? '#f3f4f6' : '#111827',
+                background: '#ffffff',
+                color: '#111827',
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Use the AJAX submit handler

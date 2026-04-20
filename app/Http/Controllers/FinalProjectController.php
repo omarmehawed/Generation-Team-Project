@@ -137,6 +137,14 @@ class FinalProjectController extends Controller
             targetUserId: $user->id
         );
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Member approved successfully.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
+
         return back()->with('success', 'Member approved successfully.');
     }
 
@@ -171,6 +179,14 @@ class FinalProjectController extends Controller
             teamId: $team->id,
             targetUserId: $user->id
         );
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Member request rejected.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
 
         return back()->with('success', 'Member request rejected.');
     }
@@ -290,33 +306,59 @@ class FinalProjectController extends Controller
             ->latest()
             ->get();
 
-        // 3. Debts Calculation
-        $membersDebts = [];
-        foreach ($team->members as $member) {
-            $debt = \App\Models\FundContribution::where('user_id', $member->user_id)
-                ->whereHas('fund', function ($q) use ($team, $activeFund) {
-                    $q->where('team_id', $team->id);
-                    if ($activeFund) $q->where('id', '!=', $activeFund->id); 
-                })
-                ->where('status', '!=', 'paid') 
-                ->get()
-                ->sum(function ($contrib) {
-                    return $contrib->fund->amount_per_member; 
-                });
+        // -- Debts & History --
+        $currentFundId = $activeFund ? $activeFund->id : null;
+        
+        // 2. Unpaid History (For currently logged in user)
+        $unpaidHistory = FundContribution::where('user_id', Auth::id())
+            ->where('status', '!=', 'paid')
+            ->whereHas('fund', function($q) use ($team, $currentFundId) {
+                $q->where('team_id', $team->id);
+                if ($currentFundId) {
+                    $q->where('id', '!=', $currentFundId);
+                }
+            })
+            ->with('fund')
+            ->get();
 
-            $membersDebts[$member->user_id] = $debt;
-        }
+        // 3. ✨ Calculate All Members' Historical Debts
+        $teamMemberIds = $team->members->pluck('user_id');
+        $membersDebts = FundContribution::whereIn('user_id', $teamMemberIds)
+            ->where('status', '!=', 'paid')
+            ->whereHas('fund', function($q) use ($team, $currentFundId) {
+                $q->where('team_id', $team->id);
+                if ($currentFundId) {
+                    $q->where('id', '!=', $currentFundId);
+                }
+            })
+            ->with('fund')
+            ->get()
+            ->groupBy('user_id')
+            ->map(function($group) {
+                return $group->sum(function($c) {
+                    return $c->fund->amount_per_member;
+                });
+            });
 
         // Determine Role
         $myRole   = $myMemberRecord->role ?? 'member';
         
         // 4. Pending Members (For Leader's Eyes Only)
         $pendingMembers = [];
+        $pendingFundPayments = [];
         if($myRole == 'leader'){
             $pendingMembers = TeamMember::where('team_id', $team->id)
                                 ->where('status', 'pending')
                                 ->with('user')
                                 ->get();
+                                
+            // 🔥 Pending Fund Payments (Current + History)
+            $pendingFundPayments = FundContribution::where('status', 'pending_approval')
+                ->whereHas('fund', function($q) use ($team) {
+                    $q->where('team_id', $team->id);
+                })
+                ->with(['user', 'fund'])
+                ->get();
         }
 
         // 5. Project Components
@@ -349,8 +391,6 @@ class FinalProjectController extends Controller
         } elseif ($myRole === 'vice_leader') {
             $myDomain = strtolower($myMemberRecord->technical_role);
             if (in_array($myDomain, ['software', 'hardware'])) {
-                // بنجيب التاسكات اللي فيها الدومين ده، 
-                // أو التاسكات اللي الدومين فيها فاضي (القديمة) بس اليوزر بتاعها في الدومين ده
                 $allTasksQuery->where(function($q) use ($myDomain, $team) {
                     $q->where('technical_role', $myDomain)
                       ->orWhere(function($sq) use ($myDomain, $team) {
@@ -376,9 +416,11 @@ class FinalProjectController extends Controller
             'activeFund',
             'fundsHistory',
             'membersDebts',
+            'unpaidHistory',
             'myRole',
             'myMemberRecord',
             'pendingMembers',
+            'pendingFundPayments',
             'components',
             'needsSubLeaderSetup',
             'availableMembers',
@@ -466,22 +508,26 @@ class FinalProjectController extends Controller
         $userToAdd = User::where('email', $request->email)->first();
 
         // 3. نتأكد إنه مش في التيم ده أصلاً
-        if ($team->members()->where('user_id', $userToAdd->id)->exists()) {
+        $existingMember = $team->members()->where('user_id', $userToAdd->id)->exists();
+        if ($existingMember) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'This user is already in your team.'], 422);
             return back()->with('error', 'This user is already in your team.');
         }
 
         // 4. نتأكد إنه مش في أي تيم تاني لنفس المشروع (عشان ميكونش بوشين)
-        $alreadyInAnotherTeam = TeamMember::where('user_id', $userToAdd->id)
+        $alreadyMemberSomewhereElse = TeamMember::where('user_id', $userToAdd->id)
             ->whereHas('team', function ($q) use ($team) {
                 $q->where('project_id', $team->project_id);
             })->exists();
 
-        if ($alreadyInAnotherTeam) {
+        if ($alreadyMemberSomewhereElse) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'This user is already a member of another team.'], 422);
             return back()->with('error', 'This user is already a member of another team.');
         }
 
         // 5. نتأكد إن التيم مش كامل (100 عضو مثلاً)
-        if ($team->members()->count() >= 100) {
+        if ($team->members()->count() >= 20) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Team is full.'], 422);
             return back()->with('error', 'Team is full.');
         }
 
@@ -502,6 +548,14 @@ class FinalProjectController extends Controller
             'url'     => route('final_project.dashboard', $team->id),
             'type'    => 'info'
         ]));
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Member added successfully!',
+                'redirect' => route('final_project.dashboard', $team->id) . '#team-section'
+            ]);
+        }
 
         return back()->with('success', 'Member added successfully!');
     }
@@ -527,12 +581,13 @@ class FinalProjectController extends Controller
         }
 
         // Check if team number is unique in this main team
-        $numberExists = TeamMember::where('team_id', $team->id)
+        $existingSubLeader = TeamMember::where('team_id', $team->id)
             ->where('is_sub_leader', true)
             ->where('team_number', $request->team_number)
             ->exists();
 
-        if ($numberExists) {
+        if ($existingSubLeader) {
+            if ($request->ajax()) return response()->json(['success' => false, 'message' => 'Team Number ' . $request->team_number . ' is already taken by another Sub Leader.'], 422);
             return back()->with('error', 'Team Number ' . $request->team_number . ' is already taken by another Sub Leader.');
         }
 
@@ -546,6 +601,22 @@ class FinalProjectController extends Controller
                 'team_number' => $request->team_number
             ]);
         });
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Your team has been set up successfully!',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Your team has been set up successfully!',
+                'redirect' => route('final_project.dashboard', $team->id) . '#team-section'
+            ]);
+        }
 
         return back()->with('success', 'Your team has been set up successfully!');
     }
@@ -564,11 +635,13 @@ class FinalProjectController extends Controller
 
         // 1. أمان: الليدر بس اللي يمسح
         if (Auth::id() != $team->leader_id) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Only the Team Leader can remove members.'], 403);
             return back()->with('error', 'Only the Team Leader can remove members.');
         }
 
         // 2. ممنوع الليدر يمسح نفسه من الزرار ده (يستخدم Leave Team)
         if ($request->user_id == $team->leader_id) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'You cannot remove yourself. Use "Leave Team" instead.'], 422);
             return back()->with('error', 'You cannot remove yourself. Use "Leave Team" instead.');
         }
 
@@ -593,9 +666,18 @@ class FinalProjectController extends Controller
                 ]));
             }
 
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Member removed successfully.',
+                    'redirect' => route('final_project.dashboard', $team->id) . '#team-section'
+                ]);
+            }
+
             return back()->with('success', 'Member removed successfully.');
         }
 
+        if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Member not found in this team.'], 404);
         return back()->with('error', 'Member not found in this team.');
     }
 
@@ -622,6 +704,14 @@ class FinalProjectController extends Controller
             'created_at' => now(),
             'updated_at' => now(),
         ]);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Report submitted successfully.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
 
         return back()->with('success', 'Report submitted successfully.');
     }
@@ -700,6 +790,14 @@ class FinalProjectController extends Controller
             targetUserId: null,
             properties: ['file' => $filePath]
         );
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Proposal submitted successfully! Waiting for approval.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
 
         return back()->with('success', 'Proposal submitted successfully! Waiting for approval.');
     }
@@ -935,9 +1033,19 @@ class FinalProjectController extends Controller
             ], [Auth::id()]);
 
             DB::commit();
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Batch expenses recorded successfully! 💸',
+                    'redirect' => back()->getTargetUrl()
+                ]);
+            }
             return back()->with('success', 'Batch expenses recorded successfully! 💸');
         } catch (\Exception $e) {
             DB::rollBack();
+            if (request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Failed to save batch expenses: ' . $e->getMessage()], 500);
+            }
             return back()->with('error', 'Failed to save batch expenses: ' . $e->getMessage());
         }
     }
@@ -959,6 +1067,7 @@ class FinalProjectController extends Controller
         // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
         if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_components)) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'You do not have permission to manage components.'], 403);
             return back()->with('error', 'You do not have permission to manage components.');
         }
 
@@ -993,6 +1102,14 @@ class FinalProjectController extends Controller
             'type'       => 'info'
         ], [Auth::id()]);
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Component added successfully!',
+                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+            ]);
+        }
+
         return back()->with('success', 'Component added successfully! 🔩');
     }
 
@@ -1010,6 +1127,7 @@ class FinalProjectController extends Controller
         // Authorization: Leader or delegated permission
         $myRecord = $team->members->where('user_id', Auth::id())->first();
         if (!$myRecord || ($myRecord->role !== 'leader' && !$myRecord->can_manage_components)) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'You do not have permission to manage components.'], 403);
             return back()->with('error', 'You do not have permission to manage components.');
         }
 
@@ -1166,6 +1284,14 @@ class FinalProjectController extends Controller
             targetUserId: null
         );
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Expense deleted successfully! 🗑️',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
+
         return back()->with('success', 'Expense deleted successfully! 🗑️');
     }
 
@@ -1211,15 +1337,15 @@ class FinalProjectController extends Controller
             'type'       => 'warning'
         ], [Auth::id()]);
 
-        if ($request->ajax()) {
+        if (request()->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Funding round started! Members notified to pay.',
-                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+                'message' => 'Fund request created and members notified! 💰',
+                'redirect' => back()->getTargetUrl()
             ]);
         }
 
-        return back()->with('success', 'Funding round started! Members notified to pay.');
+        return back()->with('success', 'Fund request created and members notified! 💰');
     }
 
 
@@ -1237,6 +1363,7 @@ class FinalProjectController extends Controller
 
         // Authorization: Ensure the user owns this contribution
         if ($contrib->user_id != Auth::id()) {
+             if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized action.'], 403);
              return back()->with('error', 'Unauthorized action.');
         }
 
@@ -1281,8 +1408,23 @@ class FinalProjectController extends Controller
 
         $contrib->update($updateData);
 
-        // Notify Leader
         $team = Team::find($contrib->fund->team_id);
+
+        // 🔍 LOG ACTIVITY
+        ActivityLogger::log(
+            action: 'fund_payment_submitted',
+            description: "Submitted payment for review: '{$contrib->fund->title}' via {$request->payment_method}",
+            subject: $contrib,
+            teamId: $team->id,
+            targetUserId: null,
+            properties: [
+                'amount' => $request->amount_transferred ?? $contrib->fund->amount_per_member,
+                'method' => $request->payment_method,
+                'fund_title' => $contrib->fund->title
+            ]
+        );
+
+        // Notify Leader
         $leader = User::find($team->leader_id);
         
         // Notify Leader
@@ -1324,7 +1466,8 @@ class FinalProjectController extends Controller
 
         // Authorization: Leader Only
         if (Auth::id() != $team->leader_id) {
-             return back()->with('error', 'Unauthorized. Only Team Leader can review.');
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized. Only Team Leader can review.'], 403);
+            return back()->with('error', 'Unauthorized. Only Team Leader can review.');
         }
 
         $user = User::find($contrib->user_id);
@@ -1333,6 +1476,7 @@ class FinalProjectController extends Controller
             // Deduct from wallet if method is wallet
             if ($contrib->payment_method === 'wallet') {
                 if ($user->wallet_balance < $contrib->fund->amount_per_member) {
+                    if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Insufficient wallet balance for this member.'], 422);
                     return back()->with('error', 'Insufficient wallet balance for this member.');
                 }
                 
@@ -1353,6 +1497,20 @@ class FinalProjectController extends Controller
                 'paid_at' => now(),
             ]);
 
+            // 🔍 LOG ACTIVITY
+            ActivityLogger::log(
+                action: 'fund_payment_approved',
+                description: "Approved payment of " . number_format($contrib->amount ?? $contrib->fund->amount_per_member) . " EGP from {$user->name} for '{$contrib->fund->title}'",
+                subject: $contrib,
+                teamId: $team->id,
+                targetUserId: $user->id,
+                properties: [
+                    'amount' => $contrib->amount ?? $contrib->fund->amount_per_member,
+                    'method' => $contrib->payment_method,
+                    'fund_title' => $contrib->fund->title
+                ]
+            );
+
             // Notify Member (Success)
             $user->notify(new BatuNotification([
                 'title'      => '✅ Payment Approved',
@@ -1363,16 +1521,14 @@ class FinalProjectController extends Controller
                 'type'       => 'success'
             ]));
 
-            if ($request->ajax()) {
+            if (request()->ajax()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Payment approved successfully.',
-                    'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+                    'redirect' => back()->getTargetUrl()
                 ]);
             }
-
             return back()->with('success', 'Payment approved successfully.');
-
         } else {
             $contrib->update([
                 'status' => 'rejected',
@@ -1389,23 +1545,107 @@ class FinalProjectController extends Controller
                 'type'       => 'alert'
             ]));
 
-            if ($request->ajax()) {
+            if (request()->ajax()) {
                 return response()->json([
                     'success' => true,
                     'message' => 'Payment rejected.',
-                    'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+                    'redirect' => back()->getTargetUrl()
                 ]);
             }
 
             return back()->with('success', 'Payment rejected.');
         }
     }
+    public function forceWalletPayment(Request $request)
+    {
+        $request->validate([
+            'contribution_id' => 'required|exists:fund_contributions,id'
+        ]);
+
+        $contrib = FundContribution::with('fund.team', 'user')->findOrFail($request->contribution_id);
+        $team = $contrib->fund->team;
+        $user = $contrib->user;
+
+        // Security check
+        if (Auth::id() != $team->leader_id) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized: Only Team Leader can force payment.'], 403);
+            return back()->with('error', 'Unauthorized: Only Team Leader can force payment.');
+        }
+
+        if ($contrib->status === 'paid') {
+            return back()->with('info', 'This contribution is already paid.');
+        }
+
+        $amount = $contrib->fund->amount_per_member;
+
+        if ($user->wallet_balance < $amount) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Member has insufficient wallet balance (' . number_format($user->wallet_balance, 2) . ' EGP).'], 422);
+            return back()->with('error', 'Member has insufficient wallet balance (' . number_format($user->wallet_balance, 2) . ' EGP).');
+        }
+
+        DB::transaction(function() use ($user, $contrib, $amount, $team) {
+            // Deduct
+            $user->decrement('wallet_balance', $amount);
+
+            // Log Transaction
+            \App\Models\WalletTransaction::create([
+                'user_id' => $user->id,
+                'admin_id' => Auth::id(),
+                'type' => 'withdrawal',
+                'amount' => $amount,
+                'balance_after' => $user->wallet_balance,
+                'notes' => "Forced Fund Payment: " . $contrib->fund->title,
+            ]);
+
+            // Mark Paid
+            $contrib->update([
+                'status' => 'paid',
+                'paid_at' => now(),
+                'payment_method' => 'wallet',
+                'notes' => 'Forced by Leader',
+            ]);
+
+            // 🔍 LOG ACTIVITY
+            ActivityLogger::log(
+                action: 'fund_payment_forced',
+                description: "Deducted " . number_format($amount) . " EGP from {$user->name}'s wallet for '{$contrib->fund->title}' (History Payment)",
+                subject: $contrib,
+                teamId: $team->id,
+                targetUserId: $user->id,
+                properties: [
+                    'amount' => $amount,
+                    'method' => 'wallet',
+                    'fund_title' => $contrib->fund->title
+                ]
+            );
+        });
+
+        // Notify Member
+        $user->notify(new BatuNotification([
+            'title'      => '💰 Automated Wallet Deduction',
+            'message'    => 'Your leader has deducted ' . number_format($amount, 2) . ' EGP from your wallet for "' . $contrib->fund->title . '".',
+            'icon'       => 'fas fa-wallet',
+        ]));
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Successfully deducted ' . number_format($amount, 2) . ' EGP from ' . $user->name . '\'s wallet.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
+
+        return back()->with('success', 'Successfully deducted ' . number_format($amount, 2) . ' EGP from ' . $user->name . '\'s wallet.');
+    }
+
 
     public function updatePaymentSettings(Request $request, Team $team)
     {
         if (Auth::id() != $team->leader_id) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized'], 403);
             abort(403, 'Unauthorized');
         }
+
 
         $request->validate([
             'payment_methods' => 'nullable|array',
@@ -1416,18 +1656,64 @@ class FinalProjectController extends Controller
             'payment_methods' => $request->payment_methods ?? []
         ]);
 
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Payment settings updated successfully! ⚙️',
+                'redirect' => route('final_project.dashboard', $team->id) . '#budget-section'
+            ]);
+        }
+
         return back()->with('success', 'Payment settings updated successfully! ⚙️');
     }
 
     // ==========================================
     // 13. تسجيل دفع عضو (Mark as Paid) -> DEPRECATED/UPDATED
     // ==========================================
-    /*
     public function markPaid(Request $request)
     {
-        // ... (Old logic commented out or removed)
+        $request->validate([
+            'contribution_id' => 'required|exists:fund_contributions,id',
+            'notes' => 'nullable|string|max:500'
+        ]);
+
+        $user = Auth::user();
+        $contrib = FundContribution::with(['fund', 'user'])->findOrFail($request->contribution_id);
+        $team = Team::findOrFail($contrib->fund->team_id);
+
+        // Security check: Only Leader or Admin
+        if ($user->id !== $team->leader_id && $user->role !== 'admin') {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Only the Team Leader can mark payments manually.'], 403);
+            return back()->with('error', 'Only the Team Leader can mark payments manually.');
+        }
+
+        // Action: Instant Settlement
+        $contrib->update([
+            'status' => 'paid',
+            'payment_method' => 'cash', 
+            'paid_at' => now(),
+            'notes' => $request->notes ?? 'Manual cash settlement by Leader'
+        ]);
+
+        // Audit Log
+        if (class_exists(\App\Services\ActivityLogger::class)) {
+            \App\Services\ActivityLogger::log(
+                'fund_payment_marked_paid',
+                "Leader manually settled contribution #{$contrib->id} for {$contrib->user->name}",
+                $team
+            );
+        }
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => "Payment for {$contrib->user->name} settled successfully! 💵✅",
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
+
+        return back()->with('success', "Payment for {$contrib->user->name} settled successfully! 💵✅");
     }
-    */
 
     public function exportFunds(Request $request)
     {
@@ -1562,6 +1848,7 @@ class FinalProjectController extends Controller
         $isLeader = Team::where('id', $request->team_id)->where('leader_id', $user->id)->exists();
 
         if (!$isLeader && ($member->extra_role ?? '') != 'reports') {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Only the Leader or Report Manager can submit weekly reports.'], 403);
             return back()->with('error', 'Only the Leader or Report Manager can submit weekly reports.');
         }
 
@@ -1611,6 +1898,14 @@ class FinalProjectController extends Controller
             'type'       => 'info'
         ], [$user->id]); // don't notify the submitter
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Weekly Report submitted successfully 📝',
+                'redirect' => route('final_project.dashboard', $request->team_id) . '#reports-section'
+            ]);
+        }
+
         return back()->with('success', 'Weekly Report submitted successfully 📝');
     }
     // ==========================================
@@ -1627,7 +1922,10 @@ class FinalProjectController extends Controller
         ]);
 
         $team = Team::findOrFail($request->team_id);
-        if (Auth::id() != $team->leader_id) return back()->with('error', 'Only Leader can book.');
+        if (Auth::id() != $team->leader_id) {
+            if (request()->ajax()) return response()->json(['success' => false, 'message' => 'Only Leader can book.'], 403);
+            return back()->with('error', 'Only Leader can book.');
+        }
 
         \App\Models\Meeting::create([
             'team_id' => $team->id,
@@ -1655,6 +1953,14 @@ class FinalProjectController extends Controller
                 'action_type' => 'meeting_request',
                 'model_id' => $team->id
             ]));
+        }
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Request sent to supervisor 📅',
+                'redirect' => route('final_project.dashboard', $team->id) . '#supervision-section'
+            ]);
         }
 
         return back()->with('success', 'Request sent to supervisor 📅');
@@ -1744,6 +2050,14 @@ class FinalProjectController extends Controller
             }
         }
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Internal meeting scheduled successfully.',
+                'redirect' => route('final_project.dashboard', $team->id) . '#meetings-section'
+            ]);
+        }
+
         return back()->with('success', 'Internal meeting scheduled successfully.');
     }
 
@@ -1775,6 +2089,14 @@ class FinalProjectController extends Controller
         }
 
         $meeting->update(['status' => 'completed']);
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Attendance saved ✅',
+                'redirect' => route('final_project.dashboard', $meeting->team_id) // Trigger refresh
+            ]);
+        }
 
         return back()->with('success', 'Attendance saved ✅');
     }
@@ -1827,6 +2149,14 @@ class FinalProjectController extends Controller
             properties: ['caption' => $request->caption]
         );
 
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Artifact uploaded successfully! 🚀',
+                'redirect' => route('final_project.dashboard', $request->team_id) . '#gallery-section'
+            ]);
+        }
+
         return back()->with('success', 'Artifact uploaded successfully! 🚀');
     }
 
@@ -1844,7 +2174,17 @@ class FinalProjectController extends Controller
 
         // مسح الملف من السيرفر
 
+        $teamId = $item->team_id;
         DB::table('project_galleries')->where('id', $id)->delete();
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Item removed.',
+                'redirect' => route('final_project.dashboard', $teamId) . '#gallery-section'
+            ]);
+        }
+
         return back()->with('success', 'Item removed.');
     }
 
@@ -1910,14 +2250,28 @@ class FinalProjectController extends Controller
             // 4. تنفيذ التحديث
             $task->update($updateData);
 
-            return back()->with('success', 'Task submitted successfully!');
-        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
-            return back()->with('error', 'Task not found.');
-        } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error('Task submission failed: ' . $e->getMessage());
-            return back()->with('error', 'Submission failed. Please try again.');
+            if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task submitted successfully!',
+                'redirect' => back()->getTargetUrl()
+            ]);
         }
+
+        return back()->with('success', 'Task submitted successfully!');
+    } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+        if (request()->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Task not found.'], 404);
+        }
+        return back()->with('error', 'Task not found.');
+    } catch (\Exception $e) {
+        \Illuminate\Support\Facades\Log::error('Task submission failed: ' . $e->getMessage());
+        if (request()->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Submission failed. Please try again.'], 500);
+        }
+        return back()->with('error', 'Submission failed. Please try again.');
     }
+}
 
     // Keep approveTask and rejectTask as they were, they look correct.
     public function approveTask($id)
@@ -1939,11 +2293,22 @@ class FinalProjectController extends Controller
                 'updated_at' => now()
             ]);
 
-            return back()->with('success', 'Task approved successfully! ✅');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Approval failed: ' . $e->getMessage());
+            if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task approved successfully! ✅',
+                'redirect' => back()->getTargetUrl()
+            ]);
         }
+
+        return back()->with('success', 'Task approved successfully! ✅');
+    } catch (\Exception $e) {
+        if (request()->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Approval failed: ' . $e->getMessage()], 500);
+        }
+        return back()->with('error', 'Approval failed: ' . $e->getMessage());
     }
+}
 
     /**
      * رفض المهمة
@@ -1967,11 +2332,22 @@ class FinalProjectController extends Controller
                 'updated_at' => now()
             ]);
 
-            return back()->with('error', 'Task rejected ❌');
-        } catch (\Exception $e) {
-            return back()->with('error', 'Rejection failed: ' . $e->getMessage());
+            if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Task rejected ❌',
+                'redirect' => back()->getTargetUrl()
+            ]);
         }
+
+        return back()->with('error', 'Task rejected ❌');
+    } catch (\Exception $e) {
+        if (request()->ajax()) {
+            return response()->json(['success' => false, 'message' => 'Rejection failed: ' . $e->getMessage()], 500);
+        }
+        return back()->with('error', 'Rejection failed: ' . $e->getMessage());
     }
+}
 
     /**
      * عرض الملف المرفوع
@@ -2026,6 +2402,14 @@ class FinalProjectController extends Controller
             'submitted_at' => null,
             'updated_at' => now()
         ]);
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Submission deleted. You can submit again.',
+                'redirect' => back()->getTargetUrl()
+            ]);
+        }
 
         return back()->with('success', 'Submission deleted. You can submit again.');
     }
@@ -2113,7 +2497,22 @@ class FinalProjectController extends Controller
 
         if ($updatedSomething) {
             $team->save();
+            if (request()->ajax()) {
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Project files updated successfully ✨',
+                    'redirect' => back()->getTargetUrl()
+                ]);
+            }
             return back()->with('success', 'Project files updated successfully ✨');
+        }
+
+        if (request()->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'No changes made.',
+                'redirect' => back()->getTargetUrl()
+            ]);
         }
 
         return back();

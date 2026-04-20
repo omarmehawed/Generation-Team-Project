@@ -643,7 +643,7 @@
 
                 {{-- كارت إنشاء الفريق --}}
                 <div
-                    class="tilt-effect glass-gold p-10 rounded-[2.5rem] hover-card-vip group cursor-pointer relative overflow-hidden bg-white dark:bg-gray-800/50">
+                    class="tilt-effect glass-gold p-10 rounded-[2.5rem] hover-card-vip group cursor-pointer relative overflow-hidden bg-white">
                     <div
                         class="absolute top-0 right-0 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob">
                     </div>
@@ -692,7 +692,7 @@
                             your workspace.
                         </p>
                         <button onclick="openModal('joinTeamModal')"
-                            class="w-full bg-white hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 dark:text-white text-black font-black py-5 px-8 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-4 text-lg transform active:scale-95">
+                            class="w-full bg-white hover:bg-gray-100 text-black font-black py-5 px-8 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-4 text-lg transform active:scale-95">
                             Enter Access Code <i
                                 class="fas fa-key text-yellow-600 group-hover:rotate-45 transition-transform"></i>
                         </button>
@@ -1676,6 +1676,8 @@
                 </div>
                 </div> {{-- End Collapsible Body --}}
             </div>
+
+
             {{-- 3. قسم الميزانية والتمويل (Split View) --}}
             <div id="budget-section" x-data="{ expandedParent: false }" class="mt-12">
                 {{-- العنوان الرئيسي للقسم --}}
@@ -1949,6 +1951,11 @@
                                             $isLate =
                                                 $contrib->status == 'pending' &&
                                                 \Carbon\Carbon::now()->gt($activeFund->deadline);
+                                            
+                                            // 🕵️ Find historical pending payments for this user (Leader Only)
+                                            $userHistoryPending = $myRole == 'leader' 
+                                                ? $pendingFundPayments->where('user_id', $contrib->user_id)->where('fund_id', '!=', $activeFund->id)
+                                                : collect();
                                         @endphp
 
                                         <div
@@ -1971,53 +1978,156 @@
                                             <div>
                                                 @if ($contrib->status == 'paid')
                                                     {{-- ✅ مدفوع (Paid) --}}
-                                                    <div class="text-right">
+                                                    <div class="text-right flex flex-col items-end gap-1.5">
                                                         <span
-                                                            class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-lg font-bold block mb-0.5"><i
+                                                            class="text-[10px] bg-green-100 text-green-700 px-2 py-1 rounded-lg font-bold block"><i
                                                                 class="fas fa-check-circle"></i> Paid</span>
+                                                        
+                                                        {{-- 🔥 Pay History Button (Even after paying current) --}}
+                                                        @if ($contrib->user_id == Auth::id() && $unpaidHistory->count() > 0)
+                                                            <button onclick="openModal('myUnpaidHistoryModal')"
+                                                                class="text-[9px] bg-amber-50 text-amber-700 px-3 py-1 rounded-lg hover:bg-amber-100 transition font-black border border-amber-100 shadow-sm flex items-center gap-1 whitespace-nowrap">
+                                                                <i class="fas fa-history"></i> Pay History ({{ $unpaidHistory->count() }})
+                                                            </button>
+                                                        @endif
+
+                                                        {{-- 👑 Leader: Historical Reviews (if Paid for current) --}}
+                                                        @if($myRole == 'leader' && $userHistoryPending->count() > 0)
+                                                            <div class="flex flex-col gap-1 items-end">
+                                                                @foreach($userHistoryPending as $hPending)
+                                                                    <button
+                                                                        onclick="openReviewModal({{ json_encode([
+                                                                            'id' => $hPending->id,
+                                                                            'member_name' => $hPending->user->name,
+                                                                            'fund_name' => $hPending->fund->title,
+                                                                            'member_balance' => $hPending->user->wallet_balance,
+                                                                            'payment_method' => $hPending->payment_method,
+                                                                            'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
+                                                                            'active_fund_amount' => $hPending->fund->amount_per_member,
+                                                                            'from_number' => $hPending->from_number,
+                                                                            'transaction_date' => $hPending->transaction_date,
+                                                                            'transaction_time' => $hPending->transaction_time,
+                                                                            'proof_url' => $hPending->payment_proof ? $hPending->payment_proof : '#',
+                                                                            'notes' => $hPending->notes
+                                                                        ]) }})"
+                                                                        class="text-[9px] bg-purple-600 text-white px-2.5 py-1 rounded-lg hover:bg-purple-700 transition font-black shadow-sm flex items-center gap-1 whitespace-nowrap">
+                                                                        <i class="fas fa-history"></i> Review History
+                                                                    </button>
+                                                                @endforeach
+                                                            </div>
+                                                        @endif
+
                                                         @if (in_array($contrib->payment_method, ['transfer', 'vodafone_cash', 'instapay']) && $contrib->payment_proof)
                                                             <a href="{{ $contrib->payment_proof }}"
                                                                 target="_blank"
-                                                                class="text-[9px] text-blue-500 underline">View Proof</a>
+                                                                class="text-[9px] text-blue-500 underline mt-0.5">View Proof</a>
                                                         @elseif($contrib->payment_method == 'cash')
-                                                            <span class="text-[9px] text-gray-400">Cash Payment</span>
+                                                            <span class="text-[9px] text-gray-400 mt-0.5 italic">Cash Payment</span>
                                                         @endif
                                                     </div>
 
                                                 @elseif($contrib->status == 'pending_approval')
                                                     {{-- ⏳ قيد المراجعة (Pending Approval) --}}
                                                     @if ($myRole == 'leader')
-                                                        {{-- Leader: Review Button --}}
-                                                        <button
-                                                            onclick="openReviewModal({{ json_encode([
-                                                                'id' => $contrib->id,
-                                                                'member_name' => $contrib->user->name,
-                                                                'member_balance' => $contrib->user->wallet_balance,
-                                                                'payment_method' => $contrib->payment_method,
-                                                                'amount' => $contrib->amount ?? $activeFund->amount_per_member,
-                                                                'active_fund_amount' => $activeFund->amount_per_member,
-                                                                'from_number' => $contrib->from_number,
-                                                                'transaction_date' => $contrib->transaction_date,
-                                                                'transaction_time' => $contrib->transaction_time,
-                                                                'proof_url' => $contrib->payment_proof ? $contrib->payment_proof : '#',
-                                                                'notes' => $contrib->notes
-                                                            ]) }})"
-                                                            class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-bold shadow-md animate-pulse">
-                                                            <i class="fas fa-search"></i> Review
-                                                        </button>
+                                                        {{-- Leader: Review Button(s) --}}
+                                                        <div class="flex flex-col gap-1.5 items-end">
+                                                            {{-- Current Fund Review --}}
+                                                            <button
+                                                                onclick="openReviewModal({{ json_encode([
+                                                                    'id' => $contrib->id,
+                                                                    'member_name' => $contrib->user->name,
+                                                                    'fund_name' => $activeFund->title,
+                                                                    'member_balance' => $contrib->user->wallet_balance,
+                                                                    'payment_method' => $contrib->payment_method,
+                                                                    'amount' => $contrib->amount ?? $activeFund->amount_per_member,
+                                                                    'active_fund_amount' => $activeFund->amount_per_member,
+                                                                    'from_number' => $contrib->from_number,
+                                                                    'transaction_date' => $contrib->transaction_date,
+                                                                    'transaction_time' => $contrib->transaction_time,
+                                                                    'proof_url' => $contrib->payment_proof ? $contrib->payment_proof : '#',
+                                                                    'notes' => $contrib->notes
+                                                                ]) }})"
+                                                                class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-lg hover:bg-blue-700 transition font-bold shadow-md animate-pulse">
+                                                                <i class="fas fa-search"></i> Review
+                                                            </button>
+
+                                                            {{-- Historical Fund Reviews --}}
+                                                            @foreach($userHistoryPending as $hPending)
+                                                                <button
+                                                                    onclick="openReviewModal({{ json_encode([
+                                                                        'id' => $hPending->id,
+                                                                        'member_name' => $hPending->user->name,
+                                                                        'fund_name' => $hPending->fund->title,
+                                                                        'member_balance' => $hPending->user->wallet_balance,
+                                                                        'payment_method' => $hPending->payment_method,
+                                                                        'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
+                                                                        'active_fund_amount' => $hPending->fund->amount_per_member,
+                                                                        'from_number' => $hPending->from_number,
+                                                                        'transaction_date' => $hPending->transaction_date,
+                                                                        'transaction_time' => $hPending->transaction_time,
+                                                                        'proof_url' => $hPending->payment_proof ? $hPending->payment_proof : '#',
+                                                                        'notes' => $hPending->notes
+                                                                    ]) }})"
+                                                                    class="text-[10px] bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700 transition font-bold shadow-md whitespace-nowrap">
+                                                                    <i class="fas fa-history"></i> Review History
+                                                                </button>
+                                                            @endforeach
+                                                        </div>
                                                     @else
                                                         {{-- Member: Under Review --}}
-                                                        <span class="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg font-bold">
-                                                            <i class="fas fa-clock"></i> Under Review
-                                                        </span>
+                                                        <div class="flex flex-col gap-1.5 items-end">
+                                                            <span class="text-[10px] bg-yellow-100 text-yellow-700 px-2 py-1 rounded-lg font-bold">
+                                                                <i class="fas fa-clock"></i> Under Review
+                                                            </span>
+                                                            {{-- 🔥 Pay History Button (While under review) --}}
+                                                            @if ($contrib->user_id == Auth::id() && $unpaidHistory->count() > 0)
+                                                                <button onclick="openModal('myUnpaidHistoryModal')"
+                                                                    class="text-[9px] bg-amber-50 text-amber-700 px-3 py-1 rounded-lg hover:bg-amber-100 transition font-black border border-amber-100 shadow-sm flex items-center gap-1">
+                                                                    <i class="fas fa-history"></i> Pay History
+                                                                </button>
+                                                            @endif
+
+                                                            {{-- 👑 Leader: Simple indicator --}}
+                                                            @if($myRole == 'leader' && $contrib->user_id != Auth::id() && $debt > 0)
+                                                                <button onclick="openModal('fundsHistoryModal')" 
+                                                                    class="text-[9px] bg-amber-600 text-white px-2 py-1 rounded-lg hover:bg-amber-700 transition font-bold shadow-sm">
+                                                                    <i class="fas fa-wallet"></i> Settle Old
+                                                                </button>
+                                                            @endif
+                                                        </div>
                                                     @endif
 
                                                 @elseif($contrib->status == 'rejected')
                                                     {{-- ❌ مرفوض (Rejected) --}}
-                                                    <div class="text-right">
-                                                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-1 rounded-lg font-bold block mb-1">
+                                                    <div class="text-right flex flex-col items-end gap-1.5">
+                                                        <span class="text-[10px] bg-red-100 text-red-700 px-2 py-1 rounded-lg font-bold block">
                                                             <i class="fas fa-times-circle"></i> Rejected
                                                         </span>
+
+                                                        {{-- Historical Fund Reviews (for Leader) --}}
+                                                        @if($myRole == 'leader' && $userHistoryPending->count() > 0)
+                                                            @foreach($userHistoryPending as $hPending)
+                                                                <button
+                                                                    onclick="openReviewModal({{ json_encode([
+                                                                        'id' => $hPending->id,
+                                                                        'member_name' => $hPending->user->name,
+                                                                        'fund_name' => $hPending->fund->title,
+                                                                        'member_balance' => $hPending->user->wallet_balance,
+                                                                        'payment_method' => $hPending->payment_method,
+                                                                        'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
+                                                                        'active_fund_amount' => $hPending->fund->amount_per_member,
+                                                                        'from_number' => $hPending->from_number,
+                                                                        'transaction_date' => $hPending->transaction_date,
+                                                                        'transaction_time' => $hPending->transaction_time,
+                                                                        'proof_url' => $hPending->payment_proof ? $hPending->payment_proof : '#',
+                                                                        'notes' => $hPending->notes
+                                                                    ]) }})"
+                                                                    class="text-[9px] bg-purple-600 text-white px-2.5 py-1 rounded-lg hover:bg-purple-700 transition font-black shadow-sm flex items-center gap-1 whitespace-nowrap">
+                                                                    <i class="fas fa-history"></i> Review History
+                                                                </button>
+                                                            @endforeach
+                                                        @endif
+
                                                         @if ($contrib->user_id == Auth::id())
                                                             <button
                                                                 onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
@@ -2025,7 +2135,7 @@
                                                                 Try Again
                                                             </button>
                                                             @if($contrib->rejection_reason)
-                                                                <p class="text-[9px] text-red-500 mt-1 max-w-[100px] leading-tight">{{ Str::limit($contrib->rejection_reason, 30) }}</p>
+                                                                <p class="text-[9px] text-red-500 mt-1 max-w-[100px] leading-tight text-right">{{ Str::limit($contrib->rejection_reason, 30) }}</p>
                                                             @endif
                                                         @endif
                                                     </div>
@@ -2045,14 +2155,72 @@
                                                         </div>
                                                     @elseif ($contrib->user_id == Auth::id())
                                                         {{-- Member: Pay Button --}}
-                                                        <button
-                                                            onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
-                                                            class="text-[10px] bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-[#D4AF37] transition font-bold shadow-md">
-                                                            Pay Now
-                                                        </button>
+                                                        <div class="flex flex-col gap-1.5 items-end">
+                                                            <button
+                                                                onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
+                                                                class="text-[10px] bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-[#D4AF37] transition font-bold shadow-md w-full">
+                                                                Pay Now
+                                                            </button>
+                                                            
+                                                            {{-- 🔥 Pay History Button (Under Pay Now) --}}
+                                                            @if ($unpaidHistory->count() > 0)
+                                                                <button onclick="openModal('myUnpaidHistoryModal')"
+                                                                    class="text-[9px] bg-amber-50 text-amber-700 px-3 py-1 rounded-lg hover:bg-amber-100 transition font-black border border-amber-100 shadow-sm flex items-center gap-1 whitespace-nowrap">
+                                                                    <i class="fas fa-history"></i> Pay History ({{ $unpaidHistory->count() }})
+                                                                </button>
+                                                            @endif
+                                                        </div>
                                                     @else
-                                                        {{-- Leader: Just Pending --}}
-                                                        <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-lg font-bold">Pending</span>
+                                                        {{-- Leader: Just Pending + Force Wallet Option --}}
+                                                        <div class="text-right flex flex-col items-end gap-1.5">
+                                                            {{-- Status Badge --}}
+                                                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-lg font-bold">Pending</span>
+
+                                                            {{-- Historical Fund Reviews --}}
+                                                            @if($myRole == 'leader' && $userHistoryPending->count() > 0)
+                                                                @foreach($userHistoryPending as $hPending)
+                                                                    <button
+                                                                        onclick="openReviewModal({{ json_encode([
+                                                                            'id' => $hPending->id,
+                                                                            'member_name' => $hPending->user->name,
+                                                                            'fund_name' => $hPending->fund->title,
+                                                                            'member_balance' => $hPending->user->wallet_balance,
+                                                                            'payment_method' => $hPending->payment_method,
+                                                                            'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
+                                                                            'active_fund_amount' => $hPending->fund->amount_per_member,
+                                                                            'from_number' => $hPending->from_number,
+                                                                            'transaction_date' => $hPending->transaction_date,
+                                                                            'transaction_time' => $hPending->transaction_time,
+                                                                            'proof_url' => $hPending->payment_proof ? $hPending->payment_proof : '#',
+                                                                            'notes' => $hPending->notes
+                                                                        ]) }})"
+                                                                        class="text-[10px] bg-purple-600 text-white px-3 py-1.5 rounded-lg hover:bg-purple-700 transition font-bold shadow-md whitespace-nowrap">
+                                                                        <i class="fas fa-history"></i> Review History
+                                                                    </button>
+                                                                @endforeach
+                                                            @endif
+
+                                                            {{-- 1. Force Current Fund --}}
+                                                            @if($myRole == 'leader' && $contrib->user->wallet_balance >= $activeFund->amount_per_member)
+                                                                <form action="{{ route('final_project.forceWalletPayment') }}" method="POST" onsubmit="return confirmAction(event, 'Force Wallet Payment: Deduct {{ number_format($activeFund->amount_per_member, 2) }} EGP from {{ $contrib->user->name }}\'s wallet?', () => { handleAjaxFormSubmit({preventDefault: () => {}, target: event.target.closest('form')}); })">
+                                                                    @csrf
+                                                                    <input type="hidden" name="contribution_id" value="{{ $contrib->id }}">
+                                                                    <button type="submit" class="text-[9px] bg-gray-900 text-white px-2 py-1 rounded-lg hover:bg-black transition font-bold shadow-sm flex items-center gap-1 whitespace-nowrap">
+                                                                        <i class="fas fa-wallet"></i> Force Current
+                                                                    </button>
+                                                                </form>
+                                                            @elseif($myRole == 'leader')
+                                                                <span class="text-[8px] text-red-400 font-bold uppercase tracking-tighter" title="Member balance: {{ number_format($contrib->user->wallet_balance, 2) }} EGP">Low Balance (Active)</span>
+                                                            @endif
+
+                                                            {{-- 2. Force Settle Old Debts --}}
+                                                            @if($myRole == 'leader' && $debt > 0)
+                                                                <button onclick="openModal('fundsHistoryModal')" 
+                                                                    class="text-[9px] bg-amber-600 text-white px-2 py-1 rounded-lg hover:bg-amber-700 transition font-bold shadow-sm flex items-center gap-1 whitespace-nowrap">
+                                                                    <i class="fas fa-exclamation-triangle"></i> Settle Old History
+                                                                </button>
+                                                            @endif
+                                                        </div>
                                                     @endif
                                                 @endif
                                             </div>
@@ -2061,6 +2229,8 @@
                                         @endif
                                     @endforeach
                                 </div>
+
+                                {{-- Removed Global Pay History Button (Moved to member entry) --}}
                             @else
                                 <div class="text-center py-10 text-gray-400">
                                     <div
@@ -2368,8 +2538,7 @@
                             class="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
                         </div>
 
-                        <form action="{{ route('final_project.submit_final', $project->id) }}" method="POST"
-                            enctype="multipart/form-data">
+                        <form action="{{ route('final_project.submit_final', $project->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return handleAjaxFormSubmit(event)">
                             @csrf
                             <div class="p-8 space-y-6 relative z-10">
 
@@ -3182,6 +3351,9 @@
                                 <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
                                     Review Payment Request
                                 </h3>
+                                <div class="mt-1">
+                                    <span id="review_fund_name" class="text-[10px] bg-blue-50 text-blue-700 px-2 py-0.5 rounded font-black uppercase tracking-widest border border-blue-100"></span>
+                                </div>
                                 
                                 {{-- Details Display Area --}}
                                 <div class="mt-4 bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
@@ -3266,6 +3438,7 @@
         let currentUserBalance = 0;
 
         function openPaymentModal(contributionId, amount, userBalance) {
+            closeModal('fundsHistoryModal');
             currentAmount = parseFloat(amount);
             currentUserBalance = parseFloat(userBalance);
             
@@ -3322,6 +3495,7 @@
             // Data is an object with all details
             document.getElementById('review_contribution_id').value = data.id;
             document.getElementById('review_member_name').innerText = data.member_name;
+            document.getElementById('review_fund_name').innerText = data.fund_name || 'Active Fund';
             const methodNames = {
                 'vodafone_cash': 'Vodafone Cash',
                 'instapay': 'InstaPay',
@@ -3426,7 +3600,7 @@
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('paymentSettingsModal')"></div>
         <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6">
             <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-                <form action="{{ route('final_project.update_payment_settings', $team->id) }}" method="POST">
+                <form action="{{ route('final_project.update_payment_settings', $team->id) }}" method="POST" onsubmit="return handleAjaxFormSubmit(event)">
                     @csrf
                     <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                         <h3 class="text-xl font-black text-gray-800 flex items-center gap-3">
@@ -3532,7 +3706,7 @@
                 <p class="text-indigo-600 text-sm font-bold">You have been promoted! Please setup your team before continuing.</p>
             </div>
             
-            <form action="{{ route('final_project.subLeaderSetup') }}" method="POST">
+            <form action="{{ route('final_project.subLeaderSetup') }}" method="POST" onsubmit="return handleAjaxFormSubmit(event)">
                 @csrf
                 <input type="hidden" name="team_id" value="{{ $team->id }}">
                 <div class="p-8 space-y-6">
@@ -3585,7 +3759,7 @@
         document.body.style.overflow = 'hidden';
     </script>
     @endif
-    
+
 @endsection
 
 {{-- ========================================================= --}}

@@ -201,7 +201,7 @@
 
                 <div class="flex justify-end gap-4 border-t border-[var(--border)] pt-6">
                     <a href="{{ route('posters.index') }}"
-                        class="px-6 py-2.5 rounded-lg font-bold text-[var(--text-muted)] border border-[var(--border)] hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
+                        class="px-6 py-2.5 rounded-lg font-bold text-[var(--text-muted)] border border-[var(--border)] hover:bg-gray-100 transition-colors">
                         Cancel
                     </a>
                     <button type="submit"

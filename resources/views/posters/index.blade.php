@@ -6,7 +6,7 @@
             <h1 class="text-3xl font-bold font-tech text-[var(--primary)] uppercase tracking-wider">Manage Posters</h1>
             <div class="flex items-center gap-3">
                 <a href="{{ url('/') }}" target="_blank"
-                    class="bg-[var(--bg-panel)] border border-[var(--border)] hover:bg-gray-100 dark:hover:bg-gray-800 text-[var(--text-main)] px-4 py-2 rounded-lg font-bold shadow-sm transition-all flex items-center gap-2">
+                    class="bg-[var(--bg-panel)] border border-[var(--border)] hover:bg-gray-100 text-[var(--text-main)] px-4 py-2 rounded-lg font-bold shadow-sm transition-all flex items-center gap-2">
                     <i class="fas fa-external-link-alt text-blue-500"></i> View Landing Page
                 </a>
                 <a href="{{ route('posters.create') }}"
@@ -45,7 +45,7 @@
                     <tbody id="sortable-posters" class="divide-y divide-[var(--border)]">
                         @forelse($posters as $poster)
                             <tr data-id="{{ $poster->id }}"
-                                class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition duration-150 cursor-move">
+                                class="hover:bg-gray-50 transition duration-150 cursor-move">
                                 <td
                                     class="py-4 px-4 text-center text-gray-400 drag-handle cursor-move hover:text-gray-600 transition-colors">
                                     <i class="fas fa-grip-lines text-xl"></i>
@@ -64,7 +64,7 @@
                                 <td class="py-4 px-4 text-center">
                                     <div class="flex flex-col items-center gap-1 text-xs">
                                         <span
-                                            class="bg-gray-100 dark:bg-gray-700 text-[var(--text-main)] px-2 py-1 rounded">Position:
+                                            class="bg-gray-100 text-[var(--text-main)] px-2 py-1 rounded">Position:
                                             {{ ucfirst($poster->text_position) }}</span>
                                         <div class="flex items-center gap-1 mt-1">
                                             <span>Color:</span>
@@ -76,12 +76,12 @@
                                 <td class="py-4 px-4 text-right">
                                     <div class="flex justify-end gap-2">
                                         <a href="{{ route('posters.edit_layout', $poster->id) }}"
-                                            class="text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 dark:bg-indigo-900/30 dark:hover:bg-indigo-900/50 p-2 rounded transition-colors"
+                                            class="text-indigo-500 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 p-2 rounded transition-colors"
                                             title="Edit Layout">
                                             <i class="fas fa-layer-group"></i>
                                         </a>
                                         <a href="{{ route('posters.edit', $poster->id) }}"
-                                            class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 p-2 rounded transition-colors"
+                                            class="text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 p-2 rounded transition-colors"
                                             title="Edit Details">
                                             <i class="fas fa-edit"></i>
                                         </a>
@@ -90,7 +90,7 @@
                                             @csrf
                                             @method('DELETE')
                                             <button type="submit"
-                                                class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 dark:bg-red-900/30 dark:hover:bg-red-900/50 p-2 rounded transition-colors"
+                                                class="text-red-500 hover:text-red-700 bg-red-50 hover:bg-red-100 p-2 rounded transition-colors"
                                                 title="Delete">
                                                 <i class="fas fa-trash"></i>
                                             </button>

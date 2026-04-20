@@ -1,15 +1,15 @@
 {{-- Evaluation Modal Component --}}
 <div id="evaluationModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md" onclick="closeModal('evaluationModal')"></div>
-    <div class="relative bg-white dark:bg-[#0f172a] rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100 dark:border-gray-800 flex flex-col" id="evaluationModalContent" style="max-height: 90vh;">
+    <div class="relative bg-white rounded-[2.5rem] w-full max-w-2xl overflow-hidden shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100 flex flex-col" id="evaluationModalContent" style="max-height: 90vh;">
         
         {{-- Header --}}
-        <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center bg-gray-50/50 dark:bg-gray-800/20 shrink-0">
+        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 shrink-0">
             <div>
-                <h3 class="text-xl font-black text-gray-800 dark:text-gray-100" id="evalModalTitle">Evaluating</h3>
+                <h3 class="text-xl font-black text-gray-800" id="evalModalTitle">Evaluating</h3>
                 <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mt-1" id="evalWeekLabel">Week #{{ $currentPeriod->week_number ?? '?' }} Evaluation</p>
             </div>
-            <button onclick="closeModal('evaluationModal')" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all">
+            <button onclick="closeModal('evaluationModal')" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all">
                 <i class="fas fa-times text-xl"></i>
             </button>
         </div>
@@ -22,7 +22,7 @@
             <input type="hidden" name="has_workshops" id="hasWorkshopsInput">
             <input type="hidden" name="has_meetings" id="hasMeetingsInput">
             
-            <div class="p-8 space-y-6 overflow-y-auto custom-scroll bg-white dark:bg-[#0f172a] flex-1">
+            <div class="p-8 space-y-6 overflow-y-auto custom-scroll bg-white flex-1">
 
                 {{-- Loading Indicator --}}
                 <div id="evalLoadingState" class="flex items-center justify-center py-8">
@@ -36,14 +36,14 @@
                         <div class="w-9 h-9 bg-blue-600 rounded-xl text-white flex items-center justify-center shadow">
                             <i class="fas fa-tasks text-sm"></i>
                         </div>
-                        <h4 class="font-black text-gray-800 dark:text-white">Task Score</h4>
+                        <h4 class="font-black text-gray-800">Task Score</h4>
                     </div>
                     <div id="evalTaskList" class="space-y-3"></div>
-                    <div class="mt-4 p-4 rounded-2xl bg-blue-50 dark:bg-blue-900/20 border border-blue-100 dark:border-blue-800 flex items-center justify-between">
-                        <span class="text-sm font-bold text-blue-700 dark:text-blue-300">Task Score</span>
+                    <div class="mt-4 p-4 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-between">
+                        <span class="text-sm font-bold text-blue-700">Task Score</span>
                         <div class="flex items-center gap-2">
                             <input type="number" name="task_score" id="taskScoreInput" min="0" max="10" step="0.5" value="0"
-                                class="w-20 rounded-xl border border-blue-200 dark:border-blue-800 bg-white dark:bg-[#111827] px-3 py-1.5 text-center text-sm font-black text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                class="w-20 rounded-xl border border-blue-200 bg-white px-3 py-1.5 text-center text-sm font-black text-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
                                 onchange="updateTotalScore()">
                             <span class="text-sm text-gray-500">/ 10</span>
                         </div>
@@ -52,7 +52,7 @@
 
                 {{-- No tasks placeholder (Hidden by default, only shown if explicitly needed) --}}
                 <div id="evalNoTasks" class="hidden">
-                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 text-center">
+                    <div class="p-4 rounded-2xl bg-gray-50 border border-gray-200 text-center">
                         <i class="fas fa-inbox text-gray-400 text-2xl mb-2"></i>
                         <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">No tasks assigned this week</p>
                     </div>
@@ -64,14 +64,14 @@
                         <div class="w-9 h-9 bg-amber-500 rounded-xl text-white flex items-center justify-center shadow">
                             <i class="fas fa-chalkboard-teacher text-sm"></i>
                         </div>
-                        <h4 class="font-black text-gray-800 dark:text-white">Workshop Score</h4>
+                        <h4 class="font-black text-gray-800">Workshop Score</h4>
                     </div>
                     <div id="evalWorkshopList" class="space-y-3"></div>
-                    <div class="mt-4 p-4 rounded-2xl bg-amber-50 dark:bg-amber-900/20 border border-amber-100 dark:border-amber-800 flex items-center justify-between">
-                        <span class="text-sm font-bold text-amber-700 dark:text-amber-300">Workshop Score</span>
+                    <div class="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-100 flex items-center justify-between">
+                        <span class="text-sm font-bold text-amber-700">Workshop Score</span>
                         <div class="flex items-center gap-2">
                             <input type="number" name="workshop_score" id="workshopScoreInput" min="0" max="10" step="0.5" value="0"
-                                class="w-20 rounded-xl border border-amber-200 dark:border-amber-800 bg-white dark:bg-[#111827] px-3 py-1.5 text-center text-sm font-black text-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                                class="w-20 rounded-xl border border-amber-200 bg-white px-3 py-1.5 text-center text-sm font-black text-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-500"
                                 onchange="updateTotalScore()">
                             <span class="text-sm text-gray-500">/ 10</span>
                         </div>
@@ -80,7 +80,7 @@
 
                 {{-- No workshops placeholder --}}
                 <div id="evalNoWorkshops" class="hidden">
-                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 text-center">
+                    <div class="p-4 rounded-2xl bg-gray-50 border border-gray-200 text-center">
                         <i class="fas fa-chalkboard text-gray-400 text-2xl mb-2"></i>
                         <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">No workshops relevant this week</p>
                     </div>
@@ -92,14 +92,14 @@
                         <div class="w-9 h-9 bg-green-600 rounded-xl text-white flex items-center justify-center shadow">
                             <i class="fas fa-users text-sm"></i>
                         </div>
-                        <h4 class="font-black text-gray-800 dark:text-white">Meeting Attendance Score</h4>
+                        <h4 class="font-black text-gray-800">Meeting Attendance Score</h4>
                     </div>
                     <div id="evalMeetingList" class="space-y-3"></div>
-                    <div class="mt-4 p-4 rounded-2xl bg-green-50 dark:bg-green-900/20 border border-green-100 dark:border-green-800 flex items-center justify-between">
-                        <span class="text-sm font-bold text-green-700 dark:text-green-300">Meeting Score</span>
+                    <div class="mt-4 p-4 rounded-2xl bg-green-50 border border-green-100 flex items-center justify-between">
+                        <span class="text-sm font-bold text-green-700">Meeting Score</span>
                         <div class="flex items-center gap-2">
                             <input type="number" name="meeting_score" id="meetingScoreInput" min="0" max="10" step="0.5" value="0"
-                                class="w-20 rounded-xl border border-green-200 dark:border-green-800 bg-white dark:bg-[#111827] px-3 py-1.5 text-center text-sm font-black text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                class="w-20 rounded-xl border border-green-200 bg-white px-3 py-1.5 text-center text-sm font-black text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500"
                                 onchange="updateTotalScore()">
                             <span class="text-sm text-gray-500">/ 10</span>
                         </div>
@@ -108,7 +108,7 @@
 
                 {{-- No meetings placeholder --}}
                 <div id="evalNoMeetings" class="hidden">
-                    <div class="p-4 rounded-2xl bg-gray-50 dark:bg-gray-800/30 border border-gray-200 dark:border-gray-700 text-center">
+                    <div class="p-4 rounded-2xl bg-gray-50 border border-gray-200 text-center">
                         <i class="fas fa-calendar-times text-gray-400 text-2xl mb-2"></i>
                         <p class="text-xs text-gray-500 font-medium uppercase tracking-widest">No meetings relevant this week</p>
                     </div>
@@ -128,17 +128,17 @@
 
                 {{-- Feedback Section --}}
                 <div class="space-y-3">
-                    <label class="block text-[10px] font-black text-gray-400 dark:text-gray-500 uppercase tracking-widest ml-1">Constructive Feedback</label>
+                    <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest ml-1">Constructive Feedback</label>
                     <textarea name="general_notes" id="evalGeneralNotes"
-                        class="w-full rounded-3xl border border-gray-100 dark:border-gray-800 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 dark:bg-[#111827] p-6 text-sm font-medium transition-all text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-600 min-h-[100px]" 
+                        class="w-full rounded-3xl border border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 p-6 text-sm font-medium transition-all text-gray-800 placeholder-gray-400 min-h-[100px]" 
                         placeholder="What should this member improve or keep doing?"></textarea>
                 </div>
             </div>
 
             {{-- Footer --}}
-            <div class="px-8 py-6 bg-gray-50/50 dark:bg-gray-800/20 border-t border-gray-100 dark:border-gray-800 flex justify-end items-center gap-4 shrink-0">
+            <div class="px-8 py-6 bg-gray-50/50 border-t border-gray-100 flex justify-end items-center gap-4 shrink-0">
                 <button type="button" onclick="closeModal('evaluationModal')" 
-                    class="px-8 py-3 rounded-2xl font-bold text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-sm uppercase tracking-widest">Discard</button>
+                    class="px-8 py-3 rounded-2xl font-bold text-gray-400 hover:bg-gray-100 transition-colors text-sm uppercase tracking-widest">Discard</button>
                 <button type="submit" 
                     class="px-10 py-3 rounded-2xl font-black text-white bg-indigo-600 hover:bg-indigo-700 shadow-xl shadow-indigo-500/30 hover:-translate-y-0.5 active:translate-y-0 transition-all flex items-center gap-3 text-sm uppercase tracking-widest">
                     Submit Review <i class="fas fa-paper-plane text-xs opacity-50"></i>
@@ -256,29 +256,29 @@
 
                         let viewBtn = '';
                         if (t.submission_type === 'file' && t.submission_file) {
-                            viewBtn = `<a href="${t.submission_file}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 text-[10px] font-black hover:bg-indigo-100 transition-all shadow-sm border border-indigo-100 dark:border-indigo-800">
+                            viewBtn = `<a href="${t.submission_file}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] font-black hover:bg-indigo-100 transition-all shadow-sm border border-indigo-100">
                                 <i class="fas fa-eye"></i> View Task
                             </a>`;
                         } else if (t.submission_type === 'link' && t.submission_value) {
-                            viewBtn = `<a href="${t.submission_value}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 dark:bg-indigo-900/40 dark:text-indigo-300 text-[10px] font-black hover:bg-indigo-100 transition-all shadow-sm border border-indigo-100 dark:border-indigo-800">
+                            viewBtn = `<a href="${t.submission_value}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] font-black hover:bg-indigo-100 transition-all shadow-sm border border-indigo-100">
                                 <i class="fas fa-link"></i> View Link
                             </a>`;
                         }
 
                         taskHtml += `
-                            <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-50/50 dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800">
+                            <div class="flex items-center justify-between p-3 rounded-2xl bg-gray-50/50 border border-gray-100">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white dark:bg-gray-800 shadow-sm">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white shadow-sm">
                                         <i class="fas ${statusIcon} ${statusColor} text-sm"></i>
                                     </div>
                                     <div class="flex flex-col">
                                         <div class="flex items-center gap-2">
-                                            <span class="text-sm font-bold text-gray-700 dark:text-gray-200 leading-tight">${t.title}</span>
+                                            <span class="text-sm font-bold text-gray-700 leading-tight">${t.title}</span>
                                             ${penaltyLabel}
                                         </div>
                                         <div class="flex items-center gap-1.5">
                                             <span class="w-1.5 h-1.5 rounded-full ${t.status === 'approved' || t.status === 'completed' ? 'bg-green-500' : (t.status === 'rejected' ? 'bg-red-500' : 'bg-amber-500')}"></span>
-                                            <span class="text-[9px] font-black uppercase tracking-wider text-gray-400 dark:text-gray-500">${t.status}</span>
+                                            <span class="text-[9px] font-black uppercase tracking-wider text-gray-400">${t.status}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -302,19 +302,19 @@
                         const isAbsent = w.status === 'absent';
                         const isAttended = w.status === 'attended' || w.status === 'late';
                         
-                        const bgClass = isAbsent ? 'bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/40' : 'bg-gray-50/50 dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800';
+                        const bgClass = isAbsent ? 'bg-red-50 border border-red-100' : 'bg-gray-50/50 border border-gray-100';
                         const iconClass = isAbsent ? 'fa-times-circle text-red-500' : 'fa-check-circle text-green-500';
                         const scoreLabel = isAttended ? `Score: ${w.score}` : 'Absent → 0';
 
                         wsHtml += `
                             <div class="flex items-center justify-between p-3 rounded-2xl ${bgClass}">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white dark:bg-gray-800 shadow-sm">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white shadow-sm">
                                         <i class="fas ${iconClass} text-sm"></i>
                                     </div>
-                                    <span class="text-sm font-bold text-gray-700 dark:text-gray-200">${w.title}</span>
+                                    <span class="text-sm font-bold text-gray-700">${w.title}</span>
                                 </div>
-                                <span class="text-[10px] font-black uppercase ${isAbsent ? 'text-red-500' : 'text-indigo-600 dark:text-indigo-400'}">${scoreLabel}</span>
+                                <span class="text-[10px] font-black uppercase ${isAbsent ? 'text-red-500' : 'text-indigo-600'}">${scoreLabel}</span>
                             </div>`;
                     });
                     document.getElementById('evalWorkshopList').innerHTML = wsHtml;
@@ -334,14 +334,14 @@
                     data.meetings.forEach(m => {
                         const isAbsent = m.status === 'absent';
                         mtHtml += `
-                            <div class="flex items-center justify-between p-3 rounded-2xl ${isAbsent ? 'bg-red-50 dark:bg-red-900/20 border border-red-100 dark:border-red-900/40' : 'bg-gray-50/50 dark:bg-gray-800/20 border border-gray-100 dark:border-gray-800'}">
+                            <div class="flex items-center justify-between p-3 rounded-2xl ${isAbsent ? 'bg-red-50 border border-red-100' : 'bg-gray-50/50 border border-gray-100'}">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white dark:bg-gray-800 shadow-sm">
+                                    <div class="w-8 h-8 rounded-lg flex items-center justify-center bg-white shadow-sm">
                                         <i class="fas ${isAbsent ? 'fa-times-circle text-red-500' : 'fa-check-circle text-green-500'} text-sm"></i>
                                     </div>
-                                    <span class="text-sm font-bold text-gray-700 dark:text-gray-200">${m.topic}</span>
+                                    <span class="text-sm font-bold text-gray-700">${m.topic}</span>
                                 </div>
-                                <span class="text-[10px] font-black uppercase ${isAbsent ? 'text-red-500' : 'text-green-600 dark:text-green-400'}">${isAbsent ? 'ABSENT → 0' : 'ATTENDED'}</span>
+                                <span class="text-[10px] font-black uppercase ${isAbsent ? 'text-red-500' : 'text-green-600'}">${isAbsent ? 'ABSENT → 0' : 'ATTENDED'}</span>
                             </div>`;
                     });
                     document.getElementById('evalMeetingList').innerHTML = mtHtml;

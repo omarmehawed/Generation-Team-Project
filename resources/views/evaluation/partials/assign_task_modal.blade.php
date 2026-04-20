@@ -59,7 +59,7 @@
 
     {{-- Modal Card --}}
     <div id="evalTaskModalCard"
-        class="relative w-full max-w-lg bg-white dark:bg-[#111827] rounded-2xl shadow-2xl border border-gray-200 dark:border-gray-700 overflow-visible transform transition-all duration-300 scale-95 opacity-0">
+        class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-visible transform transition-all duration-300 scale-95 opacity-0">
 
         {{-- Header --}}
         <div class="bg-gray-900 px-6 py-5 flex items-center justify-between">
@@ -105,9 +105,9 @@
 
                 @if ($myRole === 'leader')
                 <div class="relative flex items-center">
-                    <div class="flex-grow border-t border-gray-100 dark:border-gray-700"></div>
+                    <div class="flex-grow border-t border-gray-100"></div>
                     <span class="flex-shrink mx-3 text-[10px] font-bold text-gray-400 uppercase tracking-wider">OR SELECT INDIVIDUALLY</span>
-                    <div class="flex-grow border-t border-gray-100 dark:border-gray-700"></div>
+                    <div class="flex-grow border-t border-gray-100"></div>
                 </div>
                 @endif
 
@@ -116,7 +116,7 @@
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Task Title <span class="text-red-500">*</span></label>
                     <input type="text" name="title" id="evalTaskTitle" required
                         placeholder="e.g. Design Database Schema"
-                        class="w-full border-2 border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3 text-sm font-bold bg-gray-50 dark:bg-gray-800 dark:text-white focus:border-gray-800 focus:bg-white dark:focus:bg-gray-700 outline-none transition">
+                        class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 text-sm font-bold bg-gray-50 focus:border-gray-800 focus:bg-white outline-none transition">
                 </div>
 
                 {{-- Search Member --}}
@@ -128,12 +128,12 @@
                             placeholder="Search by name, email or academic no..."
                             autocomplete="off"
                             oninput="filterEvalTaskMembers(this.value)"
-                            class="w-full border-2 border-gray-100 dark:border-gray-700 rounded-xl pl-10 pr-4 py-3 text-sm font-semibold bg-gray-50 dark:bg-gray-800 dark:text-white focus:border-gray-800 focus:bg-white dark:focus:bg-gray-700 outline-none transition">
+                            class="w-full border-2 border-gray-100 rounded-xl pl-10 pr-4 py-3 text-sm font-semibold bg-gray-50 focus:border-gray-800 focus:bg-white outline-none transition">
                     </div>
 
                     {{-- Dropdown Results --}}
                     <div id="evalTaskSearchResults"
-                        class="absolute left-0 right-0 top-full mt-1 z-[100] rounded-xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-lg hidden max-h-44 overflow-y-auto">
+                        class="absolute left-0 right-0 top-full mt-1 z-[100] rounded-xl border border-gray-100 bg-white shadow-lg hidden max-h-44 overflow-y-auto">
                     </div>
                 </div>
 
@@ -141,8 +141,8 @@
                 <div>
                     <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Current Assignees:</p>
                     <div id="evalTaskAssigneeList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-                        <div id="evalTaskEmptyState" class="text-center py-5 border-2 border-dashed border-gray-100 dark:border-gray-700 rounded-2xl">
-                            <i class="fas fa-user-plus text-gray-200 dark:text-gray-700 text-3xl mb-1 block"></i>
+                        <div id="evalTaskEmptyState" class="text-center py-5 border-2 border-dashed border-gray-100 rounded-2xl">
+                            <i class="fas fa-user-plus text-gray-200 text-3xl mb-1 block"></i>
                             <p class="text-[10px] text-gray-400 font-bold uppercase">No members selected yet</p>
                         </div>
                     </div>
@@ -152,18 +152,18 @@
                 <div>
                     <label class="block text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Due Date & Time <span class="text-red-500">*</span></label>
                     <input type="datetime-local" name="deadline" id="evalTaskDeadline" required
-                        class="w-full border-2 border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3 text-sm font-bold bg-gray-50 dark:bg-gray-800 dark:text-white focus:border-gray-800 outline-none transition">
+                        class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 text-sm font-bold bg-gray-50 focus:border-gray-800 outline-none transition">
                 </div>
             </div>
 
             {{-- Footer --}}
-            <div class="bg-gray-50 dark:bg-gray-800/50 px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-100 dark:border-gray-700">
+            <div class="bg-gray-50 px-6 py-4 flex items-center justify-end gap-3 border-t border-gray-100">
                 <button type="button" onclick="closeEvalTaskModal()"
-                    class="text-gray-500 hover:text-gray-800 dark:hover:text-white font-bold text-xs uppercase transition px-4 py-2">
+                    class="text-gray-500 hover:text-gray-800 font-bold text-xs uppercase transition px-4 py-2">
                     Cancel
                 </button>
                 <button type="submit"
-                    class="bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:bg-gray-700 font-black text-xs uppercase tracking-widest px-6 py-2.5 rounded-xl shadow-md transition transform hover:-translate-y-0.5 flex items-center gap-2">
+                    class="bg-gray-900 text-white hover:bg-gray-700 font-black text-xs uppercase tracking-widest px-6 py-2.5 rounded-xl shadow-md transition transform hover:-translate-y-0.5 flex items-center gap-2">
                     <i class="fas fa-paper-plane text-xs"></i> Assign Task
                 </button>
             </div>
@@ -249,12 +249,12 @@ function filterEvalTaskMembers(query) {
         const techColor = m.tech === 'software' ? 'text-blue-500' : m.tech === 'hardware' ? 'text-orange-500' : 'text-gray-400';
         return `<div 
             onclick="evalTaskAddMember(${m.user_id}, '${escapeHtml(m.name)}', '${m.tech}')"
-            class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-gray-700 cursor-pointer transition border-b border-gray-50 dark:border-gray-700 last:border-0">
-            <div class="w-8 h-8 rounded-full bg-gray-800 dark:bg-gray-200 flex items-center justify-center text-[10px] font-black text-white dark:text-gray-900 flex-shrink-0">
+            class="flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer transition border-b border-gray-50 last:border-0">
+            <div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center text-[10px] font-black text-white flex-shrink-0">
                 ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
             </div>
             <div class="flex-1 min-w-0">
-                <p class="text-sm font-black text-gray-900 dark:text-white truncate">${escapeHtml(m.name)} ${badge ? `<span class="text-[9px] font-bold text-gray-400">${badge}</span>` : ''}</p>
+                <p class="text-sm font-black text-gray-900 truncate">${escapeHtml(m.name)} ${badge ? `<span class="text-[9px] font-bold text-gray-400">${badge}</span>` : ''}</p>
                 <p class="text-[10px] text-gray-400 truncate">${m.email} ${m.academic ? '· ' + m.academic : ''}</p>
             </div>
             <span class="text-[9px] font-black uppercase ${techColor}">${m.tech}</span>
@@ -312,14 +312,14 @@ function renderEvalAssignees() {
     evalTaskSelectedMembers.forEach(m => {
         // Chip
         const chip = document.createElement('div');
-        chip.className = 'eval-task-chip flex items-center justify-between bg-gray-50 dark:bg-gray-800 border border-gray-100 dark:border-gray-700 rounded-xl px-4 py-2.5';
+        chip.className = 'eval-task-chip flex items-center justify-between bg-gray-50 border border-gray-100 rounded-xl px-4 py-2.5';
         const techColor = m.tech === 'software' ? 'bg-blue-100 text-blue-700' : m.tech === 'hardware' ? 'bg-orange-100 text-orange-700' : 'bg-gray-100 text-gray-600';
         chip.innerHTML = `
             <div class="flex items-center gap-3">
-                <div class="w-8 h-8 rounded-full bg-gray-900 dark:bg-white flex items-center justify-center text-[10px] font-black text-white dark:text-gray-900">
+                <div class="w-8 h-8 rounded-full bg-gray-900 flex items-center justify-center text-[10px] font-black text-white">
                     ${m.name.split(' ').map(n => n[0]).join('').substring(0,2).toUpperCase()}
                 </div>
-                <p class="text-xs font-black text-gray-800 dark:text-white">${escapeHtml(m.name)}</p>
+                <p class="text-xs font-black text-gray-800">${escapeHtml(m.name)}</p>
                 <span class="text-[9px] font-black uppercase px-2 py-0.5 rounded-full ${techColor}">${m.tech}</span>
             </div>
             <button type="button" onclick="evalTaskRemoveMember(${m.user_id})"
