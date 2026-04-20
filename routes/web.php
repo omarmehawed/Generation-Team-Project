@@ -64,7 +64,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Dynamic Questions Management
     Route::prefix('join-questions')->name('join-questions.')->group(function() {
         Route::get('/', [\App\Http\Controllers\JoinRequestQuestionController::class, 'index'])->name('index');
-        Route::post('/ai-assistant', [\App\Http\Controllers\AiAssistantController::class, 'handleChat'])->name('ai');
+
         Route::post('/', [\App\Http\Controllers\JoinRequestQuestionController::class, 'store'])->name('store');
         Route::get('/{id}/edit', [\App\Http\Controllers\JoinRequestQuestionController::class, 'edit'])->name('edit');
         Route::put('/{id}', [\App\Http\Controllers\JoinRequestQuestionController::class, 'update'])->name('update');
