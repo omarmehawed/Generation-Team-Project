@@ -286,7 +286,7 @@
                                         <div class="flex gap-3">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                                                                                                                {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
+                                                                                                                        {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
                                                 <i class="{{ $icon }} text-sm"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
@@ -374,12 +374,6 @@
                             class="fas fa-book"></i><span>Courses</span></a></li>
                 <li><a href="https://batechu.com/lms/profile/students" class="sidebar-link"><i
                             class="fas fa-user"></i><span> LMS Profile</span></a></li>
-
-                <li class="pt-4 pb-2">
-                    <p class="px-4 text-[10px] font-bold uppercase tracking-widest opacity-60"
-                        style="color: var(--text-muted)">Generation Team</p>
-                </li>
-
                 <li>
                     <a href="https://batechu.com/lms/results" class="sidebar-link group">
                         <i class="fas fa-chart-line group-hover:text-green-400 transition-colors"></i>
@@ -398,6 +392,13 @@
                             class="fas fa-user-check"></i><span>Attendance</span></a></li>
                 <li><a href="https://batu-service.vercel.app/token/verify" class="sidebar-link"><i
                             class="fas fa-server"></i><span>Services</span></a></li>
+
+
+                <li class="pt-4 pb-2">
+                    <p class="px-4 text-[10px] font-bold uppercase tracking-widest opacity-60"
+                        style="color: var(--text-muted)">Generation Team</p>
+                </li>
+
 
                 @if(auth()->check() && auth()->user()->canManageJoinRequests())
                     <li>
