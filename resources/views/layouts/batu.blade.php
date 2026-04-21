@@ -286,7 +286,7 @@
                                         <div class="flex gap-3">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                                                                                                        {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
+                                                                                                                {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
                                                 <i class="{{ $icon }} text-sm"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
@@ -363,6 +363,11 @@
 
             <ul class="space-y-1 font-medium mt-4">
                 {{-- External Links --}}
+                <li class="pt-4 pb-2">
+                    <p class="px-4 text-[10px] font-bold uppercase tracking-widest opacity-60"
+                        style="color: var(--text-muted)">LMS</p>
+                </li>
+
                 <li><a href="https://batechu.com/lms/dashboard" class="sidebar-link"><i
                             class="fas fa-home"></i><span>LMS Home</span></a></li>
                 <li><a href="https://batechu.com/lms/courses" class="sidebar-link"><i
@@ -372,7 +377,7 @@
 
                 <li class="pt-4 pb-2">
                     <p class="px-4 text-[10px] font-bold uppercase tracking-widest opacity-60"
-                        style="color: var(--text-muted)">Workspace</p>
+                        style="color: var(--text-muted)">Generation Team</p>
                 </li>
 
                 <li>
