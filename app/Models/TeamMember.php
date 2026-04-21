@@ -39,6 +39,14 @@ class TeamMember extends Model
         'can_manage_components',
         'can_manage_expenses',
         'can_access_join_requests',
+        'can_manage_quizzes',
+    ];
+
+    protected $casts = [
+        'can_manage_components' => 'boolean',
+        'can_manage_expenses' => 'boolean',
+        'can_access_join_requests' => 'boolean',
+        'can_manage_quizzes' => 'boolean',
     ];
 
 }

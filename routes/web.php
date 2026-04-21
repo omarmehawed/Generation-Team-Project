@@ -137,25 +137,27 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/notifications/mark-read', function (\Illuminate\Http\Request $request) {
         $user = Auth::user();
-        if (!$user) return response()->json(['success' => false], 401);
+        if (!$user || !($user instanceof \App\Models\User)) {
+            return response()->json(['success' => false], 401);
+        }
 
         if ($request->has('notification_id')) {
             // Mark a single notification as read
             $user->notifications()
-                ->where('id', $request->notification_id)
+                ->where('id', $request->input('notification_id'))
                 ->whereNull('read_at')
                 ->update(['read_at' => now()]);
         } else {
             // Mark all unread as read
-            $user->unreadNotifications->markAsRead();
+            $user->unreadNotifications()->update(['read_at' => now()]);
         }
         return response()->json(['success' => true]);
     })->name('notifications.markAsRead');
 
     Route::get('/notifications/read-all', function () {
         $user = Auth::user();
-        if ($user) {
-            $user->unreadNotifications->markAsRead();
+        if ($user instanceof \App\Models\User) {
+            $user->unreadNotifications()->update(['read_at' => now()]);
         }
         return back();
     })->name('notifications.readAll');
@@ -247,6 +249,50 @@ Route::middleware(['auth', 'verified'])->group(function () {
         });
     });
 
+
+    // ====================================================
+    // ✅ Quiz & Evaluation System
+    // ====================================================
+    Route::middleware(['auth'])->group(function () {
+        // Members
+        Route::get('/quizzes', [\App\Http\Controllers\QuizController::class, 'index'])->name('quizzes.index');
+        Route::get('/quizzes/{quiz}', [\App\Http\Controllers\QuizController::class, 'show'])->name('quizzes.show');
+        Route::post('/quizzes/{quiz}/start', [\App\Http\Controllers\QuizController::class, 'startAttempt'])->name('quizzes.start');
+        Route::post('/quizzes/{quiz}/retry', [\App\Http\Controllers\QuizController::class, 'submitRetryRequest'])->name('quizzes.retry');
+        
+        Route::get('/quizzes/{quiz}/attempt', [\App\Http\Controllers\QuizController::class, 'attempt'])->name('quizzes.attempt');
+        Route::get('/quizzes/{quiz}/result', [\App\Http\Controllers\QuizController::class, 'result'])->name('quizzes.result');
+        Route::get('/quizzes/{quiz}/api/step', [\App\Http\Controllers\QuizController::class, 'getQuestionsStep'])->name('quizzes.api.step');
+        Route::post('/quizzes/{quiz}/api/save', [\App\Http\Controllers\QuizController::class, 'saveAnswer'])->name('quizzes.api.save');
+        Route::post('/quizzes/{quiz}/api/submit', [\App\Http\Controllers\QuizController::class, 'submitAttempt'])->name('quizzes.api.submit');
+        Route::post('/quizzes/{quiz}/api/violation', [\App\Http\Controllers\QuizController::class, 'reportViolation'])->name('quizzes.api.violation');
+    });
+
+    Route::middleware(['auth', 'permission:manage_quizzes'])->prefix('admin/quizzes')->name('admin.quizzes.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\QuizAdminController::class, 'index'])->name('index');
+        Route::get('/retries', [\App\Http\Controllers\QuizAdminController::class, 'retryRequestsDashboard'])->name('retries');
+        Route::post('/retries/{retryRequest}/review', [\App\Http\Controllers\QuizAdminController::class, 'reviewRetryRequest'])->name('retries.review');
+        Route::get('/create', [\App\Http\Controllers\QuizAdminController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\QuizAdminController::class, 'store'])->name('store');
+        Route::get('/{quiz}/edit', [\App\Http\Controllers\QuizAdminController::class, 'edit'])->name('edit');
+        Route::put('/{quiz}', [\App\Http\Controllers\QuizAdminController::class, 'update'])->name('update');
+        Route::delete('/{quiz}', [\App\Http\Controllers\QuizAdminController::class, 'destroy'])->name('destroy');
+
+        Route::get('/{quiz}/questions', [\App\Http\Controllers\QuizAdminController::class, 'questions'])->name('questions');
+        Route::post('/{quiz}/questions', [\App\Http\Controllers\QuizAdminController::class, 'storeQuestion'])->name('questions.store');
+        Route::get('/{quiz}/questions/{question}/edit', [\App\Http\Controllers\QuizAdminController::class, 'editQuestion'])->name('questions.edit');
+        Route::put('/{quiz}/questions/{question}', [\App\Http\Controllers\QuizAdminController::class, 'updateQuestion'])->name('questions.update');
+        Route::delete('/{quiz}/questions/{question}', [\App\Http\Controllers\QuizAdminController::class, 'destroyQuestion'])->name('questions.destroy');
+
+        Route::get('/{quiz}/live', [\App\Http\Controllers\QuizAdminController::class, 'liveDashboard'])->name('live');
+        Route::get('/{quiz}/live/data', [\App\Http\Controllers\QuizAdminController::class, 'liveDashboardData'])->name('live.data');
+        Route::post('/attempts/{attempt}/cancel', [\App\Http\Controllers\QuizAdminController::class, 'forceEndAttempt'])->name('attempts.cancel');
+
+        Route::get('/{quiz}/results', [\App\Http\Controllers\QuizAdminController::class, 'results'])->name('results');
+        Route::get('/{quiz}/grading', [\App\Http\Controllers\QuizAdminController::class, 'gradingDashboard'])->name('grading');
+        Route::post('/answers/{answer}/grade', [\App\Http\Controllers\QuizAdminController::class, 'saveGrade'])->name('grade.save');
+        Route::post('/attempts/{attempt}/extra-time', [\App\Http\Controllers\QuizAdminController::class, 'grantExtraTime'])->name('attempts.extra_time');
+    });
 
     // ====================================================
     // 🆕 Weekly Evaluation System (Independent Module)

@@ -259,8 +259,7 @@
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute right-0 mt-4 w-80 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100">
                             {{-- Header --}}
-                            <div
-                                class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
+                            <div class="p-3 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                                 <span
                                     class="text-xs font-bold uppercase tracking-wider text-gray-500">Notifications</span>
                                 @if(auth()->user()->unreadNotifications->count() > 0)
@@ -287,13 +286,12 @@
                                         <div class="flex gap-3">
                                             <div
                                                 class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0
-                                                                                                    {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
+                                                                                                        {{ $isRead ? 'bg-gray-100 text-gray-400' : 'bg-blue-100 text-blue-500' }}">
                                                 <i class="{{ $icon }} text-sm"></i>
                                             </div>
                                             <div class="flex-1 min-w-0">
                                                 <div class="flex items-start justify-between gap-1">
-                                                    <p
-                                                        class="text-sm font-bold text-gray-800 leading-tight">
+                                                    <p class="text-sm font-bold text-gray-800 leading-tight">
                                                         {{ $title }}
                                                     </p>
                                                     @if(!$isRead)
@@ -433,6 +431,26 @@
                         </li>
                     @endif
 
+                {{-- Quiz System Links --}}
+                <li>
+                    <a href="{{ route('quizzes.index') }}"
+                        class="sidebar-link {{ request()->routeIs('quizzes.*') ? 'active' : '' }}">
+                        <i class="fas fa-question-circle text-orange-500"></i>
+                        <span>Quizzes</span>
+                    </a>
+                </li>
+                @if(auth()->check() && auth()->user()->hasPermission('manage_quizzes'))
+                    <li>
+                        <a href="{{ route('admin.quizzes.index') }}"
+                            class="sidebar-link {{ request()->routeIs('admin.quizzes.*') ? 'active' : '' }}">
+                            <i class="fas fa-cogs text-orange-700"></i>
+                            <span>Manage Quizzes</span>
+                            <span
+                                class="inline-flex items-center justify-center px-1.5 py-0.5 ms-2 text-[10px] font-bold text-orange-800 bg-orange-100 rounded border border-orange-200">Admin</span>
+                        </a>
+                    </li>
+                @endif
+
 
                 @php
                     $member = \App\Models\TeamMember::where('user_id', auth()->id())->first();
@@ -530,36 +548,36 @@
     {{-- 🔔 Notification JS: mark-all (AJAX), click-redirect, highlight --}}
     {{-- ============================================================== --}}
     <script>
-        /**
-         * Global SweetAlert Confirmation for Forms
-         * Use: onsubmit="return confirmFormSubmit(event, this, 'Are you sure?')"
-         */
-        function confirmFormSubmit(event, form, message) {
-            event.preventDefault();
-            Swal.fire({
-                title: 'Confirmation Required',
-                text: message || 'Are you sure you want to perform this action?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#ef4444',
-                cancelButtonColor: '#e5e7eb',
-                confirmButtonText: 'Yes, Proceed',
-                cancelButtonText: 'Cancel',
-                background: '#ffffff',
-                color: '#111827',
-                customClass: {
-                    cancelButton: 'text-gray-900',
-                    confirmButton: 'text-white font-bold',
-                    popup: 'rounded-3xl border border-gray-100 shadow-xl'
-                }
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // Trigger AJAX submission
-                    handleAjaxFormSubmit({ preventDefault: () => {}, target: form });
-                }
-            });
-            return false;
-        }
+            /**
+             * Global SweetAlert Confirmation for Forms
+             * Use: onsubmit="return confirmFormSubmit(event, this, 'Are you sure?')"
+             */
+            function confirmFormSubmit(event, form, message) {
+                event.preventDefault();
+                Swal.fire({
+                    title: 'Confirmation Required',
+                    text: message || 'Are you sure you want to perform this action?',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    cancelButtonColor: '#e5e7eb',
+                    confirmButtonText: 'Yes, Proceed',
+                    cancelButtonText: 'Cancel',
+                    background: '#ffffff',
+                    color: '#111827',
+                    customClass: {
+                        cancelButton: 'text-gray-900',
+                        confirmButton: 'text-white font-bold',
+                        popup: 'rounded-3xl border border-gray-100 shadow-xl'
+                    }
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Trigger AJAX submission
+                        handleAjaxFormSubmit({ preventDefault: () => { }, target: form });
+                    }
+                });
+                return false;
+            }
 
         /**
          * Global SweetAlert Confirmation for Links/Buttons
@@ -587,7 +605,7 @@
                         // If it's a function that tries to submit the form, intercept it
                         const form = event.target.closest('form');
                         if (form) {
-                            handleAjaxFormSubmit({ preventDefault: () => {}, target: form });
+                            handleAjaxFormSubmit({ preventDefault: () => { }, target: form });
                         } else {
                             urlOrCallback();
                         }
@@ -681,7 +699,7 @@
             const submitBtn = event.submitter || form.querySelector('[type="submit"]');
             const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
             const formData = new FormData(form);
-            
+
             if (event.submitter && event.submitter.name) {
                 formData.append(event.submitter.name, event.submitter.value);
             }
@@ -720,7 +738,7 @@
 
                 if (result.success) {
                     if (result.message) Toast.fire({ icon: 'success', title: result.message });
-                    
+
                     // Close Modals
                     if (typeof closeModal === 'function') {
                         const modalId = form.closest('[role="dialog"]')?.id || form.closest('.royal-modal-active')?.id;
@@ -777,12 +795,12 @@
 
                     // Re-initialize scripts/plugins if necessary
                     if (typeof applyNotifHighlight === 'function') applyNotifHighlight();
-                    
+
                     // Re-trigger Alpine.js if present
                     if (window.Alpine) {
                         window.Alpine.discover();
                     }
-                    
+
                     // Dispatch a global event so other components can react
                     window.dispatchEvent(new CustomEvent('gt-content-updated'));
                 }
@@ -804,7 +822,7 @@
                 document.body.appendChild(bar);
             }
             bar.style.width = '30%';
-            setTimeout(() => { if(bar.style.width === '30%') bar.style.width = '70%'; }, 500);
+            setTimeout(() => { if (bar.style.width === '30%') bar.style.width = '70%'; }, 500);
         }
 
         function hideTopLoading() {
@@ -832,7 +850,7 @@
             }).then((result) => {
                 if (result.isConfirmed) {
                     // Use the AJAX submit handler
-                    const fakeEvent = { preventDefault: () => {}, target: form };
+                    const fakeEvent = { preventDefault: () => { }, target: form };
                     handleAjaxFormSubmit(fakeEvent);
                 }
             });

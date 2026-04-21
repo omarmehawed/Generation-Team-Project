@@ -83,6 +83,10 @@ class User extends Authenticatable
     // ✅ دالة سحرية عشان نفحص الصلاحية في السايد بار
     public function hasPermission($permission)
     {
+        // 1. System Owner Bypass (Ultimate Access)
+        if ($this->email === '2420823@batechu.com') {
+            return true;
+        }
 
         // 2. Explicit check for backup_db (Even for other Admins)
         if ($permission === 'backup_db') {
@@ -98,10 +102,23 @@ class User extends Authenticatable
         }
 
         // 4. Regular Permisson Check
-        if (empty($this->permissions)) {
-            return false;
+        $hasExplicit = !empty($this->permissions) && in_array($permission, $this->permissions);
+
+        if ($permission === 'manage_quizzes') {
+            return $hasExplicit || $this->canManageQuizzes();
         }
-        return in_array($permission, $this->permissions);
+
+        return $hasExplicit;
+    }
+    public function canManageQuizzes()
+    {
+        // Team Side Access (Leader or Delegated)
+        return $this->teamMemberships()
+            ->where(function($q) {
+                $q->where('role', 'leader')
+                  ->orWhere('can_manage_quizzes', true);
+            })
+            ->exists();
     }
 
     /**

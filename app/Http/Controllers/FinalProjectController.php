@@ -838,6 +838,7 @@ class FinalProjectController extends Controller
             'can_manage_components' => 'nullable|boolean',
             'can_manage_expenses'   => 'nullable|boolean',
             'can_access_join_requests' => 'nullable|boolean',
+            'can_manage_quizzes' => 'nullable|boolean',
         ]);
 
         $currentUser = Auth::user();
@@ -885,6 +886,7 @@ class FinalProjectController extends Controller
                 'can_manage_components' => $targetMemberRecord->can_manage_components,
                 'can_manage_expenses'   => $targetMemberRecord->can_manage_expenses,
                 'can_access_join_requests' => $targetMemberRecord->can_access_join_requests,
+                'can_manage_quizzes' => $targetMemberRecord->can_manage_quizzes,
             ]);
 
             // D. Domain Scoping (Hardware/Software)
@@ -917,6 +919,7 @@ class FinalProjectController extends Controller
             'can_manage_components' => $request->has('can_manage_components') ? (bool) $request->can_manage_components : false,
             'can_manage_expenses'   => $request->has('can_manage_expenses') ? (bool) $request->can_manage_expenses : false,
             'can_access_join_requests' => $request->has('can_access_join_requests') ? (bool) $request->can_access_join_requests : false,
+            'can_manage_quizzes' => $request->has('can_manage_quizzes') ? (bool) $request->can_manage_quizzes : false,
         ];
 
         // Perform Update in team_members
