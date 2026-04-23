@@ -301,6 +301,15 @@ class QuizAdminController extends Controller
             'answers' => $answered,
         ]);
     }
+
+    /**
+     * Show live observer page for an attempt
+     */
+    public function observeAttempt(QuizAttempt $attempt)
+    {
+        $attempt->load(['user', 'quiz']);
+        return view('admin.quizzes.observe', compact('attempt'));
+    }
     
     public function forceEndAttempt(QuizAttempt $attempt)
     {
