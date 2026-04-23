@@ -310,6 +310,33 @@ class QuizAdminController extends Controller
         $attempt->load(['user', 'quiz']);
         return view('admin.quizzes.observe', compact('attempt'));
     }
+
+    /**
+     * Review submitted answers for an attempt
+     */
+    public function reviewAttempt(QuizAttempt $attempt)
+    {
+        $attempt->load(['user', 'quiz.questions.options', 'answers']);
+        $quiz = $attempt->quiz;
+
+        // Use the saved question order
+        $questionIds = $attempt->question_order
+            ?? $quiz->questions()->orderBy('sort_order')->pluck('id')->toArray();
+
+        $questionsRaw = $quiz->questions()->with('options')
+            ->whereIn('id', $questionIds)
+            ->get()
+            ->keyBy('id');
+
+        $questions = collect($questionIds)
+            ->filter(fn($id) => $questionsRaw->has($id))
+            ->map(fn($id) => $questionsRaw->get($id))
+            ->values();
+
+        $answers = $attempt->answers->keyBy('question_id');
+
+        return view('admin.quizzes.review', compact('attempt', 'quiz', 'questions', 'answers'));
+    }
     
     public function forceEndAttempt(QuizAttempt $attempt)
     {
