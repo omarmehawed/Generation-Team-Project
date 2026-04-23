@@ -112,13 +112,4 @@
         </div>
     </div>
 </div>
-                @empty
-                <tr>
-                    <td colspan="5" class="py-8 text-center text-gray-400 font-bold">No quizzes found. Create one!</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
-    </div>
-</div>
 @endsection
