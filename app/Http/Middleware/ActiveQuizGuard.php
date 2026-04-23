@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Auth;
 use App\Models\QuizAttempt;
 use App\Models\QuizViolation;
+use App\Models\User;
 
 class ActiveQuizGuard
 {
@@ -24,7 +25,7 @@ class ActiveQuizGuard
 
         // Allow Team Leaders / System Owners to bypass being trapped
         $user = Auth::user();
-        if ($activeAttempt && $user instanceof \App\Models\User && $user->hasPermission('manage_quizzes')) {
+        if ($activeAttempt && $user instanceof User && $user->hasPermission('manage_quizzes')) {
             return $next($request);
         }
 
@@ -33,7 +34,7 @@ class ActiveQuizGuard
             // Exclude logout.
             $allowedRoutes = [
                 'quizzes/*/attempt',
-                'quizzes/api/*',
+                'quizzes/*/api/*',
                 'logout'
             ];
 

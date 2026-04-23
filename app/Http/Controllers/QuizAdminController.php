@@ -245,6 +245,62 @@ class QuizAdminController extends Controller
 
         return response()->json(['attempts' => $attempts]);
     }
+
+    public function attemptDetails(QuizAttempt $attempt)
+    {
+        $attempt->load(['user', 'quiz.questions.options']);
+        $quiz = $attempt->quiz;
+
+        $step = $attempt->current_step ?? 1;
+        $perPage = 10;
+
+        // Use the saved question order (generated once at attempt start)
+        $questionIds = $attempt->question_order
+            ?? $quiz->questions()->orderBy('sort_order')->pluck('id')->toArray();
+
+        $totalQuestions = count($questionIds);
+        $lastPage       = max(1, (int) ceil($totalQuestions / $perPage));
+        $pageIds        = array_slice($questionIds, ($step - 1) * $perPage, $perPage);
+
+        // Fetch questions for this page, keyed by id so we can reorder
+        $questionsRaw = $quiz->questions()->with('options')
+            ->whereIn('id', $pageIds)
+            ->get()
+            ->keyBy('id');
+
+        // Restore the per-attempt order
+        $questions = collect($pageIds)
+            ->filter(fn($id) => $questionsRaw->has($id))
+            ->map(function ($id) use ($questionsRaw) {
+                return $questionsRaw->get($id);
+            })
+            ->values();
+
+        $answered = QuizAnswer::where('attempt_id', $attempt->id)
+            ->whereIn('question_id', $pageIds)
+            ->get()->keyBy('question_id');
+
+        $deadline = ($attempt->extra_time_ends_at && $attempt->extra_time_ends_at->gt($attempt->ends_at))
+            ? $attempt->extra_time_ends_at
+            : $attempt->ends_at;
+
+        $timeRemaining = max(0, now()->diffInSeconds($deadline, false));
+
+        return response()->json([
+            'attempt' => [
+                'id' => $attempt->id,
+                'user_name' => $attempt->user->name,
+                'status' => $attempt->status,
+                'current_step' => $step,
+                'last_page' => $lastPage,
+                'violation_count' => $attempt->violation_count,
+                'time_remaining' => (int) $timeRemaining,
+                'last_activity' => $attempt->last_activity_at ? $attempt->last_activity_at->diffForHumans() : 'No activity yet',
+            ],
+            'questions' => $questions,
+            'answers' => $answered,
+        ]);
+    }
     
     public function forceEndAttempt(QuizAttempt $attempt)
     {

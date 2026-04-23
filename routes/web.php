@@ -286,6 +286,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/{quiz}/live', [\App\Http\Controllers\QuizAdminController::class, 'liveDashboard'])->name('live');
         Route::get('/{quiz}/live/data', [\App\Http\Controllers\QuizAdminController::class, 'liveDashboardData'])->name('live.data');
+        Route::get('/attempts/{attempt}/details', [\App\Http\Controllers\QuizAdminController::class, 'attemptDetails'])->name('attempts.details');
         Route::post('/attempts/{attempt}/cancel', [\App\Http\Controllers\QuizAdminController::class, 'forceEndAttempt'])->name('attempts.cancel');
 
         Route::get('/{quiz}/results', [\App\Http\Controllers\QuizAdminController::class, 'results'])->name('results');
