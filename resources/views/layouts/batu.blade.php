@@ -200,13 +200,15 @@
         <div class="px-4 py-3 lg:px-5 lg:pl-3">
             <div class="flex items-center justify-between">
 
-                <div class="flex items-center justify-start">
-                    <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" type="button"
-                        class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 transition-colors z-50">
-                        <i class="fas fa-bars text-xl"></i>
-                    </button>
+                <div class="flex items-center justify-start gap-2">
+                    @if(!request()->is('/') && !request()->routeIs('dashboard'))
+                        <button onclick="window.history.back()" 
+                            class="md:hidden flex items-center justify-center w-8 h-8 rounded-full bg-gray-100/50 text-gray-600 active:bg-gray-200 transition-colors">
+                            <i class="fas fa-chevron-left text-sm"></i>
+                        </button>
+                    @endif
 
-                    <a href="#" class="flex ms-2 md:me-24 items-center gap-2 md:gap-3 group shrink-0">
+                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 md:gap-3 group shrink-0">
                         <div
                             class="relative w-8 h-8 md:w-10 md:h-10 rounded-lg overflow-hidden border border-transparent group-hover:border-[var(--primary)] transition-colors duration-300 shadow-md">
                             <img src="{{ asset('assets/gt_logo.jpg') }}"
@@ -222,8 +224,8 @@
                                     GENERATION <span style="color: var(--primary)">TEAM</span>
                                 </span>
                                 <!-- Mobile -->
-                                <span class="md:hidden text-lg">
-                                    GT <span style="color: var(--primary)">.</span>
+                                <span class="md:hidden text-base">
+                                    GENERATION <span style="color: var(--primary)">TEAM</span>
                                 </span>
                             </span>
                         </div>
@@ -234,27 +236,38 @@
 
 
                     {{-- Wallet (Always link to index) --}}
-                    <a href="{{ route('wallet.index') }}" class="relative group p-2 mx-1" title="Wallet">
+                    <a href="{{ route('wallet.index') }}" class="relative group p-2 mx-1 hidden md:block" title="Wallet">
                         <i class="fas fa-wallet text-xl hover:text-blue-500 transition-colors"
                             style="color: var(--text-muted)"></i>
                     </a>
 
                     {{-- Notifications Bell --}}
-                    <div class="relative ml-auto" x-data="{ open: false }">
-                        <button @click="open = !open" class="relative group p-2">
-                            <i class="fas fa-bell text-xl hover:text-[var(--primary)] transition-colors"
-                                style="color: var(--text-muted)"></i>
-                            @if(auth()->user()->unreadNotifications->count() > 0)
-                                <span
-                                    class="absolute top-0 right-0 inline-flex items-center justify-center w-2 h-2 rounded-full animate-ping"
-                                    style="background-color: var(--primary)"></span>
-                                <span
-                                    class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold leading-none text-black rounded-full shadow-sm"
-                                    style="background-color: var(--primary); box-shadow: var(--glow)">
-                                    {{ auth()->user()->unreadNotifications->count() }}
-                                </span>
-                            @endif
-                        </button>
+                    <div class="flex items-center gap-1 sm:gap-2 relative ml-auto">
+                        <!-- Mobile Sign Out Button -->
+                        <form method="POST" action="{{ route('logout') }}" class="md:hidden">
+                            @csrf
+                            <button type="submit" 
+                                class="flex items-center justify-center w-9 h-9 rounded-full bg-red-50 text-red-500 active:bg-red-100 transition-colors"
+                                title="Sign Out">
+                                <i class="fas fa-power-off text-sm"></i>
+                            </button>
+                        </form>
+
+                        <div class="relative" x-data="{ open: false }">
+                            <button @click="open = !open" class="relative group p-2">
+                                <i class="fas fa-bell text-xl hover:text-[var(--primary)] transition-colors"
+                                    style="color: var(--text-muted)"></i>
+                                @if(auth()->user()->unreadNotifications->count() > 0)
+                                    <span
+                                        class="absolute top-0 right-0 inline-flex items-center justify-center w-2 h-2 rounded-full animate-ping"
+                                        style="background-color: var(--primary)"></span>
+                                    <span
+                                        class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold leading-none text-black rounded-full shadow-sm"
+                                        style="background-color: var(--primary); box-shadow: var(--glow)">
+                                        {{ auth()->user()->unreadNotifications->count() }}
+                                    </span>
+                                @endif
+                            </button>
 
                         <div x-show="open" @click.away="open = false" x-transition
                             class="absolute right-0 mt-4 w-80 bg-white rounded-xl shadow-2xl overflow-hidden z-50 border border-gray-100">
@@ -319,7 +332,7 @@
                     </div>
 
                     <!-- User Profile -->
-                    <div class="flex items-center ms-1 pl-2 md:ms-3 md:pl-4 relative group"
+                    <div class="hidden md:flex items-center ms-1 pl-2 md:ms-3 md:pl-4 relative group"
                         style="border-left: 1px solid var(--border)">
 
                         {{-- Hover Dropdown / Tooltip --}}
@@ -357,7 +370,7 @@
 
     <!-- Sidebar -->
     <aside id="logo-sidebar"
-        class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full border-r sm:translate-x-0"
+        class="hidden md:flex fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full border-r md:translate-x-0"
         style="background-color: var(--bg-sidebar); border-color: var(--border)" aria-label="Sidebar">
         <div class="h-full px-3 pb-4 overflow-y-auto flex flex-col justify-between custom-scroll">
 
@@ -496,7 +509,7 @@
     </aside>
 
     <!-- Main Content -->
-    <div class="p-4 sm:ml-64 mt-16 min-h-screen relative overflow-hidden transition-colors duration-300">
+    <div class="p-4 md:ml-64 mt-16 pb-20 md:pb-4 min-h-screen relative overflow-hidden transition-colors duration-300">
 
         {{-- Background Pattern --}}
         <div class="absolute inset-0 z-0 pointer-events-none opacity-20"
@@ -507,6 +520,165 @@
             @yield('content')
         </div>
     </div>
+
+    <!-- Mobile Bottom Navigation (Facebook Style) -->
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 z-50 shadow-[0_-8px_20px_rgba(0,0,0,0.08)] flex items-center justify-between px-1 pb-safe transition-transform duration-300 transform" style="height: 70px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px);">
+        
+        <!-- 1) LMS Popup Button -->
+        <div class="flex-none w-[16%]" x-data="{ openLMS: false }">
+            <button @click="openLMS = !openLMS" @click.away="openLMS = false" class="w-full h-full flex flex-col items-center justify-center gap-1 transition-all">
+                <div class="w-9 h-9 flex items-center justify-center rounded-xl transition-colors" :class="openLMS ? 'bg-indigo-50 text-[var(--primary)]' : 'text-gray-400'">
+                    <i class="fas fa-graduation-cap text-xl"></i>
+                </div>
+                <span class="text-[10px] font-bold uppercase tracking-tight" :class="openLMS ? 'text-[var(--primary)]' : 'text-gray-500'">LMS</span>
+            </button>
+            
+            <!-- LMS Popup Menu -->
+            <div x-show="openLMS" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="absolute bottom-[100%] left-2 mb-3 w-56 bg-white rounded-2xl shadow-[0_15px_50px_rgba(0,0,0,0.2)] border border-gray-100 overflow-hidden transform origin-bottom-left z-50">
+                <div class="p-3 border-b border-gray-100 bg-gray-50 uppercase text-[10px] font-black text-gray-400 text-center tracking-widest">System Portal</div>
+                <div class="py-2 max-h-[60vh] overflow-y-auto custom-scroll">
+                    <a href="https://batechu.com/lms/dashboard" class="flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"><i class="fas fa-home w-8 text-indigo-500"></i> Home</a>
+                    <a href="https://batechu.com/lms/courses" class="flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"><i class="fas fa-book w-8 text-blue-500"></i> Courses</a>
+                    <a href="https://batechu.com/lms/results" class="flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50">
+                        <i class="fas fa-chart-line w-8 text-green-500"></i> 
+                        <span>Results</span>
+                    </a>
+                    <a href="https://batechu.com/lms/assignments" class="flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"><i class="fas fa-tasks w-8 text-orange-500"></i> Assignments</a>
+                    <a href="https://batechu.com/lms/timetables" class="flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"><i class="fas fa-calendar-alt w-8 text-purple-500"></i> Timetables</a>
+                    <a href="https://batechu.com/lms/attendance/token" class="flex items-center px-4 py-3 text-sm font-bold text-gray-700 hover:bg-gray-50"><i class="fas fa-user-check w-8 text-cyan-500"></i> Attendance</a>
+                    <div class="h-px bg-gray-100 my-2"></div>
+                    <form method="POST" action="{{ route('logout') }}" class="px-2">
+                        @csrf
+                        <button type="submit" class="w-full flex items-center px-3 py-3 text-sm font-black text-red-500 hover:bg-red-50"><i class="fas fa-power-off w-8"></i> SIGN OUT</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Generation Items (Main) -->
+        <div class="flex-1 flex items-center justify-around space-x-0 overflow-hidden">
+            <a href="{{ route('projects.index') }}" class="w-[75px] flex flex-col items-center justify-center gap-1 transition-all {{ request()->routeIs('projects.*') ? 'text-indigo-600 font-black' : 'text-gray-400' }}">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full {{ request()->routeIs('projects.*') ? 'bg-indigo-50 border border-indigo-100 shadow-sm' : '' }}">
+                    <i class="fas fa-project-diagram text-xl"></i>
+                </div>
+                <span class="text-[11px] font-black uppercase tracking-tighter">Projects</span>
+            </a>
+
+            <a href="{{ route('quizzes.index') }}" class="w-[75px] flex flex-col items-center justify-center gap-1 transition-all {{ request()->routeIs('quizzes.*') ? 'text-orange-500 font-black' : 'text-gray-400' }}">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full {{ request()->routeIs('quizzes.*') ? 'bg-orange-50 border border-orange-100 shadow-sm' : '' }}">
+                    <i class="fas fa-question-circle text-xl"></i>
+                </div>
+                <span class="text-[11px] font-black uppercase tracking-tighter">Quizzes</span>
+            </a>
+        </div>
+
+        <!-- 2) More Menu (Overflow Items) -->
+        @php
+            $member = \App\Models\TeamMember::where('user_id', auth()->id())->first();
+            $myRole = $member ? $member->role : null;
+            $isSubLeader = $member ? ($member->is_sub_leader ?? false) : false;
+            $myTeamId = $member ? $member->team_id : null;
+            
+            $canSeePosters = auth()->check() && \App\Models\TeamMember::where('user_id', auth()->id())->value('role') === 'leader';
+            $canManageQuizzes = auth()->check() && auth()->user()->hasPermission('manage_quizzes');
+            $canSeeEval = $myTeamId && (in_array($myRole, ['leader', 'vice_leader']) || $isSubLeader);
+            $canManageRequests = auth()->check() && auth()->user()->canManageJoinRequests();
+        @endphp
+
+        <div class="flex-none w-[17%]" x-data="{ openMore: false }">
+            <button @click="openMore = !openMore" @click.away="openMore = false" class="w-full h-full flex flex-col items-center justify-center gap-1 transition-all">
+                <div class="w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative" :class="openMore ? 'bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm' : 'text-gray-400'">
+                    <i class="fas fa-ellipsis-h text-xl"></i>
+                    @if($canManageRequests)
+                        @php $pendingCount = \App\Models\JoinRequest::where('status', 'pending')->count(); @endphp
+                        @if($pendingCount > 0)
+                            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-black text-white bg-red-500 rounded-full border-2 border-white">{{ $pendingCount }}</span>
+                        @endif
+                    @endif
+                </div>
+                <span class="text-[11px] font-black uppercase tracking-tighter" :class="openMore ? 'text-indigo-600' : 'text-gray-500'">More</span>
+            </button>
+
+            <div x-show="openMore" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0" class="absolute bottom-[100%] right-10 mb-3 w-60 bg-white rounded-3xl shadow-[0_20px_60px_rgba(0,0,0,0.25)] border border-gray-100 overflow-hidden transform origin-bottom-right z-50">
+                <div class="p-4 border-b border-gray-100 bg-gray-50/50 uppercase text-[11px] font-black text-gray-400 text-center tracking-[0.15em]">Generation Tools</div>
+                <div class="py-2 max-h-[60vh] overflow-y-auto custom-scroll">
+                    @if($canManageRequests)
+                        <a href="{{ route('join.admin') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-indigo-50 transition-colors {{ request()->routeIs('join.admin') ? 'text-indigo-600 bg-indigo-50' : '' }}">
+                            <i class="fas fa-user-plus w-10 text-indigo-500 text-lg"></i>
+                            <span>Join Requests</span>
+                            @if($pendingCount > 0)
+                                <span class="ms-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black">{{ $pendingCount }}</span>
+                            @endif
+                        </a>
+                    @endif
+
+                    @if($canSeePosters)
+                        <a href="{{ route('posters.index') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-yellow-50 transition-colors {{ request()->routeIs('posters.*') ? 'text-yellow-600 bg-yellow-50' : '' }}">
+                            <i class="fas fa-images w-10 text-yellow-500 text-lg"></i>
+                            <span>Posters</span>
+                        </a>
+                    @endif
+                    
+                    @if($canManageQuizzes)
+                        <a href="{{ route('admin.quizzes.index') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-orange-50 transition-colors {{ request()->routeIs('admin.quizzes.*') ? 'text-orange-700 bg-orange-50' : '' }}">
+                            <i class="fas fa-cogs w-10 text-orange-700 text-lg"></i>
+                            <span>Manage Quizzes</span>
+                        </a>
+                    @endif
+
+                    @if($canSeeEval)
+                        <a href="{{ route('evaluation.index', $myTeamId) }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-indigo-50 transition-colors {{ request()->routeIs('evaluation.*') ? 'text-indigo-600 bg-indigo-50' : '' }}">
+                            <i class="fas fa-clipboard-check w-10 text-indigo-500 text-lg"></i>
+                            <span>Weekly Eval</span>
+                        </a>
+                    @endif
+                </div>
+            </div>
+        </div>
+
+        <!-- 3) Wallet & Profile (Anchored) -->
+        <div class="flex-none flex items-center justify-end px-1 gap-0">
+            <a href="{{ route('wallet.index') }}" class="w-[60px] flex flex-col items-center justify-center gap-1 {{ request()->routeIs('wallet.*') ? 'text-indigo-600 font-black' : 'text-gray-400' }}">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full {{ request()->routeIs('wallet.*') ? 'bg-indigo-50' : '' }}">
+                    <i class="fas fa-wallet text-xl"></i>
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-tight">Wallet</span>
+            </a>
+
+            <a href="{{ route('profile.show') }}" class="w-[60px] flex flex-col items-center justify-center gap-1">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full overflow-hidden border-2 p-0.5 {{ request()->routeIs('profile.*') ? 'border-indigo-600 scale-105' : 'border-gray-200' }}">
+                    <x-user-avatar :user="auth()->user()" size="w-full h-full" />
+                </div>
+                <span class="text-[10px] font-black uppercase tracking-tight {{ request()->routeIs('profile.*') ? 'text-indigo-600' : 'text-gray-500' }}">Profile</span>
+            </a>
+        </div>
+    </nav>
+
+    <script>
+        // Global Mobile Navigation Scroll Behavior (Facebook Style)
+        (function() {
+            let lastScrollY = window.scrollY;
+            const bottomNav = document.getElementById('mobile-bottom-nav');
+            if (!bottomNav) return;
+
+            window.addEventListener('scroll', () => {
+                const currentScrollY = window.scrollY;
+                const scrollDelta = currentScrollY - lastScrollY;
+
+                // Only trigger if scrolled more than a small threshold to prevent jitter
+                if (Math.abs(scrollDelta) > 5) {
+                    if (currentScrollY > lastScrollY && currentScrollY > 100) {
+                        // Scrolling Down - Hide Bar
+                        bottomNav.style.transform = 'translateY(100%)';
+                    } else {
+                        // Scrolling Up - Show Bar
+                        bottomNav.style.transform = 'translateY(0)';
+                    }
+                }
+                lastScrollY = currentScrollY;
+            }, { passive: true });
+        })();
+    </script>
 
     <!-- Scripts -->
     <script>
