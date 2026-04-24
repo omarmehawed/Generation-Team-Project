@@ -524,6 +524,55 @@
     <!-- Mobile Bottom Navigation (Facebook Style) -->
     <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full bg-white border-t border-gray-100 z-50 shadow-[0_-8px_20px_rgba(0,0,0,0.08)] flex items-center justify-between px-1 pb-safe transition-transform duration-300 transform" style="height: 70px; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(15px);">
         
+        @php
+            $user = auth()->user();
+            $member = \App\Models\TeamMember::where('user_id', $user->id)->first();
+            $myRole = $member ? $member->role : null;
+            $isSubLeader = $member ? ($member->is_sub_leader ?? false) : false;
+            $myTeamId = $member ? $member->team_id : null;
+            
+            // Permissions
+            $isLeader = $myRole === 'leader';
+            $canSeePosters = $isLeader;
+            $canManageQuizzes = $user->hasPermission('manage_quizzes');
+            $canSeeEval = $myTeamId && (in_array($myRole, ['leader', 'vice_leader']) || $isSubLeader);
+            $canManageRequests = $user->canManageJoinRequests();
+
+            // Notification Counts
+            $walletNotifs = 0;
+            if ($isLeader) {
+                $walletNotifs = \App\Models\WalletDepositRequest::where('status', 'pending')->count();
+            } else {
+                $walletNotifs = \App\Models\FundContribution::where('user_id', $user->id)->where('status', 'pending')->count();
+            }
+
+            $quizNotifs = 0;
+            if ($canManageQuizzes) {
+                $quizNotifs = \App\Models\QuizRetryRequest::where('status', 'pending')->count();
+            } else {
+                 $quizNotifs = \App\Models\Quiz::whereDoesntHave('attempts', function($q) use ($user) {
+                     $q->where('user_id', $user->id);
+                 })->where('is_published', true)->count();
+            }
+
+            $requestNotifs = $canManageRequests ? \App\Models\JoinRequest::where('status', 'pending')->count() : 0;
+            
+            $projectNotifs = 0;
+            if ($isLeader) {
+                 $projectNotifs = \App\Models\TaskSubmission::where('status', 'pending')->count();
+            } else {
+                $projectNotifs = \App\Models\Task::whereDoesntHave('submissions', function($q) use ($user) {
+                    $q->where('user_id', $user->id);
+                })->count();
+            }
+
+            $evalNotifs = 0; 
+            if ($canSeeEval) {
+            }
+
+            $moreNotifs = $requestNotifs + $evalNotifs;
+        @endphp
+
         <!-- 1) LMS Popup Button -->
         <div class="flex-none w-[16%]" x-data="{ openLMS: false }">
             <button @click="openLMS = !openLMS" @click.away="openLMS = false" class="w-full h-full flex flex-col items-center justify-center gap-1 transition-all">
@@ -558,42 +607,33 @@
         <!-- Dynamic Generation Items (Main) -->
         <div class="flex-1 flex items-center justify-around space-x-0 overflow-hidden">
             <a href="{{ route('projects.index') }}" class="w-[75px] flex flex-col items-center justify-center gap-1 transition-all {{ request()->routeIs('projects.*') ? 'text-indigo-600 font-black' : 'text-gray-400' }}">
-                <div class="w-10 h-10 flex items-center justify-center rounded-full {{ request()->routeIs('projects.*') ? 'bg-indigo-50 border border-indigo-100 shadow-sm' : '' }}">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full relative {{ request()->routeIs('projects.*') ? 'bg-indigo-50 border border-indigo-100 shadow-sm' : '' }}">
                     <i class="fas fa-project-diagram text-xl"></i>
+                    @if($projectNotifs > 0)
+                        <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-black text-white bg-red-500 rounded-full border-2 border-white">{{ $projectNotifs }}</span>
+                    @endif
                 </div>
                 <span class="text-[11px] font-black uppercase tracking-tighter">Projects</span>
             </a>
 
             <a href="{{ route('quizzes.index') }}" class="w-[75px] flex flex-col items-center justify-center gap-1 transition-all {{ request()->routeIs('quizzes.*') ? 'text-orange-500 font-black' : 'text-gray-400' }}">
-                <div class="w-10 h-10 flex items-center justify-center rounded-full {{ request()->routeIs('quizzes.*') ? 'bg-orange-50 border border-orange-100 shadow-sm' : '' }}">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full relative {{ request()->routeIs('quizzes.*') ? 'bg-orange-50 border border-orange-100 shadow-sm' : '' }}">
                     <i class="fas fa-question-circle text-xl"></i>
+                    @if($quizNotifs > 0)
+                        <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-black text-white bg-red-500 rounded-full border-2 border-white">{{ $quizNotifs }}</span>
+                    @endif
                 </div>
                 <span class="text-[11px] font-black uppercase tracking-tighter">Quizzes</span>
             </a>
         </div>
 
         <!-- 2) More Menu (Overflow Items) -->
-        @php
-            $member = \App\Models\TeamMember::where('user_id', auth()->id())->first();
-            $myRole = $member ? $member->role : null;
-            $isSubLeader = $member ? ($member->is_sub_leader ?? false) : false;
-            $myTeamId = $member ? $member->team_id : null;
-            
-            $canSeePosters = auth()->check() && \App\Models\TeamMember::where('user_id', auth()->id())->value('role') === 'leader';
-            $canManageQuizzes = auth()->check() && auth()->user()->hasPermission('manage_quizzes');
-            $canSeeEval = $myTeamId && (in_array($myRole, ['leader', 'vice_leader']) || $isSubLeader);
-            $canManageRequests = auth()->check() && auth()->user()->canManageJoinRequests();
-        @endphp
-
         <div class="flex-none w-[17%]" x-data="{ openMore: false }">
             <button @click="openMore = !openMore" @click.away="openMore = false" class="w-full h-full flex flex-col items-center justify-center gap-1 transition-all">
                 <div class="w-10 h-10 flex items-center justify-center rounded-xl transition-colors relative" :class="openMore ? 'bg-indigo-50 text-indigo-600 border border-indigo-100 shadow-sm' : 'text-gray-400'">
                     <i class="fas fa-ellipsis-h text-xl"></i>
-                    @if($canManageRequests)
-                        @php $pendingCount = \App\Models\JoinRequest::where('status', 'pending')->count(); @endphp
-                        @if($pendingCount > 0)
-                            <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-black text-white bg-red-500 rounded-full border-2 border-white">{{ $pendingCount }}</span>
-                        @endif
+                    @if($moreNotifs > 0)
+                        <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-black text-white bg-red-500 rounded-full border-2 border-white">{{ $moreNotifs }}</span>
                     @endif
                 </div>
                 <span class="text-[11px] font-black uppercase tracking-tighter" :class="openMore ? 'text-indigo-600' : 'text-gray-500'">More</span>
@@ -605,9 +645,9 @@
                     @if($canManageRequests)
                         <a href="{{ route('join.admin') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-indigo-50 transition-colors {{ request()->routeIs('join.admin') ? 'text-indigo-600 bg-indigo-50' : '' }}">
                             <i class="fas fa-user-plus w-10 text-indigo-500 text-lg"></i>
-                            <span>Join Requests</span>
-                            @if($pendingCount > 0)
-                                <span class="ms-auto bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black">{{ $pendingCount }}</span>
+                            <span class="flex-1">Join Requests</span>
+                            @if($requestNotifs > 0)
+                                <span class="bg-red-500 text-white text-[10px] px-2 py-0.5 rounded-full font-black">{{ $requestNotifs }}</span>
                             @endif
                         </a>
                     @endif
@@ -615,21 +655,21 @@
                     @if($canSeePosters)
                         <a href="{{ route('posters.index') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-yellow-50 transition-colors {{ request()->routeIs('posters.*') ? 'text-yellow-600 bg-yellow-50' : '' }}">
                             <i class="fas fa-images w-10 text-yellow-500 text-lg"></i>
-                            <span>Posters</span>
+                            <span class="flex-1">Posters</span>
                         </a>
                     @endif
                     
                     @if($canManageQuizzes)
                         <a href="{{ route('admin.quizzes.index') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-orange-50 transition-colors {{ request()->routeIs('admin.quizzes.*') ? 'text-orange-700 bg-orange-50' : '' }}">
                             <i class="fas fa-cogs w-10 text-orange-700 text-lg"></i>
-                            <span>Manage Quizzes</span>
+                            <span class="flex-1">Manage Quizzes</span>
                         </a>
                     @endif
 
                     @if($canSeeEval)
                         <a href="{{ route('evaluation.index', $myTeamId) }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 hover:bg-indigo-50 transition-colors {{ request()->routeIs('evaluation.*') ? 'text-indigo-600 bg-indigo-50' : '' }}">
                             <i class="fas fa-clipboard-check w-10 text-indigo-500 text-lg"></i>
-                            <span>Weekly Eval</span>
+                            <span class="flex-1">Weekly Eval</span>
                         </a>
                     @endif
                 </div>
@@ -639,8 +679,11 @@
         <!-- 3) Wallet & Profile (Anchored) -->
         <div class="flex-none flex items-center justify-end px-1 gap-0">
             <a href="{{ route('wallet.index') }}" class="w-[60px] flex flex-col items-center justify-center gap-1 {{ request()->routeIs('wallet.*') ? 'text-indigo-600 font-black' : 'text-gray-400' }}">
-                <div class="w-10 h-10 flex items-center justify-center rounded-full {{ request()->routeIs('wallet.*') ? 'bg-indigo-50' : '' }}">
+                <div class="w-10 h-10 flex items-center justify-center rounded-full relative {{ request()->routeIs('wallet.*') ? 'bg-indigo-50' : '' }}">
                     <i class="fas fa-wallet text-xl"></i>
+                    @if($walletNotifs > 0)
+                        <span class="absolute -top-1 -right-1 flex items-center justify-center w-5 h-5 text-[10px] font-black text-white bg-red-500 rounded-full border-2 border-white">{{ $walletNotifs }}</span>
+                    @endif
                 </div>
                 <span class="text-[10px] font-black uppercase tracking-tight">Wallet</span>
             </a>
