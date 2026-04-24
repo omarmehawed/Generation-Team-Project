@@ -2471,13 +2471,26 @@
                                             </span>
                                         </div>
 
-                                        @if ($report->file_path)
-                                            <a href="{{ $report->file_path }}"
-                                                target="_blank"
-                                                class="text-xs text-blue-500 bg-blue-50 px-2 py-1 rounded-lg hover:bg-blue-100 transition border border-blue-100">
-                                                <i class="fas fa-paperclip"></i> View File
-                                            </a>
-                                        @endif
+                                        <div class="flex items-center gap-2">
+                                            @if($report->user_id == auth()->id())
+                                                <button onclick="openEditReportModal({{ json_encode($report) }})" 
+                                                    class="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all" title="Edit Report">
+                                                    <i class="fas fa-edit text-sm"></i>
+                                                </button>
+                                                <button onclick="deleteWeeklyReport({{ $report->id }})" 
+                                                    class="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all" title="Delete Report">
+                                                    <i class="fas fa-trash-alt text-sm"></i>
+                                                </button>
+                                            @endif
+
+                                            @if ($report->file_path)
+                                                <a href="{{ $report->file_path }}"
+                                                    target="_blank"
+                                                    class="text-xs text-blue-500 bg-blue-50 px-2 py-1 rounded-lg hover:bg-blue-100 transition border border-blue-100">
+                                                    <i class="fas fa-paperclip"></i> View File
+                                                </a>
+                                            @endif
+                                        </div>
                                     </div>
                                     <div class="space-y-3">
                                         <div>
@@ -4298,4 +4311,125 @@
 
 {{-- استدعاء المودالات --}}
 @include('final_project.partials.modals')
+
+{{-- Edit Weekly Report Modal --}}
+<div id="editReportModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
+    <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('editReportModal')"></div>
+    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg mx-4 relative z-10 overflow-hidden transform transition-all">
+        <div class="p-8">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3">
+                    <i class="fas fa-edit text-blue-500"></i> Edit Report
+                </h3>
+                <button onclick="closeModal('editReportModal')" class="text-gray-400 hover:text-red-500 transition">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+
+            <form id="editReportForm" method="POST" enctype="multipart/form-data" onsubmit="return handleAjaxFormSubmit(event)">
+                @csrf
+                <div class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Week Number</label>
+                            <input type="number" name="week_number" id="edit_week_number" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-bold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Report Date</label>
+                            <input type="datetime-local" name="report_date" id="edit_report_date" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-bold">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Achievements</label>
+                        <textarea name="achievements" id="edit_achievements" rows="3" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="What did you achieve this week?"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Plans</label>
+                        <textarea name="plans" id="edit_plans" rows="2" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="What are your plans for next week?"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Challenges</label>
+                        <textarea name="challenges" id="edit_challenges" rows="2" class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Any challenges faced?"></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Update File (Optional)</label>
+                        <input type="file" name="report_file" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+                </div>
+
+                <div class="mt-8 flex gap-3">
+                    <button type="button" onclick="closeModal('editReportModal')" class="flex-1 px-6 py-3 bg-gray-100 text-gray-500 rounded-xl font-bold hover:bg-gray-200 transition uppercase tracking-widest text-xs">Cancel</button>
+                    <button type="submit" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition uppercase tracking-widest text-xs">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    function openEditReportModal(report) {
+        const form = document.getElementById('editReportForm');
+        form.action = `/final-project/reports/${report.id}/update`;
+        
+        document.getElementById('edit_week_number').value = report.week_number;
+        
+        // Format date for datetime-local
+        if(report.report_date) {
+            const date = new Date(report.report_date);
+            const formattedDate = date.toISOString().slice(0, 16);
+            document.getElementById('edit_report_date').value = formattedDate;
+        }
+
+        document.getElementById('edit_achievements').value = report.achievements;
+        document.getElementById('edit_plans').value = report.plans;
+        document.getElementById('edit_challenges').value = report.challenges || '';
+        
+        openModal('editReportModal');
+    }
+
+    function deleteWeeklyReport(reportId) {
+        Swal.fire({
+            title: 'Delete Report?',
+            text: "This action cannot be undone!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ef4444',
+            cancelButtonColor: '#6b7280',
+            confirmButtonText: 'Yes, delete it!',
+            customClass: {
+                popup: 'rounded-[2rem]',
+                confirmButton: 'rounded-xl px-6 py-3 font-bold',
+                cancelButton: 'rounded-xl px-6 py-3 font-bold'
+            }
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // Use fetch for delete to handle AJAX
+                fetch(`/final-project/reports/${reportId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        Swal.fire({
+                            title: 'Deleted!',
+                            text: data.message,
+                            icon: 'success',
+                            customClass: { popup: 'rounded-[2rem]' }
+                        }).then(() => {
+                            window.location.reload();
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>
 

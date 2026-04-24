@@ -1911,6 +1911,65 @@ class FinalProjectController extends Controller
 
         return back()->with('success', 'Weekly Report submitted successfully 📝');
     }
+
+    public function updateWeeklyReport(Request $request, $id)
+    {
+        $request->validate([
+            'week_number' => 'required|integer',
+            'report_date' => 'required|date',
+            'achievements' => 'required|string',
+            'plans' => 'required|string',
+            'challenges' => 'nullable|string',
+            'report_file' => 'nullable|file|max:20480'
+        ]);
+
+        $report = DB::table('weekly_reports')->where('id', $id)->first();
+        if (!$report) abort(404);
+
+        if ($report->user_id != Auth::id()) {
+            abort(403, 'Unauthorized');
+        }
+
+        $filePath = $report->file_path;
+        if ($request->hasFile('report_file')) {
+            $storedPath = $request->file('report_file')->store('weekly_reports', 'r2');
+            $filePath = \Illuminate\Support\Facades\Storage::disk('r2')->url($storedPath);
+        }
+
+        DB::table('weekly_reports')->where('id', $id)->update([
+            'week_number' => $request->week_number,
+            'report_date' => $request->report_date,
+            'achievements' => $request->achievements,
+            'plans' => $request->plans,
+            'challenges' => $request->challenges,
+            'file_path' => $filePath,
+            'updated_at' => now(),
+        ]);
+
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Report updated successfully!']);
+        }
+
+        return back()->with('success', 'Report updated successfully!');
+    }
+
+    public function deleteWeeklyReport($id)
+    {
+        $report = DB::table('weekly_reports')->where('id', $id)->first();
+        if (!$report) abort(404);
+
+        if (Auth::id() != $report->user_id) {
+            abort(403, 'Unauthorized');
+        }
+
+        DB::table('weekly_reports')->where('id', $id)->delete();
+
+        if (request()->ajax()) {
+            return response()->json(['success' => true, 'message' => 'Report deleted successfully!']);
+        }
+
+        return back()->with('success', 'Report deleted successfully!');
+    }
     // ==========================================
     // 15. طلب اجتماع مع المشرف (Supervision)
     // ==========================================

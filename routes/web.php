@@ -231,6 +231,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 
             Route::post('/final-project/reports', [FinalProjectController::class, 'storeReport'])->name('final_project.storeReport');
+            Route::post('/final-project/reports/{id}/update', [FinalProjectController::class, 'updateWeeklyReport'])->name('final_project.updateWeeklyReport');
+            Route::delete('/final-project/reports/{id}', [FinalProjectController::class, 'deleteWeeklyReport'])->name('final_project.deleteWeeklyReport');
 
             Route::post('/final-project/meetings/supervision', [FinalProjectController::class, 'requestSupervisionMeeting'])->name('final_project.requestSupervision');
             Route::post('/final-project/meetings/internal', [FinalProjectController::class, 'storeInternalMeeting'])->name('final_project.storeInternalMeeting');
