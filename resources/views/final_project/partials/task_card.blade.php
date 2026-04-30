@@ -13,7 +13,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
 
     {{-- Card Container --}}
     <div
-        class="p-5 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-hidden">
+        class="p-5 rounded-2xl border border-gray-100 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-sm hover:shadow-lg transition-all duration-300 relative overflow-hidden">
 
         {{-- Decorative Left Border based on status --}}
         <div class="absolute left-0 top-0 bottom-0 w-1.5
@@ -36,7 +36,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
             <div class="flex-1 w-full sm:w-auto">
                 {{-- Title --}}
                 <h4
-                    class="text-sm font-bold text-gray-800 leading-relaxed mb-1 break-words line-clamp-3 lg:line-clamp-none {{ $task->status == 'completed' ? 'line-through text-gray-400 decoration-gray-300' : '' }}">
+                    class="text-sm font-bold text-gray-800 dark:text-gray-200 leading-relaxed mb-1 break-words line-clamp-3 lg:line-clamp-none {{ $task->status =='completed' ? 'line-through text-gray-400 decoration-gray-300' : '' }}">
                     {{ $task->title }}
                 </h4>
 
@@ -44,7 +44,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                 <div class="flex items-center flex-wrap gap-2 mt-2">
                     {{-- Date Badge --}}
                     <span
-                        class="text-[10px] text-gray-500 font-mono bg-gray-50 border border-gray-100 px-2 py-0.5 rounded-md flex items-center gap-1.5">
+                        class="text-[10px] text-gray-500 dark:text-gray-400 font-mono bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 px-2 py-0.5 rounded-md flex items-center gap-1.5">
                         <i class="far fa-clock text-[9px]"></i>
                         {{ \Carbon\Carbon::parse($task->deadline)->format('M d') }}
                     </span>
@@ -100,7 +100,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                 {{-- [CASE A]: Member -> Submit Task (Pending or First Rejected) --}}
                 @if (($task->status == 'pending' || ($task->status == 'rejected' && $task->new_deadline)) && Auth::id() == $task->user_id)
                     <button onclick="openSubmitTaskModal('{{ $task->id }}', '{{ addslashes($task->title) }}')"
-                        class="group/btn relative overflow-hidden bg-{{ $color ?? 'blue' }}-600 text-white text-[10px] font-bold px-4 py-2 rounded-xl transition-all hover:shadow-md hover:shadow-{{ $color ?? 'blue' }}-500/20 active:scale-95">
+                        class="group/btn relative overflow-hidden bg-{{ $color ??'blue' }}-600 text-white text-[10px] font-bold px-4 py-2 rounded-xl transition-all hover:shadow-md hover:shadow-{{ $color ?? 'blue' }}-500/20 active:scale-95">
                         <span class="relative z-10 flex items-center gap-1.5">
                             <i class="fas fa-cloud-upload-alt"></i> Upload
                         </span>
@@ -109,7 +109,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                     
                 {{-- [CASE A2]: Member -> View & Edit Submission (Reviewing or Completed) --}}
                 @elseif(in_array($task->status, ['reviewing', 'completed']) && Auth::id() == $task->user_id)
-                    <div class="flex items-center gap-1.5 bg-gray-50 p-1 rounded-xl border border-gray-100">
+                    <div class="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-900 p-1 rounded-xl border border-gray-100 dark:border-gray-700">
                         @if ($task->submission_file || $task->submission_value)
                             <a href="{{ $task->submission_file ?? $task->submission_value }}" target="_blank"
                                 class="w-8 h-8 flex items-center justify-center rounded-full text-blue-600 hover:bg-blue-600 hover:text-white transition-all duration-200"
@@ -120,7 +120,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
                         @endif
                         
                         <button onclick="openSubmitTaskModal('{{ $task->id }}', '{{ addslashes($task->title) }}')"
-                            class="text-[10px] font-bold px-3 py-2 text-gray-700 hover:text-indigo-600 transition-colors"
+                            class="text-[10px] font-bold px-3 py-2 text-gray-700 dark:text-gray-300 hover:text-indigo-600 transition-colors"
                             title="Edit Submission">
                             <i class="fas fa-edit"></i> Edit
                         </button>
@@ -128,7 +128,7 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
 
                 {{-- [CASE B]: Leader/Vice -> Review Process --}}
                 @elseif($task->status == 'reviewing' && ($myRole == 'leader' || $myRole == 'vice_leader'))
-                    <div class="flex flex-wrap items-center gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-100 shadow-sm mt-2 sm:mt-0">
+                    <div class="flex flex-wrap items-center gap-2 bg-gray-50 dark:bg-gray-900 p-2 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm mt-2 sm:mt-0">
 
                         {{-- 1. View File --}}
                         @if ($task->submission_file)
@@ -210,9 +210,9 @@ Features: Interactive States, Role-Based Actions, Glassmorphism
 
         @if ($task->submission_comment)
             <div class="mt-4 pl-3">
-                <div class="relative {{ $task->status == 'completed' ? 'bg-green-50/50 border-green-100' : 'bg-gray-50/80 border-gray-200' }} p-3 rounded-xl border border-dashed">
-                    <i class="fas fa-quote-left text-gray-300 absolute -top-2 left-3 bg-white px-1 text-xs"></i>
-                    <p class="text-xs text-gray-600 italic leading-relaxed">
+                <div class="relative {{ $task->status =='completed' ? 'bg-green-50/50 border-green-100' : 'bg-gray-50/80 border-gray-200' }} p-3 rounded-xl border border-dashed">
+                    <i class="fas fa-quote-left text-gray-300 absolute -top-2 left-3 bg-white dark:bg-gray-800 px-1 text-xs"></i>
+                    <p class="text-xs text-gray-600 dark:text-gray-400 italic leading-relaxed">
                         {{ $task->submission_comment }}
                     </p>
                 </div>

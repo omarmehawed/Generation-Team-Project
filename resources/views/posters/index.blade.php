@@ -64,11 +64,11 @@
                                 <td class="py-4 px-4 text-center">
                                     <div class="flex flex-col items-center gap-1 text-xs">
                                         <span
-                                            class="bg-gray-100 text-[var(--text-main)] px-2 py-1 rounded">Position:
+                                            class="bg-gray-100 dark:bg-gray-900 text-[var(--text-main)] px-2 py-1 rounded">Position:
                                             {{ ucfirst($poster->text_position) }}</span>
                                         <div class="flex items-center gap-1 mt-1">
                                             <span>Color:</span>
-                                            <span class="w-4 h-4 rounded-full border border-gray-300 shadow-sm inline-block"
+                                            <span class="w-4 h-4 rounded-full border border-gray-300 dark:border-gray-600 shadow-sm inline-block"
                                                 style="background-color: {{ $poster->text_color }}"></span>
                                         </div>
                                     </div>

@@ -23,13 +23,13 @@
                         <span class="bg-white/20 p-2 rounded-xl backdrop-blur-md border border-white/10">👥</span>
                         User Management
                     </h1>
-                    <p class="mt-2 text-gray-500 text-sm font-medium">Manage access, roles, and permissions effectively.
+                    <p class="mt-2 text-gray-500 dark:text-gray-400 text-sm font-medium">Manage access, roles, and permissions effectively.
                     </p>
                 </div>
 
                 @if (session('success'))
                     <div
-                        class="animate-fade-in-up bg-white text-green-700 px-6 py-3 rounded-2xl shadow-xl border-l-4 border-green-500 flex items-center gap-3">
+                        class="animate-fade-in-up bg-white dark:bg-gray-800 text-green-700 px-6 py-3 rounded-2xl shadow-xl border-l-4 border-green-500 flex items-center gap-3">
                         <div class="bg-green-100 p-1 rounded-full"><svg class="w-4 h-4" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7">
@@ -43,10 +43,10 @@
             {{-- 📊 Stats Cards (Auto Calculated) --}}
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div
-                    class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between hover:shadow-xl transition-shadow cursor-default">
+                    class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-between hover:shadow-xl transition-shadow cursor-default">
                     <div>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-wider">Total Accounts</p>
-                        <h2 class="text-3xl font-black text-gray-800 mt-1">{{ $totalUsers }}</h2>
+                        <h2 class="text-3xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $totalUsers }}</h2>
                     </div>
                     <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -58,10 +58,10 @@
                 </div>
 
                 <div
-                    class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between hover:shadow-xl transition-shadow cursor-default">
+                    class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-between hover:shadow-xl transition-shadow cursor-default">
                     <div>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-wider">Active Students</p>
-                        <h2 class="text-3xl font-black text-gray-800 mt-1">{{ $totalStudents }}</h2>
+                        <h2 class="text-3xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $totalStudents }}</h2>
                     </div>
                     <div class="p-4 bg-green-50 text-green-600 rounded-2xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -73,10 +73,10 @@
                 </div>
 
                 <div
-                    class="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex items-center justify-between hover:shadow-xl transition-shadow cursor-default">
+                    class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 flex items-center justify-between hover:shadow-xl transition-shadow cursor-default">
                     <div>
                         <p class="text-sm font-bold text-gray-400 uppercase tracking-wider">Staff & Admins</p>
-                        <h2 class="text-3xl font-black text-gray-800 mt-1">{{ $totalStaff }}</h2>
+                        <h2 class="text-3xl font-black text-gray-800 dark:text-gray-200 mt-1">{{ $totalStaff }}</h2>
                     </div>
                     <div class="p-4 bg-purple-50 text-purple-600 rounded-2xl">
                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -91,7 +91,7 @@
             {{-- 🎛️ Control Panel --}}
 
             <div
-                class="bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-gray-200 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 sticky top-4 z-30">
+                class="bg-white/80 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col xl:flex-row justify-between items-start xl:items-center gap-4 sticky top-4 z-30">
 
                 {{-- Search & Filter --}}
 
@@ -109,12 +109,12 @@
                         </button>
                         <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
                             placeholder="Search..."
-                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border-transparent rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 outline-none font-medium">
+                            class="w-full pl-10 pr-4 py-2.5 bg-gray-50 dark:bg-gray-900 border-transparent rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white transition duration-200 outline-none font-medium">
                     </div>
 
                     {{-- Role --}}
                     <select name="role" onchange="this.form.submit()"
-                        class="py-2.5 px-3 bg-gray-50 border-transparent rounded-xl cursor-pointer font-medium text-gray-600 focus:ring-2 focus:ring-blue-500 hover:bg-gray-100 transition md:w-28">
+                        class="py-2.5 px-3 bg-gray-50 dark:bg-gray-900 border-transparent rounded-xl cursor-pointer font-medium text-gray-600 dark:text-gray-400 focus:ring-2 focus:ring-blue-500 hover:bg-gray-100 transition md:w-28">
                         <option value="">🎭 Role</option>
                         <option value="student" {{ request('role') == 'student' ? 'selected' : '' }}>Students</option>
                         <option value="doctor" {{ request('role') == 'doctor' ? 'selected' : '' }}>Doctors</option>
@@ -126,7 +126,7 @@
 
                     {{-- Department --}}
                     <select name="department" onchange="this.form.submit()"
-                        class="py-2.5 px-3 bg-gray-50 border-transparent rounded-xl cursor-pointer font-medium text-gray-600 focus:ring-2 focus:ring-blue-500 hover:bg-gray-100 transition md:w-28">
+                        class="py-2.5 px-3 bg-gray-50 dark:bg-gray-900 border-transparent rounded-xl cursor-pointer font-medium text-gray-600 dark:text-gray-400 focus:ring-2 focus:ring-blue-500 hover:bg-gray-100 transition md:w-28">
                         <option value="">🏢 Dept</option>
                         <option value="general" {{ request('department') == 'general' ? 'selected' : '' }}>General</option>
                         <option value="software" {{ request('department') == 'software' ? 'selected' : '' }}>Software
@@ -136,13 +136,13 @@
 
                     {{-- 🔥 Date Range (From - To) --}}
                     <div
-                        class="flex flex-col sm:flex-row items-center gap-1 bg-gray-50 rounded-xl px-2 py-1 border border-transparent focus-within:ring-2 focus-within:ring-blue-500 focus-within:bg-white transition w-full md:w-auto">
+                        class="flex flex-col sm:flex-row items-center gap-1 bg-gray-50 dark:bg-gray-900 rounded-xl px-2 py-1 border border-transparent focus-within:ring-2 focus-within:ring-blue-500 focus-within:bg-white transition w-full md:w-auto">
                         <input type="date" name="date_from" value="{{ request('date_from') }}"
-                            class="bg-transparent border-none text-xs font-bold text-gray-600 focus:ring-0 p-1 w-full sm:w-24"
+                            class="bg-transparent border-none text-xs font-bold text-gray-600 dark:text-gray-400 focus:ring-0 p-1 w-full sm:w-24"
                             title="From Date">
                         <span class="text-gray-400 hidden sm:block">-</span>
                         <input type="date" name="date_to" value="{{ request('date_to') }}"
-                            class="bg-transparent border-none text-xs font-bold text-gray-600 focus:ring-0 p-1 w-full sm:w-24"
+                            class="bg-transparent border-none text-xs font-bold text-gray-600 dark:text-gray-400 focus:ring-0 p-1 w-full sm:w-24"
                             title="To Date">
                     </div>
 
@@ -168,8 +168,8 @@
 
                     {{-- Import --}}
                     <button onclick="document.getElementById('importModal').classList.remove('hidden')"
-                        class="flex-1 sm:flex-none bg-white text-gray-700 border border-gray-200 py-2.5 px-4 rounded-xl font-bold shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-2 whitespace-nowrap text-sm">
-                        <i class="fas fa-file-upload text-gray-500"></i> Import
+                        class="flex-1 sm:flex-none bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border border-gray-200 dark:border-gray-700 py-2.5 px-4 rounded-xl font-bold shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-2 whitespace-nowrap text-sm">
+                        <i class="fas fa-file-upload text-gray-500 dark:text-gray-400"></i> Import
                     </button>
 
                     {{-- Export --}}
@@ -215,15 +215,15 @@
             </div>
 
             {{-- 📋 The Table --}}
-            <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
                 <div class="overflow-x-auto">
                     <table class="min-w-full leading-normal">
                         <thead>
-                            <tr class="bg-gray-50/50 border-b border-gray-100">
+                            <tr class="bg-gray-50/50 border-b border-gray-100 dark:border-gray-700">
                                 <th class="px-6 py-5 text-left">
                                     <label class="inline-flex items-center">
                                         <input type="checkbox" id="selectAll" onclick="toggleSelectAll()"
-                                            class="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 w-3 h-3 cursor-pointer">
+                                            class="rounded border-gray-300 dark:border-gray-600 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50 w-3 h-3 cursor-pointer">
                                     </label>
                                 </th>
                                 <th class="px-6 py-5 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">
@@ -251,20 +251,20 @@
                                                 onclick="updateBulkAction()" data-role="{{ $user->role }}"
                                                 data-name="{{ $user->name }}" {{-- 👈 لازم السطر ده يكون موجود --}}
                                                 data-email="{{ $user->email }}" {{-- 👈 والسطر ده كمان --}}
-                                                class="user-checkbox w-4 h-4 text-blue-600 bg-white border-2 border-gray-300 rounded focus:ring-blue-500 focus:ring-offset-0 cursor-pointer transition-all duration-200 checked:bg-blue-600 checked:border-blue-600">
+                                                class="user-checkbox w-4 h-4 text-blue-600 bg-white dark:bg-gray-800 border-2 border-gray-300 dark:border-gray-600 rounded focus:ring-blue-500 focus:ring-offset-0 cursor-pointer transition-all duration-200 checked:bg-blue-600 checked:border-blue-600">
                                         </div>
                                     </td>
                                     {{-- Name & Avatar --}}
                                     <td class="px-6 py-4">
                                         <div class="flex items-center">
                                             <div
-                                                class="flex-shrink-0 h-11 w-11 rounded-full overflow-hidden border border-gray-100 shadow-sm">
+                                                class="flex-shrink-0 h-11 w-11 rounded-full overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm">
                                                 <img src="{{ $user->profile_photo_url }}" class="w-full h-full object-cover"
                                                     alt="{{ $user->name }}">
                                             </div>
                                             <div class="ml-4">
-                                                <div class="text-sm font-bold text-gray-900">{{ $user->name }}</div>
-                                                <div class="text-xs text-gray-500">{{ $user->email }}</div>
+                                                <div class="text-sm font-bold text-gray-900 dark:text-gray-100">{{ $user->name }}</div>
+                                                <div class="text-xs text-gray-500 dark:text-gray-400">{{ $user->email }}</div>
                                             </div>
                                         </div>
                                     </td>
@@ -293,7 +293,7 @@
                                         @if ($user->role == 'student')
                                             <div class="inline-flex flex-col items-center">
                                                 <span
-                                                    class="text-xs font-semibold text-gray-700 bg-gray-100 px-2 py-0.5 rounded border border-gray-200">Year
+                                                    class="text-xs font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded border border-gray-200 dark:border-gray-700">Year
                                                     {{ $user->academic_year }}</span>
                                                 <span
                                                     class="text-[10px] text-gray-400 mt-1 uppercase tracking-wide">{{ $user->department }}
@@ -305,7 +305,7 @@
                                                     class="text-xs text-indigo-600 font-bold bg-indigo-50 px-2 py-1 rounded border border-indigo-100">🔥
                                                     Full Access</span>
                                             @else
-                                                <span class="text-xs text-gray-500 flex items-center justify-center gap-1">
+                                                <span class="text-xs text-gray-500 dark:text-gray-400 flex items-center justify-center gap-1">
                                                     <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                             d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z">
@@ -333,7 +333,7 @@
                                             {{-- عرض مين اللي أنشأ (الكود القديم) --}}
                                             @if ($user->creator)
                                                 <div class="flex flex-col items-center">
-                                                    <span class="text-xs font-bold text-gray-700">{{ $user->creator->name }}</span>
+                                                    <span class="text-xs font-bold text-gray-700 dark:text-gray-300">{{ $user->creator->name }}</span>
                                                     <span
                                                         class="text-[10px] text-gray-400">{{ $user->created_at->format('d M, Y') }}</span>
                                                 </div>
@@ -362,7 +362,7 @@
                                                     </button>
                                                 @else
                                                     <button onclick="openEditModal({{ $user }})"
-                                                        class="p-2 bg-white text-yellow-600 rounded-lg border border-gray-200 hover:border-yellow-400 hover:text-yellow-700 hover:shadow-md transition"
+                                                        class="p-2 bg-white dark:bg-gray-800 text-yellow-600 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-yellow-400 hover:text-yellow-700 hover:shadow-md transition"
                                                         title="Edit User">
                                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -376,7 +376,7 @@
                                                         @csrf
                                                         @method('DELETE')
                                                         <button type="submit"
-                                                            class="p-2 bg-white text-red-600 rounded-lg border border-gray-200 hover:border-red-400 hover:text-red-700 hover:shadow-md transition"
+                                                            class="p-2 bg-white dark:bg-gray-800 text-red-600 rounded-lg border border-gray-200 dark:border-gray-700 hover:border-red-400 hover:text-red-700 hover:shadow-md transition"
                                                             title="Move to Trash">
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor"
                                                                 viewBox="0 0 24 24">
@@ -450,7 +450,7 @@
 
                                                 {{-- زرار الإغلاق --}}
                                                 <button onclick="clearSelection()"
-                                                    class="absolute top-2 right-4 md:static md:ml-4 text-gray-500 hover:text-white">
+                                                    class="absolute top-2 right-4 md:static md:ml-4 text-gray-500 dark:text-gray-400 hover:text-white">
                                                     <i class="fas fa-times"></i>
                                                 </button>
                                             </div>
@@ -460,7 +460,7 @@
                                 <tr>
                                     <td colspan="4" class="px-6 py-12 text-center">
                                         <div class="flex flex-col items-center justify-center text-gray-400">
-                                            <div class="bg-gray-50 p-4 rounded-full mb-3">
+                                            <div class="bg-gray-50 dark:bg-gray-900 p-4 rounded-full mb-3">
                                                 <svg class="w-10 h-10 opacity-50" fill="none" stroke="currentColor"
                                                     viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -478,12 +478,12 @@
                 </div>
                 {{-- Pagination & Count Section --}}
                 <div
-                    class="px-6 py-4 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                    class="px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4">
 
                     {{-- جملة: صفحة رقم كذا من كذا --}}
-                    <div class="text-sm text-gray-500 font-medium">
-                        Showing Page <span class="font-bold text-gray-800">{{ $users->currentPage() }}</span>
-                        of <span class="font-bold text-gray-800">{{ $users->lastPage() }}</span>
+                    <div class="text-sm text-gray-500 dark:text-gray-400 font-medium">
+                        Showing Page <span class="font-bold text-gray-800 dark:text-gray-200">{{ $users->currentPage() }}</span>
+                        of <span class="font-bold text-gray-800 dark:text-gray-200">{{ $users->lastPage() }}</span>
                         <span class="text-xs text-gray-400 mx-1">({{ $users->total() }} Total Users)</span>
                     </div>
 
@@ -722,11 +722,11 @@
                 let displayName = user.name ? user.name : 'Unknown';
                 let displayEmail = user.email ? user.email : 'No Email';
                 listContainer.innerHTML += `
-                                    <div class="flex items-start gap-3 p-2 bg-gray-50 border border-gray-100 rounded-lg">
+                                    <div class="flex items-start gap-3 p-2 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-lg">
                                         <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold uppercase shrink-0">${displayName.charAt(0)}</div>
                                         <div class="overflow-hidden">
-                                            <p class="text-xs font-bold text-gray-800 truncate">${displayName}</p>
-                                            <p class="text-[10px] text-gray-500 truncate font-mono">${displayEmail}</p>
+                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate">${displayName}</p>
+                                            <p class="text-[10px] text-gray-500 dark:text-gray-400 truncate font-mono">${displayEmail}</p>
                                         </div>
                                     </div>`;
             });
@@ -779,17 +779,17 @@
 
                 // تصميم الكارت الصغير جوه قائمة الحذف
                 htmlList += `
-                                        <div class="flex items-center justify-between p-2 bg-gray-50 rounded-lg border border-gray-100">
+                                        <div class="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded-lg border border-gray-100 dark:border-gray-700">
                                             <div class="flex items-center gap-3 overflow-hidden">
-                                                <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 flex items-center justify-center text-[10px] font-bold">
+                                                <div class="w-6 h-6 rounded-full bg-gray-200 text-gray-600 dark:text-gray-400 flex items-center justify-center text-[10px] font-bold">
                                                     ${name.charAt(0)}
                                                 </div>
                                                 <div class="truncate">
-                                                    <p class="text-xs font-bold text-gray-800 truncate w-32">${name}</p>
-                                                    <p class="text-[9px] text-gray-500 truncate">${email}</p>
+                                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200 truncate w-32">${name}</p>
+                                                    <p class="text-[9px] text-gray-500 dark:text-gray-400 truncate">${email}</p>
                                                 </div>
                                             </div>
-                                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600">${role}</span>
+                                            <span class="text-[10px] uppercase font-bold px-2 py-0.5 rounded bg-gray-200 text-gray-600 dark:text-gray-400">${role}</span>
                                         </div>
                                     `;
             });

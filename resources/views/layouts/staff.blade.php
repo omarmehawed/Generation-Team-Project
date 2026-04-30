@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'dark' }" :class="{ 'dark': theme === 'dark' }">
+<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'dark' }" :class="{'dark': theme === 'dark' }">
 
 <head>
     <meta charset="UTF-8">
@@ -9,6 +9,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { primary: '#2596be' }
+                }
+            }
+        }
+    </script>
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Rajdhani:wght@300;500;600;700&display=swap"
         rel="stylesheet">
@@ -22,11 +32,9 @@
             --bg-sidebar: #ffffff;
             --text-main: #1f2937;
             --text-muted: #6b7280;
-            --primary: #175c53;
-            /* Dark Teal/Green */
-            --primary-hover: #114a42;
-            --accent: #D4AF37;
-            /* Gold */
+            --primary: #2596be;
+            --primary-hover: #31a7d1;
+            --accent: #2596be;
             --border: #e5e7eb;
             /* Gray 200 */
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -34,7 +42,7 @@
             --grid-color: #d1d5db;
         }
 
-        [data-theme="dark"] {
+        .dark {
             /* Dark Mode (Refined Slate - Softer & High Contrast) */
             --bg-main: #0f172a;
             /* Slate 900 - Deep Blue-Grey */
@@ -45,12 +53,9 @@
             /* Slate 50 - Bright White */
             --text-muted: #94a3b8;
             /* Slate 400 */
-            --primary: #06b6d4;
-            /* Cyan 500 */
-            --primary-hover: #0891b2;
-            /* Cyan 600 */
-            --accent: #f59e0b;
-            /* Amber 500 - Gold/Yellow */
+            --primary: #2596be;
+            --primary-hover: #31a7d1;
+            --accent: #2596be;
             --border: #334155;
             /* Slate 700 */
             --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
@@ -189,17 +194,15 @@
     </style>
 </head>
 
-<body class="antialiased" :data-theme="theme">
+<body class="antialiased bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
     <script>
         (function () {
             try {
                 var theme = localStorage.getItem('theme');
                 if (theme === 'dark' || (!theme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
-                    document.body.setAttribute('data-theme', 'dark');
                 } else {
                     document.documentElement.classList.remove('dark');
-                    document.body.setAttribute('data-theme', 'light');
                 }
             } catch (e) { }
         })();
@@ -246,11 +249,11 @@
             <div class="flex items-center gap-4">
 
                 <!-- Theme Toggle -->
-                <button @click="theme = theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('theme', theme)"
+                <button @click="theme = theme === 'dark' ? 'light' : 'dark'; localStorage.setItem('theme', theme); if(theme === 'dark') { document.documentElement.classList.add('dark'); } else { document.documentElement.classList.remove('dark'); }"
                     class="hidden md:flex w-8 h-8 rounded-full items-center justify-center transition-all duration-300 focus:outline-none border hover:shadow-lg"
                     style="background-color: var(--bg-sidebar); border-color: var(--border); color: var(--text-muted)">
-                    <i class="fas fa-sun text-yellow-500 text-sm" x-show="theme === 'light'" style="display: none;"></i>
-                    <i class="fas fa-moon text-cyan-400 text-sm" x-show="theme === 'dark'" style="display: none;"></i>
+                    <i class="fas fa-moon text-gray-500 text-sm" x-show="theme === 'light'" style="display: none;"></i>
+                    <i class="fas fa-sun text-yellow-500 text-sm" x-show="theme === 'dark'" style="display: none;"></i>
                 </button>
 
                 {{-- Notifications --}}
@@ -263,7 +266,7 @@
                                 class="absolute top-0 right-0 inline-flex items-center justify-center w-2 h-2 rounded-full animate-ping"
                                 style="background-color: var(--accent)"></span>
                             <span
-                                class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold leading-none text-black rounded-full shadow-sm"
+                                class="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold leading-none text-black dark:text-white rounded-full shadow-sm"
                                 style="background-color: var(--accent); color: #000">
                                 {{ auth()->user()->unreadNotifications->count() }}
                             </span>
@@ -283,7 +286,7 @@
                         </div>
                         <div class="max-h-80 overflow-y-auto custom-scroll">
                             @forelse(auth()->user()->unreadNotifications as $notification)
-                                <div class="p-4 border-b transition-colors {{ $notification->read_at ? 'opacity-60' : '' }}"
+                                <div class="p-4 border-b transition-colors {{ $notification->read_at ?'opacity-60' : '' }}"
                                     style="border-color: var(--border); background-color: {{ $notification->read_at ? 'transparent' : 'rgba(0, 243, 255, 0.05)' }}">
                                     <div class="flex gap-3">
                                         <div class="flex-shrink-0 mt-1">
@@ -343,7 +346,7 @@
             {{-- Sidebar --}}
             <aside
                 class="w-64 border-r flex flex-col fixed h-full pb-16 overflow-y-auto z-50 transition-transform duration-300 transform md:translate-x-0 glass-panel"
-                style="border-color: var(--border)" :class="mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'">
+                style="border-color: var(--border)" :class="mobileMenuOpen ?'translate-x-0' : '-translate-x-full'">
 
                 <nav class="flex-1 py-8 space-y-2 px-3">
 
@@ -370,7 +373,7 @@
                                 <span class="text-sm ml-3 font-medium">Projects</span>
                             </div>
                             <i class="fas fa-chevron-right text-[10px] transition-transform duration-300"
-                                :class="{ 'rotate-90': projectsOpen }"></i>
+                                :class="{'rotate-90': projectsOpen }"></i>
                         </button>
 
                         <div x-show="projectsOpen" x-collapse class="space-y-1 overflow-hidden">
@@ -385,7 +388,7 @@
                                         <span class="text-xs font-bold ml-2">Generation Team Projects</span>
                                     </div>
                                     <i class="fas fa-chevron-right text-[8px] transition-transform duration-300"
-                                        :class="{ 'rotate-90': gradOpen }"></i>
+                                        :class="{'rotate-90': gradOpen }"></i>
                                 </button>
 
                                 <div x-show="gradOpen" x-collapse class="pl-10 mt-1 space-y-1 border-l-2 ml-6"
@@ -459,7 +462,7 @@
                                     <span class="text-sm ml-3">User Management</span>
                                 </div>
                                 <i class="fas fa-chevron-right text-[10px] transition-transform duration-300"
-                                    :class="{ 'rotate-90': userMgmtOpen }"></i>
+                                    :class="{'rotate-90': userMgmtOpen }"></i>
                             </button>
 
                             <div x-show="userMgmtOpen" x-collapse class="space-y-1 overflow-hidden">
@@ -503,7 +506,7 @@
                     <div class="mt-auto px-4 space-y-2">
                         {{-- Mobile Profile Link (since hidden in header) --}}
                         <a href="{{ route('profile.show') }}"
-                            class="md:hidden flex items-center justify-center gap-2 text-gray-500 hover:bg-gray-500/10 font-bold text-sm w-full py-3 rounded-xl transition border border-transparent hover:border-gray-500/50">
+                            class="md:hidden flex items-center justify-center gap-2 text-gray-500 dark:text-gray-400 hover:bg-gray-500/10 font-bold text-sm w-full py-3 rounded-xl transition border border-transparent hover:border-gray-500/50">
                             <i class="fas fa-user-circle"></i>
                             <span>My Profile</span>
                         </a>

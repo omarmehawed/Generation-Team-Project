@@ -5,8 +5,8 @@
     </div>
 
     <div
-        class="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 md:p-8 border-t md:border border-gray-200 transform transition-all">
-        <h3 class="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+        class="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 md:p-8 border-t md:border border-gray-200 dark:border-gray-700 transform transition-all">
+        <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200 flex items-center gap-2">
             <i class="fas fa-hand-holding-usd text-amber-500"></i> Request Wallet Deposit
         </h3>
 
@@ -21,11 +21,11 @@
                         <input type="radio" name="payment_method" value="cash" class="peer hidden" checked
                             x-model="method">
                         <div
-                            class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all group-hover:bg-gray-50">
+                            class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all group-hover:bg-gray-50">
                             <i
                                 class="fas fa-money-bill-wave text-lg mb-1 block text-gray-400 group-hover:text-amber-500 peer-checked:text-amber-500"></i>
                             <p
-                                class="text-[10px] font-bold text-gray-600 peer-checked:text-amber-600">
+                                class="text-[10px] font-bold text-gray-600 dark:text-gray-400 peer-checked:text-amber-600">
                                 Cash</p>
                         </div>
                     </label>
@@ -33,22 +33,22 @@
                         <input type="radio" name="payment_method" value="vodafone_cash" class="peer hidden"
                             x-model="method">
                         <div
-                            class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-red-500 peer-checked:bg-red-50 transition-all group-hover:bg-gray-50">
+                            class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-red-500 peer-checked:bg-red-50 transition-all group-hover:bg-gray-50">
                             <i
                                 class="fas fa-mobile-alt text-lg mb-1 block text-gray-400 group-hover:text-red-500 peer-checked:text-red-500"></i>
                             <p
-                                class="text-[10px] font-bold text-gray-600 peer-checked:text-red-600">
+                                class="text-[10px] font-bold text-gray-600 dark:text-gray-400 peer-checked:text-red-600">
                                 V. Cash</p>
                         </div>
                     </label>
                     <label class="cursor-pointer group">
                         <input type="radio" name="payment_method" value="instapay" class="peer hidden" x-model="method">
                         <div
-                            class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all group-hover:bg-gray-50">
+                            class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all group-hover:bg-gray-50">
                             <i
                                 class="fas fa-university text-lg mb-1 block text-gray-400 group-hover:text-purple-500 peer-checked:text-purple-500"></i>
                             <p
-                                class="text-[10px] font-bold text-gray-600 peer-checked:text-purple-600">
+                                class="text-[10px] font-bold text-gray-600 dark:text-gray-400 peer-checked:text-purple-600">
                                 InstaPay</p>
                         </div>
                     </label>
@@ -60,7 +60,7 @@
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">£</span>
                     <input type="number" name="amount" step="0.01" min="1" required
-                        class="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800"
+                        class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200"
                         placeholder="0.00">
                 </div>
             </div>
@@ -69,7 +69,7 @@
             <div x-show="method === 'cash'" class="mb-5">
                 <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notes</label>
                 <textarea name="notes" rows="2"
-                    class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 text-sm"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm"
                     placeholder="e.g., I handed the money to the leader at university."></textarea>
             </div>
 
@@ -79,7 +79,7 @@
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Transfer Phone
                         Number</label>
                     <input type="text" name="phone_number" :required="method !== 'cash'"
-                        class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 text-sm"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm"
                         placeholder="01XXXXXXXXX">
                 </div>
                 <div class="grid grid-cols-2 gap-4">
@@ -87,26 +87,26 @@
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Transfer
                             Date</label>
                         <input type="date" name="transfer_date" :required="method !== 'cash'"
-                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 text-sm">
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm">
                     </div>
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Transfer
                             Time</label>
                         <input type="time" name="transfer_time" :required="method !== 'cash'"
-                            class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 text-sm">
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm">
                     </div>
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Upload
                         Screenshot</label>
                     <input type="file" name="screenshot" :required="method !== 'cash'"
-                        class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200">
+                        class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-amber-100 file:text-amber-700 hover:file:bg-amber-200">
                 </div>
             </div>
 
             <div class="flex gap-4 mt-8">
                 <button type="button" onclick="closeDepositRequestModal()"
-                    class="flex-1 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors">Cancel</button>
+                    class="flex-1 py-3 bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-sm transition-colors">Cancel</button>
                 <button type="submit"
                     class="flex-1 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-amber-500/20 transition-transform active:scale-95">Submit
                     Request</button>
@@ -122,11 +122,11 @@
     </div>
 
     <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl relative z-10 overflow-hidden border border-gray-200 max-h-[90vh] flex flex-col">
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-4xl relative z-10 overflow-hidden border border-gray-200 dark:border-gray-700 max-h-[90vh] flex flex-col">
         <div
-            class="p-6 border-b border-gray-100 space-y-4 bg-gray-50">
+            class="p-6 border-b border-gray-100 dark:border-gray-700 space-y-4 bg-gray-50 dark:bg-gray-900">
             <div class="flex justify-between items-center">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                     <i class="fas fa-list-alt text-indigo-500"></i> Pending Deposit Requests
                 </h3>
                 <button onclick="closeRequestsListModal()" class="text-gray-400 hover:text-red-500 transition-colors">
@@ -139,7 +139,7 @@
                 <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
                 <input type="text" x-model="searchQuery" 
                        placeholder="Search by Name or Academic Number..."
-                       class="w-full pl-10 pr-4 py-2 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-gray-700 transition-all">
+                       class="w-full pl-10 pr-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm text-gray-700 dark:text-gray-300 transition-all">
             </div>
         </div>
 
@@ -168,14 +168,14 @@
                 <div class="space-y-4">
                     <template x-for="req in filteredRequests" :key="req.id">
                         <div
-                            class="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex flex-col md:flex-row justify-between items-center gap-4">
+                            class="p-4 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 flex flex-col md:flex-row justify-between items-center gap-4">
                             <div class="flex items-center gap-4 w-full md:w-auto">
                                 <div
                                     class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-sm">
                                     <img :src="req.user.profile_photo_url" class="w-full h-full object-cover">
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800" x-text="req.user.name"></p>
+                                    <p class="font-bold text-gray-800 dark:text-gray-200" x-text="req.user.name"></p>
                                     <p class="text-xs text-gray-400 font-mono" x-text="req.user.email"></p>
                                 </div>
                             </div>
@@ -189,7 +189,7 @@
                                 <div class="text-center md:text-right">
                                     <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Method</p>
                                     <span class="px-2 py-1 rounded-lg text-[10px] font-bold uppercase tracking-wider"
-                                        :class="req.payment_method === 'cash' ? 'bg-amber-100 text-amber-700' : (req.payment_method === 'vodafone_cash' ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700')"
+                                        :class="req.payment_method ==='cash' ? 'bg-amber-100 text-amber-700' : (req.payment_method === 'vodafone_cash' ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700')"
                                         x-text="req.payment_method.replace('_', ' ')"></span>
                                 </div>
                                 <button @click="viewDetails(req)"
@@ -210,8 +210,8 @@
     <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" onclick="closeDetailsModal()"></div>
 
     <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-md relative z-10 p-6 md:p-8 border border-gray-200 transform transition-all">
-        <h3 class="text-xl font-bold mb-6 text-gray-800 flex items-center gap-2">
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-md relative z-10 p-6 md:p-8 border border-gray-200 dark:border-gray-700 transform transition-all">
+        <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200 flex items-center gap-2">
             <i class="fas fa-info-circle text-blue-500"></i> Request Details
         </h3>
 
@@ -222,23 +222,23 @@
                         <img :src="request?.user?.profile_photo_url" class="w-full h-full object-cover rounded-full">
                     </div>
                     <div>
-                        <p class="text-lg font-bold text-gray-800" x-text="request?.user?.name"></p>
+                        <p class="text-lg font-bold text-gray-800 dark:text-gray-200" x-text="request?.user?.name"></p>
                         <p class="text-xs text-amber-600 font-black" x-text="'Amount: ' + request?.amount + ' EGP'"></p>
                     </div>
                 </div>
 
                 <div
-                    class="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-3">
+                    class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 space-y-3">
                     <div class="flex justify-between">
                         <span class="text-xs font-bold text-gray-400">METHOD</span>
-                        <span class="text-sm font-black text-gray-700 uppercase"
+                        <span class="text-sm font-black text-gray-700 dark:text-gray-300 uppercase"
                             x-text="request?.payment_method.replace('_', ' ')"></span>
                     </div>
 
                     <template x-if="request?.payment_method === 'cash'">
                         <div>
                             <span class="text-xs font-bold text-gray-400 block mb-1">NOTES</span>
-                            <p class="text-sm text-gray-600 italic" x-text="request?.notes"></p>
+                            <p class="text-sm text-gray-600 dark:text-gray-400 italic" x-text="request?.notes"></p>
                         </div>
                     </template>
 
@@ -246,18 +246,18 @@
                         <div class="space-y-3">
                             <div class="flex justify-between">
                                 <span class="text-xs font-bold text-gray-400">PHONE</span>
-                                <span class="text-sm font-mono font-bold text-gray-700"
+                                <span class="text-sm font-mono font-bold text-gray-700 dark:text-gray-300"
                                     x-text="request?.phone_number || 'N/A'"></span>
                             </div>
                             <div class="flex justify-between">
                                 <span class="text-xs font-bold text-gray-400">DATE/TIME</span>
-                                <span class="text-sm font-bold text-gray-700"
+                                <span class="text-sm font-bold text-gray-700 dark:text-gray-300"
                                     x-text="(request?.transfer_date || 'N/A') + ' ' + (request?.transfer_time || '')"></span>
                             </div>
                             <div x-show="request?.screenshot_url">
                                 <span class="text-xs font-bold text-gray-400 block mb-2">SCREENSHOT</span>
                                 <a :href="request?.screenshot_url" target="_blank"
-                                    class="block rounded-lg overflow-hidden border border-gray-200">
+                                    class="block rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700">
                                     <img :src="request?.screenshot_url"
                                         class="w-full h-48 object-cover hover:scale-105 transition-transform">
                                 </a>
@@ -290,7 +290,7 @@
                         <template x-if="action === 'reject'">
                             <div class="flex gap-4 w-full">
                                 <button type="button" @click="action = 'idle'"
-                                    class="flex-1 py-3 bg-gray-100 text-gray-700 rounded-xl font-bold text-sm">Back</button>
+                                    class="flex-1 py-3 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-sm">Back</button>
                                 <button type="submit" name="action" value="reject"
                                     class="flex-1 py-3 bg-red-600 hover:bg-red-700 text-white rounded-xl font-bold text-sm shadow-lg shadow-red-500/20">Confirm
                                     Reject</button>
@@ -311,9 +311,9 @@
         </div>
 
         <div
-            class="bg-white rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 border-t md:border border-gray-200 transform transition-all flex flex-col max-h-[90vh]">
+            class="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 border-t md:border border-gray-200 dark:border-gray-700 transform transition-all flex flex-col max-h-[90vh]">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+                <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                     <i class="fas fa-layer-group text-amber-500"></i> Bulk Operation
                 </h3>
                 <button @click="closeBulkModal()" class="text-gray-400 hover:text-red-500 transition-colors">
@@ -332,7 +332,7 @@
                         {{-- ID Input --}}
                         <div class="relative">
                             <input type="text" x-model="studentQuery" @keydown.enter.prevent="addStudent()"
-                                class="w-full pl-4 pr-12 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 text-sm"
+                                class="w-full pl-4 pr-12 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm"
                                 placeholder="Type Academic ID and press Enter..." :disabled="loading">
                             <button type="button" @click="addStudent()"
                                 class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"
@@ -345,7 +345,7 @@
 
                         {{-- Selected Students Avatars --}}
                         <div
-                            class="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-xl border border-dashed border-gray-200 min-h-[60px]">
+                            class="flex flex-wrap gap-2 p-2 bg-gray-50 dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-700 min-h-[60px]">
                             <template x-for="(student, index) in selectedStudents" :key="student.id">
                                 <div class="relative group">
                                     <div class="w-10 h-10 rounded-full border-2 border-white overflow-hidden shadow-sm"
@@ -377,18 +377,18 @@
                         <label class="cursor-pointer group">
                             <input type="radio" name="type" value="deposit" class="peer hidden" checked x-model="type">
                             <div
-                                class="p-4 rounded-xl border-2 border-gray-100 text-center peer-checked:border-green-500 peer-checked:bg-green-50 transition-all hover:bg-gray-50">
+                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-green-500 peer-checked:bg-green-50 transition-all hover:bg-gray-50">
                                 <i class="fas fa-plus text-lg mb-1 block text-gray-400 peer-checked:text-green-500"></i>
-                                <p class="text-xs font-bold text-gray-600 peer-checked:text-green-600">
+                                <p class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-green-600">
                                     Deposit</p>
                             </div>
                         </label>
                         <label class="cursor-pointer group">
                             <input type="radio" name="type" value="withdrawal" class="peer hidden" x-model="type">
                             <div
-                                class="p-4 rounded-xl border-2 border-gray-100 text-center peer-checked:border-red-500 peer-checked:bg-red-50 transition-all hover:bg-gray-50">
+                                class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-red-500 peer-checked:bg-red-50 transition-all hover:bg-gray-50">
                                 <i class="fas fa-minus text-lg mb-1 block text-gray-400 peer-checked:text-red-500"></i>
-                                <p class="text-xs font-bold text-gray-600 peer-checked:text-red-600">
+                                <p class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-red-600">
                                     Withdrawal</p>
                             </div>
                         </label>
@@ -400,7 +400,7 @@
                     <div class="relative">
                         <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">£</span>
                         <input type="number" name="amount" step="0.1" min="0.1" required x-model="amount"
-                            class="w-full pl-10 pr-4 py-4 text-2xl font-mono font-black bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 text-gray-800 transition-all placeholder-gray-300"
+                            class="w-full pl-10 pr-4 py-4 text-2xl font-mono font-black bg-gray-50 dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-xl focus:ring-4 focus:ring-amber-500/20 focus:border-amber-500 text-gray-800 dark:text-gray-200 transition-all placeholder-gray-300"
                             placeholder="0.0">
                     </div>
                     {{-- Total Calculation --}}
@@ -414,7 +414,7 @@
 
                 <div class="flex gap-4">
                     <button type="button" @click="closeBulkModal()"
-                        class="flex-1 py-4 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-2xl font-bold text-sm transition-all">
+                        class="flex-1 py-4 bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-700 dark:text-gray-300 rounded-2xl font-bold text-sm transition-all">
                         Cancel
                     </button>
                     <button type="submit" :disabled="selectedStudents.length === 0 || !amount"

@@ -120,16 +120,16 @@
         {{-- Header --}}
         <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
             <div>
-                <h1 class="text-3xl font-black text-gray-800 tracking-tight mb-2">Defense Calendar 📅</h1>
-                <p class="text-gray-500 font-medium text-sm">Manage graduation project defense schedules.</p>
+                <h1 class="text-3xl font-black text-gray-800 dark:text-gray-200 tracking-tight mb-2">Defense Calendar 📅</h1>
+                <p class="text-gray-500 dark:text-gray-400 font-medium text-sm">Manage graduation project defense schedules.</p>
             </div>
-            <div class="bg-white px-5 py-3 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+            <div class="bg-white dark:bg-gray-800 px-5 py-3 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex items-center gap-4">
                 <div class="w-10 h-10 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center">
                     <i class="fas fa-calendar-check"></i>
                 </div>
                 <div>
                     <p class="text-xs uppercase text-gray-400 font-bold tracking-wider">Scheduled</p>
-                    <p class="text-xl font-black text-gray-800">{{ count($scheduledTeams) }} <span
+                    <p class="text-xl font-black text-gray-800 dark:text-gray-200">{{ count($scheduledTeams) }} <span
                             class="text-xs font-normal text-gray-400">Teams</span></p>
                 </div>
             </div>

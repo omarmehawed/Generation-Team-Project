@@ -63,8 +63,8 @@
                   document.documentElement.classList.remove('dark');
               }
           }
-      }" :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }" }"
-    :class="{ 'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }" x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); 
+      }" :class="{'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }" }"
+    :class="{'bg-gray-50 text-gray-900': !darkMode, 'bg-dark text-white': darkMode }" x-init="$watch('darkMode', val => val ? document.documentElement.classList.add('dark') : document.documentElement.classList.remove('dark')); 
             if(!darkMode) document.documentElement.classList.remove('dark');
             
             if(firstError) {
@@ -87,17 +87,17 @@
                     </div>
                     <div>
                         <h1 class="text-xl font-bold font-tech tracking-wider"
-                            :class="{ 'text-gray-900': !darkMode, 'text-white': darkMode }">
+                            :class="{'text-gray-900': !darkMode, 'text-white': darkMode }">
                             GEN<span class="hidden xs:inline">ERATION</span> <span class="text-blue-500">TEAM</span>
                         </h1>
                     </div>
                 </div>
                 <div class="flex items-center gap-4">
                     <button @click="toggleTheme()" class="p-2 rounded-full hover:bg-gray-200/20 transition-colors">
-                        <i class="fas" :class="darkMode ? 'fa-sun text-yellow-400' : 'fa-moon text-gray-600'"></i>
+                        <i class="fas" :class="darkMode ?'fa-sun text-yellow-400' : 'fa-moon text-gray-600'"></i>
                     </button>
                     <a href="/" class="text-sm font-bold hover:text-blue-500 transition-colors"
-                        :class="{ 'text-gray-600': !darkMode, 'text-gray-300': darkMode }">
+                        :class="{'text-gray-600': !darkMode, 'text-gray-300': darkMode }">
                         <i class="fas fa-arrow-right ml-2"></i> <span class="hidden sm:inline">Back to Home</span>
                     </a>
                 </div>
@@ -135,13 +135,13 @@
             @endif
 
             <div class="bg-gray-800/80 backdrop-blur-xl rounded-3xl shadow-2xl overflow-hidden border border-gray-700"
-                :class="{ 'bg-white/90 border-gray-200 shadow-xl': !darkMode, 'bg-gray-800/80 border-gray-700': darkMode }">
+                :class="{'bg-white/90 border-gray-200 shadow-xl': !darkMode, 'bg-gray-800/80 border-gray-700': darkMode }">
 
                 <!-- Header -->
-                <div class="px-8 py-8 border-b" :class="{ 'border-gray-200': !darkMode, 'border-gray-700': darkMode }">
+                <div class="px-8 py-8 border-b" :class="{'border-gray-200': !darkMode, 'border-gray-700': darkMode }">
                     <h2 class="text-3xl font-bold text-center mb-2"
-                        :class="{ 'text-gray-900': !darkMode, 'text-white': darkMode }">Join Our Team</h2>
-                    <p class="text-center text-sm" :class="{ 'text-gray-500': !darkMode, 'text-gray-400': darkMode }">
+                        :class="{'text-gray-900': !darkMode, 'text-white': darkMode }">Join Our Team</h2>
+                    <p class="text-center text-sm" :class="{'text-gray-500': !darkMode, 'text-gray-400': darkMode }">
                         Complete the form below to become a student of Generation Team.</p>
                 </div>
 
@@ -159,10 +159,10 @@
                             <!-- Photo Upload -->
                             <div class="col-span-2" x-data="{ preview: null }">
                                 <label class="block text-sm font-bold mb-2"
-                                    :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Formal Photo</label>
+                                    :class="darkMode ?'text-gray-300' : 'text-gray-700'">Formal Photo</label>
                                 <div class="flex items-center gap-6">
                                     <div class="w-24 h-24 rounded-full border-2 border-dashed flex items-center justify-center overflow-hidden relative"
-                                        :class="darkMode ? 'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-100'">
+                                        :class="darkMode ?'border-gray-600 bg-gray-800' : 'border-gray-300 bg-gray-100'">
                                         <template x-if="!preview">
                                             <i class="fas fa-camera text-2xl text-gray-400"></i>
                                         </template>
@@ -179,7 +179,7 @@
                                             <input type="file" name="photo" class="hidden" accept="image/*"
                                                 @change="preview = URL.createObjectURL($event.target.files[0])">
                                         </label>
-                                        <p class="mt-2 text-xs text-gray-500">JPG, PNG or GIF. Max size 100MB.</p>
+                                        <p class="mt-2 text-xs text-gray-500 dark:text-gray-400">JPG, PNG or GIF. Max size 100MB.</p>
                                     </div>
                                 </div>
                             </div>
@@ -188,10 +188,10 @@
                     <!-- Full Name -->
                     <div class="col-span-2">
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(الأسم بالعربي)Full Name</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">(الأسم بالعربي)Full Name</label>
                         <input type="text" name="full_name" required value="{{ old('full_name') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('full_name') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
                         @error('full_name')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -218,7 +218,7 @@
                             }
                         }" x-init="if(nationalId) checkDuplicate()">
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(الرقم القومي)National ID</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">(الرقم القومي)National ID</label>
                         <input type="text" name="national_id" required x-model="nationalId"
                             @input.debounce.500ms="checkDuplicate"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('national_id') border-red-500 @enderror"
@@ -241,10 +241,10 @@
                     <!-- Academic ID -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(الرقم الأكاديمي)Academic ID</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">(الرقم الأكاديمي)Academic ID</label>
                         <input type="text" name="academic_id" required value="{{ old('academic_id') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('academic_id') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
                         @error('academic_id')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -253,10 +253,10 @@
                     <!-- Date of Birth -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">(تاريخ الميلاد)Date of Birth</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">(تاريخ الميلاد)Date of Birth</label>
                         <input type="date" name="date_of_birth" required value="{{ old('date_of_birth') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('date_of_birth') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
                         @error('date_of_birth')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -265,10 +265,10 @@
                     <!-- Group -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Group</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">Group</label>
                         <select name="group" required
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors appearance-none @error('group') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500 bg-gray-800' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="darkMode ?'border-gray-600 text-white focus:border-blue-500 bg-gray-800' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
                             <option value="" disabled selected>Select Group</option>
                             <option value="G1" {{ old('group') == 'G1' ? 'selected' : '' }}>G1</option>
                             <option value="G2" {{ old('group') == 'G2' ? 'selected' : '' }}>G2</option>
@@ -284,10 +284,10 @@
                     <!-- Phone -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Phone Number</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">Phone Number</label>
                         <input type="text" name="phone_number" required value="{{ old('phone_number') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('phone_number') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
                         @error('phone_number')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -296,10 +296,10 @@
                     <!-- WhatsApp -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">WhatsApp Number</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">WhatsApp Number</label>
                         <input type="text" name="whatsapp_number" required value="{{ old('whatsapp_number') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('whatsapp_number') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
                         @error('whatsapp_number')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -308,11 +308,11 @@
                     <!-- Address -->
                     <div>
                         <label class="block text-sm font-bold mb-2"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Address (العنوان)</label>
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">Address (العنوان)</label>
                         <input type="text" name="address" required placeholder="City, Street, Building No."
                             value="{{ old('address') }}"
                             class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors @error('address') border-red-500 @enderror"
-                            :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
+                            :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'">
                         @error('address')
                             <p class="text-red-500 text-xs mt-1">{{ $message }}</p>
                         @enderror
@@ -321,17 +321,17 @@
                     <!-- Dorm Status -->
                     <div>
                         <label class="block text-sm font-bold mb-3"
-                            :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Are you staying in a
-                            dorm/hostel? <span class="text-xs text-gray-500">(هل تسكن بسكن
+                            :class="darkMode ?'text-gray-300' : 'text-gray-700'">Are you staying in a
+                            dorm/hostel? <span class="text-xs text-gray-500 dark:text-gray-400">(هل تسكن بسكن
                                 جامعي؟)</span></label>
                         <div class="flex gap-6 pt-2">
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" name="is_dorm" value="1" class="w-5 h-5 text-blue-600">
-                                <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">Yes</span>
+                                <span :class="darkMode ?'text-gray-300' : 'text-gray-700'">Yes</span>
                             </label>
                             <label class="flex items-center gap-2 cursor-pointer">
                                 <input type="radio" name="is_dorm" value="0" checked class="w-5 h-5 text-blue-600">
-                                <span :class="darkMode ? 'text-gray-300' : 'text-gray-700'">No</span>
+                                <span :class="darkMode ?'text-gray-300' : 'text-gray-700'">No</span>
                             </label>
                         </div>
                         @error('is_dorm')
@@ -356,7 +356,7 @@
                         </h3>
                         @foreach ($questions as $q)
                             <div x-show="shouldShow({{ $q->toJson() }})" class="mb-8" x-transition>
-                                <label class="block text-sm font-bold mb-3" :class="darkMode ? 'text-gray-300' : 'text-gray-700'">
+                                <label class="block text-sm font-bold mb-3" :class="darkMode ?'text-gray-300' : 'text-gray-700'">
                                     {{ $q->question_text }}
                                     @if($q->is_required) <span class="text-red-500">*</span> @endif
                                 </label>
@@ -365,21 +365,21 @@
                                     <input type="text" name="answers[{{ $q->id }}]" 
                                         @input="answers[{{ $q->id }}] = $event.target.value"
                                         class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
-                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
                                         {{ $q->is_required ? 'required' : '' }}>
 
                                 @elseif($q->question_type === 'textarea')
                                     <textarea name="answers[{{ $q->id }}]" rows="3"
                                         @input="answers[{{ $q->id }}] = $event.target.value"
                                         class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
-                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
                                         {{ $q->is_required ? 'required' : '' }}></textarea>
 
                                 @elseif($q->question_type === 'radio')
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                         @foreach($q->options as $opt)
                                             <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-blue-600/10"
-                                                :class="darkMode ? 'border-gray-700 bg-gray-800/40 text-gray-300' : 'border-gray-200 bg-white text-gray-700'">
+                                                :class="darkMode ?'border-gray-700 bg-gray-800/40 text-gray-300' : 'border-gray-200 bg-white text-gray-700'">
                                                 <input type="radio" name="answers[{{ $q->id }}]" value="{{ $opt }}"
                                                     @change="answers[{{ $q->id }}] = '{{ $opt }}'"
                                                     class="w-5 h-5 text-blue-600" {{ $q->is_required ? 'required' : '' }}>
@@ -392,7 +392,7 @@
                                     <select name="answers[{{ $q->id }}]"
                                         @change="answers[{{ $q->id }}] = $event.target.value"
                                         class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
-                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
                                         {{ $q->is_required ? 'required' : '' }}>
                                         <option value="">Select an option</option>
                                         @foreach($q->options as $opt)
@@ -404,7 +404,7 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3" x-data="{ selected: [] }">
                                         @foreach($q->options as $opt)
                                             <label class="flex items-center gap-3 p-3 rounded-xl border cursor-pointer transition-all hover:bg-blue-600/10"
-                                                :class="darkMode ? 'border-gray-700 bg-gray-800/40 text-gray-300' : 'border-gray-200 bg-white text-gray-700'">
+                                                :class="darkMode ?'border-gray-700 bg-gray-800/40 text-gray-300' : 'border-gray-200 bg-white text-gray-700'">
                                                 <input type="checkbox" name="answers[{{ $q->id }}][]" value="{{ $opt }}"
                                                     @change="if($event.target.checked) selected.push('{{ $opt }}'); else selected = selected.filter(v => v !== '{{ $opt }}'); answers[{{ $q->id }}] = selected"
                                                     class="w-5 h-5 text-blue-600 rounded">
@@ -417,29 +417,29 @@
                                     <input type="date" name="answers[{{ $q->id }}]"
                                         @input="answers[{{ $q->id }}] = $event.target.value"
                                         class="w-full px-4 py-3 rounded-lg bg-transparent border focus:outline-none transition-colors"
-                                        :class="darkMode ? 'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
+                                        :class="darkMode ?'border-gray-600 text-white focus:border-blue-500' : 'border-gray-300 text-gray-900 focus:border-blue-500 bg-gray-50'"
                                         {{ $q->is_required ? 'required' : '' }}>
 
                                 @elseif($q->question_type === 'scale')
-                                    <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-gray-200">
-                                        <span class="text-xs text-gray-500">Poor</span>
+                                    <div class="flex items-center justify-between bg-slate-50 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Poor</span>
                                         <div class="flex gap-4">
                                             @for($i=1; $i<=5; $i++)
                                                 <label class="flex flex-col items-center gap-1 cursor-pointer">
                                                     <input type="radio" name="answers[{{ $q->id }}]" value="{{ $i }}"
                                                         @change="answers[{{ $q->id }}] = '{{ $i }}'"
                                                         class="w-6 h-6 text-blue-600" {{ $q->is_required ? 'required' : '' }}>
-                                                    <span class="text-xs font-bold" :class="darkMode ? 'text-gray-400' : 'text-gray-600'">{{ $i }}</span>
+                                                    <span class="text-xs font-bold" :class="darkMode ?'text-gray-400' : 'text-gray-600'">{{ $i }}</span>
                                                 </label>
                                             @endfor
                                         </div>
-                                        <span class="text-xs text-gray-500">Excellent</span>
+                                        <span class="text-xs text-gray-500 dark:text-gray-400">Excellent</span>
                                     </div>
 
                                 @elseif($q->question_type === 'matrix')
-                                    <div class="overflow-x-auto rounded-xl border border-gray-200">
+                                    <div class="overflow-x-auto rounded-xl border border-gray-200 dark:border-gray-700">
                                         <table class="w-full text-sm">
-                                            <thead :class="darkMode ? 'bg-gray-800' : 'bg-gray-50'">
+                                            <thead :class="darkMode ?'bg-gray-800' : 'bg-gray-50'">
                                                 <tr>
                                                     <th class="p-3 text-left">Item</th>
                                                     @foreach($q->options['cols'] as $col)
@@ -450,7 +450,7 @@
                                             <tbody class="divide-y divide-gray-100">
                                                 @foreach($q->options['rows'] as $row)
                                                     <tr>
-                                                        <td class="p-3 font-bold" :class="darkMode ? 'text-gray-300' : 'text-gray-700'">{{ $row }}</td>
+                                                        <td class="p-3 font-bold" :class="darkMode ?'text-gray-300' : 'text-gray-700'">{{ $row }}</td>
                                                         @foreach($q->options['cols'] as $col)
                                                             <td class="p-3 text-center">
                                                                 <input type="radio" name="answers[{{ $q->id }}][{{ $row }}]" value="{{ $col }}" 

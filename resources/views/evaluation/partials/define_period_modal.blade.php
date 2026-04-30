@@ -1,12 +1,12 @@
 {{-- Define New Week Modal --}}
 <div id="definePeriodModal" class="fixed inset-0 z-[9999] hidden items-center justify-center p-4">
     <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md" onclick="closeModal('definePeriodModal')"></div>
-    <div class="relative bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100" id="definePeriodModalContent">
+    <div class="relative bg-white dark:bg-gray-800 rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100 dark:border-gray-700" id="definePeriodModalContent">
         
         {{-- Header --}}
-        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+        <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50">
             <div>
-                <h3 class="text-xl font-black text-gray-800">Define New Week</h3>
+                <h3 class="text-xl font-black text-gray-800 dark:text-gray-200">Define New Week</h3>
                 <p class="text-[10px] text-indigo-500 font-bold uppercase tracking-widest mt-1">Manual Evaluation Period</p>
             </div>
             <button onclick="closeModal('definePeriodModal')" class="w-10 h-10 rounded-xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-all">
@@ -25,7 +25,7 @@
                         <i class="fas fa-hashtag text-xs"></i>
                     </div>
                     <input type="number" name="week_number" required min="1" value="{{ ($allPeriods->first()?->week_number ?? 0) + 1 }}"
-                        class="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 text-sm font-bold text-gray-800 transition-all">
+                        class="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all">
                 </div>
             </div>
 
@@ -38,7 +38,7 @@
                             <i class="far fa-calendar-alt text-xs"></i>
                         </div>
                         <input type="date" name="start_date" required value="{{ now()->format('Y-m-d') }}"
-                            class="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 text-sm font-bold text-gray-800 transition-all">
+                            class="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all">
                     </div>
                 </div>
 
@@ -50,7 +50,7 @@
                             <i class="far fa-calendar-check text-xs"></i>
                         </div>
                         <input type="date" name="end_date" required value="{{ now()->addDays(6)->format('Y-m-d') }}"
-                            class="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 text-sm font-bold text-gray-800 transition-all">
+                            class="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-100 dark:border-gray-700 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 text-sm font-bold text-gray-800 dark:text-gray-200 transition-all">
                     </div>
                 </div>
             </div>

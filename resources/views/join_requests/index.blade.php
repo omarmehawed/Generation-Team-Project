@@ -35,7 +35,7 @@
                     </p>
                 </div>
                 
-                <div class="flex flex-wrap items-center gap-3 bg-white p-2 rounded-2xl shadow-sm border border-slate-100">
+                <div class="flex flex-wrap items-center gap-3 bg-white dark:bg-gray-800 p-2 rounded-2xl shadow-sm border border-slate-100">
                     <!-- Export Button -->
                     <button type="button" @click="exportModal = true"
                         class="px-5 py-2.5 bg-slate-100/50 text-slate-700 rounded-xl hover:bg-slate-200 transition-all shadow-sm font-bold text-sm flex items-center gap-2">
@@ -65,12 +65,12 @@
                             }
                          }">
                         <button type="button" @click="toggle()" 
-                                :class="enabled ? 'bg-emerald-500 shadow-emerald-500/40' : 'bg-slate-300'"
+                                :class="enabled ?'bg-emerald-500 shadow-emerald-500/40' : 'bg-slate-300'"
                                 class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none shadow-sm">
-                            <span :class="enabled ? 'translate-x-5' : 'translate-x-0'"
-                                  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out"></span>
+                            <span :class="enabled ?'translate-x-5' : 'translate-x-0'"
+                                  class="pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white dark:bg-gray-800 shadow ring-0 transition duration-200 ease-in-out"></span>
                         </button>
-                        <span class="text-[10px] font-black tracking-widest uppercase" :class="enabled ? 'text-emerald-500' : 'text-slate-400'" x-text="enabled ? 'Accepting' : 'Paused'"></span>
+                        <span class="text-[10px] font-black tracking-widest uppercase" :class="enabled ?'text-emerald-500' : 'text-slate-400'" x-text="enabled ? 'Accepting' : 'Paused'"></span>
                     </div>
                 </div>
             </div>
@@ -78,7 +78,7 @@
             <!-- Highly Polished Analytics Cards -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 lg:gap-6 mb-8">
                 <!-- Total -->
-                <div class="bg-white border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="bg-white dark:bg-gray-800 border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-blue-500/5 rounded-full blur-2xl group-hover:bg-blue-500/10 transition-colors"></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Total Apps</p>
                     <div class="flex items-end justify-between relative z-10">
@@ -90,7 +90,7 @@
                 </div>
 
                 <!-- Pending -->
-                <div class="bg-white border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="bg-white dark:bg-gray-800 border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-amber-500/5 rounded-full blur-2xl group-hover:bg-amber-500/10 transition-colors"></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Pending</p>
                     <div class="flex items-end justify-between relative z-10">
@@ -102,7 +102,7 @@
                 </div>
 
                 <!-- Approved -->
-                <div class="bg-white border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="bg-white dark:bg-gray-800 border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-emerald-500/5 rounded-full blur-2xl group-hover:bg-emerald-500/10 transition-colors"></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Approved</p>
                     <div class="flex items-end justify-between relative z-10">
@@ -114,7 +114,7 @@
                 </div>
 
                 <!-- Rejected -->
-                <div class="bg-white border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
+                <div class="bg-white dark:bg-gray-800 border border-slate-100 rounded-[1.5rem] p-5 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group">
                     <div class="absolute top-0 right-0 w-24 h-24 bg-rose-500/5 rounded-full blur-2xl group-hover:bg-rose-500/10 transition-colors"></div>
                     <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Rejected</p>
                     <div class="flex items-end justify-between relative z-10">
@@ -127,7 +127,7 @@
             </div>
 
             <!-- Toolbar / Search Engine -->
-            <form method="GET" action="{{ route('join.admin') }}" onsubmit="handleAjaxFormSubmit(event)" class="bg-white border border-slate-200 p-2 sm:p-3 rounded-2xl shadow-sm flex flex-col md:flex-row items-center gap-3 relative z-20 w-full mb-6">
+            <form method="GET" action="{{ route('join.admin') }}" onsubmit="handleAjaxFormSubmit(event)" class="bg-white dark:bg-gray-800 border border-slate-200 p-2 sm:p-3 rounded-2xl shadow-sm flex flex-col md:flex-row items-center gap-3 relative z-20 w-full mb-6">
                 <!-- Search Input -->
                 <div class="flex-1 w-full relative group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -155,7 +155,7 @@
         </div>
 
         <!-- NEW POLISHED TABLE LAYOUT FOR DESKTOP -->
-        <div class="hidden lg:block bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+        <div class="hidden lg:block bg-white dark:bg-gray-800 border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full whitespace-nowrap text-left border-collapse">
                     <thead class="bg-slate-50/80 border-b border-slate-200">
@@ -234,7 +234,7 @@
                                         @endif
 
                                         <div class="text-[10px] font-bold text-slate-400 flex items-center gap-1 uppercase tracking-wider">
-                                            <i class="fas text-[10px] {{ $request->is_dorm == 1 ? 'fa-building text-blue-400' : 'fa-home' }}"></i>
+                                            <i class="fas text-[10px] {{ $request->is_dorm == 1 ?'fa-building text-blue-400' : 'fa-home' }}"></i>
                                             {{ $request->is_dorm == 1 ? 'Dorm' : 'Offline' }}
                                         </div>
                                     </div>
@@ -254,7 +254,7 @@
                                                 Accept
                                             </button>
                                             <button @click="openRejectModal({{ $request }})"
-                                                    class="px-3 h-8 bg-white border border-slate-200 text-slate-600 rounded-lg hover:border-rose-300 hover:text-rose-600 font-bold text-xs transition-all">
+                                                    class="px-3 h-8 bg-white dark:bg-gray-800 border border-slate-200 text-slate-600 rounded-lg hover:border-rose-300 hover:text-rose-600 font-bold text-xs transition-all">
                                                 Reject
                                             </button>
                                         @endif
@@ -280,7 +280,7 @@
         <!-- MOBILE CARDS (Only visible on small/medium screens) -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 lg:hidden">
             @forelse($requests as $request)
-                <div class="bg-white rounded-[1.5rem] border border-slate-200 shadow-sm p-5 flex flex-col relative">
+                <div class="bg-white dark:bg-gray-800 rounded-[1.5rem] border border-slate-200 shadow-sm p-5 flex flex-col relative">
                     <!-- Mobile Avatar & Header -->
                     <div class="flex items-start gap-4 mb-4">
                         <div class="w-12 h-12 rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shrink-0">
@@ -331,7 +331,7 @@
                                 <i class="fas fa-eye text-sm"></i>
                             </button>
                             <button @click="openRejectModal({{ $request }})"
-                                    class="flex-1 h-10 bg-white border border-slate-200 text-slate-700 rounded-xl font-bold text-xs">
+                                    class="flex-1 h-10 bg-white dark:bg-gray-800 border border-slate-200 text-slate-700 rounded-xl font-bold text-xs">
                                 Reject
                             </button>
                             <button @click="openApproveModal({{ $request }})"
@@ -347,7 +347,7 @@
                     </div>
                 </div>
             @empty
-                <div class="col-span-full py-10 text-center text-slate-500 border border-slate-200 rounded-2xl bg-white">
+                <div class="col-span-full py-10 text-center text-slate-500 border border-slate-200 rounded-2xl bg-white dark:bg-gray-800">
                     No requests found.
                 </div>
             @endforelse
@@ -355,7 +355,7 @@
 
         <!-- Pagination -->
         <div class="mt-8 flex justify-center w-full">
-            <div class="w-full bg-white border border-slate-200 rounded-2xl p-4 shadow-sm overflow-hidden">
+            <div class="w-full bg-white dark:bg-gray-800 border border-slate-200 rounded-2xl p-4 shadow-sm overflow-hidden">
                 {{ $requests->links() }}
             </div>
         </div>
@@ -372,7 +372,7 @@
             
             <div class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm transition-opacity" @click="exportModal = false"></div>
             
-            <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
+            <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-lg relative z-10 overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
                 <div class="px-6 py-5 border-b border-slate-100 bg-slate-50 text-slate-900 flex justify-between items-center">
                     <h3 class="text-lg font-bold flex items-center gap-3">
                         <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
@@ -426,7 +426,7 @@
                             @foreach(['full_name' => 'Full Name', 'national_id' => 'National ID', 'academic_id' => 'Academic ID', 'phone_number' => 'Phone', 'whatsapp_number' => 'WhatsApp', 'address' => 'Address', 'date_of_birth' => 'Date of Birth', 'status' => 'Status'] as $col => $label)
                                 <label class="cursor-pointer group relative">
                                     <input type="checkbox" name="columns[]" value="{{ $col }}" checked class="peer sr-only">
-                                    <div class="px-3 py-2.5 rounded-xl border border-slate-200 bg-white flex flex-row items-center gap-3 transition-all peer-checked:border-blue-500 peer-checked:shadow-sm">
+                                    <div class="px-3 py-2.5 rounded-xl border border-slate-200 bg-white dark:bg-gray-800 flex flex-row items-center gap-3 transition-all peer-checked:border-blue-500 peer-checked:shadow-sm">
                                         <div class="w-5 h-5 rounded flex items-center justify-center border border-slate-300 bg-slate-50 peer-checked:bg-blue-500 peer-checked:border-transparent text-white transition-colors shrink-0">
                                             <i class="fas fa-check text-[10px]"></i>
                                         </div>
@@ -452,7 +452,7 @@
                 <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm transition-opacity" 
                      x-transition.opacity duration.300ms @click="viewModalOpen = false"></div>
                 
-                <div class="relative bg-white w-full max-w-sm sm:max-w-xl md:max-w-3xl rounded-[1.5rem] shadow-2xl overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
+                <div class="relative bg-white dark:bg-gray-800 w-full max-w-sm sm:max-w-xl md:max-w-3xl rounded-[1.5rem] shadow-2xl overflow-hidden border border-slate-200 flex flex-col max-h-[90vh]">
                     
                     <div class="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 bg-slate-50">
                         <h3 class="text-base sm:text-lg font-bold text-slate-800 flex items-center gap-2">
@@ -544,7 +544,7 @@
                                                 <template x-if="typeof value === 'object' && value !== null">
                                                     <div class="space-y-1.5 mt-2">
                                                         <template x-for="(subVal, subKey) in value" :key="subKey">
-                                                            <div class="flex justify-between items-center bg-white border border-slate-200 px-2.5 py-1.5 rounded-lg shadow-sm">
+                                                            <div class="flex justify-between items-center bg-white dark:bg-gray-800 border border-slate-200 px-2.5 py-1.5 rounded-lg shadow-sm">
                                                                 <span class="text-[10px] text-slate-500" x-text="subKey"></span>
                                                                 <span class="text-[10px] font-bold text-slate-900" x-text="subVal"></span>
                                                             </div>
@@ -564,11 +564,11 @@
                         </div>
 
                         <!-- Footer Actions -->
-                        <div class="bg-white border-t border-slate-200 p-3 sm:p-4 rounded-b-[1.5rem]">
+                        <div class="bg-white dark:bg-gray-800 border-t border-slate-200 p-3 sm:p-4 rounded-b-[1.5rem]">
                             <template x-if="selectedRequest.status === 'pending'">
                                 <div class="flex gap-2">
                                     <button @click="viewModalOpen = false; openRejectModal(selectedRequest)"
-                                            class="w-1/3 py-3 bg-white border-2 border-slate-200 text-slate-700 rounded-[1rem] text-sm font-bold hover:border-rose-400 hover:text-rose-600 transition-colors">
+                                            class="w-1/3 py-3 bg-white dark:bg-gray-800 border-2 border-slate-200 text-slate-700 rounded-[1rem] text-sm font-bold hover:border-rose-400 hover:text-rose-600 transition-colors">
                                         Reject
                                     </button>
                                     <button @click="viewModalOpen = false; openApproveModal(selectedRequest)"
@@ -591,7 +591,7 @@
             <div class="flex items-center justify-center min-h-screen p-4 text-center">
                 <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm transition-opacity" @click="approveModalOpen = false"></div>
                 
-                <div class="inline-block bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all align-middle max-w-sm w-full border border-slate-200">
+                <div class="inline-block bg-white dark:bg-gray-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all align-middle max-w-sm w-full border border-slate-200">
                     <form method="POST" :action="'/join-requests/' + selectedRequest?.id + '/store-user'" onsubmit="return handleAjaxFormSubmit(event)">
                         @csrf
                         <div class="p-6">
@@ -622,7 +622,7 @@
                             </div>
                         </div>
                         <div class="bg-slate-50 p-5 flex gap-3 border-t border-slate-100 rounded-b-3xl">
-                            <button type="button" @click="approveModalOpen = false" class="flex-1 py-3.5 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold text-sm transition-colors hover:bg-slate-50">Cancel</button>
+                            <button type="button" @click="approveModalOpen = false" class="flex-1 py-3.5 bg-white dark:bg-gray-800 border border-slate-200 text-slate-700 rounded-2xl font-bold text-sm transition-colors hover:bg-slate-50">Cancel</button>
                             <button type="submit" class="flex-1 py-3.5 bg-blue-600 text-white rounded-2xl font-bold text-sm shadow-md transition-colors hover:bg-blue-700">Accept</button>
                         </div>
                     </form>
@@ -635,7 +635,7 @@
             <div class="flex items-center justify-center min-h-screen p-4 text-center">
                 <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm transition-opacity" @click="rejectModalOpen = false"></div>
                 
-                <div class="inline-block bg-white rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all align-middle max-w-sm w-full border border-slate-200">
+                <div class="inline-block bg-white dark:bg-gray-800 rounded-3xl text-left overflow-hidden shadow-2xl transform transition-all align-middle max-w-sm w-full border border-slate-200">
                     <form method="POST" :action="'/join-requests/' + selectedRequest?.id + '/reject'" onsubmit="return handleAjaxFormSubmit(event)">
                         @csrf
                         <div class="p-6">
@@ -648,7 +648,7 @@
                             </div>
                         </div>
                         <div class="bg-slate-50 p-5 flex gap-3 border-t border-slate-100 rounded-b-3xl">
-                            <button type="button" @click="rejectModalOpen = false" class="flex-1 py-3.5 bg-white border border-slate-200 text-slate-700 rounded-2xl font-bold text-sm transition-colors hover:border-slate-300 hover:text-slate-900">Cancel</button>
+                            <button type="button" @click="rejectModalOpen = false" class="flex-1 py-3.5 bg-white dark:bg-gray-800 border border-slate-200 text-slate-700 rounded-2xl font-bold text-sm transition-colors hover:border-slate-300 hover:text-slate-900">Cancel</button>
                             <button type="submit" class="flex-1 py-3.5 bg-rose-600 text-white rounded-2xl font-bold text-sm shadow-md transition-colors hover:bg-rose-700">Reject Request</button>
                         </div>
                     </form>

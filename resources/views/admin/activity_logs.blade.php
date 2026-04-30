@@ -11,7 +11,7 @@
         <div class="max-w-7xl mx-auto space-y-6 mt-4">
 
             {{-- Header --}}
-            <div class="flex justify-between items-end text-black mb-6">
+            <div class="flex justify-between items-end text-black dark:text-white mb-6">
                 <div>
                     <h1 class="text-3xl font-extrabold tracking-tight flex items-center gap-3">
                         <span class="bg-white/20 p-2 rounded-xl backdrop-blur-md border border-white/10">🛡️</span>
@@ -22,21 +22,21 @@
             </div>
 
             {{-- Table Container --}}
-            <div class="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden relative">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden relative">
 
                 <div class="overflow-x-auto">
                     <table class="w-full">
-                        <thead class="bg-gray-50 border-b border-gray-100">
+                        <thead class="bg-gray-50 dark:bg-gray-900 border-b border-gray-100 dark:border-gray-700">
                             <tr>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Actor (Causer)</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Action</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Target User (Subject)</th>
-                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-4 text-left text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Date & Time</th>
-                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="px-6 py-4 text-center text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                                     Details</th>
                             </tr>
                         </thead>
@@ -48,13 +48,13 @@
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600">
+                                                class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-xs font-bold text-gray-600 dark:text-gray-400">
                                                 {{ $log->causer ? strtoupper(substr($log->causer->name, 0, 1)) : '?' }}
                                             </div>
                                             <div>
-                                                <p class="text-sm font-bold text-gray-900">
+                                                <p class="text-sm font-bold text-gray-900 dark:text-gray-100">
                                                     {{ $log->causer->name ?? 'System / Unknown' }}</p>
-                                                <p class="text-[10px] text-gray-500">{{ $log->causer->email ?? '' }}</p>
+                                                <p class="text-[10px] text-gray-500 dark:text-gray-400">{{ $log->causer->email ?? '' }}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -79,8 +79,8 @@
                                     {{-- 3. المفعول به (اتعمل في مين؟) --}}
                                     <td class="px-6 py-4 whitespace-nowrap">
                                         @if ($log->subject)
-                                            <div class="text-sm font-bold text-gray-800">{{ $log->subject->name }}</div>
-                                            <div class="text-[10px] text-gray-500 uppercase">{{ $log->subject->role }}</div>
+                                            <div class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $log->subject->name }}</div>
+                                            <div class="text-[10px] text-gray-500 dark:text-gray-400 uppercase">{{ $log->subject->role }}</div>
                                         @else
                                             <span class="text-xs text-red-400 italic">User Deleted completely</span>
                                         @endif
@@ -88,7 +88,7 @@
 
                                     {{-- 4. الوقت --}}
                                     <td class="px-6 py-4 whitespace-nowrap">
-                                        <div class="text-xs font-bold text-gray-700">
+                                        <div class="text-xs font-bold text-gray-700 dark:text-gray-300">
                                             {{ $log->created_at->format('d M Y, h:i A') }}</div>
                                         <div class="text-[10px] text-gray-400">{{ $log->created_at->diffForHumans() }}</div>
                                     </td>
@@ -98,7 +98,7 @@
                                         @if ($log->changes)
                                             {{-- زرار شيك يفتح المودال --}}
                                             <button onclick="showChanges({{ json_encode($log->changes) }})"
-                                                class="group flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 hover:bg-blue-600 text-gray-500 hover:text-white transition-all duration-200 shadow-sm"
+                                                class="group flex items-center justify-center w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 hover:bg-blue-600 text-gray-500 dark:text-gray-400 hover:text-white transition-all duration-200 shadow-sm"
                                                 title="View Details">
                                                 <i class="fas fa-eye group-hover:scale-110 transition-transform"></i>
                                             </button>
@@ -109,7 +109,7 @@
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="5" class="px-6 py-12 text-center text-gray-400 bg-gray-50">
+                                    <td colspan="5" class="px-6 py-12 text-center text-gray-400 bg-gray-50 dark:bg-gray-900">
                                         <div class="flex flex-col items-center justify-center">
                                             <i class="fas fa-history text-4xl mb-3 text-gray-300"></i>
                                             <p class="text-sm">No activity logs found yet.</p>
@@ -122,7 +122,7 @@
                 </div>
 
                 {{-- Pagination --}}
-                <div class="px-6 py-4 border-t border-gray-100">
+                <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
                     {{ $logs->links() }}
                 </div>
             </div>
@@ -138,17 +138,17 @@
 
         <div class="fixed inset-0 z-10 flex items-center justify-center p-4">
             <div
-                class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl border border-gray-100 transform transition-all scale-100 overflow-hidden flex flex-col max-h-[85vh]">
+                class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl border border-gray-100 dark:border-gray-700 transform transition-all scale-100 overflow-hidden flex flex-col max-h-[85vh]">
 
                 {{-- Header --}}
-                <div class="bg-gray-50 px-6 py-4 border-b border-gray-100 flex justify-between items-center">
+                <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center">
                             <i class="fas fa-exchange-alt"></i>
                         </div>
                         <div>
-                            <h3 class="text-lg font-bold text-gray-800">Change Details</h3>
-                            <p class="text-xs text-gray-500">Compare old vs new values.</p>
+                            <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Change Details</h3>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Compare old vs new values.</p>
                         </div>
                     </div>
                     <button onclick="closeChangesModal()"
@@ -158,7 +158,7 @@
                 {{-- Content (Scrollable Table) --}}
                 <div class="p-6 overflow-y-auto custom-scrollbar">
                     <table class="w-full text-sm text-left">
-                        <thead class="text-xs text-gray-500 uppercase bg-gray-50 border-b">
+                        <thead class="text-xs text-gray-500 dark:text-gray-400 uppercase bg-gray-50 dark:bg-gray-900 border-b">
                             <tr>
                                 <th class="px-4 py-3 w-1/3">Field / Attribute</th>
                                 <th class="px-4 py-3 w-1/3 text-red-600">Old Value (Before)</th>
@@ -177,7 +177,7 @@
                 </div>
 
                 {{-- Footer --}}
-                <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 text-right">
+                <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 border-t border-gray-100 dark:border-gray-700 text-right">
                     <button onclick="closeChangesModal()"
                         class="px-6 py-2 bg-gray-800 text-white rounded-xl font-bold hover:bg-black transition shadow-lg">
                         Close
@@ -216,7 +216,7 @@
 
                     let row = `
                     <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 font-bold text-gray-700 capitalize bg-gray-50/50">${key.replace('_', ' ')}</td>
+                        <td class="px-4 py-3 font-bold text-gray-700 dark:text-gray-300 capitalize bg-gray-50/50">${key.replace('_', ' ')}</td>
                         <td class="px-4 py-3 text-red-600 bg-red-50/30 font-mono text-xs break-all">${oldVal}</td>
                         <td class="px-4 py-3 text-green-600 bg-green-50/30 font-mono text-xs break-all">${newVal}</td>
                     </tr>
@@ -231,7 +231,7 @@
                     let val = formatValue(data.attributes[key]);
                     let row = `
                     <tr class="hover:bg-gray-50 transition">
-                        <td class="px-4 py-3 font-bold text-gray-700 capitalize bg-gray-50/50">${key.replace('_', ' ')}</td>
+                        <td class="px-4 py-3 font-bold text-gray-700 dark:text-gray-300 capitalize bg-gray-50/50">${key.replace('_', ' ')}</td>
                         <td class="px-4 py-3 text-gray-400 italic">-</td>
                         <td class="px-4 py-3 text-green-600 bg-green-50/30 font-mono text-xs break-all">${val}</td>
                     </tr>

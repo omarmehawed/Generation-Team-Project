@@ -3,7 +3,7 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 flex items-center gap-3">
+        <h1 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-gray-100 flex items-center gap-3">
             <span class="w-10 h-10 sm:w-12 sm:h-12 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center shadow-sm">
                 <i class="fas fa-cogs text-sm sm:text-base"></i>
             </span>
@@ -25,10 +25,10 @@
         </div>
     </div>
 
-    <div class="bg-white rounded-3xl shadow-xl shadow-gray-100/50 border border-gray-100 overflow-hidden">
+    <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl shadow-gray-100/50 border border-gray-100 dark:border-gray-700 overflow-hidden">
         <div class="overflow-x-auto">
             <table class="min-w-full text-left text-sm whitespace-nowrap">
-                <thead class="uppercase tracking-widest border-b border-gray-100 bg-gray-50/50">
+                <thead class="uppercase tracking-widest border-b border-gray-100 dark:border-gray-700 bg-gray-50/50">
                     <tr class="text-[10px] font-black text-gray-400">
                         <th scope="col" class="px-8 py-5">Quiz Information</th>
                         <th scope="col" class="px-6 py-5 text-center">Questions</th>
@@ -42,7 +42,7 @@
                     <tr class="hover:bg-gray-50/50 transition duration-200 group">
                         <td class="px-8 py-6">
                             <div class="flex flex-col">
-                                <span class="font-black text-gray-900 text-base mb-1 group-hover:text-indigo-600 transition">{{ $quiz->title }}</span>
+                                <span class="font-black text-gray-900 dark:text-gray-100 text-base mb-1 group-hover:text-indigo-600 transition">{{ $quiz->title }}</span>
                                 <div class="flex items-center gap-3 text-[10px] sm:text-xs font-bold text-gray-400">
                                     <span class="flex items-center gap-1"><i class="far fa-clock text-indigo-400"></i> {{ $quiz->duration_minutes }} Mins</span>
                                     <span class="w-1 h-1 bg-gray-200 rounded-full"></span>
@@ -64,24 +64,24 @@
                             @if($quiz->is_published)
                                 <span class="bg-emerald-50 text-emerald-600 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border border-emerald-100">Published</span>
                             @else
-                                <span class="bg-gray-50 text-gray-500 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border border-gray-200">Hidden</span>
+                                <span class="bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 px-3 py-1 rounded-full text-xs font-black uppercase tracking-widest border border-gray-200 dark:border-gray-700">Hidden</span>
                             @endif
                         </td>
                         <td class="px-8 py-6 text-center">
                             <div class="flex justify-center gap-2">
-                                <a href="{{ route('admin.quizzes.questions', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-100 text-amber-600 rounded-xl shadow-sm hover:shadow-md hover:border-amber-200 transition" title="Questions">
+                                <a href="{{ route('admin.quizzes.questions', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-amber-600 rounded-xl shadow-sm hover:shadow-md hover:border-amber-200 transition" title="Questions">
                                     <i class="fas fa-list-ul text-xs"></i>
                                 </a>
-                                <a href="{{ route('admin.quizzes.live', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-100 text-rose-500 rounded-xl shadow-sm hover:shadow-md hover:border-rose-200 transition" title="Live Monitor">
+                                <a href="{{ route('admin.quizzes.live', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-rose-500 rounded-xl shadow-sm hover:shadow-md hover:border-rose-200 transition" title="Live Monitor">
                                     <i class="fas fa-satellite-dish text-xs animate-pulse"></i>
                                 </a>
-                                <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-100 text-indigo-600 rounded-xl shadow-sm hover:shadow-md hover:border-indigo-200 transition" title="Results">
+                                <a href="{{ route('admin.quizzes.results', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-indigo-600 rounded-xl shadow-sm hover:shadow-md hover:border-indigo-200 transition" title="Results">
                                     <i class="fas fa-chart-bar text-xs"></i>
                                 </a>
-                                <a href="{{ route('admin.quizzes.grading', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-100 text-purple-600 rounded-xl shadow-sm hover:shadow-md hover:border-purple-200 transition" title="Manual Grading">
+                                <a href="{{ route('admin.quizzes.grading', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-purple-600 rounded-xl shadow-sm hover:shadow-md hover:border-purple-200 transition" title="Manual Grading">
                                     <i class="fas fa-check-double text-xs"></i>
                                 </a>
-                                <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white border border-gray-100 text-gray-600 rounded-xl shadow-sm hover:shadow-md hover:border-gray-200 transition" title="Settings">
+                                <a href="{{ route('admin.quizzes.edit', $quiz->id) }}" class="w-9 h-9 flex items-center justify-center bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 text-gray-600 dark:text-gray-400 rounded-xl shadow-sm hover:shadow-md hover:border-gray-200 transition" title="Settings">
                                     <i class="fas fa-cog text-xs"></i>
                                 </a>
                                 <form action="{{ route('admin.quizzes.destroy', $quiz->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this quiz? All attempts, responses, and questions will be destroyed permanently!')" class="inline-block">
@@ -98,7 +98,7 @@
                     <tr>
                         <td colspan="5" class="py-24 text-center">
                             <div class="flex flex-col items-center gap-4 text-gray-300">
-                                <div class="w-20 h-20 rounded-[2rem] bg-gray-50 flex items-center justify-center text-4xl">
+                                <div class="w-20 h-20 rounded-[2rem] bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-4xl">
                                     <i class="fas fa-box-open"></i>
                                 </div>
                                 <p class="font-black uppercase tracking-[0.3em] text-xs">No quizzes found</p>

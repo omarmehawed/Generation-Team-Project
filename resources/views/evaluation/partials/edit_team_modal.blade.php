@@ -8,13 +8,13 @@
 
     {{-- Modal Content --}}
     <div id="editTeamModalContent"
-        class="relative bg-white rounded-[3rem] w-full max-w-lg overflow-visible shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100">
+        class="relative bg-white dark:bg-gray-800 rounded-[3rem] w-full max-w-lg overflow-visible shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100 dark:border-gray-700">
 
         {{-- Header --}}
-        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+        <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50">
             <div>
-                <h3 class="text-xl font-black text-gray-800">Edit Team Number</h3>
-                <p class="text-xs text-gray-500 mt-1 font-bold italic" x-text="'Member: ' + memberName"></p>
+                <h3 class="text-xl font-black text-gray-800 dark:text-gray-200">Edit Team Number</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-1 font-bold italic" x-text="'Member: ' + memberName"></p>
             </div>
             <button @click="closeModal()" type="button"
                 class="w-10 h-10 rounded-2xl flex items-center justify-center text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors">
@@ -34,7 +34,7 @@
                             New Team Number
                         </label>
                         <select name="team_number" x-model="teamNumber" required
-                            class="w-full bg-gray-50 border-2 border-gray-100 text-gray-900 text-base font-bold rounded-2xl focus:ring-indigo-500 focus:border-indigo-500 block p-5 transition-all shadow-inner">
+                            class="w-full bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-700 text-gray-900 dark:text-gray-100 text-base font-bold rounded-2xl focus:ring-indigo-500 focus:border-indigo-500 block p-5 transition-all shadow-inner">
                             <option value="">Select Team</option>
                             @for($i=1; $i<=20; $i++)
                                 <option value="{{ $i }}">Team #{{ $i }}</option>
@@ -45,7 +45,7 @@
 
                     <div class="pt-4 border-t border-gray-50 flex justify-end gap-3">
                         <button type="button" @click="closeModal()"
-                            class="px-6 py-3 rounded-xl font-bold text-sm text-gray-600 bg-gray-100 hover:bg-gray-200 transition-colors">
+                            class="px-6 py-3 rounded-xl font-bold text-sm text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 transition-colors">
                             Cancel
                         </button>
                         <button type="submit"

@@ -4,7 +4,7 @@
 
         <!-- Golden Curtain Animation -->
         <div
-            class="ramadan-curtain absolute inset-0 w-full h-full bg-gradient-to-b from-[#D4AF37] via-[#F4C430] to-transparent opacity-0 transform -translate-y-full">
+            class="ramadan-curtain absolute inset-0 w-full h-full bg-gradient-to-b from-[#2596be] via-[#F4C430] to-transparent opacity-0 transform -translate-y-full">
         </div>
 
         <!-- Decorative Crescent Moon (Top Right) -->
@@ -18,11 +18,11 @@
                 <defs>
                     <linearGradient id="moon-gradient" x1="20" y1="20" x2="80" y2="80" gradientUnits="userSpaceOnUse">
                         <stop offset="0%" stop-color="#F4C430" />
-                        <stop offset="100%" stop-color="#D4AF37" />
+                        <stop offset="100%" stop-color="#2596be" />
                     </linearGradient>
                 </defs>
                 <!-- Hanging Lantern (Fanous) attached to Moon -->
-                <line x1="85" y1="50" x2="85" y2="70" stroke="#D4AF37" stroke-width="1" />
+                <line x1="85" y1="50" x2="85" y2="70" stroke="#2596be" stroke-width="1" />
                 <rect x="80" y="70" width="10" height="15" rx="2" fill="#F4C430" class="animate-swing origin-top" />
             </svg>
         </div>
@@ -66,13 +66,13 @@
 
             0%,
             100% {
-                text-shadow: 0 0 10px #D4AF37, 0 0 20px #D4AF37;
+                text-shadow: 0 0 10px #2596be, 0 0 20px #2596be;
                 filter: drop-shadow(0 0 5px rgba(212, 175, 55, 0.5));
                 transform: scale(1);
             }
 
             50% {
-                text-shadow: 0 0 20px #D4AF37, 0 0 30px #FFD700;
+                text-shadow: 0 0 20px #2596be, 0 0 30px #FFD700;
                 filter: drop-shadow(0 0 15px rgba(212, 175, 55, 0.8));
                 transform: scale(1.05);
             }
@@ -113,7 +113,7 @@
                 */
         :root {
             /* Override Accents with Gold */
-            --primary: #D4AF37 !important;
+            --primary: #2596be !important;
             /* Metallic Gold */
             --primary-hover: #B4941F !important;
             /* Darker Gold */
@@ -127,20 +127,20 @@
             --bg-main: #0c1220 !important;
             /* Deep Night Blue */
             --bg-panel: #131c2e !important;
-            --border: #D4AF37 !important;
+            --border: #2596be !important;
             /* Gold Borders */
             --text-muted: #94a3b8 !important;
         }
 
         [data-theme="dark"] .sidebar-link.active {
             background: linear-gradient(90deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%) !important;
-            border-left-color: #D4AF37 !important;
+            border-left-color: #2596be !important;
         }
 
         /* Button & Link Gold Accents */
         a:hover,
         button:hover {
-            color: #D4AF37;
+            color: #2596be;
             /* Force Gold on Hover */
         }
     </style>
@@ -195,7 +195,7 @@
                     ctx.translate(this.x, this.y);
                     ctx.rotate(this.rotation * Math.PI / 180);
                     ctx.globalAlpha = this.opacity;
-                    ctx.fillStyle = '#D4AF37'; // Gold
+                    ctx.fillStyle = '#2596be'; // Gold
                     ctx.font = `${this.size}px serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';

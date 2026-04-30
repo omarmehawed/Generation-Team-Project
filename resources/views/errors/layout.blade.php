@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'light' }" :class="{ 'dark': theme === 'dark' }">
+<html lang="en" x-data="{ theme: localStorage.getItem('theme') || 'light' }" :class="{'dark': theme === 'dark' }">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,7 +24,7 @@
             --text-main: #1e1b4b;
             --text-muted: #475569;
             --primary: #1e1b4b;
-            --accent: #fbbf24;
+            --accent: #2596be;
             --glow: 0 10px 40px -10px rgba(30, 27, 75, 0.3);
             --overlay: rgba(248, 250, 252, 0.7);
         }
@@ -33,7 +33,7 @@
             --bg-main: #010413;
             --text-main: #f8fafc;
             --text-muted: #cbd5e1;
-            --primary: #fbbf24;
+            --primary: #2596be;
             --accent: #818cf8;
             --glow: 0 0 60px rgba(251, 191, 36, 0.3);
             --overlay: rgba(1, 4, 19, 0.75);
@@ -179,7 +179,7 @@
         }
 
         .dark .btn-home {
-            background: linear-gradient(135deg, var(--primary), #b45309);
+            background: linear-gradient(135deg, var(--primary), #1c7ca0);
             color: #1e1b4b;
         }
 
@@ -231,13 +231,13 @@
         <!-- Theme Switcher (Mini) -->
         <div class="fixed bottom-12 left-1/2 -translate-x-1/2 flex justify-center items-center gap-8 text-[var(--text-muted)]">
              <button @click="theme = 'light'; localStorage.setItem('theme', 'light')" 
-                     :class="theme === 'light' ? 'text-[var(--primary)] scale-125' : 'hover:scale-110'"
+                     :class="theme ==='light' ? 'text-[var(--primary)] scale-125' : 'hover:scale-110'"
                      class="transition-all duration-300">
                 <i class="fas fa-sun text-xl"></i>
              </button>
              <div class="w-1.5 h-1.5 rounded-full bg-[var(--text-muted)] opacity-30"></div>
              <button @click="theme = 'dark'; localStorage.setItem('theme', 'dark')" 
-                     :class="theme === 'dark' ? 'text-[var(--primary)] scale-125' : 'hover:scale-110'"
+                     :class="theme ==='dark' ? 'text-[var(--primary)] scale-125' : 'hover:scale-110'"
                      class="transition-all duration-300">
                 <i class="fas fa-moon text-xl"></i>
              </button>

@@ -32,7 +32,7 @@
                     @else
                         <div
                             class="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-gray-800 to-black flex items-center justify-center border-4 border-gray-700 shadow-xl">
-                            <i class="fas fa-users text-4xl text-gray-500"></i>
+                            <i class="fas fa-users text-4xl text-gray-500 dark:text-gray-400"></i>
                         </div>
                     @endif
                 </div>
@@ -71,7 +71,7 @@
                     </button>
                 </form>
 
-                <p class="mt-6 text-sm text-gray-500">
+                <p class="mt-6 text-sm text-gray-500 dark:text-gray-400">
                     * Your request will be sent to the team leader for approval.
                 </p>
 

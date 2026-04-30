@@ -56,7 +56,7 @@
             @if($cat['count'] > 0 || $key == 'tasks') {{-- Always show tasks even if empty, hide others if empty? Or show all? Let's show all for consistency but dim empty ones --}}
             <button @click="activeTab = '{{ $key }}'"
                 class="flex flex-col items-center justify-center p-4 rounded-xl transition-all duration-300 border"
-                :class="activeTab === '{{ $key }}' 
+                :class="activeTab ==='{{ $key }}' 
                     ? 'bg-gray-800 border-{{$color}}-500/50 shadow-[0_0_15px_rgba(0,0,0,0.3)] scale-105' 
                     : 'bg-gray-800/50 border-transparent hover:bg-gray-800 hover:border-gray-700 opacity-70 hover:opacity-100'">
                 
@@ -64,7 +64,7 @@
                     <i class="{{ $cat['icon'] }} {{ $cat['text'] }} text-lg"></i>
                 </div>
                 <span class="text-xs font-bold text-gray-300 uppercase tracking-wide">{{ $cat['label'] }}</span>
-                <span class="text-[10px] text-gray-500 mt-1">{{ $cat['count'] }} Items</span>
+                <span class="text-[10px] text-gray-500 dark:text-gray-400 mt-1">{{ $cat['count'] }} Items</span>
             </button>
             @endif
         @endforeach
@@ -98,7 +98,7 @@
                                 </div>
                                 <div>
                                     <h4 class="text-white font-bold text-sm">Week {{ $report->week_number }} Report</h4>
-                                    <p class="text-gray-500 text-xs">{{ \Carbon\Carbon::parse($report->report_date)->format('M d, Y') }}</p>
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">{{ \Carbon\Carbon::parse($report->report_date)->format('M d, Y') }}</p>
                                 </div>
                             </div>
                             @if($report->file_path)
@@ -126,12 +126,12 @@
                                 </div>
                                 <div>
                                     <h4 class="text-white font-bold text-sm">{{ $meeting->topic }}</h4>
-                                    <p class="text-gray-500 text-xs">
+                                    <p class="text-gray-500 dark:text-gray-400 text-xs">
                                         {{ \Carbon\Carbon::parse($meeting->meeting_date)->format('M d, Y h:i A') }} • {{ ucfirst($meeting->mode) }}
                                     </p>
                                 </div>
                             </div>
-                            <span class="px-2 py-1 rounded text-[10px] font-bold {{ $meeting->status == 'completed' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400' }}">
+                            <span class="px-2 py-1 rounded text-[10px] font-bold {{ $meeting->status =='completed' ? 'bg-green-500/10 text-green-400' : 'bg-yellow-500/10 text-yellow-400' }}">
                                 {{ strtoupper($meeting->status) }}
                             </span>
                         </div>
@@ -152,7 +152,7 @@
                                 <img src="{{ $item->file_path }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
                                 <div class="w-full h-full flex items-center justify-center bg-gray-900">
-                                    <i class="fas fa-video text-3xl text-gray-600"></i>
+                                    <i class="fas fa-video text-3xl text-gray-600 dark:text-gray-400"></i>
                                 </div>
                             @endif
                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
@@ -179,10 +179,10 @@
                             </div>
                             <div>
                                 <h4 class="text-white font-bold">{{ $doc['type'] }}</h4>
-                                <p class="text-gray-500 text-xs truncate max-w-[150px]">{{ $doc['name'] }}</p>
+                                <p class="text-gray-500 dark:text-gray-400 text-xs truncate max-w-[150px]">{{ $doc['name'] }}</p>
                             </div>
                             <div class="ml-auto">
-                                <i class="fas fa-download text-gray-500 group-hover:text-cyan-400 transition-colors"></i>
+                                <i class="fas fa-download text-gray-500 dark:text-gray-400 group-hover:text-cyan-400 transition-colors"></i>
                             </div>
                         </a>
                     @endforeach

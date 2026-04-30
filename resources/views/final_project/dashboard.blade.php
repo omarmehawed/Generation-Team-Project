@@ -165,37 +165,7 @@
             /* لمنع قفزة السكرول بار */
         }
 
-        /* شاشة التحميل (Preloader) */
-        #royal-preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f0f0f;
-            z-index: 99999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            transition: opacity 0.5s ease-out;
-        }
 
-        .loader-spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(212, 175, 55, 0.3);
-            border-radius: 50%;
-            border-top-color: #D4AF37;
-            animation: spin 1s ease-in-out infinite;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
 
         /* أنيميشن الظهور الانسيابي */
         .fade-in-up {
@@ -291,7 +261,7 @@
         .hover-card-vip:hover {
             transform: translateY(-10px) scale(1.02);
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25), 0 0 20px rgba(212, 175, 55, 0.3);
-            border-color: #D4AF37;
+            border-color: #2596be;
             z-index: 10;
         }
 
@@ -395,7 +365,7 @@
         }
 
         .custom-scroll::-webkit-scrollbar-thumb {
-            background: linear-gradient(to bottom, #D4AF37, #AA771C);
+            background: linear-gradient(to bottom, #2596be, #AA771C);
             border-radius: 10px;
         }
 
@@ -431,7 +401,7 @@
             background: var(--bg-panel); /* Use global variable */
             color: var(--text-main);
             border-radius: 1.5rem;
-            border: 2px solid #D4AF37;
+            border: 2px solid #2596be;
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             max-height: 90vh;
             overflow-y: auto;
@@ -471,13 +441,7 @@
 
 
 
-    {{-- 🔥 شاشة التحميل (Preloader) 🔥 --}}
-    <div id="royal-preloader">
-        <div class="loader-spinner mb-4"></div>
-        <h2 class="text-gold-gradient text-xl tracking-[0.3em] font-bold uppercase animate-pulse">Loading Workspace <br>
-            Devloped by Omar Mehawed
-        </h2>
-    </div>
+
 
     {{-- لمعة الماوس --}}
     <div id="mouse-glow" class="mouse-glow"></div>
@@ -489,7 +453,7 @@
         <div class="absolute bottom-0 left-0 -z-10 w-80 h-80 bg-orange-400/10 rounded-full blur-[100px]"></div>
 
         {{-- 🧭 1. شريط التنقل (زجاجي) --}}
-        <nav class="flex mb-6 text-gray-500 text-xs md:text-sm font-medium overflow-x-auto pb-2" aria-label="Breadcrumb">
+        <nav class="flex mb-6 text-gray-500 dark:text-gray-400 text-xs md:text-sm font-medium overflow-x-auto pb-2" aria-label="Breadcrumb">
             <ol
                 class="inline-flex items-center space-x-2 bg-white/70 backdrop-blur-md px-6 py-3 rounded-full shadow-lg border border-yellow-100/50 hover:shadow-xl transition-all duration-300">
                 <li class="inline-flex items-center">
@@ -538,10 +502,10 @@
                         <span
                             class="text-gray-400 text-sm font-medium flex items-center gap-2 bg-white/5 px-4 py-1.5 rounded-full border border-white/10 backdrop-blur-sm hover:bg-white/10 transition-colors">
                             <i
-                                class="far fa-clock {{ $project->deadline && \Carbon\Carbon::now()->gt($project->deadline) ? 'text-red-400' : 'text-yellow-400 animate-spin-slow' }}"></i>
+                                class="far fa-clock {{ $project->deadline && \Carbon\Carbon::now()->gt($project->deadline) ?'text-red-400' : 'text-yellow-400 animate-spin-slow' }}"></i>
                             <span class="text-gray-300">Deadline:</span>
                             <span
-                                class="{{ $project->deadline && \Carbon\Carbon::now()->gt($project->deadline) ? 'text-red-400 line-through decoration-red-500' : 'text-yellow-100' }} font-bold tracking-wider">
+                                class="{{ $project->deadline && \Carbon\Carbon::now()->gt($project->deadline) ?'text-red-400 line-through decoration-red-500' : 'text-yellow-100' }} font-bold tracking-wider">
                                 @if ($project->deadline)
                                     {{ \Carbon\Carbon::parse($project->deadline)->format('d M, h:i A') }}
                                 @else
@@ -643,7 +607,7 @@
 
                 {{-- كارت إنشاء الفريق --}}
                 <div
-                    class="tilt-effect glass-gold p-10 rounded-[2.5rem] hover-card-vip group cursor-pointer relative overflow-hidden bg-white">
+                    class="tilt-effect glass-gold p-10 rounded-[2.5rem] hover-card-vip group cursor-pointer relative overflow-hidden bg-white dark:bg-gray-800">
                     <div
                         class="absolute top-0 right-0 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-70 animate-blob">
                     </div>
@@ -655,10 +619,10 @@
                             class="w-28 h-28 bg-gradient-to-tr from-yellow-300 to-yellow-600 rounded-3xl rotate-6 flex items-center justify-center mb-8 shadow-[0_20px_40px_rgba(234,179,8,0.4)] group-hover:rotate-12 transition-all duration-500 border-4 border-white">
                             <i class="fas fa-crown text-6xl text-white drop-shadow-md"></i>
                         </div>
-                        <h3 class="text-4xl font-black text-gray-800 mb-4 group-hover:text-yellow-700 transition-colors">
+                        <h3 class="text-4xl font-black text-gray-800 dark:text-gray-200 mb-4 group-hover:text-yellow-700 transition-colors">
                             Create
                             Team</h3>
-                        <p class="text-gray-500 mb-10 text-base leading-relaxed max-w-xs mx-auto">
+                        <p class="text-gray-500 dark:text-gray-400 mb-10 text-base leading-relaxed max-w-xs mx-auto">
                             Step up as a <span class="font-bold text-yellow-600">Leader</span>. Establish your squad and
                             dominate the project.
                         </p>
@@ -692,7 +656,7 @@
                             your workspace.
                         </p>
                         <button onclick="openModal('joinTeamModal')"
-                            class="w-full bg-white hover:bg-gray-100 text-black font-black py-5 px-8 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-4 text-lg transform active:scale-95">
+                            class="w-full bg-white dark:bg-gray-800 hover:bg-gray-100 text-black dark:text-white font-black py-5 px-8 rounded-2xl shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-all flex items-center justify-center gap-4 text-lg transform active:scale-95">
                             Enter Access Code <i
                                 class="fas fa-key text-yellow-600 group-hover:rotate-45 transition-transform"></i>
                         </button>
@@ -737,7 +701,7 @@
                                     {{-- ⭐⭐⭐ اللوجو وزرار التعديل ⭐⭐⭐ --}}
                                     <div class="relative group/badge w-fit">
                                         <div
-                                            class="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-[#D4AF37] to-transparent shadow-lg relative">
+                                            class="w-24 h-24 rounded-full p-1 bg-gradient-to-tr from-[#2596be] to-transparent shadow-lg relative">
 
                                             {{-- الصورة --}}
                                             <img src="{{ $team->logo ? route('final_project.logo', $team->id) . '?v=' . time() : 'https://ui-avatars.com/api/?name=' . urlencode($team->name) . '&background=000&color=D4AF37&bold=true' }}"
@@ -747,7 +711,7 @@
                                             {{-- زرار التعديل --}}
                                             @if (isset($myRole) && $myRole == 'leader')
                                                 <button onclick="openModal('editLogoModal')"
-                                                    class="absolute bottom-0 right-0 bg-white text-black w-8 h-8 flex items-center justify-center rounded-full shadow-lg border border-gray-200 hover:bg-[#D4AF37] hover:text-white transition-all transform hover:scale-110 cursor-pointer z-20">
+                                                    class="absolute bottom-0 right-0 bg-white dark:bg-gray-800 text-black dark:text-white w-8 h-8 flex items-center justify-center rounded-full shadow-lg border border-gray-200 dark:border-gray-700 hover:bg-[#2596be] hover:text-white transition-all transform hover:scale-110 cursor-pointer z-20">
                                                     <i class="fas fa-camera text-xs"></i>
                                                 </button>
                                             @endif
@@ -786,7 +750,7 @@
                                                     @if ($team->ta_id)
                                                         {{ \App\Models\User::find($team->ta_id)->name ?? 'Unknown' }}
                                                     @else
-                                                        <span class="text-gray-500 italic">Not Assigned Yet</span>
+                                                        <span class="text-gray-500 dark:text-gray-400 italic">Not Assigned Yet</span>
                                                     @endif
                                                 </p>
                                             </div>
@@ -822,7 +786,7 @@
 
                     {{-- كارت حالتي (My Role) --}}
                     <div
-                        class="bg-white rounded-3xl border border-gray-100 shadow-xl p-8 relative overflow-hidden group hover:border-yellow-300 transition-colors">
+                        class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl p-8 relative overflow-hidden group hover:border-yellow-300 transition-colors">
                         <div
                             class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-gray-200 to-gray-400 group-hover:from-yellow-400 group-hover:to-yellow-600 transition-all duration-500">
                         </div>
@@ -842,11 +806,11 @@
 
                         <div class="flex flex-col items-center mb-8">
                             <div
-                                class="w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-lg relative {{ $myRole == 'leader' ? 'bg-gradient-to-br from-yellow-300 to-yellow-600 text-white border-4 border-yellow-100' : 'bg-gray-100 text-gray-500 border-4 border-white' }}">
+                                class="w-20 h-20 rounded-full flex items-center justify-center mb-4 shadow-lg relative {{ $myRole =='leader' ? 'bg-gradient-to-br from-yellow-300 to-yellow-600 text-white border-4 border-yellow-100' : 'bg-gray-100 text-gray-500 border-4 border-white' }}">
                                 <i
-                                    class="fas {{ $myRole == 'leader' ? 'fa-crown text-3xl animate-pulse' : 'fa-user text-3xl' }}"></i>
+                                    class="fas {{ $myRole =='leader' ? 'fa-crown text-3xl animate-pulse' : 'fa-user text-3xl' }}"></i>
                             </div>
-                            <span class="text-2xl font-black text-gray-800 capitalize">
+                            <span class="text-2xl font-black text-gray-800 dark:text-gray-200 capitalize">
                                 {{ $myRole === 'vice_leader' ? 'Vice Leader' : ucfirst($myRole) }}
                             </span>
                             @if($myRole === 'vice_leader')
@@ -860,7 +824,7 @@
                         @if ($isLocked)
                             <div class="space-y-2">
                                 <button disabled
-                                    class="w-full bg-gray-100 text-gray-400 font-bold rounded-xl py-3.5 cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200 shadow-inner">
+                                    class="w-full bg-gray-100 dark:bg-gray-900 text-gray-400 font-bold rounded-xl py-3.5 cursor-not-allowed flex items-center justify-center gap-2 border border-gray-200 dark:border-gray-700 shadow-inner">
                                     <i class="fas fa-lock"></i>
                                     <span>Team Locked</span>
                                 </button>
@@ -880,7 +844,7 @@
 
                     {{-- 🏟️ Lobby Card (Always Visible for Leader) --}}
                     @if(isset($myRole) && $myRole == 'leader')
-                    <div class="bg-white rounded-3xl border border-gray-100 shadow-xl p-6 relative overflow-hidden group hover:border-blue-300 transition-colors mb-8">
+                    <div class="bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl p-6 relative overflow-hidden group hover:border-blue-300 transition-colors mb-8">
                         <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-400 to-cyan-500"></div>
 
                         <h3 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-widest flex items-center gap-2">
@@ -890,14 +854,14 @@
                         <div class="space-y-4 max-h-[300px] overflow-y-auto custom-scroll pr-2">
                             @if(isset($pendingMembers) && count($pendingMembers) > 0)
                                 @foreach($pendingMembers as $req)
-                                <div class="flex items-center justify-between bg-gray-50 p-3 rounded-xl border border-gray-100 hover:shadow-md transition-shadow">
+                                <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
                                     <div class="flex items-center gap-3">
                                         <div class="relative">
                                             <img src="https://ui-avatars.com/api/?name={{ urlencode($req->user->name) }}&background=EBF8FF&color=3182CE&bold=true" class="w-10 h-10 rounded-full border border-blue-200">
                                             <span class="absolute bottom-0 right-0 w-3 h-3 bg-yellow-400 border-2 border-white rounded-full" title="Pending"></span>
                                         </div>
                                         <div>
-                                            <h4 class="text-sm font-bold text-gray-800">{{ \Illuminate\Support\Str::limit($req->user->name, 15) }}</h4>
+                                            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ \Illuminate\Support\Str::limit($req->user->name, 15) }}</h4>
                                             <p class="text-[10px] text-gray-400">{{ $req->created_at->diffForHumans(null, true) }}</p>
                                         </div>
                                     </div>
@@ -939,14 +903,14 @@
 
 
                     {{-- 1. جدول الأعضاء (The Team Members) --}}
-                    <div x-data="{ expanded: false, searchMember: '' }" class="bg-white rounded-[2rem] border border-gray-100 shadow-2xl overflow-hidden relative">
+                    <div x-data="{ expanded: false, searchMember: '' }" class="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-2xl overflow-hidden relative">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-yellow-50 rounded-bl-[100%] -mr-10 -mt-10 z-0">
                         </div>
-                        <div @click="expanded = !expanded" class="px-8 py-8 border-b border-gray-100 flex justify-between items-center relative z-10 cursor-pointer hover:bg-gray-50 transition-colors">
+                        <div @click="expanded = !expanded" class="px-8 py-8 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center relative z-10 cursor-pointer hover:bg-gray-50 transition-colors">
                             <div>
-                                <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3">
+                                <h3 class="text-2xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-3">
                                     The Team Members
-                                    <i class="fas fa-chevron-down text-lg text-gray-300 transition-transform duration-300 ml-2" :class="expanded ? 'rotate-180' : ''"></i>
+                                    <i class="fas fa-chevron-down text-lg text-gray-300 transition-transform duration-300 ml-2" :class="expanded ?'rotate-180' : ''"></i>
                                 </h3>
                                 <p class="text-sm text-gray-400 mt-1">Manage your elite team members</p>
                             </div>
@@ -979,7 +943,7 @@
                                         <i class="fas fa-search text-gray-400 group-focus-within:text-yellow-500 transition-colors"></i>
                                     </div>
                                     <input type="text" x-model="searchMember" 
-                                        class="block w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-100 rounded-2xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all shadow-sm"
+                                        class="block w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-yellow-500/20 focus:border-yellow-500 transition-all shadow-sm"
                                         placeholder="Search by Name or Academic ID...">
                                 </div>
                             </div>
@@ -1008,7 +972,7 @@
                                         @endphp
                                         <tr class="group transition-all duration-300 hover:-translate-y-1"
                                             x-show="searchMember === '' || '{{ $mName }}'.includes(searchMember.toLowerCase()) || '{{ $mID }}'.includes(searchMember.toLowerCase())">
-                                            <td class="bg-white group-hover:bg-yellow-50/30 rounded-l-2xl border-y border-l border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
+                                            <td class="bg-white dark:bg-gray-800 group-hover:bg-yellow-50/30 rounded-l-2xl border-y border-l border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
                                                 <div class="flex items-center gap-4">
                                                     <div class="relative">
                                                         <x-user-avatar :user="$member->user" size="w-12 h-12" classes="border-2 border-white shadow-md" />
@@ -1023,21 +987,21 @@
                                                         @endif
                                                     </div>
                                                     <div>
-                                                        <div class="text-base font-bold text-gray-800 group-hover:text-yellow-800 transition-colors">
+                                                        <div class="text-base font-bold text-gray-800 dark:text-gray-200 group-hover:text-yellow-800 transition-colors">
                                                             {{ $member->user->name }}
                                                         </div>
-                                                        <div class="text-[10px] uppercase font-black tracking-tighter {{ $member->technical_role == 'software' ? 'text-blue-500' : ($member->technical_role == 'hardware' ? 'text-orange-500' : 'text-gray-400') }}">
+                                                        <div class="text-[10px] uppercase font-black tracking-tighter {{ $member->technical_role =='software' ? 'text-blue-500' : ($member->technical_role == 'hardware' ? 'text-orange-500' : 'text-gray-400') }}">
                                                             {{ $member->technical_role ?? 'General' }}
                                                         </div>
                                                     </div>
                                                 </div>
                                             </td>
-                                            <td class="bg-white group-hover:bg-yellow-50/30 border-y border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
-                                                <div class="text-sm font-bold text-gray-700 font-mono bg-gray-50 px-3 py-1.5 rounded-lg inline-block border border-gray-200 shadow-sm">
+                                            <td class="bg-white dark:bg-gray-800 group-hover:bg-yellow-50/30 border-y border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
+                                                <div class="text-sm font-bold text-gray-700 dark:text-gray-300 font-mono bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-lg inline-block border border-gray-200 dark:border-gray-700 shadow-sm">
                                                     {{ $member->user->email ? explode('@', $member->user->email)[0] : 'N/A' }}
                                                 </div>
                                             </td>
-                                            <td class="bg-white group-hover:bg-yellow-50/30 border-y border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
+                                            <td class="bg-white dark:bg-gray-800 group-hover:bg-yellow-50/30 border-y border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
                                                 @if ($member->role == 'leader')
                                                     <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 text-xs font-black shadow-sm border border-yellow-300">
                                                         <i class="fas fa-star text-[10px] animate-spin-slow"></i> TEAM LEADER
@@ -1047,12 +1011,12 @@
                                                         Vice Leader
                                                     </span>
                                                 @else
-                                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gray-50 text-gray-500 text-xs font-bold border border-gray-200">
+                                                    <span class="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gray-50 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-xs font-bold border border-gray-200 dark:border-gray-700">
                                                         <span class="w-2 h-2 rounded-full bg-gray-400"></span> Member
                                                     </span>
                                                 @endif
                                             </td>
-                                            <td class="px-8 py-4 text-right bg-white group-hover:bg-yellow-50/30 rounded-r-2xl border-y border-r border-gray-100 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md">
+                                            <td class="px-8 py-4 text-right bg-white dark:bg-gray-800 group-hover:bg-yellow-50/30 rounded-r-2xl border-y border-r border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md">
                                                 <div class="flex items-center justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
                                                     @if ($myRole == 'leader' || ($myRole == 'vice_leader' && $member->role == 'member'))
                                                         <a href="{{ route('profile.show', $member->user->id) }}"
@@ -1077,7 +1041,7 @@
                                                     @endif
                                                     
                                                     <button onclick="openReportModal('{{ $member->user_id }}', '{{ $member->user->name }}')"
-                                                        class="w-8 h-8 rounded-full bg-gray-100 text-gray-500 hover:bg-gray-800 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
+                                                        class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-800 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
                                                         title="Report">
                                                         <i class="fas fa-flag text-xs"></i>
                                                     </button>
@@ -1095,9 +1059,9 @@
 
                     {{-- 🔥 2. اجتماعات التيم الداخلية (Internal Meetings) 🔥 --}}
                     <div
-                        class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift mt-10 transition-all hover:shadow-2xl">
-                        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
+                        class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden hover-lift mt-10 transition-all hover:shadow-2xl">
+                        <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-3 text-lg">
                                 <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm"><i
                                         class="fas fa-users"></i>
                                 </div>
@@ -1106,7 +1070,7 @@
 
                             <div class="flex gap-2">
                                 <button onclick="openModal('internalHistoryModal')"
-                                    class="bg-gray-100 text-gray-500 hover:text-gray-700 px-3 py-2 rounded-xl text-xs font-bold transition border border-gray-200 hover:bg-gray-200">
+                                    class="bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:text-gray-700 px-3 py-2 rounded-xl text-xs font-bold transition border border-gray-200 dark:border-gray-700 hover:bg-gray-200">
                                     <i class="fas fa-history"></i> Log
                                 </button>
 
@@ -1130,8 +1094,8 @@
                                 <div
                                     class="bg-blue-50 rounded-2xl p-6 border border-blue-100 flex flex-col md:flex-row justify-between items-center gap-4 transition-transform hover:scale-[1.01]">
                                     <div>
-                                        <p class="font-black text-gray-800 text-lg mb-1">{{ $nextInternal->topic }}</p>
-                                        <div class="flex flex-wrap gap-4 text-xs text-gray-500">
+                                        <p class="font-black text-gray-800 dark:text-gray-200 text-lg mb-1">{{ $nextInternal->topic }}</p>
+                                        <div class="flex flex-wrap gap-4 text-xs text-gray-500 dark:text-gray-400">
                                             <span><i class="far fa-clock text-blue-500"></i>
                                                 {{ \Carbon\Carbon::parse($nextInternal->meeting_date)->format('D, d M - h:i A') }}</span>
                                             <span>
@@ -1153,13 +1117,13 @@
                                         @if ($myRole == 'leader')
                                             <button
                                                 onclick="openAttendanceModal('{{ $nextInternal->id }}', '{{ $nextInternal->topic }}')"
-                                                class="flex-1 md:flex-none bg-white border border-blue-200 text-blue-600 py-2 px-6 rounded-xl text-xs font-bold hover:bg-blue-50 transition">Attendance
+                                                class="flex-1 md:flex-none bg-white dark:bg-gray-800 border border-blue-200 text-blue-600 py-2 px-6 rounded-xl text-xs font-bold hover:bg-blue-50 transition">Attendance
                                                 📝</button>
                                         @endif
                                     </div>
                                 </div>
                             @else
-                                <div class="text-center py-8 border-2 border-dashed border-gray-100 rounded-2xl">
+                                <div class="text-center py-8 border-2 border-dashed border-gray-100 dark:border-gray-700 rounded-2xl">
                                     <p class="text-gray-400 text-sm">No internal meetings scheduled.</p>
                                 </div>
                             @endif
@@ -1179,15 +1143,15 @@
                 {{-- 🟡 حالة الانتظار --}}
                 @if ($team->proposal_status == 'pending')
                     <div
-                        class="bg-gradient-to-r from-yellow-50 to-white border-l-4 border-[#D4AF37] p-6 rounded-2xl shadow-lg flex items-center gap-4 relative overflow-hidden transform hover:-translate-y-1 transition">
-                        <div class="absolute right-0 top-0 w-32 h-32 bg-[#D4AF37]/10 rounded-full blur-2xl -mr-10 -mt-10">
+                        class="bg-gradient-to-r from-yellow-50 to-white border-l-4 border-[#2596be] p-6 rounded-2xl shadow-lg flex items-center gap-4 relative overflow-hidden transform hover:-translate-y-1 transition">
+                        <div class="absolute right-0 top-0 w-32 h-32 bg-[#2596be]/10 rounded-full blur-2xl -mr-10 -mt-10">
                         </div>
                         <div class="p-3 bg-[#FFF8E1] rounded-full text-[#AA8A26] animate-pulse">
                             <i class="fas fa-hourglass-half text-2xl"></i>
                         </div>
                         <div>
-                            <h4 class="text-lg font-bold text-gray-800">Proposal Under Review</h4>
-                            <p class="text-sm text-gray-500">Your proposal "<span
+                            <h4 class="text-lg font-bold text-gray-800 dark:text-gray-200">Proposal Under Review</h4>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Your proposal "<span
                                     class="font-bold text-[#AA8A26]">{{ $team->proposal_title }}</span>" is currently
                                 being reviewed
                                 by the professor. Tasks are locked until approval.</p>
@@ -1237,8 +1201,8 @@
 
             {{-- 5. مركز الاجتماعات (Meetings Control Center) --}}
             <div
-                class="bg-gradient-to-br from-gray-900 to-black rounded-[2.5rem] border border-[#D4AF37]/30 shadow-2xl p-8 relative overflow-hidden group hover-lift w-full mb-10">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#D4AF37] to-transparent"></div>
+                class="bg-gradient-to-br from-gray-900 to-black rounded-[2.5rem] border border-[#2596be]/30 shadow-2xl p-8 relative overflow-hidden group hover-lift w-full mb-10">
+                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-[#2596be] to-transparent"></div>
                 <div class="flex justify-between items-start mb-6">
                     <div>
                         <h4 class="text-[#FFD700] font-bold text-lg flex items-center gap-2">
@@ -1254,7 +1218,7 @@
                         </button>
                         @if ($myRole == 'leader')
                             <button onclick="openModal('bookSupervisionModal')"
-                                class="bg-[#D4AF37] hover:bg-[#AA8A26] text-white px-4 py-2 rounded-xl shadow-lg transition transform hover:scale-105 font-bold text-xs flex items-center gap-2 box-shadow-gold">
+                                class="bg-[#2596be] hover:bg-[#AA8A26] text-white px-4 py-2 rounded-xl shadow-lg transition transform hover:scale-105 font-bold text-xs flex items-center gap-2 box-shadow-gold">
                                 <i class="fas fa-plus"></i> Request
                             </button>
                         @endif
@@ -1292,12 +1256,12 @@
                                 <p class="text-white font-bold text-xl">
                                     {{ \Carbon\Carbon::parse($nextSupervision->meeting_date)->format('D, d M') }}
                                 </p>
-                                <p class="text-[#D4AF37] font-mono text-sm">
+                                <p class="text-[#2596be] font-mono text-sm">
                                     {{ \Carbon\Carbon::parse($nextSupervision->meeting_date)->format('h:i A') }}
                                 </p>
                                 <p class="text-gray-400 text-xs mt-1 max-w-md truncate">{{ $nextSupervision->topic }}</p>
                                 @if ($nextSupervision->description)
-                                    <p class="text-gray-500 text-[10px] mt-1">
+                                    <p class="text-gray-500 dark:text-gray-400 text-[10px] mt-1">
                                         {{ Str::limit($nextSupervision->description, 50) }}</p>
                                 @endif
                             </div>
@@ -1305,7 +1269,7 @@
 
                         <div class="flex flex-col items-end gap-3 w-full md:w-auto">
                             <span
-                                class="px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider w-full md:w-auto text-center {{ $nextSupervision->status == 'confirmed' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' }}">
+                                class="px-4 py-1.5 rounded-lg text-[10px] font-bold uppercase tracking-wider w-full md:w-auto text-center {{ $nextSupervision->status =='confirmed' ? 'bg-green-500/20 text-green-400 border border-green-500/30' : 'bg-yellow-500/20 text-yellow-400 border border-yellow-500/30' }}">
                                 {{ $nextSupervision->status }}
                             </span>
 
@@ -1330,7 +1294,7 @@
                     </div>
                 @else
                     <div class="text-center py-8 border-2 border-dashed border-white/10 rounded-2xl">
-                        <p class="text-gray-500 text-sm">No upcoming supervision sessions.</p>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">No upcoming supervision sessions.</p>
                     </div>
                 @endif
             </div>
@@ -1344,7 +1308,7 @@
                             <i class="fas fa-hammer"></i>
                         </div>
                         Domain Workshops
-                        <i class="fas fa-chevron-down text-sm text-gray-500 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                        <i class="fas fa-chevron-down text-sm text-gray-500 dark:text-gray-400 transition-transform duration-300 ml-1" :class="expanded ?'rotate-180' : ''"></i>
                     </h3>
                     
                     @if (in_array($myRole, ['leader', 'vice_leader']))
@@ -1363,11 +1327,11 @@
                             @endforeach
                         </div>
                     @else
-                        <div class="text-center py-12 bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-[2rem]">
-                            <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100">
+                        <div class="text-center py-12 bg-gray-50/50 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-[2rem]">
+                            <div class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm border border-gray-100 dark:border-gray-700">
                                 <i class="fas fa-calendar-times text-gray-300 text-xl"></i>
                             </div>
-                            <h4 class="text-gray-500 font-bold mb-1">No Workshops Scheduled</h4>
+                            <h4 class="text-gray-500 dark:text-gray-400 font-bold mb-1">No Workshops Scheduled</h4>
                             <p class="text-gray-400 text-xs">Stay tuned for upcoming technical sessions!</p>
                         </div>
                     @endif
@@ -1376,14 +1340,14 @@
 
             {{-- 2. لوحة المهام المقسمة (Split Tasks Board) --}}
             <div id="tasks-section" x-data="{ expanded: false, taskSearchQuery: '' }"
-                class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift relative mt-10">
-                <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 bg-gray-50/50 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition-colors">
-                    <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
+                class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden hover-lift relative mt-10">
+                <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 bg-gray-50/50 flex justify-between items-center cursor-pointer hover:bg-gray-100 transition-colors">
+                    <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-3 text-lg">
                         <div class="p-2 bg-orange-50 rounded-xl text-orange-500 shadow-sm"><i
                                 class="fas fa-layer-group"></i>
                         </div>
                         Tasks Distribution
-                        <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                        <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ?'rotate-180' : ''"></i>
                     </h3>
                 </div>
                 
@@ -1401,7 +1365,7 @@
 
                 {{-- 🕵️ SEARCH BAR (For Leaders/Vice Leaders) --}}
                 @if($myRole === 'leader' || $myRole === 'vice_leader')
-                    <div class="px-8 py-5 bg-white border-b border-gray-100 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="px-8 py-5 bg-white dark:bg-gray-800 border-b border-gray-100 dark:border-gray-700 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div class="flex flex-col md:flex-row md:items-center gap-4 flex-1">
                             <div class="relative flex-1 max-w-xl">
                                 <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -1409,15 +1373,15 @@
                                 </div>
                                 <input type="text" x-model="taskSearchQuery" 
                                     placeholder="Search member by Name or Academic ID (e.g. 2420823)..."
-                                    class="w-full pl-11 pr-4 py-3 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:bg-white focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm outline-none font-medium">
+                                    class="w-full pl-11 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border-2 border-gray-100 dark:border-gray-700 rounded-2xl focus:bg-white focus:border-orange-500/30 focus:ring-4 focus:ring-orange-500/5 transition-all text-sm outline-none font-medium">
                                 <button x-show="taskSearchQuery" @click="taskSearchQuery = ''" 
                                     class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-red-500 transition-colors">
                                     <i class="fas fa-times-circle"></i>
                                 </button>
                             </div>
-                            <div class="flex items-center gap-2 text-xs text-gray-500 bg-gray-50 px-4 py-2 rounded-xl border border-gray-100">
+                            <div class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 px-4 py-2 rounded-xl border border-gray-100 dark:border-gray-700">
                                 <i class="fas fa-filter text-orange-400"></i>
-                                <span>Showing: <span class="font-bold text-gray-800" x-text="taskSearchQuery ? 'Filtered Results' : 'All Members'"></span></span>
+                                <span>Showing: <span class="font-bold text-gray-800 dark:text-gray-200" x-text="taskSearchQuery ? 'Filtered Results' : 'All Members'"></span></span>
                             </div>
                         </div>
                         
@@ -1431,7 +1395,7 @@
                     </div>
                 @endif
 
-                <div class="grid grid-cols-1 {{ $isDualView ? 'lg:grid-cols-2 divide-gray-100 lg:divide-x' : '' }}">
+                <div class="grid grid-cols-1 {{ $isDualView ?'lg:grid-cols-2 divide-gray-100 lg:divide-x' : '' }}">
 
                     {{-- 💻 الجزء الأول: Software Team --}}
                     @if($isLeader || $isSoftVice || ($myRole === 'vice_leader' && $myTechRole === 'general') || ($myRole === 'member' && $myTechRole === 'software'))
@@ -1464,7 +1428,7 @@
                                 $softMembers = $softMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div id="software-tasks-area" class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
+                        <div id="software-tasks-area" class="grid grid-cols-1 {{ $isDualView ?'2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($softMembers as $member)
                                 @php 
                                     $memberTasks = $team->tasks->where('user_id', $member->user_id);
@@ -1477,12 +1441,12 @@
                                     x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 transform scale-95"
                                     x-transition:enter-end="opacity-100 transform scale-100"
-                                    class="bg-white rounded-xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition">
+                                    class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition">
                                     <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-50">
                                         <img class="w-8 h-8 rounded-full"
                                             src="https://ui-avatars.com/api/?name={{ $member->user->name }}">
                                         <div>
-                                            <p class="text-xs font-bold text-gray-800">{{ $member->user->name }}</p>
+                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ $member->user->name }}</p>
                                             <span
                                                 class="text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">{{ ucfirst($member->role) }}</span>
                                         </div>
@@ -1547,7 +1511,7 @@
                                 $hardMembers = $hardMembers->where('user_id', Auth::id());
                             }
                         @endphp
-                        <div id="hardware-tasks-area" class="grid grid-cols-1 {{ $isDualView ? '2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
+                        <div id="hardware-tasks-area" class="grid grid-cols-1 {{ $isDualView ?'2xl:grid-cols-2' : '' }} gap-4 max-h-[800px] overflow-y-auto custom-scroll pr-1">
                             @foreach ($hardMembers as $member)
                                 @php 
                                     $memberTasks = $team->tasks->where('user_id', $member->user_id);
@@ -1560,12 +1524,12 @@
                                     x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 transform scale-95"
                                     x-transition:enter-end="opacity-100 transform scale-100"
-                                    class="bg-white rounded-xl p-4 border border-orange-100 shadow-sm hover:shadow-md transition">
+                                    class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-orange-100 shadow-sm hover:shadow-md transition">
                                     <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-50">
                                         <img class="w-8 h-8 rounded-full"
                                             src="https://ui-avatars.com/api/?name={{ $member->user->name }}">
                                         <div>
-                                            <p class="text-xs font-bold text-gray-800">{{ $member->user->name }}</p>
+                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ $member->user->name }}</p>
                                             <span
                                                 class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">{{ ucfirst($member->role) }}</span>
                                         </div>
@@ -1601,33 +1565,33 @@
                 </div>
 
                 {{-- ✅ 📜 Task Log / History Section ✅ --}}
-                <div class="p-8 border-t border-gray-100 bg-gray-50/30">
+                <div class="p-8 border-t border-gray-100 dark:border-gray-700 bg-gray-50/30">
                     <div class="flex items-center gap-2 mb-6">
-                        <div class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500">
+                        <div class="w-8 h-8 rounded-lg bg-gray-200 flex items-center justify-center text-gray-500 dark:text-gray-400">
                             <i class="fas fa-history"></i>
                         </div>
-                        <h4 class="font-bold text-gray-700">Task Log / History</h4>
+                        <h4 class="font-bold text-gray-700 dark:text-gray-300">Task Log / History</h4>
                     </div>
 
                     @if(isset($tasksHistory) && $tasksHistory->count() > 0)
                         <div class="space-y-4">
                             @foreach($tasksHistory as $title => $tasks)
-                                <div x-data="{ expanded: false }" class="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+                                <div x-data="{ expanded: false }" class="bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm overflow-hidden">
                                     <div @click="expanded = !expanded" class="px-5 py-4 flex justify-between items-center cursor-pointer hover:bg-gray-50 transition-colors">
                                         <div class="flex items-center gap-3">
                                             <div class="w-2 h-2 rounded-full bg-green-400"></div>
-                                            <p class="font-bold text-gray-800 text-sm">{{ $title }}</p>
-                                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{{ $tasks->count() }} Record(s)</span>
+                                            <p class="font-bold text-gray-800 dark:text-gray-200 text-sm">{{ $title }}</p>
+                                            <span class="text-[10px] bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 px-2 py-0.5 rounded-full">{{ $tasks->count() }} Record(s)</span>
                                         </div>
-                                        <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform" :class="expanded ? 'rotate-180' : ''"></i>
+                                        <i class="fas fa-chevron-down text-xs text-gray-400 transition-transform" :class="expanded ?'rotate-180' : ''"></i>
                                     </div>
                                     <div x-show="expanded" x-transition class="p-5 border-t border-gray-50 space-y-4">
                                         @foreach($tasks as $t)
-                                            <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100">
+                                            <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100 dark:border-gray-700">
                                                 <div class="flex justify-between items-start mb-3">
                                                     <div class="flex items-center gap-2">
                                                         <img class="w-6 h-6 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($t->user->name) }}">
-                                                        <span class="text-xs font-bold text-gray-700">{{ $t->user->name }}</span>
+                                                        <span class="text-xs font-bold text-gray-700 dark:text-gray-300">{{ $t->user->name }}</span>
                                                     </div>
                                                     <span class="text-[10px] text-gray-400">{{ $t->graded_at ? $t->graded_at->format('M d, H:i') : '' }}</span>
                                                 </div>
@@ -1647,9 +1611,9 @@
 
                                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                                     @if($t->submission_comment)
-                                                        <div class="p-2 bg-white rounded-lg border border-gray-50">
+                                                        <div class="p-2 bg-white dark:bg-gray-800 rounded-lg border border-gray-50">
                                                             <p class="text-[9px] font-bold text-gray-400 mb-1">Comment:</p>
-                                                            <p class="text-[10px] text-gray-600 italic">"{{ $t->submission_comment }}"</p>
+                                                            <p class="text-[10px] text-gray-600 dark:text-gray-400 italic">"{{ $t->submission_comment }}"</p>
                                                         </div>
                                                     @endif
                                                     @if($t->feedback)
@@ -1667,7 +1631,7 @@
                         </div>
                     @else
                         <div class="text-center py-8">
-                            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <i class="fas fa-clipboard-list text-gray-200 text-3xl"></i>
                             </div>
                             <p class="text-xs text-gray-400 italic">No completed tasks in history yet.</p>
@@ -1685,20 +1649,20 @@
                     <div class="p-3 bg-green-100 rounded-xl text-green-600 shadow-sm group-hover:scale-110 transition-transform"><i
                             class="fas fa-wallet text-xl"></i>
                     </div>
-                    <h3 class="text-2xl font-black text-gray-800 flex items-center gap-2">
+                    <h3 class="text-2xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-2">
                         Expenses &amp; Budget
-                        <i class="fas fa-chevron-down text-lg text-gray-400 transition-transform duration-300 ml-2 group-hover:text-gray-600" :class="expandedParent ? 'rotate-180' : ''"></i>
+                        <i class="fas fa-chevron-down text-lg text-gray-400 transition-transform duration-300 ml-2 group-hover:text-gray-600" :class="expandedParent ?'rotate-180' : ''"></i>
                     </h3>
                 </div>
                 <div x-show="expandedParent" x-transition.opacity.duration.300ms style="display: none;" class="grid grid-cols-1 xl:grid-cols-3 gap-8 mt-10">
 
                     {{-- ⚙️ الجزء الأول: المكونات (Components) --}}
-                    <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-blue-100 shadow-xl overflow-hidden hover-lift flex flex-col">
-                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-blue-50/40 cursor-pointer hover:bg-blue-50 transition-colors">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <div x-data="{ expanded: false }" class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-blue-100 shadow-xl overflow-hidden hover-lift flex flex-col">
+                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-blue-50/40 cursor-pointer hover:bg-blue-50 transition-colors">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                 <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm"><i class="fas fa-microchip"></i></div>
                                 Components
-                                <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                                <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ?'rotate-180' : ''"></i>
                             </h3>
                             @if ($myRole == 'leader' || ($myMemberRecord && $myMemberRecord->can_manage_components))
                                 <button @click.stop onclick="openModal('addComponentModal')"
@@ -1713,11 +1677,11 @@
                             @if (isset($components) && $components->count() > 0)
                                 <div class="space-y-4 overflow-y-auto max-h-80 custom-scroll">
                                     @foreach ($components as $comp)
-                                        <div class="flex items-start gap-3 p-3 rounded-2xl bg-gray-50 border border-gray-100 hover:border-blue-200 hover:bg-blue-50/30 transition">
+                                        <div class="flex items-start gap-3 p-3 rounded-2xl bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 hover:border-blue-200 hover:bg-blue-50/30 transition">
                                             {{-- Component Image --}}
                                             @if ($comp->image_path)
                                                 <img src="{{ $comp->image_path }}" alt="{{ $comp->name }}"
-                                                    class="w-14 h-14 rounded-xl object-cover border border-gray-200 flex-shrink-0">
+                                                    class="w-14 h-14 rounded-xl object-cover border border-gray-200 dark:border-gray-700 flex-shrink-0">
                                             @else
                                                 <div class="w-14 h-14 rounded-xl bg-blue-100 flex items-center justify-center border border-blue-200 flex-shrink-0">
                                                     <i class="fas fa-microchip text-blue-400 text-xl"></i>
@@ -1725,7 +1689,7 @@
                                             @endif
                                             <div class="min-w-0 flex-grow">
                                                 <div class="flex justify-between items-start">
-                                                    <p class="font-bold text-gray-800 text-sm truncate">{{ $comp->name }}</p>
+                                                    <p class="font-bold text-gray-800 dark:text-gray-200 text-sm truncate">{{ $comp->name }}</p>
                                                     {{-- Edit/Delete Buttons --}}
                                                     @if ($myRole == 'leader' || ($myMemberRecord && $myMemberRecord->can_manage_components))
                                                         <div class="flex items-center gap-1">
@@ -1745,7 +1709,7 @@
                                                         </div>
                                                     @endif
                                                 </div>
-                                                <p class="text-[11px] text-gray-500 leading-relaxed mt-0.5">{{ Str::limit($comp->description, 80) }}</p>
+                                                <p class="text-[11px] text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">{{ Str::limit($comp->description, 80) }}</p>
                                             </div>
                                         </div>
                                     @endforeach
@@ -1755,7 +1719,7 @@
                                     <div class="w-14 h-14 bg-blue-50 rounded-full flex items-center justify-center mx-auto mb-3">
                                         <i class="fas fa-microchip text-blue-300 text-2xl"></i>
                                     </div>
-                                    <p class="text-sm font-bold text-gray-600">No components yet</p>
+                                    <p class="text-sm font-bold text-gray-600 dark:text-gray-400">No components yet</p>
                                     <p class="text-xs text-gray-400 mt-1">Add the hardware/software components your project needs.</p>
                                 </div>
                             @endif
@@ -1764,13 +1728,13 @@
                     </div>
 
                     {{-- 🟢 الجزء الثاني: المصروفات (Expenses - Outgoing) --}}
-                    <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift flex flex-col">
-                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <div x-data="{ expanded: false }" class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden hover-lift flex flex-col">
+                        <div @click="expanded = !expanded" class="px-6 py-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                 <div class="p-2 bg-red-50 rounded-lg text-red-500 shadow-sm"><i
                                         class="fas fa-shopping-cart"></i></div>
                                 Expenses
-                                <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                                <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ?'rotate-180' : ''"></i>
                             </h3>
                             @if ($myRole == 'leader' || ($myMemberRecord && $myMemberRecord->can_manage_expenses))
                                 <button @click.stop onclick="openModal('addExpenseModal')"
@@ -1801,7 +1765,7 @@
                                                         @if ($expense->receipt_path)
                                                             <a href="{{ $expense->receipt_path }}"
                                                                 target="_blank"
-                                                                class="group relative block w-10 h-10 rounded-lg overflow-hidden border border-gray-200 hover:border-blue-400 transition">
+                                                                class="group relative block w-10 h-10 rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 hover:border-blue-400 transition">
                                                                 <img src="{{ $expense->receipt_path }}"
                                                                     alt="Receipt"
                                                                     class="w-full h-full object-cover group-hover:scale-110 transition duration-300">
@@ -1811,13 +1775,13 @@
                                                             </a>
                                                         @else
                                                             <div
-                                                                class="w-10 h-10 rounded-lg bg-gray-50 flex items-center justify-center text-gray-300 border border-gray-100">
+                                                                class="w-10 h-10 rounded-lg bg-gray-50 dark:bg-gray-900 flex items-center justify-center text-gray-300 border border-gray-100 dark:border-gray-700">
                                                                 <i class="fas fa-receipt text-xs"></i>
                                                             </div>
                                                         @endif
 
                                                         <div>
-                                                            <p class="font-bold text-gray-800">
+                                                            <p class="font-bold text-gray-800 dark:text-gray-200">
                                                                 {{ $expense->item ?? $expense->item_name }}
                                                             </p>
                                                             <p class="text-[10px] text-gray-400">{{ $expense->shop_name }}</p>
@@ -1867,19 +1831,19 @@
                         </div> {{-- End Expenses Collapsible Area --}}
                     </div>
                     {{-- 🟡 الجزء الثالث: التمويل واللمّ (Funds Collection) --}}
-                    <div x-data="{ expanded: false }" class="bg-white rounded-[2.5rem] border border-yellow-100 shadow-xl overflow-hidden hover-lift flex flex-col">
-                        <div @click="expanded = !expanded" class="px-5 py-4 border-b border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#FFF8E1]/50 cursor-pointer hover:bg-yellow-50 transition-colors gap-3">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-2">
+                    <div x-data="{ expanded: false }" class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-yellow-100 shadow-xl overflow-hidden hover-lift flex flex-col">
+                        <div @click="expanded = !expanded" class="px-5 py-4 border-b border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-start sm:items-center bg-[#FFF8E1]/50 cursor-pointer hover:bg-yellow-50 transition-colors gap-3">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                                 <div class="p-2 bg-yellow-100 rounded-lg text-[#AA8A26] shadow-sm"><i
                                         class="fas fa-hand-holding-usd"></i></div>
                                 <span>Fund Collection</span>
-                                <i class="fas fa-chevron-down text-sm text-[#AA8A26] transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                                <i class="fas fa-chevron-down text-sm text-[#AA8A26] transition-transform duration-300 ml-1" :class="expanded ?'rotate-180' : ''"></i>
                             </h3>
                             <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                                 {{-- زرار الهستوري --}}
                                 @if ($fundsHistory->count() > 0)
                                     <button @click.stop onclick="openModal('fundsHistoryModal')"
-                                        class="flex-1 sm:flex-none text-[10px] bg-gray-100 text-gray-600 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition whitespace-nowrap"><i
+                                        class="flex-1 sm:flex-none text-[10px] bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition whitespace-nowrap"><i
                                             class="fas fa-history"></i> History</button>
                                 @endif
 
@@ -1906,18 +1870,18 @@
                                     <div class="flex justify-between items-end mb-2">
                                         <div>
                                             <p class="text-xs text-gray-400 font-bold uppercase tracking-wider">Active:
-                                                <span class="text-gray-800">{{ $activeFund->title }}</span>
+                                                <span class="text-gray-800 dark:text-gray-200">{{ $activeFund->title }}</span>
                                             </p>
                                             <p class="text-xl font-black text-[#AA8A26]">
                                                 {{ number_format($activeFund->amount_per_member) }} <small
-                                                    class="text-gray-500 text-xs font-bold">EGP / Person</small>
+                                                    class="text-gray-500 dark:text-gray-400 text-xs font-bold">EGP / Person</small>
                                             </p>
                                         </div>
                                         <div class="text-right">
                                             <p class="text-xs text-red-500 font-bold"><i class="far fa-clock"></i>
                                                 Deadline
                                             </p>
-                                            <p class="text-sm font-bold text-gray-800">
+                                            <p class="text-sm font-bold text-gray-800 dark:text-gray-200">
                                                 {{ \Carbon\Carbon::parse($activeFund->deadline)->format('d M') }}
                                             </p>
                                         </div>
@@ -1929,7 +1893,7 @@
                                         $totalMembers = $team->members->count();
                                         $percent = $totalMembers > 0 ? ($paidCount / $totalMembers) * 100 : 0;
                                     @endphp
-                                    <div class="bg-gray-100 rounded-full h-2 overflow-hidden mb-1">
+                                    <div class="bg-gray-100 dark:bg-gray-900 rounded-full h-2 overflow-hidden mb-1">
                                         <div class="h-full bg-gradient-to-r from-yellow-400 to-[#AA8A26]"
                                             style="width: {{ $percent }}%"></div>
                                     </div>
@@ -1959,11 +1923,11 @@
                                         @endphp
 
                                         <div
-                                            class="flex items-center justify-between p-3 rounded-xl border {{ $contrib->status == 'paid' ? 'bg-green-50 border-green-100' : ($isLate ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100') }}">
+                                            class="flex items-center justify-between p-3 rounded-xl border {{ $contrib->status =='paid' ? 'bg-green-50 border-green-100' : ($isLate ? 'bg-red-50 border-red-200' : 'bg-white border-gray-100') }}">
                                             <a href="{{ route('profile.show', $contrib->user_id) }}" class="flex items-center gap-3 group/profile">
                                                 <x-user-avatar :user="$contrib->user" size="w-9 h-9" />
                                                 <div>
-                                                    <p class="text-xs font-bold text-gray-800 group-hover/profile:text-[#AA8A26] transition-colors">{{ $contrib->user->name }}
+                                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover/profile:text-[#AA8A26] transition-colors">{{ $contrib->user->name }}
                                                     </p>
 
                                                     {{-- 🔥 عرض الديون القديمة (الفضيحة) --}}
@@ -2148,7 +2112,7 @@
                                                             @if ($contrib->user_id == Auth::id())
                                                                 <button
                                                                     onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
-                                                                    class="text-[10px] bg-gray-900 text-white px-3 py-1 rounded-lg hover:bg-[#D4AF37] transition font-bold shadow-md">
+                                                                    class="text-[10px] bg-gray-900 text-white px-3 py-1 rounded-lg hover:bg-[#2596be] transition font-bold shadow-md">
                                                                     Pay Now
                                                                 </button>
                                                             @endif
@@ -2158,7 +2122,7 @@
                                                         <div class="flex flex-col gap-1.5 items-end">
                                                             <button
                                                                 onclick="openPaymentModal('{{ $contrib->id }}', '{{ $activeFund->amount_per_member }}', '{{ Auth::user()->wallet_balance }}')"
-                                                                class="text-[10px] bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-[#D4AF37] transition font-bold shadow-md w-full">
+                                                                class="text-[10px] bg-gray-900 text-white px-3 py-1.5 rounded-lg hover:bg-[#2596be] transition font-bold shadow-md w-full">
                                                                 Pay Now
                                                             </button>
                                                             
@@ -2174,7 +2138,7 @@
                                                         {{-- Leader: Just Pending + Force Wallet Option --}}
                                                         <div class="text-right flex flex-col items-end gap-1.5">
                                                             {{-- Status Badge --}}
-                                                            <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-1 rounded-lg font-bold">Pending</span>
+                                                            <span class="text-[10px] bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 px-2 py-1 rounded-lg font-bold">Pending</span>
 
                                                             {{-- Historical Fund Reviews --}}
                                                             @if($myRole == 'leader' && $userHistoryPending->count() > 0)
@@ -2234,7 +2198,7 @@
                             @else
                                 <div class="text-center py-10 text-gray-400">
                                     <div
-                                        class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-3">
                                         <i class="fas fa-hand-holding-heart text-2xl text-gray-300"></i>
                                     </div>
                                     <p class="text-sm font-bold">No active requests</p>
@@ -2256,9 +2220,9 @@
                         <div class="p-3 bg-purple-100 rounded-xl text-purple-600 shadow-sm group-hover:scale-110 transition-transform">
                             <i class="fas fa-photo-video text-xl"></i>
                         </div>
-                        <h3 class="text-2xl font-black text-gray-800 flex items-center gap-2">
+                        <h3 class="text-2xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-2">
                             Project Showroom
-                            <i class="fas fa-chevron-down text-lg text-gray-400 transition-transform duration-300 ml-2 group-hover:text-gray-600" :class="expanded ? 'rotate-180' : ''"></i>
+                            <i class="fas fa-chevron-down text-lg text-gray-400 transition-transform duration-300 ml-2 group-hover:text-gray-600" :class="expanded ?'rotate-180' : ''"></i>
                         </h3>
                     </div>
                     <button @click.stop onclick="openModal('uploadGalleryModal')"
@@ -2268,7 +2232,7 @@
                 </div>
 
                 <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;"
-                    class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl p-8 transition-all hover:shadow-2xl">
+                    class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-200 dark:border-gray-700 shadow-xl p-8 transition-all hover:shadow-2xl">
                     @php
                         $galleryItems = \Illuminate\Support\Facades\DB::table('project_galleries')
                             ->where('team_id', $team->id)
@@ -2281,7 +2245,7 @@
                             @foreach ($galleryItems as $item)
                                 {{-- كارت العرض --}}
                                 <div
-                                    class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 bg-gray-50 h-64 cursor-pointer">
+                                    class="group relative rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 h-64 cursor-pointer">
 
                                     {{-- 🟢 حالة 1: لو العنصر فيديو --}}
                                     @if (isset($item->type) && $item->type == 'video')
@@ -2376,13 +2340,13 @@
                         </div>
                     @else
                         {{-- حالة الفراغ --}}
-                        <div class="text-center py-12 border-2 border-dashed border-gray-200 rounded-3xl bg-gray-50/50">
+                        <div class="text-center py-12 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-3xl bg-gray-50/50">
                             <div
-                                class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm animate-bounce-slow">
+                                class="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm animate-bounce-slow">
                                 <i class="fas fa-photo-video text-4xl text-gray-300"></i>
                             </div>
-                            <h4 class="text-gray-800 font-bold text-lg">Empty Showroom</h4>
-                            <p class="text-gray-500 text-sm mb-6">Share project images, diagrams, or demo videos.</p>
+                            <h4 class="text-gray-800 dark:text-gray-200 font-bold text-lg">Empty Showroom</h4>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm mb-6">Share project images, diagrams, or demo videos.</p>
                             <button onclick="openModal('uploadGalleryModal')"
                                 class="text-blue-600 font-bold text-xs hover:underline uppercase tracking-wide">
                                 Start Uploading
@@ -2425,13 +2389,13 @@
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-10 items-start">
                 {{-- العمود الأول: قسم التقارير الأسبوعية --}}
                 <div id="reports-section" x-data="{ expanded: false }"
-                    class="bg-white rounded-[2.5rem] border border-gray-200 shadow-xl overflow-hidden hover-lift transition-all flex flex-col">
-                    <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
-                        <h3 class="font-bold text-gray-800 flex items-center gap-3 text-lg">
+                    class="bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-200 dark:border-gray-700 shadow-xl overflow-hidden hover-lift transition-all flex flex-col">
+                    <div @click="expanded = !expanded" class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 cursor-pointer hover:bg-gray-100 transition-colors">
+                        <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-3 text-lg">
                             <div class="p-2 bg-blue-100 rounded-lg text-blue-600 shadow-sm"><i class="fas fa-stream"></i>
                             </div>
                             Progress Timeline
-                            <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ? 'rotate-180' : ''"></i>
+                            <i class="fas fa-chevron-down text-sm text-gray-400 transition-transform duration-300 ml-1" :class="expanded ?'rotate-180' : ''"></i>
                         </h3>
                         @if (
                             $team &&
@@ -2445,7 +2409,7 @@
                     </div>
                     <div x-show="expanded" x-transition.opacity.duration.300ms style="display: none;" class="flex flex-col flex-grow">
                     <div class="p-8 relative custom-scroll max-h-[500px] overflow-y-auto">
-                        <div class="absolute left-12 top-8 bottom-8 w-0.5 bg-gray-100"></div>
+                        <div class="absolute left-12 top-8 bottom-8 w-0.5 bg-gray-100 dark:bg-gray-900"></div>
                         @php
                             $reports = \Illuminate\Support\Facades\DB::table('weekly_reports')
                                 ->where('team_id', $team->id)
@@ -2455,14 +2419,14 @@
                         @forelse($reports as $report)
                             <div class="relative pl-12 mb-8 group">
                                 <div
-                                    class="absolute left-0 w-8 h-8 bg-white border-4 border-[#D4AF37] rounded-full flex items-center justify-center z-10 shadow-md group-hover:scale-110 transition">
-                                    <span class="text-[10px] font-bold text-gray-700">{{ $report->week_number }}</span>
+                                    class="absolute left-0 w-8 h-8 bg-white dark:bg-gray-800 border-4 border-[#2596be] rounded-full flex items-center justify-center z-10 shadow-md group-hover:scale-110 transition">
+                                    <span class="text-[10px] font-bold text-gray-700 dark:text-gray-300">{{ $report->week_number }}</span>
                                 </div>
                                 <div
-                                    class="bg-white border border-gray-100 p-5 rounded-2xl shadow-sm hover:shadow-md transition hover:border-[#D4AF37]/30 transform group-hover:translate-x-1">
+                                    class="bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 p-5 rounded-2xl shadow-sm hover:shadow-md transition hover:border-[#2596be]/30 transform group-hover:translate-x-1">
                                     <div class="flex justify-between items-start mb-2">
                                         <div>
-                                            <h4 class="font-bold text-gray-900 text-sm">Week {{ $report->week_number }}
+                                            <h4 class="font-bold text-gray-900 dark:text-gray-100 text-sm">Week {{ $report->week_number }}
                                                 Report</h4>
                                             <span class="text-xs text-gray-400">
                                                 By {{ \App\Models\User::find($report->user_id)->name }} •
@@ -2496,7 +2460,7 @@
                                         <div>
                                             <p class="text-[10px] font-bold text-green-600 uppercase tracking-wider mb-1">
                                                 Achievements</p>
-                                            <p class="text-xs text-gray-600 leading-relaxed">{{ $report->achievements }}
+                                            <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{{ $report->achievements }}
                                             </p>
                                         </div>
                                         <div class="flex gap-4">
@@ -2504,14 +2468,14 @@
                                                 <p
                                                     class="text-[10px] font-bold text-blue-600 uppercase tracking-wider mb-1">
                                                     Next Plan</p>
-                                                <p class="text-xs text-gray-600 leading-relaxed">{{ $report->plans }}</p>
+                                                <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">{{ $report->plans }}</p>
                                             </div>
                                             @if ($report->challenges)
                                                 <div class="flex-1">
                                                     <p
                                                         class="text-[10px] font-bold text-red-500 uppercase tracking-wider mb-1">
                                                         Challenges</p>
-                                                    <p class="text-xs text-gray-600 leading-relaxed">
+                                                    <p class="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
                                                         {{ $report->challenges }}</p>
                                                 </div>
                                             @endif
@@ -2522,7 +2486,7 @@
                         @empty
                             <div class="text-center py-10 pl-4">
                                 <div
-                                    class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-3">
                                     <i class="fas fa-history text-2xl text-gray-300"></i>
                                 </div>
                                 <p class="text-gray-400 text-sm">No weekly reports submitted yet.</p>
@@ -2536,19 +2500,19 @@
                 <div>
                     <div class="flex items-center gap-3 mb-6">
                         <div
-                            class="w-12 h-12 rounded-full bg-gradient-to-br from-[#D4AF37] to-[#8B7500] flex items-center justify-center shadow-lg animate-float">
+                            class="w-12 h-12 rounded-full bg-gradient-to-br from-[#2596be] to-[#8B7500] flex items-center justify-center shadow-lg animate-float">
                             <i class="fas fa-graduation-cap text-white text-xl"></i>
                         </div>
                         <div>
-                            <h2 class="text-2xl font-black text-gray-800">Final Submission</h2>
-                            <p class="text-gray-500 text-sm">Upload final deliverables.</p>
+                            <h2 class="text-2xl font-black text-gray-800 dark:text-gray-200">Final Submission</h2>
+                            <p class="text-gray-500 dark:text-gray-400 text-sm">Upload final deliverables.</p>
                         </div>
                     </div>
 
                     <div
-                        class="bg-white rounded-[2rem] shadow-2xl overflow-hidden border border-[#D4AF37]/20 relative hover:border-[#D4AF37] transition duration-500">
+                        class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl overflow-hidden border border-[#2596be]/20 relative hover:border-[#2596be] transition duration-500">
                         <div
-                            class="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
+                            class="absolute top-0 right-0 w-64 h-64 bg-[#2596be]/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
                         </div>
 
                         <form action="{{ route('final_project.submit_final', $project->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return handleAjaxFormSubmit(event)">
@@ -2562,15 +2526,15 @@
 
                                 {{-- 1. رفع الكتاب --}}
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        <i class="fas fa-book text-[#D4AF37] mr-1"></i> Project Book (Thesis)
+                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                        <i class="fas fa-book text-[#2596be] mr-1"></i> Project Book (Thesis)
                                     </label>
                                     @if ($team->final_book_file)
                                         <div
                                             class="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-200">
                                             <div class="flex items-center gap-3">
                                                 <i class="fas fa-file-pdf text-red-500 text-xl"></i>
-                                                <span class="text-sm font-bold text-gray-700">Project_Book.pdf</span>
+                                                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Project_Book.pdf</span>
                                             </div>
                                             <a href="{{ $team->final_book_file }}"
                                                 target="_blank"
@@ -2581,7 +2545,7 @@
                                     @if (!$team->is_fully_submitted && $canUploadBook)
                                         <div class="mt-2 text-[10px] text-gray-400 font-bold mb-1 ml-1 uppercase">Upload New {{ $team->final_book_file ? 'Version' : '' }}</div>
                                         <input type="file" name="final_book" accept=".pdf"
-                                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
+                                            class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#2596be]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
                                     @elseif (!$team->is_fully_submitted && !$team->final_book_file)
                                         <p class="text-sm text-gray-400 italic">Waiting for leader or manager to upload...</p>
                                     @endif
@@ -2589,15 +2553,15 @@
 
                                 {{-- 2. رفع العرض التقديمي --}}
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
-                                        <i class="fas fa-desktop text-[#D4AF37] mr-1"></i> Final Presentation
+                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
+                                        <i class="fas fa-desktop text-[#2596be] mr-1"></i> Final Presentation
                                     </label>
                                     @if ($team->presentation_file)
                                         <div
                                             class="flex items-center justify-between p-4 bg-green-50 rounded-xl border border-green-200">
                                             <div class="flex items-center gap-3">
                                                 <i class="fas fa-file-powerpoint text-orange-500 text-xl"></i>
-                                                <span class="text-sm font-bold text-gray-700">Presentation.pptx</span>
+                                                <span class="text-sm font-bold text-gray-700 dark:text-gray-300">Presentation.pptx</span>
                                             </div>
                                             <a href="{{ $team->presentation_file }}"
                                                 target="_blank"
@@ -2608,7 +2572,7 @@
                                     @if (!$team->is_fully_submitted && $canUploadPresentation)
                                         <div class="mt-2 text-[10px] text-gray-400 font-bold mb-1 ml-1 uppercase">Upload New {{ $team->presentation_file ? 'Version' : '' }}</div>
                                         <input type="file" name="presentation" accept=".ppt,.pptx,.pdf"
-                                            class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
+                                            class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#2596be]/10 file:text-[#AA8A26] border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer bg-gray-50/50 p-2 hover:bg-gray-100 transition">
                                     @elseif (!$team->is_fully_submitted && !$team->presentation_file)
                                         <p class="text-sm text-gray-400 italic">Waiting for leader or manager to upload...</p>
                                     @endif
@@ -2616,16 +2580,16 @@
 
                                 {{-- 3. رابط فيديو المناقشة --}}
                                 <div>
-                                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">
+                                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">
                                         <i class="fab fa-youtube text-red-500 mr-1"></i> Defense Video Link
                                     </label>
                                     @if (!$team->is_fully_submitted && $canUploadPresentation)
                                         <input type="url" name="defense_video"
                                             value="{{ $team->defense_video_link }}" placeholder="https://..."
-                                            class="w-full border-2 border-gray-100 bg-gray-50 p-4 rounded-xl focus:border-[#D4AF37] outline-none transition font-medium text-gray-700">
+                                            class="w-full border-2 border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-4 rounded-xl focus:border-[#2596be] outline-none transition font-medium text-gray-700 dark:text-gray-300">
                                     @else
                                         @if($team->defense_video_link)
-                                            <div class="p-4 bg-gray-50 rounded-xl border border-gray-100 text-xs font-bold text-blue-600 truncate">
+                                            <div class="p-4 bg-gray-50 dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-700 text-xs font-bold text-blue-600 truncate">
                                                 <i class="fas fa-link mr-1"></i> {{ $team->defense_video_link }}
                                             </div>
                                         @elseif(!$team->is_fully_submitted)
@@ -2637,7 +2601,7 @@
 
                             @if (!$team->is_fully_submitted)
                                 {{-- الحالة الأولى: لم يتم التسليم النهائي بعد --}}
-                                <div class="bg-gray-50 px-8 py-6 border-t border-gray-100 flex flex-col gap-4">
+                                <div class="bg-gray-50 dark:bg-gray-900 px-8 py-6 border-t border-gray-100 dark:border-gray-700 flex flex-col gap-4">
                                     @if ($isLeader)
                                         {{-- زر التسليم النهائي --}}
                                         <button type="button" name="submit_finish" value="1"
@@ -2653,7 +2617,7 @@
                                     {{-- زر حفظ المسودة --}}
                                     @if($canUploadBook || $canUploadPresentation)
                                         <button type="submit" name="submit_finish" value="0"
-                                            class="w-full bg-white border-2 border-gray-200 text-gray-600 font-bold py-4 rounded-xl shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-2">
+                                            class="w-full bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 font-bold py-4 rounded-xl shadow-sm hover:bg-gray-50 transition flex items-center justify-center gap-2">
                                             <i class="fas fa-save"></i> Save Draft
                                         </button>
                                         @if(!$isLeader)
@@ -2705,12 +2669,12 @@
                             </div>
                         @else
                             <div
-                                class="flex flex-col items-center justify-center h-48 relative z-10 text-center bg-gray-50 rounded-2xl mb-8 border border-gray-100">
+                                class="flex flex-col items-center justify-center h-48 relative z-10 text-center bg-gray-50 dark:bg-gray-900 rounded-2xl mb-8 border border-gray-100 dark:border-gray-700">
                                 <div
-                                    class="w-16 h-16 bg-white rounded-full flex items-center justify-center mb-4 animate-pulse shadow-sm">
-                                    <i class="fas fa-hourglass-half text-gray-500 text-2xl"></i>
+                                    class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mb-4 animate-pulse shadow-sm">
+                                    <i class="fas fa-hourglass-half text-gray-500 dark:text-gray-400 text-2xl"></i>
                                 </div>
-                                <h4 class="text-gray-500 font-bold text-sm">Not Scheduled Yet for project discussion
+                                <h4 class="text-gray-500 dark:text-gray-400 font-bold text-sm">Not Scheduled Yet for project discussion
                                 </h4>
                                 <p class="text-gray-400 text-xs mt-1 max-w-[200px]">Your supervisor hasn't set the
                                     defense
@@ -2721,10 +2685,10 @@
 
                     {{-- 🎓 كارت النتيجة للطالب --}}
                     <div
-                        class="bg-white rounded-2xl shadow-xl p-6 relative overflow-hidden border border-gray-100 h-250 transition-all hover:shadow-2xl hover:border-purple-200">
+                        class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 relative overflow-hidden border border-gray-100 dark:border-gray-700 h-250 transition-all hover:shadow-2xl hover:border-purple-200">
                         <div class="absolute -top-6 -right-6 w-24 h-24 bg-purple-50 rounded-full blur-xl"></div>
                         <h3
-                            class="text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10 text-gray-800 border-b border-gray-100 pb-4">
+                            class="text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-2 relative z-10 text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700 pb-4">
                             <i class="fas fa-graduation-cap text-purple-600"></i> Final Result
                         </h3>
                         @if (isset($team) && $team->project_score)
@@ -2740,19 +2704,19 @@
                                     class="inline-block px-3 py-1 rounded-full {{ $statusBg }} text-[10px] font-bold uppercase mb-4 tracking-wider shadow-sm">{{ $statusText }}</span>
                                 <div class="flex flex-col items-center justify-center mb-4">
                                     <span
-                                        class="text-5xl font-black text-gray-800 tracking-tighter">{{ $team->project_score }}</span>
+                                        class="text-5xl font-black text-gray-800 dark:text-gray-200 tracking-tighter">{{ $team->project_score }}</span>
                                     <span class="text-gray-400 font-bold text-sm uppercase mt-1">Out of
                                         {{ $team->project_max_score }}</span>
                                 </div>
-                                <div class="bg-gray-50 rounded-xl p-3 border border-gray-100">
-                                    <p class="text-xs text-gray-500 font-bold uppercase mb-1">Percentage</p>
+                                <div class="bg-gray-50 dark:bg-gray-900 rounded-xl p-3 border border-gray-100 dark:border-gray-700">
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase mb-1">Percentage</p>
                                     <p class="text-2xl font-bold {{ $color }}">{{ round($percentage, 1) }}%
                                     </p>
                                 </div>
                             </div>
                         @else
                             <div class="flex flex-col items-center justify-center h-40 relative z-10 text-center">
-                                <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-4">
+                                <div class="w-16 h-16 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center mb-4">
                                     <i class="fas fa-clipboard-list text-gray-300 text-2xl"></i>
                                 </div>
                                 <h4 class="text-gray-400 font-bold text-sm">Results Pending</h4>
@@ -2765,16 +2729,16 @@
             </div>
         @elseif($team)
             <div
-                class="mt-12 bg-white rounded-[2.5rem] border border-gray-200 shadow-xl p-12 text-center relative overflow-hidden">
+                class="mt-12 bg-white dark:bg-gray-800 rounded-[2.5rem] border border-gray-200 dark:border-gray-700 shadow-xl p-12 text-center relative overflow-hidden">
                 <div class="absolute inset-0 bg-gray-50/50"></div>
-                <div class="absolute -top-24 -right-24 w-64 h-64 bg-gray-100 rounded-full blur-3xl opacity-50"></div>
+                <div class="absolute -top-24 -right-24 w-64 h-64 bg-gray-100 dark:bg-gray-900 rounded-full blur-3xl opacity-50"></div>
                 <div class="relative z-10">
                     <div
-                        class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg border-4 border-gray-50">
+                        class="w-24 h-24 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg border-4 border-gray-50">
                         <i class="fas fa-lock text-5xl text-gray-300"></i>
                     </div>
-                    <h3 class="text-3xl font-black text-gray-800 mb-2">Workspace Locked</h3>
-                    <p class="text-gray-500 max-w-md mx-auto mb-8 text-sm leading-relaxed">
+                    <h3 class="text-3xl font-black text-gray-800 dark:text-gray-200 mb-2">Workspace Locked</h3>
+                    <p class="text-gray-500 dark:text-gray-400 max-w-md mx-auto mb-8 text-sm leading-relaxed">
                         Operations (Meetings, Tasks, Budget, Reports) are locked until your project proposal is
                         <span class="text-green-600 font-bold bg-green-50 px-2 py-0.5 rounded">Approved</span>.
                     </p>
@@ -2793,7 +2757,7 @@
                         </div>
                     @else
                         <div
-                            class="inline-block bg-gray-100 text-gray-500 px-8 py-4 rounded-2xl font-bold border border-gray-200">
+                            class="inline-block bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 px-8 py-4 rounded-2xl font-bold border border-gray-200 dark:border-gray-700">
                             <i class="fas fa-paper-plane mr-2"></i> Please Submit your proposal to unlock.
                         </div>
                     @endif
@@ -2811,7 +2775,7 @@
             <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"
                 onclick="closeModal('addComponentModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 {{-- Header --}}
                 <div class="bg-gradient-to-r from-blue-600 to-blue-500 px-6 py-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -2831,24 +2795,24 @@
 
                     {{-- Component Name --}}
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Component Name <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Component Name <span class="text-red-500">*</span></label>
                         <input type="text" name="name" required
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition"
+                            class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition"
                             placeholder="e.g. Arduino Uno, Raspberry Pi, LCD Screen...">
                     </div>
 
                     {{-- Description --}}
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Description <span class="text-red-500">*</span></label>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Description <span class="text-red-500">*</span></label>
                         <textarea name="description" required rows="3"
-                            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition resize-none"
+                            class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 focus:border-blue-400 outline-none transition resize-none"
                             placeholder="How will this component help in the project?"></textarea>
                     </div>
 
                     {{-- Component Image --}}
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Component Image <span class="text-gray-400">(optional)</span></label>
-                        <div class="relative border-2 border-dashed border-gray-200 rounded-xl p-4 text-center hover:border-blue-400 transition cursor-pointer" onclick="document.getElementById('comp_image_input').click()">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Component Image <span class="text-gray-400">(optional)</span></label>
+                        <div class="relative border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl p-4 text-center hover:border-blue-400 transition cursor-pointer" onclick="document.getElementById('comp_image_input').click()">
                             <i class="fas fa-image text-gray-300 text-2xl mb-1"></i>
                             <p class="text-xs text-gray-400" id="comp_image_label">Click to upload image</p>
                             <input type="file" id="comp_image_input" name="image" accept="image/*" class="hidden"
@@ -2858,7 +2822,7 @@
 
                     <div class="flex gap-3 pt-2">
                         <button type="button" onclick="closeModal('addComponentModal')"
-                            class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                            class="flex-1 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
                         <button type="submit"
                             class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">
                             <i class="fas fa-check mr-1"></i> Accept
@@ -2877,7 +2841,7 @@
             <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true"
                 onclick="closeModal('addExpenseModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 {{-- Header --}}
                 <div class="bg-gradient-to-r from-red-500 to-rose-500 px-6 py-4 flex items-center justify-between">
                     <div class="flex items-center gap-3">
@@ -2922,18 +2886,18 @@
 
                         {{-- Choose components to add --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase tracking-wider mb-1">Add Items to Invoice <span class="text-red-500">*</span></label>
+                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase tracking-wider mb-1">Add Items to Invoice <span class="text-red-500">*</span></label>
                             <div class="flex gap-2">
                                 <select x-ref="compSelect"
                                     @change="addItem($event.target.value)"
-                                    class="flex-1 border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white">
+                                    class="flex-1 border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 focus:border-red-400 outline-none transition bg-white dark:bg-gray-800">
                                     <option value="">-- Choose a component --</option>
                                     <template x-for="comp in availableComponents" :key="comp.id">
                                         <option :value="comp.id" x-text="comp.name"></option>
                                     </template>
                                 </select>
                                 <button type="button" @click="addCustomItem()" 
-                                    class="bg-gray-100 hover:bg-gray-200 text-gray-700 font-bold py-2 px-4 rounded-xl text-xs transition border border-gray-200">
+                                    class="bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-700 dark:text-gray-300 font-bold py-2 px-4 rounded-xl text-xs transition border border-gray-200 dark:border-gray-700">
                                     + Custom
                                 </button>
                             </div>
@@ -2942,13 +2906,13 @@
                         {{-- List of selected items with their prices --}}
                         <div class="space-y-3 max-h-60 overflow-y-auto pr-2 custom-scrollbar">
                             <template x-for="(item, index) in selectedItems" :key="index">
-                                <div class="bg-gray-50 rounded-2xl p-4 border border-gray-100 relative group animate-in fade-in slide-in-from-top-2">
+                                <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-700 relative group animate-in fade-in slide-in-from-top-2">
                                     <div class="flex justify-between items-start mb-3">
                                         <div class="flex-grow mr-4">
-                                            <h4 x-show="!item.custom" class="text-sm font-black text-gray-800" x-text="item.name"></h4>
+                                            <h4 x-show="!item.custom" class="text-sm font-black text-gray-800 dark:text-gray-200" x-text="item.name"></h4>
                                             <div x-show="item.custom">
                                                 <input type="text" name="custom_item_name[]" x-model="item.name" required
-                                                    class="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition"
+                                                    class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition"
                                                     placeholder="e.g. Transportation, Printing...">
                                             </div>
                                             <input type="hidden" name="component_id[]" :value="item.id">
@@ -2964,15 +2928,15 @@
                                         <div>
                                             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Unit Price</label>
                                             <input type="number" name="price_per_unit[]" x-model="item.price" required step="0.01" min="0.01"
-                                                class="w-full bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                                                class="w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
                                         </div>
                                         <div>
                                             <label class="block text-[10px] font-bold text-gray-400 uppercase mb-1">Quantity</label>
                                             <div class="flex items-center gap-2">
-                                                <button type="button" @click="item.qty = Math.max(1, parseInt(item.qty) - 1)" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition">-</button>
+                                                <button type="button" @click="item.qty = Math.max(1, parseInt(item.qty) - 1)" class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 transition">-</button>
                                                 <input type="number" name="quantity[]" x-model="item.qty" readonly
-                                                    class="w-12 text-center bg-transparent border-0 font-bold text-gray-800 focus:ring-0 p-0">
-                                                <button type="button" @click="item.qty = parseInt(item.qty) + 1" class="w-8 h-8 rounded-lg bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:bg-gray-50 transition">+</button>
+                                                    class="w-12 text-center bg-transparent border-0 font-bold text-gray-800 dark:text-gray-200 focus:ring-0 p-0">
+                                                <button type="button" @click="item.qty = parseInt(item.qty) + 1" class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-500 dark:text-gray-400 hover:bg-gray-50 transition">+</button>
                                             </div>
                                         </div>
                                     </div>
@@ -2980,7 +2944,7 @@
                             </template>
                             
                             <template x-if="selectedItems.length === 0">
-                                <div class="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl">
+                                <div class="text-center py-6 border-2 border-dashed border-gray-100 dark:border-gray-700 rounded-2xl">
                                     <i class="fas fa-shopping-cart text-gray-200 text-3xl mb-2"></i>
                                     <p class="text-xs text-gray-400">No items selected yet.</p>
                                 </div>
@@ -2990,9 +2954,9 @@
                         {{-- Store & Invoice (Shared) --}}
                         <div class="grid grid-cols-1 gap-4">
                             <div>
-                                <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Store Name <span class="text-red-500">*</span></label>
+                                <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Store Name <span class="text-red-500">*</span></label>
                                 <input type="text" name="shop_name" required
-                                    class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition"
+                                    class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition"
                                     placeholder="e.g. Amazon, local shop...">
                             </div>
 
@@ -3013,7 +2977,7 @@
 
                         <div class="flex gap-3 pt-2">
                             <button type="button" onclick="closeModal('addExpenseModal')"
-                                class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                                class="flex-1 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
                             <button type="submit" :disabled="selectedItems.length === 0"
                                 class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
                                 Save Batch Expense
@@ -3031,7 +2995,7 @@
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('editComponentModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 <div class="bg-blue-600 px-6 py-4 flex justify-between items-center text-white">
                     <h3 class="text-lg font-black flex items-center gap-2"><i class="fas fa-edit"></i> Edit Component</h3>
                     <button onclick="closeModal('editComponentModal')" class="hover:rotate-90 transition-transform"><i class="fas fa-times text-xl"></i></button>
@@ -3040,19 +3004,19 @@
                     @csrf
                     @method('PUT')
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Name</label>
-                        <input type="text" name="name" id="edit_comp_name" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none transition">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Name</label>
+                        <input type="text" name="name" id="edit_comp_name" required class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Description</label>
-                        <textarea name="description" id="edit_comp_description" required rows="3" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none transition"></textarea>
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Description</label>
+                        <textarea name="description" id="edit_comp_description" required rows="3" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-blue-400 outline-none transition"></textarea>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">New Image <span class="text-gray-400">(Leave empty to keep current)</span></label>
-                        <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">New Image <span class="text-gray-400">(Leave empty to keep current)</span></label>
+                        <input type="file" name="image" accept="image/*" class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                     </div>
                     <div class="flex gap-3 pt-2">
-                        <button type="button" onclick="closeModal('editComponentModal')" class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                        <button type="button" onclick="closeModal('editComponentModal')" class="flex-1 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
                         <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">Save Changes</button>
                     </div>
                 </form>
@@ -3067,7 +3031,7 @@
         <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-gray-900 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeModal('editExpenseModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            <div class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+            <div class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 <div class="bg-red-500 px-6 py-4 flex justify-between items-center text-white">
                     <h3 class="text-lg font-black flex items-center gap-2"><i class="fas fa-edit"></i> Edit Expense</h3>
                     <button onclick="closeModal('editExpenseModal')" class="hover:rotate-90 transition-transform"><i class="fas fa-times text-xl"></i></button>
@@ -3076,33 +3040,33 @@
                     @csrf
                     @method('PUT')
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Item Name</label>
-                        <input type="text" name="item" id="edit_expense_item" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Item Name</label>
+                        <input type="text" name="item" id="edit_expense_item" required class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Shop/Store Name</label>
-                        <input type="text" name="shop_name" id="edit_expense_shop" required class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Shop/Store Name</label>
+                        <input type="text" name="shop_name" id="edit_expense_shop" required class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
                     </div>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Unit Price</label>
-                            <input type="number" step="0.01" name="price_per_unit" id="edit_expense_price" required oninput="editExpenseUpdateTotal()" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Unit Price</label>
+                            <input type="number" step="0.01" name="price_per_unit" id="edit_expense_price" required oninput="editExpenseUpdateTotal()" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Quantity</label>
-                            <input type="number" name="quantity" id="edit_expense_qty" required oninput="editExpenseUpdateTotal()" class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
+                            <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Quantity</label>
+                            <input type="number" name="quantity" id="edit_expense_qty" required oninput="editExpenseUpdateTotal()" class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm focus:ring-2 focus:ring-red-400 outline-none transition">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">Total Amount (EGP)</label>
-                        <input type="number" step="0.01" name="amount" id="edit_expense_amount" readonly class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-gray-50 font-bold text-red-600">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">Total Amount (EGP)</label>
+                        <input type="number" step="0.01" name="amount" id="edit_expense_amount" readonly class="w-full border border-gray-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm bg-gray-50 dark:bg-gray-900 font-bold text-red-600">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1">New Receipt <span class="text-gray-400">(optional)</span></label>
-                        <input type="file" name="receipt" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
+                        <label class="block text-xs font-bold text-gray-600 dark:text-gray-400 uppercase mb-1">New Receipt <span class="text-gray-400">(optional)</span></label>
+                        <input type="file" name="receipt" accept="image/*" class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100">
                     </div>
                     <div class="flex gap-3 pt-2">
-                        <button type="button" onclick="closeModal('editExpenseModal')" class="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
+                        <button type="button" onclick="closeModal('editExpenseModal')" class="flex-1 border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-400 py-2.5 rounded-xl text-sm font-bold hover:bg-gray-50 transition">Cancel</button>
                         <button type="submit" class="flex-1 bg-red-500 hover:bg-red-600 text-white py-2.5 rounded-xl text-sm font-bold transition shadow-lg">Save Changes</button>
                     </div>
                 </form>
@@ -3115,18 +3079,18 @@
     {{-- ========================================== --}}
     <div id="confirmDeleteModal" class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
         <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" onclick="closeDeleteModal()"></div>
-        <div class="relative bg-white rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl transform transition-all scale-100 opacity-100">
+        <div class="relative bg-white dark:bg-gray-800 rounded-3xl max-w-sm w-full overflow-hidden shadow-2xl transform transition-all scale-100 opacity-100">
             <div class="p-8 text-center">
                 <div class="w-20 h-20 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-6">
                     <div class="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center animate-pulse">
                         <i class="fas fa-trash-alt text-red-500 text-2xl"></i>
                     </div>
                 </div>
-                <h3 class="text-2xl font-black text-gray-900 mb-3">Wait a minute!</h3>
-                <p class="text-gray-500 leading-relaxed mb-8" id="confirmDeleteMessage">Are you sure you want to delete this item? This action cannot be undone.</p>
+                <h3 class="text-2xl font-black text-gray-900 dark:text-gray-100 mb-3">Wait a minute!</h3>
+                <p class="text-gray-500 dark:text-gray-400 leading-relaxed mb-8" id="confirmDeleteMessage">Are you sure you want to delete this item? This action cannot be undone.</p>
                 <div class="flex gap-3 mt-4">
                     <button type="button" onclick="closeDeleteModal()" 
-                            class="flex-1 px-6 py-3.5 bg-gray-50 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 hover:text-gray-600 transition duration-300">
+                            class="flex-1 px-6 py-3.5 bg-gray-50 dark:bg-gray-900 text-gray-400 font-bold rounded-2xl hover:bg-gray-100 hover:text-gray-600 transition duration-300">
                         Cancel
                     </button>
                     <button type="button" id="confirmDeleteBtn"
@@ -3214,28 +3178,28 @@
                 onclick="closeModal('paymentSubmissionModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div
-                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 
                 <form action="{{ route('final_project.submitPayment') }}" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="contribution_id" id="submit_contribution_id">
                     
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div
                                 class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
                                 <i class="fas fa-money-bill-wave text-yellow-600"></i>
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
                                     Submit Payment
                                 </h3>
                                 <div class="mt-4 space-y-4">
                                     {{-- Payment Method --}}
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Payment Method</label>
+                                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Payment Method</label>
                                         <select name="payment_method" id="payment_method_select" onchange="togglePaymentFields(this.value)"
-                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm rounded-md">
+                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm rounded-md">
                                             @php
                                                 $enabledMethods = $team->payment_methods ?? ['vodafone_cash', 'instapay', 'cash', 'wallet'];
                                             @endphp
@@ -3257,40 +3221,40 @@
                                     {{-- Transfer Fields --}}
                                     <div id="transfer_fields" class="hidden space-y-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Amount Transferred (EGP)</label>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Amount Transferred (EGP)</label>
                                             <input type="number" step="0.01" name="amount_transferred" id="default_amount_input"
-                                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                                                class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Transfer From (Number)</label>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Transfer From (Number)</label>
                                             <input type="text" name="from_number" placeholder="010xxxxxxxx"
-                                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                                                class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
                                         </div>
                                          <div class="grid grid-cols-2 gap-4">
                                             <div>
-                                                <label class="block text-sm font-medium text-gray-700">Date</label>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Date</label>
                                                 <input type="date" name="transaction_date" value="{{ date('Y-m-d') }}"
-                                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                                                    class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
                                             </div>
                                             <div>
-                                                <label class="block text-sm font-medium text-gray-700">Time</label>
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Time</label>
                                                 <input type="time" name="transaction_time" value="{{ date('H:i') }}"
-                                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+                                                    class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
                                             </div>
                                         </div>
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Screenshot (Proof)</label>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Screenshot (Proof)</label>
                                             <input type="file" name="proof_image" accept="image/*"
-                                                class="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100">
+                                                class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-yellow-50 file:text-yellow-700 hover:file:bg-yellow-100">
                                         </div>
                                     </div>
 
                                     {{-- Cash Fields --}}
                                     <div id="cash_fields" class="hidden space-y-4">
                                         <div>
-                                            <label class="block text-sm font-medium text-gray-700">Notes (Required)</label>
+                                            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Notes (Required)</label>
                                             <textarea name="notes" rows="3" placeholder="I gave you the money when we met at..."
-                                                class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"></textarea>
+                                                class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"></textarea>
                                         </div>
                                     </div>
 
@@ -3312,7 +3276,7 @@
                                                 <span class="text-sm font-bold">- <span id="wallet_request_amount">0.00</span> EGP</span>
                                             </div>
                                             <div class="pt-3 border-t border-amber-200 flex items-center justify-between">
-                                                <span class="text-xs font-bold text-gray-600 uppercase">After Deduction</span>
+                                                <span class="text-xs font-bold text-gray-600 dark:text-gray-400 uppercase">After Deduction</span>
                                                 <span class="text-lg font-black text-green-600"><span id="wallet_after_balance">0.00</span> EGP</span>
                                             </div>
                                         </div>
@@ -3322,13 +3286,13 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
                         <button type="submit" id="submit_payment_btn"
                             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm">
                             Submit Payment
                         </button>
                         <button type="button" onclick="closeModal('paymentSubmissionModal')"
-                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                             Cancel
                         </button>
                     </div>
@@ -3348,20 +3312,20 @@
                 onclick="closeModal('paymentReviewModal')"></div>
             <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
             <div
-                class="inline-block align-bottom bg-white rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                class="inline-block align-bottom bg-white dark:bg-gray-800 rounded-2xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                 
                 <form action="{{ route('final_project.reviewPayment') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="contribution_id" id="review_contribution_id">
                     
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                    <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
                         <div class="sm:flex sm:items-start">
                             <div
                                 class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-blue-100 sm:mx-0 sm:h-10 sm:w-10">
                                 <i class="fas fa-search-dollar text-blue-600"></i>
                             </div>
                             <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900 dark:text-gray-100" id="modal-title">
                                     Review Payment Request
                                 </h3>
                                 <div class="mt-1">
@@ -3369,7 +3333,7 @@
                                 </div>
                                 
                                 {{-- Details Display Area --}}
-                                <div class="mt-4 bg-gray-50 p-4 rounded-lg space-y-2 text-sm">
+                                <div class="mt-4 bg-gray-50 dark:bg-gray-900 p-4 rounded-lg space-y-2 text-sm">
                                     <p><strong>Member:</strong> <span id="review_member_name">Loading...</span></p>
                                     <p><strong>Method:</strong> <span id="review_method" class="uppercase">Loading...</span></p>
                                     
@@ -3388,21 +3352,21 @@
                                     {{-- Cash Details --}}
                                     <div id="review_cash_details" class="hidden">
                                         <p class="mt-1"><strong>Notes:</strong></p>
-                                        <p id="review_notes" class="text-gray-600 italic border-l-2 border-gray-300 pl-2"></p>
+                                        <p id="review_notes" class="text-gray-600 dark:text-gray-400 italic border-l-2 border-gray-300 dark:border-gray-600 pl-2"></p>
                                     </div>
 
                                     {{-- Wallet Details --}}
                                     <div id="review_wallet_details" class="hidden bg-amber-50 border border-amber-100 rounded-lg p-3">
                                         <div class="flex justify-between text-xs mb-1">
-                                            <span class="text-gray-500">Member Balance:</span>
-                                            <span class="font-bold text-gray-800"><span id="review_wallet_balance">0.00</span> EGP</span>
+                                            <span class="text-gray-500 dark:text-gray-400">Member Balance:</span>
+                                            <span class="font-bold text-gray-800 dark:text-gray-200"><span id="review_wallet_balance">0.00</span> EGP</span>
                                         </div>
                                         <div class="flex justify-between text-xs mb-1">
-                                            <span class="text-gray-500">Requested Deduction:</span>
+                                            <span class="text-gray-500 dark:text-gray-400">Requested Deduction:</span>
                                             <span class="font-bold text-red-600">- <span id="review_wallet_deduction">0.00</span> EGP</span>
                                         </div>
                                         <div class="flex justify-between text-xs pt-2 border-t border-amber-200">
-                                            <span class="font-bold text-gray-700">Balance After:</span>
+                                            <span class="font-bold text-gray-700 dark:text-gray-300">Balance After:</span>
                                             <span class="font-black text-green-600"><span id="review_wallet_after">0.00</span> EGP</span>
                                         </div>
                                     </div>
@@ -3418,7 +3382,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
                         {{-- Approve Button --}}
                         <button type="submit" name="action" value="approve" id="approve_btn"
                             class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none sm:w-auto sm:text-sm">
@@ -3437,7 +3401,7 @@
                         </button>
 
                         <button type="button" onclick="closeModal('paymentReviewModal')"
-                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
+                            class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 focus:outline-none sm:mt-0 sm:w-auto sm:text-sm">
                             Cancel
                         </button>
                     </div>
@@ -3560,9 +3524,9 @@
     <div id="exportFundModal" class="modal fixed inset-0 z-[100] hidden">
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('exportFundModal')"></div>
         <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6">
-            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
-                <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                    <h3 class="text-xl font-black text-gray-800 flex items-center gap-3">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
+                <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
+                    <h3 class="text-xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-3">
                         <i class="fas fa-file-excel text-green-500"></i> Export Fund Data
                     </h3>
                     <button onclick="closeModal('exportFundModal')" class="text-gray-400 hover:text-red-500 transition-colors">
@@ -3581,7 +3545,7 @@
                                     <i class="fas fa-check"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800">Paid Members</p>
+                                    <p class="font-bold text-gray-800 dark:text-gray-200">Paid Members</p>
                                     <p class="text-[10px] text-green-600 font-bold uppercase tracking-wider">Who completed payment</p>
                                 </div>
                             </div>
@@ -3595,7 +3559,7 @@
                                     <i class="fas fa-times"></i>
                                 </div>
                                 <div>
-                                    <p class="font-bold text-gray-800">Unpaid Members</p>
+                                    <p class="font-bold text-gray-800 dark:text-gray-200">Unpaid Members</p>
                                     <p class="text-[10px] text-red-600 font-bold uppercase tracking-wider">Includes historical debt</p>
                                 </div>
                             </div>
@@ -3612,11 +3576,11 @@
     <div id="paymentSettingsModal" class="modal fixed inset-0 z-[100] hidden">
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('paymentSettingsModal')"></div>
         <div class="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-md p-6">
-            <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-2xl overflow-hidden border border-gray-100 dark:border-gray-700">
                 <form action="{{ route('final_project.update_payment_settings', $team->id) }}" method="POST" onsubmit="return handleAjaxFormSubmit(event)">
                     @csrf
-                    <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-                        <h3 class="text-xl font-black text-gray-800 flex items-center gap-3">
+                    <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50 dark:bg-gray-900">
+                        <h3 class="text-xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-3">
                             <i class="fas fa-cog text-gray-400"></i> Payment Settings
                         </h3>
                         <button type="button" onclick="closeModal('paymentSettingsModal')" class="text-gray-400 hover:text-red-500 transition-colors">
@@ -3633,66 +3597,66 @@
                             @endphp
                             
                             {{-- Vodafone Cash --}}
-                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                            <label class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center shadow-sm">
                                         <i class="fas fa-mobile-alt"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-gray-800">Vodafone Cash</p>
+                                        <p class="font-bold text-gray-800 dark:text-gray-200">Vodafone Cash</p>
                                         <p class="text-[10px] text-gray-400 font-bold uppercase">Digital Transfer</p>
                                     </div>
                                 </div>
                                 <input type="checkbox" name="payment_methods[]" value="vodafone_cash" 
-                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    class="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-yellow-600 focus:ring-yellow-500"
                                     {{ in_array('vodafone_cash', $methods) ? 'checked' : '' }}>
                             </label>
 
                             {{-- InstaPay --}}
-                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                            <label class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm">
                                         <i class="fas fa-university"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-gray-800">InstaPay</p>
+                                        <p class="font-bold text-gray-800 dark:text-gray-200">InstaPay</p>
                                         <p class="text-[10px] text-gray-400 font-bold uppercase">Bank Transfer</p>
                                     </div>
                                 </div>
                                 <input type="checkbox" name="payment_methods[]" value="instapay" 
-                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    class="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-yellow-600 focus:ring-yellow-500"
                                     {{ in_array('instapay', $methods) ? 'checked' : '' }}>
                             </label>
 
                             {{-- Cash --}}
-                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                            <label class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center shadow-sm">
                                         <i class="fas fa-hand-holding-usd"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-gray-800">Cash</p>
+                                        <p class="font-bold text-gray-800 dark:text-gray-200">Cash</p>
                                         <p class="text-[10px] text-gray-400 font-bold uppercase">Hand to Hand</p>
                                     </div>
                                 </div>
                                 <input type="checkbox" name="payment_methods[]" value="cash" 
-                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    class="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-yellow-600 focus:ring-yellow-500"
                                     {{ in_array('cash', $methods) ? 'checked' : '' }}>
                             </label>
 
                             {{-- Wallet --}}
-                            <label class="flex items-center justify-between p-4 bg-gray-50 border border-gray-100 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
+                            <label class="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-2xl cursor-pointer hover:bg-yellow-50/50 transition-colors">
                                 <div class="flex items-center gap-4">
                                     <div class="w-10 h-10 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center shadow-sm">
                                         <i class="fas fa-wallet"></i>
                                     </div>
                                     <div>
-                                        <p class="font-bold text-gray-800">Wallet</p>
+                                        <p class="font-bold text-gray-800 dark:text-gray-200">Wallet</p>
                                         <p class="text-[10px] text-gray-400 font-bold uppercase">In-App Credit</p>
                                     </div>
                                 </div>
                                 <input type="checkbox" name="payment_methods[]" value="wallet" 
-                                    class="w-5 h-5 rounded border-gray-300 text-yellow-600 focus:ring-yellow-500"
+                                    class="w-5 h-5 rounded border-gray-300 dark:border-gray-600 text-yellow-600 focus:ring-yellow-500"
                                     {{ in_array('wallet', $methods) ? 'checked' : '' }}>
                             </label>
                         </div>
@@ -3710,9 +3674,9 @@
     <!-- Forced Sub Leader Setup Modal -->
     <div id="subLeaderSetupModal" class="fixed inset-0 z-[200] flex items-center justify-center overflow-y-auto overflow-x-hidden p-4 sm:p-6" aria-modal="true">
         <div class="fixed inset-0 bg-gray-900/90 backdrop-blur-md" aria-hidden="true"></div>
-        <div class="relative w-full max-w-xl transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-indigo-600">
+        <div class="relative w-full max-w-xl transform rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all border-t-8 border-indigo-600">
             <div class="bg-indigo-50 px-8 py-6 rounded-t-xl border-b border-indigo-100 flex flex-col items-center text-center">
-                <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-md text-indigo-600 text-3xl mb-4 border border-indigo-100 animate-bounce">
+                <div class="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md text-indigo-600 text-3xl mb-4 border border-indigo-100 animate-bounce">
                     <i class="fas fa-users-cog"></i>
                 </div>
                 <h2 class="text-2xl font-black text-indigo-900 mb-1">Sub-Leader Setup</h2>
@@ -3724,42 +3688,42 @@
                 <input type="hidden" name="team_id" value="{{ $team->id }}">
                 <div class="p-8 space-y-6">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Assign Team Number</label>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Assign Team Number</label>
                         <p class="text-[10px] text-gray-400 mb-3">Choose a unique team number (e.g. 1, 2, 3...) to identify your group inside your domain.</p>
                         <input type="number" name="team_number" required min="1" placeholder="Enter team number..."
-                            class="w-full border-2 border-gray-200 rounded-xl px-4 py-3 text-lg font-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-gray-50">
+                            class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl px-4 py-3 text-lg font-black focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition bg-gray-50 dark:bg-gray-900">
                     </div>
 
-                    <hr class="border-gray-100">
+                    <hr class="border-gray-100 dark:border-gray-700">
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Claim Your Members</label>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Claim Your Members</label>
                         <p class="text-[10px] text-gray-400 mb-3">Select the members that will perform tasks and workshops under your supervision.</p>
                         
                         <div class="max-h-60 overflow-y-auto pr-2 custom-scrollbar space-y-2">
                             @forelse($availableMembers as $avMember)
-                                <label class="flex items-center justify-between p-3 border border-gray-100 hover:border-indigo-300 rounded-xl cursor-pointer transition bg-white hover:bg-indigo-50 group">
+                                <label class="flex items-center justify-between p-3 border border-gray-100 dark:border-gray-700 hover:border-indigo-300 rounded-xl cursor-pointer transition bg-white dark:bg-gray-800 hover:bg-indigo-50 group">
                                     <div class="flex items-center gap-3">
-                                        <div class="h-10 w-10 rounded-full bg-gray-100 flex items-center justify-center text-xs font-black text-gray-500 group-hover:text-indigo-600 group-hover:bg-white border border-transparent group-hover:border-indigo-200 transition">
+                                        <div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center text-xs font-black text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 group-hover:bg-white border border-transparent group-hover:border-indigo-200 transition">
                                             {{ substr($avMember->user->name, 0, 2) }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-gray-800">{{ $avMember->user->name }}</p>
+                                            <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $avMember->user->name }}</p>
                                             <p class="text-[10px] text-gray-400">{{ $avMember->user->email }} - Level {{ $avMember->user->academic_year ?? '1' }}</p>
                                         </div>
                                     </div>
-                                    <input type="checkbox" name="member_ids[]" value="{{ $avMember->id }}" class="w-5 h-5 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                    <input type="checkbox" name="member_ids[]" value="{{ $avMember->id }}" class="w-5 h-5 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500">
                                 </label>
                             @empty
-                                <div class="text-center py-6 bg-gray-50 rounded-xl border border-dashed border-gray-200">
-                                    <p class="text-xs font-bold text-gray-500">No available members to claim in your domain right now.</p>
+                                <div class="text-center py-6 bg-gray-50 dark:bg-gray-900 rounded-xl border border-dashed border-gray-200 dark:border-gray-700">
+                                    <p class="text-xs font-bold text-gray-500 dark:text-gray-400">No available members to claim in your domain right now.</p>
                                 </div>
                             @endforelse
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-gray-50 px-8 py-5 border-t border-gray-100 rounded-b-xl flex justify-end">
+                <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 border-t border-gray-100 dark:border-gray-700 rounded-b-xl flex justify-end">
                     <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
                         Complete Setup <i class="fas fa-arrow-right"></i>
                     </button>
@@ -4199,12 +4163,12 @@
 @if($canExport)
 <div id="exportMembersModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('exportMembersModal')"></div>
-    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-md mx-4 relative z-10 overflow-hidden transform transition-all p-8" x-data="{
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-md mx-4 relative z-10 overflow-hidden transform transition-all p-8" x-data="{
         exporting: false,
         columns: ['name', 'academic_number', 'national_id', 'email', 'phone_number', 'whatsapp_number', 'address', 'role']
     }">
         <div class="flex justify-between items-center mb-6">
-            <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3">
+            <h3 class="text-2xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-3">
                 <i class="fas fa-file-excel text-green-500"></i> Export Excel
             </h3>
             <button onclick="closeModal('exportMembersModal')" class="text-gray-400 hover:text-red-500 transition">
@@ -4218,51 +4182,51 @@
             <input type="hidden" name="group_id" value="all" id="exportGroupId">
 
             <div class="mb-6">
-                <label class="font-bold text-gray-700 mb-3 text-sm flex items-center gap-2">
+                <label class="font-bold text-gray-700 dark:text-gray-300 mb-3 text-sm flex items-center gap-2">
                     <i class="fas fa-layer-group text-green-500"></i> Select Team Scope:
                 </label>
                 <div class="grid grid-cols-3 gap-2">
-                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-green-300 transition-all cursor-pointer group">
+                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:bg-white hover:border-green-300 transition-all cursor-pointer group">
                         <input type="radio" name="technical_role" value="all" checked class="hidden peer">
                         <div class="w-full h-full absolute inset-0 rounded-xl peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/50 pointer-events-none"></div>
                         <i class="fas fa-users text-lg text-gray-400 group-hover:text-green-500 peer-checked:text-green-600 z-10"></i>
-                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 peer-checked:text-green-700 z-10">All Team</span>
+                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 dark:text-gray-400 peer-checked:text-green-700 z-10">All Team</span>
                     </label>
 
-                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-green-300 transition-all cursor-pointer group relative">
+                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:bg-white hover:border-green-300 transition-all cursor-pointer group relative">
                         <input type="radio" name="technical_role" value="software" class="hidden peer">
                         <div class="w-full h-full absolute inset-0 rounded-xl peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/50 pointer-events-none"></div>
                         <i class="fas fa-code text-lg text-gray-400 group-hover:text-green-500 peer-checked:text-green-600 z-10"></i>
-                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 peer-checked:text-green-700 z-10">Software</span>
+                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 dark:text-gray-400 peer-checked:text-green-700 z-10">Software</span>
                     </label>
 
-                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 bg-gray-50 hover:bg-white hover:border-green-300 transition-all cursor-pointer group relative">
+                    <label class="flex flex-col items-center gap-2 p-3 rounded-xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:bg-white hover:border-green-300 transition-all cursor-pointer group relative">
                         <input type="radio" name="technical_role" value="hardware" class="hidden peer">
                         <div class="w-full h-full absolute inset-0 rounded-xl peer-checked:border-2 peer-checked:border-green-500 peer-checked:bg-green-50/50 pointer-events-none"></div>
                         <i class="fas fa-microchip text-lg text-gray-400 group-hover:text-green-500 peer-checked:text-green-600 z-10"></i>
-                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 peer-checked:text-green-700 z-10">Hardware</span>
+                        <span class="text-[10px] font-black uppercase tracking-tighter text-gray-500 dark:text-gray-400 peer-checked:text-green-700 z-10">Hardware</span>
                     </label>
                 </div>
                 <p class="text-[10px] text-gray-400 mt-2 italic px-1" id="exportGroupText">Exporting entire team.</p>
             </div>
 
             <div class="space-y-3 mb-8">
-                <label class="font-bold text-gray-700 block mb-2">Select Columns to Export:</label>
+                <label class="font-bold text-gray-700 dark:text-gray-300 block mb-2">Select Columns to Export:</label>
                 <div class="grid grid-cols-2 gap-3">
                     <template x-for="item in [{id: 'name', label: 'Name'}, {id: 'academic_number', label: 'Academic Number'}, {id: 'national_id', label: 'National ID'}, {id: 'email', label: 'Email'}, {id: 'phone_number', label: 'Phone Number'}, {id: 'whatsapp_number', label: 'WhatsApp Number'}, {id: 'address', label: 'Address'}, {id: 'role', label: 'Role'}]">
-                        <label class="flex items-center gap-2 cursor-pointer group bg-gray-50 p-2 rounded-lg border border-gray-100 hover:border-green-200 transition-colors">
-                            <input type="checkbox" name="columns[]" :value="item.id" x-model="columns" class="w-4 h-4 text-green-500 bg-white border-gray-300 rounded focus:ring-green-500">
-                            <span class="text-sm font-semibold text-gray-600 group-hover:text-gray-900 transition truncate" x-text="item.label" :title="item.label"></span>
+                        <label class="flex items-center gap-2 cursor-pointer group bg-gray-50 dark:bg-gray-900 p-2 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-green-200 transition-colors">
+                            <input type="checkbox" name="columns[]" :value="item.id" x-model="columns" class="w-4 h-4 text-green-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-green-500">
+                            <span class="text-sm font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 transition truncate" x-text="item.label" :title="item.label"></span>
                         </label>
                     </template>
                 </div>
             </div>
 
             <div class="flex gap-4">
-                <button type="button" onclick="closeModal('exportMembersModal')" class="flex-1 px-4 py-3 bg-gray-100 text-gray-600 rounded-xl font-bold hover:bg-gray-200 transition">
+                <button type="button" onclick="closeModal('exportMembersModal')" class="flex-1 px-4 py-3 bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 rounded-xl font-bold hover:bg-gray-200 transition">
                     Cancel
                 </button>
-                <button type="submit" class="flex-1 px-4 py-3 bg-green-500 text-white rounded-xl font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 transition flex items-center justify-center gap-2" :disabled="exporting || columns.length === 0" :class="exporting || columns.length === 0 ? 'opacity-70 cursor-not-allowed' : ''">
+                <button type="submit" class="flex-1 px-4 py-3 bg-green-500 text-white rounded-xl font-bold shadow-lg shadow-green-500/30 hover:bg-green-600 transition flex items-center justify-center gap-2" :disabled="exporting || columns.length === 0" :class="exporting || columns.length === 0 ?'opacity-70 cursor-not-allowed' : ''">
                     <i class="fas fa-spinner fa-spin" x-show="exporting"></i>
                     <i class="fas fa-download" x-show="!exporting"></i>
                     <span x-text="exporting ? 'Exporting...' : 'Export'"></span>
@@ -4315,10 +4279,10 @@
 {{-- Edit Weekly Report Modal --}}
 <div id="editReportModal" class="fixed inset-0 z-[100] hidden items-center justify-center">
     <div class="fixed inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal('editReportModal')"></div>
-    <div class="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg mx-4 relative z-10 overflow-hidden transform transition-all">
+    <div class="bg-white dark:bg-gray-800 rounded-[2rem] shadow-2xl w-full max-w-lg mx-4 relative z-10 overflow-hidden transform transition-all">
         <div class="p-8">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-2xl font-black text-gray-800 flex items-center gap-3">
+                <h3 class="text-2xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-3">
                     <i class="fas fa-edit text-blue-500"></i> Edit Report
                 </h3>
                 <button onclick="closeModal('editReportModal')" class="text-gray-400 hover:text-red-500 transition">
@@ -4332,37 +4296,37 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Week Number</label>
-                            <input type="number" name="week_number" id="edit_week_number" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-bold">
+                            <input type="number" name="week_number" id="edit_week_number" required class="w-full bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-bold">
                         </div>
                         <div>
                             <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Report Date</label>
-                            <input type="datetime-local" name="report_date" id="edit_report_date" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-bold">
+                            <input type="datetime-local" name="report_date" id="edit_report_date" required class="w-full bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 font-bold">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Achievements</label>
-                        <textarea name="achievements" id="edit_achievements" rows="3" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="What did you achieve this week?"></textarea>
+                        <textarea name="achievements" id="edit_achievements" rows="3" required class="w-full bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="What did you achieve this week?"></textarea>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Plans</label>
-                        <textarea name="plans" id="edit_plans" rows="2" required class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="What are your plans for next week?"></textarea>
+                        <textarea name="plans" id="edit_plans" rows="2" required class="w-full bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="What are your plans for next week?"></textarea>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Challenges</label>
-                        <textarea name="challenges" id="edit_challenges" rows="2" class="w-full bg-gray-50 border-gray-100 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Any challenges faced?"></textarea>
+                        <textarea name="challenges" id="edit_challenges" rows="2" class="w-full bg-gray-50 dark:bg-gray-900 border-gray-100 dark:border-gray-700 rounded-xl focus:ring-blue-500 focus:border-blue-500 text-sm" placeholder="Any challenges faced?"></textarea>
                     </div>
 
                     <div>
                         <label class="block text-xs font-bold text-gray-400 uppercase mb-2">Update File (Optional)</label>
-                        <input type="file" name="report_file" class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                        <input type="file" name="report_file" class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-black file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
                     </div>
                 </div>
 
                 <div class="mt-8 flex gap-3">
-                    <button type="button" onclick="closeModal('editReportModal')" class="flex-1 px-6 py-3 bg-gray-100 text-gray-500 rounded-xl font-bold hover:bg-gray-200 transition uppercase tracking-widest text-xs">Cancel</button>
+                    <button type="button" onclick="closeModal('editReportModal')" class="flex-1 px-6 py-3 bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 rounded-xl font-bold hover:bg-gray-200 transition uppercase tracking-widest text-xs">Cancel</button>
                     <button type="submit" class="flex-1 px-6 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition uppercase tracking-widest text-xs">Save Changes</button>
                 </div>
             </form>

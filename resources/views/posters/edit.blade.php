@@ -80,7 +80,7 @@
                                 replace all):</span>
                             @foreach($poster->images as $img)
                                 <img src="{{ asset('storage/' . $img) }}"
-                                    class="h-16 w-16 object-cover rounded border border-gray-300">
+                                    class="h-16 w-16 object-cover rounded border border-gray-300 dark:border-gray-600">
                             @endforeach
                         </div>
                     @endif

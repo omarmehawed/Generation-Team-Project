@@ -16,13 +16,13 @@
         $isAutoSubmitted = $attempt->status === 'auto_submitted';
     @endphp
 
-    <div class="rounded-[2rem] overflow-hidden shadow-2xl mb-8 border {{ $isDisqualified ? 'border-red-200' : ($passed ? 'border-green-200' : 'border-yellow-200') }}">
+    <div class="rounded-[2rem] overflow-hidden shadow-2xl mb-8 border {{ $isDisqualified ?'border-red-200' : ($passed ? 'border-green-200' : 'border-yellow-200') }}">
         {{-- Header gradient --}}
-        <div class="p-10 relative text-white {{ $isDisqualified ? 'bg-gradient-to-br from-red-900 to-red-700' : ($passed ? 'bg-gradient-to-br from-gray-900 to-black' : 'bg-gradient-to-br from-yellow-800 to-yellow-900') }}">
+        <div class="p-10 relative text-white {{ $isDisqualified ?'bg-gradient-to-br from-red-900 to-red-700' : ($passed ? 'bg-gradient-to-br from-gray-900 to-black' : 'bg-gradient-to-br from-yellow-800 to-yellow-900') }}">
             <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
             <div class="relative z-10 flex flex-col sm:flex-row items-center gap-8">
                 {{-- Big score circle --}}
-                <div class="w-36 h-36 rounded-full border-8 {{ $isDisqualified ? 'border-red-400 bg-red-800/50' : ($passed ? 'border-yellow-400 bg-white/10' : 'border-yellow-500 bg-yellow-900/30') }} flex flex-col items-center justify-center shrink-0 shadow-2xl">
+                <div class="w-36 h-36 rounded-full border-8 {{ $isDisqualified ?'border-red-400 bg-red-800/50' : ($passed ? 'border-yellow-400 bg-white/10' : 'border-yellow-500 bg-yellow-900/30') }} flex flex-col items-center justify-center shrink-0 shadow-2xl">
                     @if($isDisqualified)
                         <i class="fas fa-ban text-5xl text-red-300"></i>
                     @else
@@ -57,10 +57,10 @@
         </div>
 
         {{-- Stats bar --}}
-        <div class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-100 bg-white">
+        <div class="grid grid-cols-2 sm:grid-cols-4 divide-x divide-gray-100 bg-white dark:bg-gray-800">
             <div class="p-5 text-center">
                 <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Total Score</p>
-                <p class="text-2xl font-black text-gray-800">{{ $attempt->score }} <span class="text-sm text-gray-400 font-bold">/ {{ $quiz->total_marks }}</span></p>
+                <p class="text-2xl font-black text-gray-800 dark:text-gray-200">{{ $attempt->score }} <span class="text-sm text-gray-400 font-bold">/ {{ $quiz->total_marks }}</span></p>
             </div>
             <div class="p-5 text-center">
                 <p class="text-xs font-bold uppercase tracking-wider text-green-400 mb-1">Correct</p>
@@ -72,13 +72,13 @@
             </div>
             <div class="p-5 text-center">
                 <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-1">Unanswered</p>
-                <p class="text-2xl font-black text-gray-500">{{ $unanswered }}</p>
+                <p class="text-2xl font-black text-gray-500 dark:text-gray-400">{{ $unanswered }}</p>
             </div>
         </div>
     </div>
 
     {{-- ===== ANSWER REVIEW ===== --}}
-    <h2 class="text-2xl font-black text-gray-800 mb-6"><i class="fas fa-list-check text-blue-500 mr-2"></i> Answer Review</h2>
+    <h2 class="text-2xl font-black text-gray-800 dark:text-gray-200 mb-6"><i class="fas fa-list-check text-blue-500 mr-2"></i> Answer Review</h2>
 
     <div class="space-y-4">
         @foreach($questions as $i => $q)
@@ -97,7 +97,7 @@
                     $badge = '<span class="bg-red-100 text-red-700 text-xs font-black px-3 py-1 rounded-full"><i class=\"fas fa-times mr-1\"></i>Wrong</span>';
                 } elseif (!$isAnswered) {
                     $cardBg = 'bg-gray-50 border-gray-200';
-                    $badge = '<span class="bg-gray-100 text-gray-500 text-xs font-black px-3 py-1 rounded-full"><i class=\"fas fa-minus mr-1\"></i>Unanswered</span>';
+                    $badge = '<span class="bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-xs font-black px-3 py-1 rounded-full"><i class=\"fas fa-minus mr-1\"></i>Unanswered</span>';
                 } else {
                     $cardBg = 'bg-blue-50 border-blue-200';
                     $badge = '<span class="bg-blue-100 text-blue-700 text-xs font-black px-3 py-1 rounded-full"><i class=\"fas fa-pen mr-1\"></i>Written (Pending Grade)</span>';
@@ -107,8 +107,8 @@
             <div class="rounded-2xl border {{ $cardBg }} p-6 shadow-sm">
                 <div class="flex items-start justify-between gap-4 mb-4">
                     <div class="flex items-center gap-3">
-                        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 text-sm font-black flex items-center justify-center shrink-0">{{ $i + 1 }}</span>
-                        <p class="font-bold text-gray-900 text-base leading-snug">{{ $q->question_text }}</p>
+                        <span class="w-8 h-8 rounded-full bg-gray-200 text-gray-700 dark:text-gray-300 text-sm font-black flex items-center justify-center shrink-0">{{ $i + 1 }}</span>
+                        <p class="font-bold text-gray-900 dark:text-gray-100 text-base leading-snug">{{ $q->question_text }}</p>
                     </div>
                     {!! $badge !!}
                 </div>
@@ -146,9 +146,9 @@
                     </div>
 
                 @elseif($q->question_type === 'written')
-                    <div class="ml-11 mt-2 bg-white p-4 rounded-xl border border-blue-200">
+                    <div class="ml-11 mt-2 bg-white dark:bg-gray-800 p-4 rounded-xl border border-blue-200">
                         <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Your Answer</p>
-                        <p class="text-gray-800 font-bold">{{ $ans ? ($ans->text_answer ?: '(blank)') : '(No answer submitted)' }}</p>
+                        <p class="text-gray-800 dark:text-gray-200 font-bold">{{ $ans ? ($ans->text_answer ?: '(blank)') : '(No answer submitted)' }}</p>
                         @if($ans && $ans->marks_awarded > 0)
                             <p class="text-xs text-green-600 font-bold mt-2"><i class="fas fa-star mr-1"></i> {{ $ans->marks_awarded }} / {{ $q->marks }} marks awarded</p>
                         @elseif(!$ans || !$ans->text_answer)

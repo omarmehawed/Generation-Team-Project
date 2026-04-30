@@ -28,12 +28,12 @@
     <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md" @click="closeModal()"></div>
 
     <div id="assignSubLeaderModalContent"
-        class="relative bg-white rounded-[3rem] w-full max-w-3xl overflow-visible shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100">
+        class="relative bg-white dark:bg-gray-800 rounded-[3rem] w-full max-w-3xl overflow-visible shadow-2xl scale-95 opacity-0 transition-all duration-300 transform border border-gray-100 dark:border-gray-700">
 
         <div
-            class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50">
             <div>
-                <h3 class="text-xl font-black text-gray-800">Assign Sub Leader</h3>
+                <h3 class="text-xl font-black text-gray-800 dark:text-gray-200">Assign Sub Leader</h3>
                 <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest mt-1">
                     <span x-text="members.length + ' members available'"></span>
                 </p>
@@ -64,11 +64,11 @@
                                    x-model="search"
                                    @keydown.enter.prevent="if(filteredMembers.length > 0) selectMember(filteredMembers[0])"
                                    placeholder="Enter name, email or ID..."
-                                   class="w-full rounded-[2rem] border-2 border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 pl-16 pr-8 py-6 text-base font-bold text-gray-800 transition-all shadow-inner">
+                                   class="w-full rounded-[2rem] border-2 border-gray-100 dark:border-gray-700 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 pl-16 pr-8 py-6 text-base font-bold text-gray-800 dark:text-gray-200 transition-all shadow-inner">
 
                             <div x-show="search.trim().length > 0 && !selectedMember"
                                  x-cloak
-                                 class="absolute left-0 right-0 top-full mt-3 z-[10010] bg-white border-2 border-indigo-500 rounded-[2rem] shadow-2xl overflow-hidden">
+                                 class="absolute left-0 right-0 top-full mt-3 z-[10010] bg-white dark:bg-gray-800 border-2 border-indigo-500 rounded-[2rem] shadow-2xl overflow-hidden">
                                 <div class="max-h-[450px] overflow-y-auto custom-scroll">
                                     <template x-for="m in filteredMembers" :key="m.id">
                                         <div @click="selectMember(m)"
@@ -88,7 +88,7 @@
                                     </template>
 
                                     <div x-show="search.length > 0 && filteredMembers.length === 0" class="p-16 text-center">
-                                        <p class="text-lg text-gray-500 font-bold">No members found</p>
+                                        <p class="text-lg text-gray-500 dark:text-gray-400 font-bold">No members found</p>
                                     </div>
                                 </div>
                             </div>
@@ -105,7 +105,7 @@
                             alt="Selected member avatar">
 
                         <div class="flex-1">
-                            <h4 class="font-black text-gray-900 leading-tight"
+                            <h4 class="font-black text-gray-900 dark:text-gray-100 leading-tight"
                                 x-text="selectedMember ? selectedMember.name : ''"></h4>
 
                             <p class="text-[10px] text-indigo-500 font-black uppercase tracking-widest mt-1"
@@ -130,7 +130,7 @@
                             </label>
 
                             <select name="team_number" x-model="team_number" required
-                                class="w-full rounded-2xl border border-gray-100 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 px-5 py-4 text-sm font-bold text-gray-800">
+                                class="w-full rounded-2xl border border-gray-100 dark:border-gray-700 focus:border-indigo-500 focus:ring-0 bg-gray-50/50 px-5 py-4 text-sm font-bold text-gray-800 dark:text-gray-200">
                                 <option value="">Select Team Number</option>
                                 @for($i = 1; $i <= 20; $i++)
                                     <option value="{{ $i }}">Team #{{ $i }}</option>
@@ -145,14 +145,14 @@
                             </label>
 
                             <div class="grid grid-cols-2 gap-3">
-                                <button type="button" @click="technical_role = 'software'" :class="technical_role === 'software'
+                                <button type="button" @click="technical_role = 'software'" :class="technical_role ==='software'
                                             ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
                                             : 'bg-gray-100 text-gray-500'"
                                     class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
                                     Software
                                 </button>
 
-                                <button type="button" @click="technical_role = 'hardware'" :class="technical_role === 'hardware'
+                                <button type="button" @click="technical_role = 'hardware'" :class="technical_role ==='hardware'
                                             ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
                                             : 'bg-gray-100 text-gray-500'"
                                     class="py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all">
@@ -168,7 +168,7 @@
                             </label>
 
                             <div
-                                class="w-full rounded-2xl border border-gray-100 bg-gray-50/50 px-5 py-4 text-sm font-bold text-gray-800">
+                                class="w-full rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50/50 px-5 py-4 text-sm font-bold text-gray-800 dark:text-gray-200">
                                 Auto selected:
                                 <span class="text-indigo-600 uppercase"
                                     x-text="technical_role"></span>
@@ -179,7 +179,7 @@
             </div>
 
             <div
-                class="px-8 py-6 bg-gray-50/50 border-t border-gray-100 flex justify-between items-center gap-4">
+                class="px-8 py-6 bg-gray-50/50 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center gap-4">
                 <button type="button" @click="step === 1 ? closeModal() : prevStep()"
                     class="px-6 py-3 rounded-2xl font-bold text-gray-400 hover:bg-gray-100 transition-colors text-xs uppercase tracking-widest">
                     <span x-text="step === 1 ? 'Cancel' : 'Back'"></span>

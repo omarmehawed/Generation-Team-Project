@@ -5,7 +5,7 @@
     <!-- Premium Header -->
     <div class="relative mb-10">
         <div class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-cyan-500 rounded-3xl blur opacity-20 dark:opacity-40"></div>
-        <div class="relative flex flex-col lg:flex-row items-center justify-between gap-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-gray-100 dark:border-gray-800 p-6 rounded-3xl shadow-xl">
+        <div class="relative flex flex-col lg:flex-row items-center justify-between gap-6 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border border-gray-100 dark:border-gray-700 dark:border-gray-800 p-6 rounded-3xl shadow-xl">
             <div class="flex flex-col sm:flex-row items-center gap-4 text-center sm:text-left w-full lg:w-auto">
                 <div class="w-14 h-14 bg-blue-600 rounded-2xl flex shrink-0 items-center justify-center text-white shadow-lg shadow-blue-500/30 mx-auto sm:mx-0">
                     <i class="fas fa-tools text-2xl"></i>
@@ -113,15 +113,15 @@
                     </div>
                 </template>
 
-                <div class="bg-white dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-[2rem] p-6 shadow-xl hover:shadow-2xl hover:border-blue-500/30 dark:hover:border-blue-500/40 transition-all duration-500 relative overflow-hidden">
+                <div class="bg-white dark:bg-gray-800 dark:bg-gray-900 border border-slate-100 dark:border-gray-800 rounded-[2rem] p-6 shadow-xl hover:shadow-2xl hover:border-blue-500/30 dark:hover:border-blue-500/40 transition-all duration-500 relative overflow-hidden">
                     <!-- Accent Strip -->
-                    <div class="absolute top-0 left-0 bottom-0 w-2" :class="q.is_active ? getTypeColor(q.question_type) : 'bg-slate-300 dark:bg-gray-700'"></div>
+                    <div class="absolute top-0 left-0 bottom-0 w-2" :class="q.is_active ? getTypeColor(q.question_type) :'bg-slate-300 dark:bg-gray-700'"></div>
 
                     <div class="flex items-start gap-6">
                         <!-- Left Sidebar: Order & Icon -->
                         <div class="flex flex-col items-center gap-4 shrink-0">
                             <div class="w-12 h-12 rounded-2xl flex items-center justify-center text-xl shadow-inner bg-slate-50 dark:bg-gray-800/80"
-                                 :class="q.is_active ? getTypeIconColor(q.question_type) : 'text-slate-400'">
+                                 :class="q.is_active ? getTypeIconColor(q.question_type) :'text-slate-400'">
                                 <i :class="getTypeIcon(q.question_type)"></i>
                             </div>
 
@@ -195,7 +195,7 @@
                                                 <p class="text-[10px] font-black uppercase text-slate-400 mb-2">Columns</p>
                                                 <div class="flex flex-wrap gap-1">
                                                     <template x-for="(col, i) in (q.options?.cols || [])" :key="i">
-                                                        <span class="px-1.5 py-0.5 bg-white dark:bg-gray-700 rounded text-[9px] text-slate-500" x-text="col"></span>
+                                                        <span class="px-1.5 py-0.5 bg-white dark:bg-gray-800 dark:bg-gray-700 rounded text-[9px] text-slate-500" x-text="col"></span>
                                                     </template>
                                                 </div>
                                             </div>
@@ -227,7 +227,7 @@
                             <button @click="toggleVisibility(q)" 
                                     class="w-10 h-10 rounded-xl bg-white dark:bg-gray-800 border border-slate-100 dark:border-gray-700 hover:border-blue-500 transition-all shadow-sm flex items-center justify-center"
                                     :title="q.is_active ? 'Hide Question' : 'Show Question'">
-                                <i class="fas" :class="q.is_active ? 'fa-eye text-blue-500' : 'fa-eye-slash text-slate-400'"></i>
+                                <i class="fas" :class="q.is_active ?'fa-eye text-blue-500' : 'fa-eye-slash text-slate-400'"></i>
                             </button>
 
                             <!-- Add to Archive Button -->
@@ -259,9 +259,9 @@
         </template>
 
         <template x-if="questions.length === 0">
-            <div class="text-center py-20 bg-gray-50 dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-800 rounded-3xl">
+            <div class="text-center py-20 bg-gray-50 dark:bg-gray-900 border-2 border-dashed border-gray-200 dark:border-gray-700 dark:border-gray-800 rounded-3xl">
                 <i class="fas fa-question-circle text-4xl text-gray-300 mb-4 block"></i>
-                <h3 class="text-gray-500 font-bold">No questions added yet.</h3>
+                <h3 class="text-gray-500 dark:text-gray-400 font-bold">No questions added yet.</h3>
                 <p class="text-gray-400 text-sm">Start by clicking 'Add Question'</p>
             </div>
         </template>
@@ -279,7 +279,7 @@
         <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
             <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm transition-opacity" @click="modalOpen = false"></div>
             
-            <div class="inline-block align-middle bg-white dark:bg-gray-900 rounded-3xl sm:rounded-[2.5rem] text-left overflow-hidden shadow-3xl transform transition-all my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100 dark:border-gray-800 mx-2 sm:mx-0">
+            <div class="inline-block align-middle bg-white dark:bg-gray-800 dark:bg-gray-900 rounded-3xl sm:rounded-[2.5rem] text-left overflow-hidden shadow-3xl transform transition-all my-8 sm:align-middle sm:max-w-2xl sm:w-full border border-slate-100 dark:border-gray-800 mx-2 sm:mx-0">
                 <form :action="isEdit ? '{{ url('/join-questions') }}/' + editingId : '{{ route('join-questions.store') }}'" method="POST">
                     @csrf
                     <template x-if="isEdit">
@@ -289,14 +289,14 @@
                     <div class="px-5 py-6 sm:px-8 sm:py-8 border-b border-slate-100 dark:border-gray-800 flex justify-between items-center bg-slate-50 dark:bg-gray-800/50">
                         <div class="flex items-center gap-3 sm:gap-4">
                             <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-blue-600 flex items-center justify-center text-white shrink-0">
-                                <i :class="isEdit ? 'fas fa-edit' : 'fas fa-plus'"></i>
+                                <i :class="isEdit ?'fas fa-edit' : 'fas fa-plus'"></i>
                             </div>
                             <div>
                                 <h3 class="text-xl sm:text-2xl font-black text-slate-900 dark:text-white" x-text="isEdit ? 'Edit Question' : 'Add Question'"></h3>
                                 <p class="text-[10px] sm:text-xs text-slate-500 font-medium tracking-tight">Configure details and behavior.</p>
                             </div>
                         </div>
-                        <button type="button" @click="modalOpen = false" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-gray-700 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shadow-sm shrink-0">
+                        <button type="button" @click="modalOpen = false" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white dark:bg-gray-800 dark:bg-gray-700 flex items-center justify-center text-slate-400 hover:text-red-500 transition-colors shadow-sm shrink-0">
                             <i class="fas fa-times text-lg"></i>
                         </button>
                     </div>
@@ -331,7 +331,7 @@
                                     <div class="relative">
                                         <input type="checkbox" name="is_required" value="1" x-model="form.is_required" class="peer sr-only">
                                         <div class="w-14 h-7 bg-slate-200 dark:bg-gray-700 rounded-full peer-checked:bg-blue-600 transition-all shadow-inner"></div>
-                                        <div class="absolute left-1 top-1 w-5 h-5 bg-white rounded-full peer-checked:translate-x-7 transition-all shadow-md"></div>
+                                        <div class="absolute left-1 top-1 w-5 h-5 bg-white dark:bg-gray-800 rounded-full peer-checked:translate-x-7 transition-all shadow-md"></div>
                                     </div>
                                     <div class="flex flex-col">
                                         <span class="text-sm font-black text-slate-800 dark:text-white mt-1">Required</span>
@@ -353,7 +353,7 @@
                                             <div class="flex items-center gap-3">
                                                 <div class="w-8 h-8 rounded-full bg-blue-600/10 text-blue-600 flex items-center justify-center text-xs font-black" x-text="i+1"></div>
                                                 <input type="text" :name="'options['+i+']'" x-model="form.options[i]" required
-                                                    class="flex-grow bg-white dark:bg-gray-950 border border-slate-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 dark:focus:border-blue-500 font-bold">
+                                                    class="flex-grow bg-white dark:bg-gray-800 dark:bg-gray-950 border border-slate-200 dark:border-gray-700 rounded-xl px-4 py-2.5 text-sm outline-none focus:border-blue-600 dark:focus:border-blue-500 font-bold">
                                                 <button type="button" @click="removeOption(i)" class="w-10 h-10 text-red-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-xl transition-all">
                                                     <i class="fas fa-trash"></i>
                                                 </button>
@@ -375,7 +375,7 @@
                                             <template x-for="(row, i) in form.options.rows" :key="i">
                                                 <div class="flex items-center gap-2">
                                                     <input type="text" :name="'options[rows]['+i+']'" x-model="form.options.rows[i]" required
-                                                        class="flex-grow bg-white dark:bg-gray-950 border border-slate-200 dark:border-gray-700 rounded-xl px-4 py-2 text-xs outline-none">
+                                                        class="flex-grow bg-white dark:bg-gray-800 dark:bg-gray-950 border border-slate-200 dark:border-gray-700 rounded-xl px-4 py-2 text-xs outline-none">
                                                     <button type="button" @click="removeMatrixItem('rows', i)" class="text-red-400 p-2">
                                                         <i class="fas fa-times"></i>
                                                     </button>
@@ -392,7 +392,7 @@
                                             <template x-for="(col, i) in form.options.cols" :key="i">
                                                 <div class="flex items-center gap-2">
                                                     <input type="text" :name="'options[cols]['+i+']'" x-model="form.options.cols[i]" required
-                                                        class="flex-grow bg-white dark:bg-gray-950 border border-slate-200 dark:border-gray-700 rounded-xl px-4 py-2 text-xs outline-none">
+                                                        class="flex-grow bg-white dark:bg-gray-800 dark:bg-gray-950 border border-slate-200 dark:border-gray-700 rounded-xl px-4 py-2 text-xs outline-none">
                                                     <button type="button" @click="removeMatrixItem('cols', i)" class="text-red-400 p-2">
                                                         <i class="fas fa-times"></i>
                                                     </button>
@@ -435,7 +435,7 @@
                                     <div>
                                         <label class="block text-[10px] font-black text-amber-600 uppercase tracking-widest mb-3 italic">Show this question ONLY IF...</label>
                                         <select name="conditional_logic[show_if_question_id]" x-model="form.conditional_logic.show_if_question_id"
-                                            class="w-full bg-white dark:bg-gray-900 border border-amber-500/30 rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-amber-500">
+                                            class="w-full bg-white dark:bg-gray-800 dark:bg-gray-900 border border-amber-500/30 rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-amber-500">
                                             <option value="">Select Target Question</option>
                                             <template x-for="prevQ in previousQuestions" :key="prevQ.id">
                                                 <option :value="prevQ.id" x-text="'#' + (questions.indexOf(prevQ) + 1) + ': ' + prevQ.question_text"></option>
@@ -445,7 +445,7 @@
                                     <div>
                                         <label class="block text-[10px] font-black text-amber-600 uppercase tracking-widest mb-3 italic">Value is exactly...</label>
                                         <input type="text" name="conditional_logic[show_if_value]" x-model="form.conditional_logic.show_if_value"
-                                            class="w-full bg-white dark:bg-gray-900 border border-amber-500/30 rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-amber-500"
+                                            class="w-full bg-white dark:bg-gray-800 dark:bg-gray-900 border border-amber-500/30 rounded-2xl px-4 py-3 text-sm font-bold text-slate-800 dark:text-white outline-none focus:border-amber-500"
                                             placeholder="e.g. Yes">
                                     </div>
                                 </div>
@@ -469,7 +469,7 @@
     <div x-show="configModalOpen" class="fixed inset-0 z-[110] overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm" @click="configModalOpen = false"></div>
-            <div class="relative bg-white dark:bg-gray-900 rounded-[2.5rem] max-w-xl w-full p-8 shadow-2xl border border-slate-100 dark:border-gray-800">
+            <div class="relative bg-white dark:bg-gray-800 dark:bg-gray-900 rounded-[2.5rem] max-w-xl w-full p-8 shadow-2xl border border-slate-100 dark:border-gray-800">
                 <div class="flex items-center justify-between mb-8">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-purple-600 flex items-center justify-center text-white shadow-lg shadow-purple-500/20">
@@ -493,7 +493,7 @@
 
                     <button @click="saveSettings($event)" :disabled="savingSettings"
                         class="w-full h-14 bg-purple-600 hover:bg-purple-700 text-white rounded-2xl font-black transition-all shadow-xl shadow-purple-500/20 flex items-center justify-center gap-3">
-                        <i class="fas" :class="savingSettings ? 'fa-spinner fa-spin' : 'fa-save'"></i>
+                        <i class="fas" :class="savingSettings ?'fa-spinner fa-spin' : 'fa-save'"></i>
                         <span x-text="savingSettings ? 'Saving...' : 'Save All Settings'"></span>
                     </button>
                 </div>
@@ -505,7 +505,7 @@
     <div x-show="archiveModalOpen" class="fixed inset-0 z-[110] overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm" @click="archiveModalOpen = false"></div>
-            <div class="relative bg-white dark:bg-gray-900 rounded-[2.5rem] max-w-lg w-full p-8 shadow-2xl border border-slate-100 dark:border-gray-800">
+            <div class="relative bg-white dark:bg-gray-800 dark:bg-gray-900 rounded-[2.5rem] max-w-lg w-full p-8 shadow-2xl border border-slate-100 dark:border-gray-800">
                 <div class="flex items-center justify-between mb-8">
                     <div class="flex items-center gap-4">
                         <div class="w-12 h-12 rounded-2xl bg-purple-100 text-purple-600 flex items-center justify-center shadow-sm">
@@ -540,14 +540,14 @@
                             </div>
                             <div class="flex items-center gap-2">
                                 <button @click="toggleArchiveVisibility(arch)" 
-                                        class="w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-white dark:bg-gray-700 shadow-sm"
-                                        :class="arch.is_active ? 'text-blue-500' : 'text-slate-400'">
-                                    <i class="fas" :class="arch.is_active ? 'fa-eye' : 'fa-eye-slash'"></i>
+                                        class="w-8 h-8 rounded-lg flex items-center justify-center transition-all bg-white dark:bg-gray-800 dark:bg-gray-700 shadow-sm"
+                                        :class="arch.is_active ?'text-blue-500' : 'text-slate-400'">
+                                    <i class="fas" :class="arch.is_active ?'fa-eye' : 'fa-eye-slash'"></i>
                                 </button>
                                 <form :action="'{{ url('/join-questions/archives') }}/' + arch.id" method="POST" onsubmit="return confirmFormSubmit(event, this, 'Deleting an archive will ungroup its questions. Continue?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="w-8 h-8 rounded-lg bg-white dark:bg-gray-700 text-red-500 flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-red-50">
+                                    <button type="submit" class="w-8 h-8 rounded-lg bg-white dark:bg-gray-800 dark:bg-gray-700 text-red-500 flex items-center justify-center sm:opacity-0 sm:group-hover:opacity-100 transition-opacity hover:bg-red-50">
                                         <i class="fas fa-trash text-xs"></i>
                                     </button>
                                 </form>
@@ -566,7 +566,7 @@
     <div x-show="addToArchiveOpen" class="fixed inset-0 z-[120] overflow-y-auto" style="display: none;">
         <div class="flex items-center justify-center min-h-screen px-4">
             <div class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm" @click="addToArchiveOpen = false"></div>
-            <div class="relative bg-white dark:bg-gray-900 rounded-[2.5rem] max-w-sm w-full p-8 shadow-2xl border border-slate-100 dark:border-gray-800 text-center">
+            <div class="relative bg-white dark:bg-gray-800 dark:bg-gray-900 rounded-[2.5rem] max-w-sm w-full p-8 shadow-2xl border border-slate-100 dark:border-gray-800 text-center">
                 <div class="w-20 h-20 bg-purple-100 text-purple-600 rounded-[2rem] flex items-center justify-center mx-auto mb-6 text-3xl">
                     <i class="fas fa-folder-plus"></i>
                 </div>
@@ -582,7 +582,7 @@
                         </button>
                     </template>
                     <button @click="assignToArchive(null)" 
-                            class="p-4 rounded-2xl bg-white dark:bg-gray-950 border-2 border-slate-100 dark:border-gray-800 hover:border-red-500 transition-all text-sm font-black text-red-500">
+                            class="p-4 rounded-2xl bg-white dark:bg-gray-800 dark:bg-gray-950 border-2 border-slate-100 dark:border-gray-800 hover:border-red-500 transition-all text-sm font-black text-red-500">
                         Remove from Archive
                     </button>
                 </div>

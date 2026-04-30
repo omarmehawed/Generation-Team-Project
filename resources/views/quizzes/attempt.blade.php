@@ -27,7 +27,7 @@
     <div x-show="loading && hasStarted" x-cloak class="fixed inset-0 bg-white/80 backdrop-blur-sm z-40 flex items-center justify-center">
         <div class="text-center">
             <i class="fas fa-circle-notch fa-spin text-4xl text-yellow-500 mb-4"></i>
-            <p class="font-bold text-gray-700">Loading Exam Data...</p>
+            <p class="font-bold text-gray-700 dark:text-gray-300">Loading Exam Data...</p>
             <p class="text-xs text-gray-400" x-text="syncStatus"></p>
         </div>
     </div>
@@ -36,9 +36,9 @@
     <div x-show="hasStarted" x-cloak>
 
     <!-- Exam Content Header -->
-    <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-gray-100 pb-6">
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-end justify-between gap-6 border-b border-gray-100 dark:border-gray-700 pb-6">
         <div>
-            <h1 class="text-2xl sm:text-3xl font-black text-gray-900 leading-tight mb-2">{{ $quiz->title }}</h1>
+            <h1 class="text-2xl sm:text-3xl font-black text-gray-900 dark:text-gray-100 leading-tight mb-2">{{ $quiz->title }}</h1>
             <div class="flex items-center gap-3">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
                 <p class="text-[10px] font-black text-gray-400 uppercase tracking-widest">Active Attempt In Progress</p>
@@ -75,7 +75,7 @@
     <!-- Questions Container -->
     <div class="space-y-8">
         <template x-for="(q, index) in questions" :key="q.id">
-            <div class="bg-white rounded-[2.5rem] shadow-2xl shadow-gray-200/40 border border-gray-100 p-8 sm:p-12 transition duration-500 hover:border-indigo-100">
+            <div class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-2xl shadow-gray-200/40 border border-gray-100 dark:border-gray-700 p-8 sm:p-12 transition duration-500 hover:border-indigo-100">
                 <!-- Header -->
                 <div class="flex items-center justify-between mb-8">
                     <div class="flex items-center gap-3">
@@ -91,21 +91,21 @@
                 
                 <!-- Text -->
                 <div class="prose prose-indigo max-w-none mb-10">
-                    <p class="text-xl sm:text-2xl font-black text-gray-800 leading-tight whitespace-pre-wrap allow-select" x-html="q.question_text"></p>
+                    <p class="text-xl sm:text-2xl font-black text-gray-800 dark:text-gray-200 leading-tight whitespace-pre-wrap allow-select" x-html="q.question_text"></p>
                 </div>
 
                 <!-- Options -->
                 <div x-show="q.question_type === 'mcq'" class="grid grid-cols-1 gap-4">
                     <template x-for="opt in q.options" :key="opt.id">
                         <label class="relative flex items-center p-6 border-2 rounded-2xl cursor-pointer transition-all duration-300 group overflow-hidden"
-                               :class="answers[q.id]?.selected_option_id == opt.id ? 'bg-indigo-50/50 border-indigo-500 shadow-xl shadow-indigo-100/50' : 'bg-gray-50/50 border-gray-100 hover:bg-indigo-50/20 hover:border-indigo-100'">
+                               :class="answers[q.id]?.selected_option_id == opt.id ?'bg-indigo-50/50 border-indigo-500 shadow-xl shadow-indigo-100/50' : 'bg-gray-50/50 border-gray-100 hover:bg-indigo-50/20 hover:border-indigo-100'">
                             <input type="radio" 
                                    :name="'q_' + q.id" 
                                    :value="opt.id"
                                    x-model="answers[q.id].selected_option_id"
                                    @change="saveAnswer(q.id, opt.id, null)"
-                                   class="w-6 h-6 text-indigo-600 focus:ring-indigo-500 border-gray-300 shadow-inner">
-                            <span class="ml-5 font-black text-gray-700 text-lg allow-select group-hover:text-indigo-900 transition-colors" x-text="opt.option_text"></span>
+                                   class="w-6 h-6 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 shadow-inner">
+                            <span class="ml-5 font-black text-gray-700 dark:text-gray-300 text-lg allow-select group-hover:text-indigo-900 transition-colors" x-text="opt.option_text"></span>
                             
                             <template x-if="answers[q.id]?.selected_option_id == opt.id">
                                 <div class="absolute right-6 opacity-40">
@@ -120,7 +120,7 @@
                 <div x-show="q.question_type === 'written'">
                     <textarea 
                         rows="6" 
-                        class="w-full rounded-[2rem] border-gray-100 bg-gray-50/50 p-8 font-bold text-gray-800 focus:border-indigo-500 focus:ring-indigo-200 focus:bg-white transition duration-300 shadow-inner allow-select placeholder-gray-300" 
+                        class="w-full rounded-[2rem] border-gray-100 dark:border-gray-700 bg-gray-50/50 p-8 font-bold text-gray-800 dark:text-gray-200 focus:border-indigo-500 focus:ring-indigo-200 focus:bg-white transition duration-300 shadow-inner allow-select placeholder-gray-300" 
                         placeholder="Construct your response here..."
                         x-model="answers[q.id].text_answer"
                         @input.debounce.1000ms="saveAnswer(q.id, null, answers[q.id].text_answer)"></textarea>
@@ -131,18 +131,18 @@
             </div>
         </template>
         
-        <div x-show="questions.length === 0 && !loading" class="flex flex-col items-center justify-center py-20 bg-white rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100">
+        <div x-show="questions.length === 0 && !loading" class="flex flex-col items-center justify-center py-20 bg-white dark:bg-gray-800 rounded-[3rem] shadow-2xl shadow-gray-200/50 border border-gray-100 dark:border-gray-700">
             <div class="w-20 h-20 rounded-[2rem] bg-emerald-50 text-emerald-500 flex items-center justify-center text-4xl mb-6">
                 <i class="fas fa-check-double"></i>
             </div>
-            <h3 class="text-xl font-black text-gray-900 uppercase tracking-widest">Section Complete</h3>
+            <h3 class="text-xl font-black text-gray-900 dark:text-gray-100 uppercase tracking-widest">Section Complete</h3>
             <p class="text-gray-400 font-bold mt-2">Proceed to the next step to continue.</p>
         </div>
     </div>
 
     <!-- Navigation Footer -->
     <div class="mt-12 sticky bottom-8 flex flex-col sm:flex-row items-center justify-between gap-6 bg-white/80 backdrop-blur-xl p-6 sm:px-10 rounded-[2.5rem] shadow-2xl shadow-gray-400/20 border border-gray-200/50 z-30">
-        <button @click="prevStep()" :disabled="currentStep === 1 || loading" class="w-full sm:w-auto px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-gray-500 bg-gray-50 hover:bg-gray-100 disabled:opacity-30 transition transform active:scale-95">
+        <button @click="prevStep()" :disabled="currentStep === 1 || loading" class="w-full sm:w-auto px-10 py-4 rounded-2xl font-black text-xs uppercase tracking-widest text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 disabled:opacity-30 transition transform active:scale-95">
             <i class="fas fa-chevron-left mr-3"></i> Previous Step
         </button>
         
@@ -150,7 +150,7 @@
             <!-- Paginator Dots -->
             <template x-for="i in lastPage">
                 <div class="w-2 h-2 rounded-full transition-all duration-500" 
-                     :class="i === currentStep ? 'bg-indigo-600 w-8' : 'bg-gray-200 scale-100'"></div>
+                     :class="i === currentStep ?'bg-indigo-600 w-8' : 'bg-gray-200 scale-100'"></div>
             </template>
         </div>
 
@@ -159,7 +159,7 @@
                 Next Step <i class="fas fa-chevron-right ml-3"></i>
             </button>
 
-            <button x-show="currentStep === lastPage && lastPage > 0" @click="submitExam()" :disabled="loading" class="w-full sm:w-auto px-12 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-black bg-yellow-400 hover:bg-yellow-500 transition transform active:scale-95 shadow-xl shadow-yellow-200 border-2 border-yellow-500">
+            <button x-show="currentStep === lastPage && lastPage > 0" @click="submitExam()" :disabled="loading" class="w-full sm:w-auto px-12 py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] text-black dark:text-white bg-yellow-400 hover:bg-yellow-500 transition transform active:scale-95 shadow-xl shadow-yellow-200 border-2 border-yellow-500">
                 Finalize & Submit
             </button>
         </div>

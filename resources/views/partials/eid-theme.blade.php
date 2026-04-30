@@ -11,7 +11,7 @@
                 <!-- String -->
                 <path d="M45 50 Q50 70 48 90" stroke="#d1d5db" stroke-width="1" fill="none" />
                 <ellipse cx="45" cy="40" rx="15" ry="18" fill="url(#ball1)" />
-                <path d="M43 57 L47 57 L45 59 Z" fill="#d97706" />
+                <path d="M43 57 L47 57 L45 59 Z" fill="#2596be" />
                 <ellipse cx="40" cy="35" rx="3" ry="5" fill="#ffffff" opacity="0.4" />
             </g>
 

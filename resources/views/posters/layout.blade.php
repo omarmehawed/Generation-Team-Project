@@ -113,7 +113,7 @@
             <!-- Live Preview -->
             <div class="lg:col-span-3">
                 <div
-                    class="ui-card p-4 overflow-hidden bg-white border-4 border-dashed border-[var(--border)] min-h-[800px] relative">
+                    class="ui-card p-4 overflow-hidden bg-white dark:bg-gray-800 border-4 border-dashed border-[var(--border)] min-h-[800px] relative">
                     <div class="absolute top-2 right-2 bg-black/50 text-white px-3 py-1 rounded text-xs z-50">Live Preview
                     </div>
 

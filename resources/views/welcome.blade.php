@@ -43,7 +43,7 @@
                         amiri: ['Amiri', 'serif'],
                     },
                     colors: {
-                        primary: '#fbbf24', // Gold
+                        primary: '#2596be', // Gold
                         dark: '#0f172a',
                         light: '#f8fafc',
                     },
@@ -140,7 +140,7 @@
 </head>
 
 <body
-    class="font-cairo antialiased transition-colors duration-300 bg-gray-50 text-gray-900"
+    class="font-cairo antialiased transition-colors duration-300 bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100"
     x-data="{ 
           darkMode: localStorage.getItem('theme') === 'dark',
           mobileMenuOpen: false,
@@ -192,7 +192,7 @@
 
     <!-- Navigation -->
     <nav
-        class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md text-gray-900 border-b border-gray-200">
+        class="fixed w-full z-50 transition-all duration-300 bg-white/95 backdrop-blur-md text-gray-900 dark:text-gray-100 border-b border-gray-200 dark:border-gray-700">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
 
@@ -203,7 +203,7 @@
                             alt="Generation Team">
                     </div>
                     <div class="hidden md:block">
-                        <h1 class="text-2xl font-bold font-tech tracking-wider text-gray-900">
+                        <h1 class="text-2xl font-bold font-tech tracking-wider text-gray-900 dark:text-gray-100">
                             GENERATION <span class="text-amber-500">TEAM</span>
                         </h1>
                     </div>
@@ -212,21 +212,21 @@
                 <!-- Desktop Menu -->
                 <div class="hidden md:flex items-center gap-8 font-amiri">
                     <a href="#home"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">الرئيسية</a>
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">الرئيسية</a>
                     <a href="#team"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">عن
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">عن
                         الفريق</a>
                     <a href="#itclub"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">التعاون
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">التعاون
                         مع IT</a>
                     <a href="#leadership"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">القيادة
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">القيادة
                         والإشراف</a>
                     <a href="#project"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">عن
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">عن
                         المشروع</a>
                     <button @click="statusModalOpen = true"
-                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700">متابعة
+                        class="text-lg font-bold hover:text-amber-500 transition-colors text-gray-700 dark:text-gray-300">متابعة
                         الطلب</button>
                 </div>
 
@@ -246,7 +246,7 @@
 
                     <!-- Mobile Menu Toggle -->
                     <button @click="mobileMenuOpen = !mobileMenuOpen"
-                        class="md:hidden p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-900">
+                        class="md:hidden p-2 rounded-lg transition-colors hover:bg-gray-100 text-gray-900 dark:text-gray-100">
                         <i class="fas fa-bars text-xl" x-show="!mobileMenuOpen"></i>
                         <i class="fas fa-times text-xl" x-show="mobileMenuOpen" style="display: none;"></i>
                     </button>
@@ -256,32 +256,32 @@
 
         <!-- Mobile Menu Dropdown -->
         <div x-show="mobileMenuOpen" style="display: none;"
-            class="md:hidden absolute top-20 left-0 w-full border-t shadow-2xl backdrop-blur-md transition-all duration-300 bg-white/95 border-gray-200"
+            class="md:hidden absolute top-20 left-0 w-full border-t shadow-2xl backdrop-blur-md transition-all duration-300 bg-white/95 border-gray-200 dark:border-gray-700"
             x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 -translate-y-4"
             x-transition:enter-end="opacity-100 translate-y-0" x-transition:leave="transition ease-in duration-150"
             x-transition:leave-start="opacity-100 translate-y-0" x-transition:leave-end="opacity-0 -translate-y-4">
             <div class="flex flex-col px-6 py-8 space-y-6 font-amiri border-b-4 border-amber-500">
                 <a href="#home" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>الرئيسية</span> <i class="fas fa-home text-sm opacity-50"></i>
                 </a>
                 <a href="#team" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>عن الفريق</span> <i class="fas fa-users text-sm opacity-50"></i>
                 </a>
                 <a href="#itclub" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>التعاون مع IT</span> <i class="fas fa-handshake text-sm opacity-50"></i>
                 </a>
                 <a href="#leadership" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>القيادة والإشراف</span> <i class="fas fa-user-tie text-sm opacity-50"></i>
                 </a>
                 <a href="#project" @click="mobileMenuOpen = false"
-                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800">
+                    class="text-xl font-bold flex items-center justify-between hover:text-amber-500 transition-colors text-gray-800 dark:text-gray-200">
                     <span>عن المشروع</span> <i class="fas fa-robot text-sm opacity-50"></i>
                 </a>
-                <hr class="border-gray-200 mb-2">
+                <hr class="border-gray-200 dark:border-gray-700 mb-2">
                 <button @click="statusModalOpen = true; mobileMenuOpen = false"
                     class="w-full text-right text-xl font-bold flex items-center justify-between text-amber-500 hover:text-amber-400 transition-colors">
                     <span>متابعة الطلب</span> <i class="fas fa-search text-sm"></i>
@@ -316,7 +316,7 @@
                 </h1>
 
                 <!-- Quote -->
-                <div class="max-w-3xl mx-auto backdrop-blur-sm p-6 rounded-2xl border-r-4 border-amber-500 mb-8 animate-slide-up font-amiri bg-white/60 text-gray-900 shadow-lg"
+                <div class="max-w-3xl mx-auto backdrop-blur-sm p-6 rounded-2xl border-r-4 border-amber-500 mb-8 animate-slide-up font-amiri bg-white/60 text-gray-900 dark:text-gray-100 shadow-lg"
                     style="animation-delay: 0.4s">
                     <p class="text-xl md:text-3xl font-bold leading-relaxed">
                         "لو نفسك تشتغل على روبوت شبه بني آدم… بس مش أي روبوت 👀 <br>
@@ -345,7 +345,7 @@
                         </span>
                     </button>
                     <a href="#project"
-                        class="px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 glass border-gray-800 text-gray-800 hover:bg-gray-100">
+                        class="px-8 py-4 rounded-full font-bold text-lg border transition-all hover:scale-105 glass border-gray-800 text-gray-800 dark:text-gray-200 hover:bg-gray-100">
                         اكتشف المزيد
                     </a>
                 </div>
@@ -366,7 +366,7 @@
     @endphp
 
     @if($posters->count() > 0)
-        <section id="custom-posters" class="py-16 relative overflow-hidden bg-white">
+        <section id="custom-posters" class="py-16 relative overflow-hidden bg-white dark:bg-gray-800">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
                 @foreach($posters as $poster)
                     <?php
@@ -423,7 +423,7 @@
                                 </div>
                                 <div class="absolute inset-x-0 bottom-4 flex justify-center gap-2 z-20">
                                     <template x-for="i in slides" :key="i">
-                                        <button @click="activeSlide = i - 1" class="w-3 h-3 rounded-full transition-colors focus:outline-none shadow-sm" :class="activeSlide === i - 1 ? 'bg-amber-500' : 'bg-white/50 border border-gray-400'"></button>
+                                        <button @click="activeSlide = i - 1" class="w-3 h-3 rounded-full transition-colors focus:outline-none shadow-sm" :class="activeSlide === i - 1 ?'bg-amber-500' : 'bg-white/50 border border-gray-400'"></button>
                                     </template>
                                 </div>
                             </div>
@@ -528,7 +528,7 @@
     @endif
 
     <!-- About Team Section -->
-    <section id="team" class="py-24 relative overflow-hidden bg-white">
+    <section id="team" class="py-24 relative overflow-hidden bg-white dark:bg-gray-800">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <div class="text-center mb-16 font-amiri">
@@ -541,25 +541,25 @@
                 <!-- Text Content -->
                 <div class="space-y-6 text-right order-2 lg:order-1 font-amiri">
                     <h3 class="text-2xl font-bold text-amber-500">Generation Team</h3>
-                    <p class="text-lg leading-loose opacity-80 text-gray-700">
+                    <p class="text-lg leading-loose opacity-80 text-gray-700 dark:text-gray-300">
                         "نحن فريق Generation Team، مجموعة من الطلاب الشغوفين بالتكنولوجيا والابتكار.
                         هدفنا ليس مجرد بناء روبوت، بل خلق تجربة هندسية متكاملة تجمع بين التصميم الميكانيكي،
                         الأنظمة المدمجة، والذكاء الاصطناعي."
                     </p>
-                    <p class="text-lg leading-loose opacity-80 text-gray-700">
+                    <p class="text-lg leading-loose opacity-80 text-gray-700 dark:text-gray-300">
                         نؤمن بأن العمل الجماعي هو سر النجاح، ونبحث دائمًا عن العقول المبدعة
                         لتكون جزءًا من رحلتنا نحو المستقبل.
                     </p>
 
                     <div class="grid grid-cols-2 gap-6 mt-8">
                         <div
-                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200">
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white dark:bg-gray-800 border-amber-200">
                             <i class="fas fa-users text-3xl text-amber-500 mb-3"></i>
                             <h4 class="font-bold text-xl text-slate-900">عمل جماعي</h4>
                             <p class="text-sm opacity-70">بيئة تعاونية محفزة</p>
                         </div>
                         <div
-                            class="p-4 rounded-xl border hover-card glass-panel bg-white border-amber-200">
+                            class="p-4 rounded-xl border hover-card glass-panel bg-white dark:bg-gray-800 border-amber-200">
                             <i class="fas fa-lightbulb text-3xl text-amber-500 mb-3"></i>
                             <h4 class="font-bold text-xl text-slate-900">ابتكار</h4>
                             <p class="text-sm opacity-70">أفكار خارج الصندوق</p>
@@ -584,7 +584,7 @@
     </section>
 
     <!-- IT Club Collaboration Section (Slider) -->
-    <section id="itclub" class="py-24 relative overflow-hidden select-none bg-gray-50" x-data="{ 
+    <section id="itclub" class="py-24 relative overflow-hidden select-none bg-gray-50 dark:bg-gray-900" x-data="{ 
             activeSlide: 1, 
             maxSlides: 2, 
             autoInterval: null, 
@@ -645,7 +645,7 @@
             <div class="grid relative items-center">
 
                 <!-- Slide 1: Collaboration with IT Club -->
-                <div :class="activeSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                <div :class="activeSlide === 1 ?'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
                     class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
@@ -666,7 +666,7 @@
                                 <h3 class="text-3xl font-bold text-amber-500 mb-2">Collaboration with IT Club</h3>
                             </div>
 
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Our collaboration with the IT Club at Borg El Arab Technological University has
                                     played a vital role in the success and development of the Generation Team project.
                                     The club provided continuous technical support, professional mentorship, and a
@@ -684,12 +684,12 @@
                 </div>
 
                 <!-- Slide 2: About IT Club -->
-                <div :class="activeSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                <div :class="activeSlide === 2 ?'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
                     class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
                             <div
-                                class="relative w-80 h-auto md:w-[400px] bg-white rounded-3xl overflow-hidden border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)] p-6 flex flex-col items-center justify-center">
+                                class="relative w-80 h-auto md:w-[400px] bg-white dark:bg-gray-800 rounded-3xl overflow-hidden border-4 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.2)] p-6 flex flex-col items-center justify-center">
                                 <img src="{{ asset('assets/itclub/it_club.png') }}"
                                     class="w-full h-auto object-contain transform hover:scale-105 transition-transform duration-500"
                                     alt="IT Club Logo">
@@ -702,11 +702,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-blue-500 mb-2">About IT Club</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800">Borg El
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Borg El
                                     Arab
                                     Technological University (BATU)</p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>The IT Club is a dynamic, student-led organization at Borg El Arab Technological
                                     University (BATU). It focuses on developing students’ technical skills, encouraging
                                     innovation, and building a strong technology community.</p>
@@ -736,7 +736,7 @@
                                     <i class="fab fa-linkedin-in text-2xl"></i>
                                 </a>
                                 <a href="https://www.tiktok.com/@information.techn92" target="_blank"
-                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-900/10 text-gray-900 hover:bg-gray-900 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-900/20"
+                                    class="flex items-center justify-center w-12 h-12 rounded-full bg-gray-900/10 text-gray-900 dark:text-gray-100 hover:bg-gray-900 hover:text-white transition-all transform hover:scale-110 shadow-lg border border-gray-900/20"
                                     title="TikTok">
                                     <i class="fab fa-tiktok text-2xl"></i>
                                 </a>
@@ -755,19 +755,19 @@
             <!-- Navigation Controls -->
             <div class="flex items-center justify-center gap-6 mt-16 relative z-20" dir="ltr">
                 <button aria-label="Next slide" @click="next()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
                     <i class="fas fa-chevron-right"></i>
                 </button>
                 <div class="flex items-center gap-3">
                     <template x-for="i in maxSlides" :key="i">
                         <button :aria-label="'Go to slide ' + i" @click="goTo(i)"
                             class="h-2 rounded-full transition-all duration-300"
-                            :class="activeSlide === i ? 'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
+                            :class="activeSlide === i ?'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
                         </button>
                     </template>
                 </div>
                 <button aria-label="Previous slide" @click="prev()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
@@ -775,7 +775,7 @@
     </section>
 
     <!-- Leadership & Supervision Section (Slider) -->
-    <section id="leadership" class="py-24 relative overflow-hidden select-none bg-gray-50" x-data="{ 
+    <section id="leadership" class="py-24 relative overflow-hidden select-none bg-gray-50 dark:bg-gray-900" x-data="{ 
             activeSlide: 1, 
             maxSlides: 4, 
             autoInterval: null, 
@@ -836,7 +836,7 @@
             <div class="grid relative items-center">
 
                 <!-- Slide 1: Project Leader -->
-                <div :class="activeSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                <div :class="activeSlide === 1 ?'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
                     class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
@@ -855,11 +855,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-amber-500 mb-2">Omar Mehawed</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800">Project
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Project
                                     Leader</p>
                             </div>
 
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Omar Mehawed is an Information Technology student and Project Leader with a strong
                                     passion for software development, cybersecurity, and emerging technologies.</p>
                                 <p>He is an active Head of the IT Club in the PR department and has participated in
@@ -889,7 +889,7 @@
                 </div>
 
                 <!-- Slide 2: Vice Leader -->
-                <div :class="activeSlide === 2 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                <div :class="activeSlide === 2 ?'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
                     class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
@@ -907,10 +907,10 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-purple-500 mb-2">Jana Tarek</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800">Vice Leader
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Vice Leader
                                 </p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Jana Tarek is the Vice Leader of the project, supporting team management,
                                     coordination, and internal operations. She plays a key role in organizing the
                                     workflow, ensuring smooth communication, and helping achieve the project goals
@@ -921,7 +921,7 @@
                 </div>
 
                 <!-- Slide 3: Project Supervisor -->
-                <div :class="activeSlide === 3 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                <div :class="activeSlide === 3 ?'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
                     class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
@@ -938,11 +938,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-blue-500 mb-2">Mohamed El-Fayoumi</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800">Project
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Project
                                     Supervisor
                                 </p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Mohamed El-Fayoumi is a Mechatronics Engineering student with strong interests in
                                     autonomous vehicles and machine learning, aiming to become a Self-Driving Car
                                     Engineer. He has developed professional and leadership experience through his
@@ -963,7 +963,7 @@
                 </div>
 
                 <!-- Slide 4: Academic Supervisor -->
-                <div :class="activeSlide === 4 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
+                <div :class="activeSlide === 4 ?'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'"
                     class="col-start-1 row-start-1 w-full transition-opacity duration-700">
                     <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
                         <div class="relative order-1 lg:order-2 flex justify-center">
@@ -981,11 +981,11 @@
                         <div class="space-y-6 order-2 lg:order-1 text-left font-tech" dir="ltr">
                             <div>
                                 <h3 class="text-3xl font-bold text-emerald-500 mb-2">Dr. Osama El-Nahhas</h3>
-                                <p class="text-xl font-semibold opacity-90 text-gray-800">Dean of the
+                                <p class="text-xl font-semibold opacity-90 text-gray-800 dark:text-gray-200">Dean of the
                                     Faculty
                                     of Information Technology</p>
                             </div>
-                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700">
+                            <div class="space-y-4 text-lg leading-relaxed opacity-80 text-gray-700 dark:text-gray-300">
                                 <p>Dr. Osama El-Nahhas is the Dean of the Faculty of Information Technology and provides
                                     academic supervision and official support for the project. His leadership ensures
                                     the project aligns with academic standards and institutional excellence.</p>
@@ -1007,7 +1007,7 @@
             <!-- Navigation Controls -->
             <div class="flex items-center justify-center gap-6 mt-16 relative z-20">
                 <button aria-label="Next slide" @click="next()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
                     <i class="fas fa-chevron-right"></i>
                 </button>
 
@@ -1015,13 +1015,13 @@
                     <template x-for="i in maxSlides" :key="i">
                         <button :aria-label="'Go to slide ' + i" @click="goTo(i)"
                             class="h-2 rounded-full transition-all duration-300"
-                            :class="activeSlide === i ? 'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
+                            :class="activeSlide === i ?'w-8 bg-amber-500' : (darkMode ? 'w-2 bg-gray-700 hover:bg-gray-500' : 'w-2 bg-gray-300 hover:bg-gray-400')">
                         </button>
                     </template>
                 </div>
 
                 <button aria-label="Previous slide" @click="prev()"
-                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 text-gray-600">
+                    class="w-10 h-10 rounded-full flex items-center justify-center border transition-all glass hover:bg-amber-500 hover:text-white hover:border-amber-500 border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400">
                     <i class="fas fa-chevron-left"></i>
                 </button>
             </div>
@@ -1030,13 +1030,13 @@
     </section>
 
     <!-- About Project Section -->
-    <section id="project" class="py-24 bg-gray-50">
+    <section id="project" class="py-24 bg-gray-50 dark:bg-gray-900">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center mb-16 font-amiri">
                 <h2 class="text-4xl font-bold mb-4 text-slate-900">عن <span
                         class="text-amber-500">المشروع</span></h2>
                 <div class="w-24 h-1 bg-amber-500 mx-auto rounded-full"></div>
-                <p class="mt-6 text-xl max-w-2xl mx-auto opacity-80 text-gray-700">
+                <p class="mt-6 text-xl max-w-2xl mx-auto opacity-80 text-gray-700 dark:text-gray-300">
                     "إحنا شغالين على مشروع ضخم، ومحتاجين ناس جاهزة تتحرك بعد الميد تِرم مباشرة"
                 </p>
             </div>
@@ -1044,7 +1044,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center">
 
                 <!-- Card 1 -->
-                <div class="p-8 rounded-3xl border hover-card group ">
+                <div class="p-8 rounded-3xl border hover-card group">
                     <div
                         class="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-amber-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-microchip text-3xl text-amber-500 group-hover:text-white"></i>
@@ -1055,7 +1055,7 @@
                 </div>
 
                 <!-- Card 2 -->
-                <div class="p-8 rounded-3xl border hover-card group ">
+                <div class="p-8 rounded-3xl border hover-card group">
                     <div
                         class="w-16 h-16 bg-indigo-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-indigo-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-brain text-3xl text-indigo-500 group-hover:text-white"></i>
@@ -1065,7 +1065,7 @@
                 </div>
 
                 <!-- Card 3 -->
-                <div class="p-8 rounded-3xl border hover-card group ">
+                <div class="p-8 rounded-3xl border hover-card group">
                     <div
                         class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-emerald-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-cogs text-3xl text-emerald-500 group-hover:text-white"></i>
@@ -1076,7 +1076,7 @@
                 </div>
 
                 <!-- Card 4 -->
-                <div class="p-8 rounded-3xl border hover-card group ">
+                <div class="p-8 rounded-3xl border hover-card group">
                     <div
                         class="w-16 h-16 bg-red-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-red-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-battery-full text-3xl text-red-500 group-hover:text-white"></i>
@@ -1086,7 +1086,7 @@
                 </div>
 
                 <!-- Card 5 -->
-                <div class="p-8 rounded-3xl border hover-card group ">
+                <div class="p-8 rounded-3xl border hover-card group">
                     <div
                         class="w-16 h-16 bg-orange-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6 group-hover:bg-orange-500 group-hover:text-white transition-colors duration-300">
                         <i class="fas fa-flask text-3xl text-orange-500 group-hover:text-white"></i>
@@ -1121,7 +1121,7 @@
             x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" style="display: none;">
 
             <div @click.away="statusModalOpen = false"
-                class="relative w-full max-w-md p-8 rounded-3xl border shadow-2xl transition-all duration-300 bg-white border-gray-200"
+                class="relative w-full max-w-md p-8 rounded-3xl border shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700"
                 x-transition:enter="transition ease-out duration-300 transform"
                 x-transition:enter-start="opacity-0 translate-y-8 scale-95"
                 x-transition:enter-end="opacity-100 translate-y-0 scale-100"
@@ -1139,19 +1139,19 @@
                         class="w-16 h-16 bg-amber-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-amber-500/20">
                         <i class="fas fa-search text-2xl text-amber-500"></i>
                     </div>
-                    <h2 class="text-2xl font-bold mb-2 font-amiri text-gray-900">متابعة حالة الطلب</h2>
+                    <h2 class="text-2xl font-bold mb-2 font-amiri text-gray-900 dark:text-gray-100">متابعة حالة الطلب</h2>
                     <p class="text-sm opacity-70">أدخل رقمك الأكاديمي للاستعلام عن حالة طلب الانضمام</p>
                 </div>
 
                 <div class="space-y-4">
                     <div>
                         <input type="text" x-model="academicId" placeholder="الرقم الأكاديمي"
-                            class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-tech text-center text-lg tracking-widest bg-gray-50 border-gray-200 text-gray-900">
+                            class="w-full px-4 py-3 rounded-xl border focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all font-tech text-center text-lg tracking-widest bg-gray-50 dark:bg-gray-900 border-gray-200 dark:border-gray-700 text-gray-900 dark:text-gray-100">
                     </div>
 
                     <button @click="checkStatus()" :disabled="isChecking || !academicId"
                         class="w-full py-3 rounded-xl font-bold text-white transition-all duration-300 flex justify-center items-center shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-                        :class="isChecking ? 'bg-gray-500' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500'">
+                        :class="isChecking ?'bg-gray-500' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500'">
                         <span x-show="!isChecking" class="font-amiri text-lg">تحقق من الحالة</span>
                         <i x-show="isChecking" class="fas fa-spinner fa-spin text-xl"></i>
                     </button>
@@ -1190,7 +1190,7 @@
         </div>
 
         <!-- content -->
-        <div class="relative bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-amber-500/20"
+        <div class="relative bg-white dark:bg-gray-800 w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-amber-500/20"
             x-transition:enter="transition ease-out duration-500"
             x-transition:enter-start="opacity-0 scale-90 translate-y-10"
             x-transition:enter-end="opacity-100 scale-100 translate-y-0">
@@ -1209,12 +1209,12 @@
                     <div class="absolute inset-0 w-24 h-24 rounded-full bg-green-500/20 animate-ping opacity-20 mx-auto"></div>
                 </div>
 
-                <h2 class="text-3xl font-black mb-4 font-tech tracking-tighter text-gray-900">
+                <h2 class="text-3xl font-black mb-4 font-tech tracking-tighter text-gray-900 dark:text-gray-100">
                     SUCCESS!
                 </h2>
                 
-                <div class="py-6 px-4 bg-gray-50 rounded-2xl border border-gray-100 mb-8">
-                    <p class="text-lg md:text-xl font-amiri leading-relaxed text-gray-700">
+                <div class="py-6 px-4 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-700 mb-8">
+                    <p class="text-lg md:text-xl font-amiri leading-relaxed text-gray-700 dark:text-gray-300">
                         {{ session('success') }}
                     </p>
                 </div>
@@ -1231,7 +1231,7 @@
 
     <!-- Footer -->
     <footer
-        class="py-8 text-center text-sm border-t bg-white border-amber-100 text-gray-600">
+        class="py-8 text-center text-sm border-t bg-white dark:bg-gray-800 border-amber-100 text-gray-600 dark:text-gray-400">
         <p class="font-amiri">Copyright © 2026 <span class="text-amber-500 font-bold">Generation Team</span>. All rights
             reserved.</p>
     </footer>

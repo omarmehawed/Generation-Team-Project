@@ -8,6 +8,16 @@
 
     <!-- Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { primary: '#2596be' }
+                }
+            }
+        }
+    </script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <!-- Fonts -->
@@ -227,7 +237,7 @@
                     </div>
 
                     <a href="{{ route('auth.google') }}"
-                        class="w-full flex items-center justify-center gap-3 py-3.5 text-xs font-black bg-white border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-all shadow-sm active:scale-95">
+                        class="w-full flex items-center justify-center gap-3 py-3.5 text-xs font-black bg-white dark:bg-gray-800 border border-slate-200 text-slate-700 rounded-xl hover:bg-slate-50 transition-all shadow-sm active:scale-95">
                         <img src="https://www.gstatic.com/images/branding/product/1x/googleg_48dp.png" alt="Google" class="w-4 h-4">
                         <span class="tracking-widest capitalize">Sign in with Google</span>
                     </a>

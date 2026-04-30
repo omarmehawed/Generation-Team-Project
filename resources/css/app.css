@@ -4,45 +4,38 @@
 
 @layer base {
     body {
-        @apply bg-gray-50 text-gray-900 dark:bg-[#0f1016] dark:text-gray-100 font-sans antialiased;
-        background-image: 
-            radial-gradient(circle at 50% 0%, rgba(49, 46, 129, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 100% 0%, rgba(251, 191, 36, 0.05) 0%, transparent 25%);
-    }
-    
-    .dark body {
-        background-image: 
-            radial-gradient(circle at 50% 0%, rgba(30, 27, 75, 0.4) 0%, transparent 60%),
-            radial-gradient(circle at 100% 0%, rgba(217, 119, 6, 0.1) 0%, transparent 30%);
+        @apply bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100 font-sans antialiased transition-colors duration-300;
     }
 }
 
 @layer components {
-    .glass-panel {
-        @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-white/20 dark:border-gray-700/50 shadow-xl;
-    }
-    
-    .ramadan-card {
-        @apply bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700/50 overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+    /* Main Panel / Card System */
+    .glass-panel, .ramadan-card {
+        @apply bg-white dark:bg-gray-800 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm transition-all duration-300;
     }
 
-    .btn-gold {
-        @apply bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-white shadow-lg shadow-amber-500/30 border-none;
+    /* Button System */
+    .btn-primary {
+        @apply bg-[#2596be] hover:bg-[#31a7d1] active:bg-[#1c7ca0] text-white font-semibold py-2 px-4 rounded-xl transition-colors duration-200;
     }
-    
-    .text-gold {
-         @apply text-amber-500 dark:text-amber-400;
+
+    .btn-secondary {
+        @apply bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-semibold py-2 px-4 rounded-xl transition-colors duration-200 border border-transparent dark:border-gray-600;
+    }
+
+    .btn-danger {
+        @apply bg-red-600 hover:bg-red-500 active:bg-red-700 text-white font-semibold py-2 px-4 rounded-xl transition-colors duration-200;
     }
 }
 
 /* Custom Scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    @apply bg-transparent;
+    @apply bg-gray-50 dark:bg-gray-900;
 }
 
 ::-webkit-scrollbar-thumb {

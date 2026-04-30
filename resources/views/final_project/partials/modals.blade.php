@@ -88,15 +88,15 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
        4. BRANDING & COLORS (Royal Gold Theme)
     --------------------------------------------------------- */
     .border-royal-gold {
-        border-color: #D4AF37;
+        border-color: #2596be;
     }
 
     .bg-royal-gold {
-        background-color: #D4AF37;
+        background-color: #2596be;
     }
 
     .text-royal-gold {
-        color: #D4AF37;
+        color: #2596be;
     }
 
     .modal-header-gradient {
@@ -120,7 +120,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     }
 
     .input-classic:focus {
-        border-color: #D4AF37;
+        border-color: #2596be;
         background-color: #ffffff;
         outline: none;
         box-shadow: 0 0 0 4px rgba(212, 175, 55, 0.15);
@@ -137,7 +137,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     --------------------------------------------------------- */
     .btn-modal-primary {
         background: linear-gradient(135deg, #1f2937 0%, #000000 100%);
-        color: #D4AF37;
+        color: #2596be;
         padding: 12px 30px;
         border-radius: 12px;
         font-weight: 800;
@@ -159,9 +159,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     .btn-modal-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25);
-        background: #D4AF37;
+        background: #2596be;
         color: #111827;
-        border-color: #D4AF37;
+        border-color: #2596be;
     }
 
     .btn-modal-primary:active {
@@ -274,16 +274,16 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         <input type="hidden" name="project_id" value="{{ $project->id }}">
                     @endif
 
-                    <div class="bg-white px-8 pt-8 pb-6">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
                         <div class="flex items-center gap-6 mb-6">
                             {{-- منطقة اللوجو --}}
                             <div class="relative group cursor-pointer w-24 h-24">
                                 <img id="createLogoPreview"
                                     src="https://ui-avatars.com/api/?name=New+Team&background=000&color=D4AF37&size=256"
-                                    class="w-full h-full rounded-full object-cover border-4 border-gray-100 shadow-md">
+                                    class="w-full h-full rounded-full object-cover border-4 border-gray-100 dark:border-gray-700 shadow-md">
 
                                 <label for="createRawInput"
-                                    class="absolute bottom-0 right-0 bg-gray-900 text-[#D4AF37] w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:scale-110 transition cursor-pointer z-10">
+                                    class="absolute bottom-0 right-0 bg-gray-900 text-[#2596be] w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white hover:scale-110 transition cursor-pointer z-10">
                                     <i class="fas fa-camera text-xs"></i>
                                 </label>
 
@@ -294,20 +294,20 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
 
                             <div class="flex-1">
-                                <h3 class="text-2xl font-black text-gray-900 tracking-tight">Create Team</h3>
-                                <p class="text-xs text-gray-500 font-medium">Upload badge & name your squad.</p>
+                                <h3 class="text-2xl font-black text-gray-900 dark:text-gray-100 tracking-tight">Create Team</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 font-medium">Upload badge & name your squad.</p>
                                 <p class="text-xs text-red-500 font-medium">The Team Name Cannot Changed.</p>
                             </div>
                         </div>
 
-                        <label class="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide ml-1">Team
+                        <label class="block text-gray-700 dark:text-gray-300 text-xs font-bold mb-2 uppercase tracking-wide ml-1">Team
                             Name</label>
                         <input type="text" name="name" required placeholder="e.g. Alpha Operations"
                             class="input-classic"
                             oninput="if(!document.getElementById('createBase64').value) document.getElementById('createLogoPreview').src = `https://ui-avatars.com/api/?name=${this.value}&background=000&color=D4AF37&size=256`">
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-4 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="btn-modal-primary ripple-btn">Initialize Team</button>
                         <button type="button" onclick="closeModal('createTeamModal')" class="btn-cancel">Cancel</button>
                     </div>
@@ -329,15 +329,15 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         @csrf
                         <input type="hidden" name="team_id" value="{{ $team->id }}">
 
-                        <div class="bg-white px-6 py-6">
-                            <h3 class="text-xl font-black text-gray-900 mb-4 flex items-center gap-2">
-                                <i class="fas fa-edit text-[#D4AF37]"></i> Update Team Badge
+                        <div class="bg-white dark:bg-gray-800 px-6 py-6">
+                            <h3 class="text-xl font-black text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
+                                <i class="fas fa-edit text-[#2596be]"></i> Update Team Badge
                             </h3>
 
                             <div class="flex flex-col items-center space-y-4">
                                 <label
-                                    class="block w-full cursor-pointer border-2 border-dashed border-gray-300 rounded-xl p-4 text-center hover:border-[#D4AF37] hover:bg-yellow-50 transition">
-                                    <span class="text-gray-500 text-sm font-bold block mb-1">Click to choose
+                                    class="block w-full cursor-pointer border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-4 text-center hover:border-[#2596be] hover:bg-yellow-50 transition">
+                                    <span class="text-gray-500 dark:text-gray-400 text-sm font-bold block mb-1">Click to choose
                                         image</span>
                                     <input type="file" id="editRawInput" accept="image/*" class="hidden"
                                         onchange="initCropper(this, 'edit')" />
@@ -346,7 +346,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
                         </div>
 
-                        <div class="bg-gray-50 px-6 py-4 flex flex-row-reverse gap-3">
+                        <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex flex-row-reverse gap-3">
                             <button type="submit" id="editSaveBtn"
                                 class="btn-royal-gold py-2 px-6 rounded-xl font-bold shadow-md hidden">Save
                                 Changes</button>
@@ -363,14 +363,14 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     {{-- ========================================== --}}
     <div id="sharedCropperModal"
         class="fixed inset-0 z-[100000] hidden bg-black/90 backdrop-blur-sm items-center justify-center p-4">
-        <div class="bg-white rounded-2xl overflow-hidden shadow-2xl w-full max-w-lg">
+        <div class="bg-white dark:bg-gray-800 rounded-2xl overflow-hidden shadow-2xl w-full max-w-lg">
             <div class="h-[400px] bg-black flex justify-center items-center">
                 <img id="sharedImageToCrop" class="max-w-full max-h-full block">
             </div>
-            <div class="bg-gray-50 px-6 py-4 flex justify-end gap-3">
+            <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex justify-end gap-3">
                 <button type="button" onclick="closeSharedCropper()" class="btn-cancel">Cancel</button>
                 <button type="button" id="sharedCropBtn"
-                    class="bg-[#D4AF37] text-black px-6 py-2 rounded-xl font-bold">Crop & Save</button>
+                    class="bg-[#2596be] text-black dark:text-white px-6 py-2 rounded-xl font-bold">Crop & Save</button>
             </div>
         </div>
     </div>
@@ -441,21 +441,21 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     @if (isset($project) && $project)
                         <input type="hidden" name="project_id" value="{{ $project->id }}">
                     @endif
-                    <div class="bg-white px-8 pt-10 pb-8 text-center">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-10 pb-8 text-center">
                         <div
                             class="w-20 h-20 bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-6 border-4 border-[#C5A059] shadow-xl relative">
                             <div class="absolute inset-0 rounded-full border border-white/20"></div>
                             <i class="fas fa-key text-[#C5A059] text-3xl shimmer-icon"></i>
                         </div>
-                        <h3 class="text-2xl font-black text-gray-900 mb-2">Access Portal</h3>
-                        <p class="text-gray-500 text-sm mb-8 font-medium">Enter the 6-character secure access code.</p>
+                        <h3 class="text-2xl font-black text-gray-900 dark:text-gray-100 mb-2">Access Portal</h3>
+                        <p class="text-gray-500 dark:text-gray-400 text-sm mb-8 font-medium">Enter the 6-character secure access code.</p>
 
                         <div class="relative max-w-[280px] mx-auto">
                             <input type="text" name="code" required placeholder="X7K9M2" maxlength="6"
-                                class="w-full border-2 border-gray-200 rounded-2xl p-4 text-center text-4xl font-mono font-bold uppercase tracking-[0.3em] text-gray-800 focus:border-[#C5A059] focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all placeholder-gray-200 shadow-inner">
+                                class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-2xl p-4 text-center text-4xl font-mono font-bold uppercase tracking-[0.3em] text-gray-800 dark:text-gray-200 focus:border-[#C5A059] focus:ring-4 focus:ring-yellow-500/10 outline-none transition-all placeholder-gray-200 shadow-inner">
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="btn-modal-primary w-full ripple-btn">Authenticate &
                             Join</button>
                     </div>
@@ -473,18 +473,18 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 <form action="{{ route('final_project.invite') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
-                    <div class="bg-white px-8 pt-8 pb-6">
-                        <h3 class="text-xl font-bold text-gray-900 mb-6 flex items-center gap-3">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-3">
                             <div class="p-2.5 bg-blue-50 rounded-xl text-blue-600"><i class="fas fa-paper-plane"></i>
                             </div>
                             Send Invitation
                         </h3>
-                        <label class="block text-gray-700 text-xs font-bold mb-2 uppercase tracking-wide ml-1">Student
+                        <label class="block text-gray-700 dark:text-gray-300 text-xs font-bold mb-2 uppercase tracking-wide ml-1">Student
                             Email</label>
                         <input type="email" name="email" required placeholder="2xxxxxx@batechu.com"
                             class="input-classic">
                     </div>
-                    <div class="bg-gray-50 px-8 py-4 flex flex-row-reverse gap-3">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 flex flex-row-reverse gap-3">
                         <button type="submit" class="btn-modal-primary ripple-btn">Add Member</button>
                         <button type="button" onclick="closeModal('inviteMemberModal')"
                             class="btn-cancel">Close</button>
@@ -505,12 +505,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     {{-- تأكد أن المتغير $team متاح هنا، أو استخدم $myTeam حسب الكود عندك --}}
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
-                    <div class="bg-white px-8 pt-8 pb-6">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
                         <div class="flex items-center gap-4 text-red-600 mb-4">
                             <div class="p-3 bg-red-50 rounded-full animate-pulse">
                                 <i class="fas fa-exclamation-triangle text-2xl"></i>
                             </div>
-                            <h3 class="text-xl font-bold text-gray-900">Confirm Disengagement</h3>
+                            <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Confirm Disengagement</h3>
                         </div>
 
                         {{-- 🔥 الجزء الجديد: فحص الليدر --}}
@@ -530,9 +530,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
 
                             <div class="mb-4">
-                                <label class="block text-gray-700 text-sm font-bold mb-2">Select New Leader:</label>
+                                <label class="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2">Select New Leader:</label>
                                 <select name="new_leader_id" required
-                                    class="w-full border border-gray-300 p-3 rounded-xl text-sm bg-white focus:ring-red-500 focus:border-red-500 font-bold">
+                                    class="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-xl text-sm bg-white dark:bg-gray-800 focus:ring-red-500 focus:border-red-500 font-bold">
                                     <option value="" disabled selected>-- Select a member --</option>
                                     @foreach ($team->members as $member)
                                         @if ($member->user_id != auth()->id())
@@ -543,7 +543,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
                         @else
                             {{-- الرسالة العادية للأعضاء أو الليدر الوحيد --}}
-                            <p class="text-gray-600 text-sm ml-1 leading-relaxed font-medium">
+                            <p class="text-gray-600 dark:text-gray-400 text-sm ml-1 leading-relaxed font-medium">
                                 Are you sure you want to leave this team? <br>
                                 <span class="text-red-500 text-xs">⚠️ This action cannot be undone and you will lose
                                     access.</span>
@@ -552,7 +552,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-4 flex flex-row-reverse gap-3">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 flex flex-row-reverse gap-3">
                         <button type="submit"
                             class="bg-red-600 text-white font-bold py-3 px-6 rounded-xl text-xs uppercase tracking-wider hover:bg-red-700 transition shadow-lg ripple-btn hover:shadow-red-500/30">
                             Leave Team
@@ -581,22 +581,22 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
         aria-modal="true">
         <div class="modal-centering-wrapper">
             <div class="modal-overlay" onclick="closeModal('manageMemberModal')"></div>
-            <div class="modal-content border-t-8 border-[#D4AF37] !border-t-[#D4AF37]">
+            <div class="modal-content border-t-8 border-[#2596be] !border-t-[#2596be]">
                 <form action="{{ route('final_project.updateMember') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
                     <input type="hidden" name="user_id" id="manageUserId">
 
-                    <div class="bg-white px-8 pt-8 pb-6">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
                         <div class="flex items-center gap-3 mb-6 text-[#AA8A26]">
                             <div class="p-2 bg-[#FFF8E1] rounded-full"><i class="fas fa-user-cog text-xl"></i></div>
-                            <h3 class="text-xl font-black text-gray-900">Manage Roles</h3>
+                            <h3 class="text-xl font-black text-gray-900 dark:text-gray-100">Manage Roles</h3>
                         </div>
 
                         <div
-                            class="text-sm text-gray-500 mb-6 bg-gray-50 p-4 rounded-xl border border-gray-200 flex items-center gap-2">
+                            class="text-sm text-gray-500 dark:text-gray-400 mb-6 bg-gray-50 dark:bg-gray-900 p-4 rounded-xl border border-gray-200 dark:border-gray-700 flex items-center gap-2">
                             <i class="fas fa-info-circle text-gray-400"></i>
-                            <span>Editing for: <span id="manageUserName" class="font-bold text-gray-900"></span></span>
+                            <span>Editing for: <span id="manageUserName" class="font-bold text-gray-900 dark:text-gray-100"></span></span>
                         </div>
 
                         {{-- Roles --}}
@@ -608,16 +608,16 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                 <label class="cursor-pointer">
                                     <input type="radio" name="role" value="member" class="peer hidden" checked>
                                     <div
-                                        class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-[#D4AF37] peer-checked:bg-[#FFF8E1] transition-all hover:bg-gray-50">
-                                        <p class="text-sm font-bold text-gray-600 peer-checked:text-[#AA8A26]">Member
+                                        class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-[#2596be] peer-checked:bg-[#FFF8E1] transition-all hover:bg-gray-50">
+                                        <p class="text-sm font-bold text-gray-600 dark:text-gray-400 peer-checked:text-[#AA8A26]">Member
                                             👤</p>
                                     </div>
                                 </label>
                                 <label class="cursor-pointer">
                                     <input type="radio" name="role" value="vice_leader" class="peer hidden">
                                     <div
-                                        class="p-3 rounded-xl border-2 border-gray-100 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:bg-gray-50">
-                                        <p class="text-sm font-bold text-gray-600 peer-checked:text-purple-700">Vice
+                                        class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all hover:bg-gray-50">
+                                        <p class="text-sm font-bold text-gray-600 dark:text-gray-400 peer-checked:text-purple-700">Vice
                                             Head 🎖️</p>
                                     </div>
                                 </label>
@@ -633,19 +633,19 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                     <input type="radio" name="technical_role" value="general" class="peer hidden"
                                         checked>
                                     <div
-                                        class="p-2.5 rounded-xl border border-gray-200 text-center peer-checked:bg-gray-800 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-gray-800">
+                                        class="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-center peer-checked:bg-gray-800 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-gray-800">
                                         General</div>
                                 </label>
                                 <label class="cursor-pointer">
                                     <input type="radio" name="technical_role" value="software" class="peer hidden">
                                     <div
-                                        class="p-2.5 rounded-xl border border-gray-200 text-center peer-checked:bg-blue-600 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-blue-600">
+                                        class="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-center peer-checked:bg-blue-600 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-blue-600">
                                         Software 💻</div>
                                 </label>
                                 <label class="cursor-pointer">
                                     <input type="radio" name="technical_role" value="hardware" class="peer hidden">
                                     <div
-                                        class="p-2.5 rounded-xl border border-gray-200 text-center peer-checked:bg-orange-500 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-orange-500">
+                                        class="p-2.5 rounded-xl border border-gray-200 dark:border-gray-700 text-center peer-checked:bg-orange-500 peer-checked:text-white transition text-xs font-bold shadow-sm peer-checked:border-orange-500">
                                         Hardware 🔌</div>
                                 </label>
                             </div>
@@ -656,7 +656,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Extra
                                 Responsibility</label>
                             <select name="extra_role" id="manageExtraRole"
-                                class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition bg-white font-semibold text-gray-700">
+                                class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-[#2596be] focus:border-[#2596be] outline-none transition bg-white dark:bg-gray-800 font-semibold text-gray-700 dark:text-gray-300">
                                 <option value="none">None</option>
                                 <option value="presentation">🎤 Presentation Master</option>
                                 <option value="reports">📝 Weekly Reports</option>
@@ -665,7 +665,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit"
                             class="btn-modal-primary py-2 px-6 rounded-xl font-bold shadow-md transition transform hover:-translate-y-0.5 ripple-btn">Save
                             Changes</button>
@@ -693,19 +693,19 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     </button>
                 </div>
 
-                <form action="{{ route('final_project.reportMember') }}" method="POST" class="p-6 bg-white" onsubmit="handleAjaxFormSubmit(event)">
+                <form action="{{ route('final_project.reportMember') }}" method="POST" class="p-6 bg-white dark:bg-gray-800" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
                     <input type="hidden" name="reported_user_id" id="reported_user_id_input">
 
                     <p
-                        class="text-sm text-gray-600 mb-5 bg-red-50 p-4 rounded-xl border border-red-100 flex gap-2 items-start">
+                        class="text-sm text-gray-600 dark:text-gray-400 mb-5 bg-red-50 p-4 rounded-xl border border-red-100 flex gap-2 items-start">
                         <i class="fas fa-info-circle text-red-500 mt-0.5"></i>
                         <span>You are filing a formal complaint against <span id="reported_member_name"
                                 class="font-bold text-red-800"></span>. This will be reviewed by supervisors.</span>
                     </p>
 
                     <div class="mb-4">
-                        <label class="block text-xs font-bold text-gray-500 uppercase mb-2">Complaint / Issue
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase mb-2">Complaint / Issue
                             Detail</label>
                         <textarea name="complaint" rows="5" required class="input-classic resize-none"
                             placeholder="Please describe the issue in detail..."></textarea>
@@ -713,7 +713,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                     <div class="flex justify-end gap-3 pt-2">
                         <button type="button" onclick="closeModal('reportMemberModal')"
-                            class="text-gray-500 font-bold text-xs uppercase px-4 py-3 hover:bg-gray-100 rounded-lg transition">Cancel</button>
+                            class="text-gray-500 dark:text-gray-400 font-bold text-xs uppercase px-4 py-3 hover:bg-gray-100 rounded-lg transition">Cancel</button>
                         <button type="submit"
                             class="bg-red-600 hover:bg-red-700 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl shadow-md ripple-btn hover:shadow-red-500/30">Submit
                             Report</button>
@@ -730,7 +730,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             <div class="modal-content !max-w-xl">
                 {{-- Header --}}
                 <div class="modal-header-gradient px-8 py-6 relative overflow-hidden rounded-t-[1.3rem]">
-                    <div class="absolute top-0 right-0 w-24 h-24 bg-[#D4AF37]/20 rounded-full blur-2xl -mr-6 -mt-6">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-[#2596be]/20 rounded-full blur-2xl -mr-6 -mt-6">
                     </div>
                     <h3 class="text-2xl font-black text-white flex items-center gap-3 relative z-10">
                         <i class="fas fa-lightbulb text-[#FFD700] shimmer-icon"></i> Submit Proposal
@@ -743,9 +743,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-5">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 space-y-5">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Project
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Project
                                 Title</label>
                             <input type="text" name="proposal_title" required placeholder="e.g. Smart Traffic System AI"
                                 class="input-classic">
@@ -753,7 +753,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         <div>
                             <label
-                                class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Description
+                                class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Description
                                 & Objectives</label>
                             <textarea name="proposal_description" required rows="4"
                                 placeholder="Describe your project idea, goals, and technologies used..."
@@ -761,11 +761,11 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Proposal
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Proposal
                                 Document (PDF)</label>
                             <div class="relative group">
                                 <input type="file" name="proposal_file" required accept=".pdf,.doc,.docx,.pptx"
-                                    class="block w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#D4AF37]/10 file:text-[#AA8A26] hover:file:bg-[#D4AF37]/20 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer hover:border-[#D4AF37]/50 transition bg-gray-50 h-14 pt-1.5">
+                                    class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#2596be]/10 file:text-[#AA8A26] hover:file:bg-[#2596be]/20 border-2 border-dashed border-gray-200 dark:border-gray-700 rounded-xl cursor-pointer hover:border-[#2596be]/50 transition bg-gray-50 dark:bg-gray-900 h-14 pt-1.5">
                             </div>
                             <p class="text-[10px] text-gray-400 mt-1 flex justify-between">
                                 <span>Max size: 1GB.</span>
@@ -774,7 +774,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="btn-modal-primary ripple-btn">Submit Proposal <i
                                 class="fas fa-paper-plane ml-2"></i></button>
                         <button type="button" onclick="closeModal('proposalModal')" class="btn-cancel">Cancel</button>
@@ -804,8 +804,8 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
-                    <div class="bg-white px-8 pt-8 pb-6">
-                        <h3 class="text-xl font-black text-gray-900 mb-6 flex items-center gap-3">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
+                        <h3 class="text-xl font-black text-gray-900 dark:text-gray-100 mb-6 flex items-center gap-3">
                             <div class="p-2.5 bg-green-100 rounded-xl text-green-600 shadow-sm"><i
                                     class="fas fa-receipt"></i></div>
                             Add New Expense
@@ -830,20 +830,20 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                         class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Amount
                                         (EGP)</label>
                                     <input type="number" name="amount" required step="0.01"
-                                        class="w-full border-2 border-gray-200 bg-gray-50 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white outline-none transition font-mono text-lg font-bold">
+                                        class="w-full border-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white outline-none transition font-mono text-lg font-bold">
                                 </div>
                                 <div>
                                     <label
                                         class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Receipt
                                         Image</label>
                                     <input type="file" name="receipt" accept="image/*"
-                                        class="w-full text-xs text-gray-500 border border-dashed border-gray-300 rounded-xl p-3 hover:bg-gray-50 cursor-pointer transition">
+                                        class="w-full text-xs text-gray-500 dark:text-gray-400 border border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-3 hover:bg-gray-50 cursor-pointer transition">
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit"
                             class="bg-green-600 hover:bg-green-700 text-white font-bold text-xs uppercase tracking-wider py-3 px-6 rounded-xl shadow-md transition ripple-btn">Save
                             Record</button>
@@ -872,9 +872,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </p>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-4">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Title /
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Title /
                                 Reason</label>
                             <input type="text" name="title" required placeholder="e.g. Buying Motors & Sensors"
                                 class="input-classic">
@@ -883,24 +883,24 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label
-                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Amount
+                                    class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Amount
                                     Per Member</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-3 text-gray-400 font-bold">EGP</span>
                                     <input type="number" name="amount_per_member" required step="0.01" placeholder="200"
-                                        class="w-full border-2 border-gray-100 bg-gray-50 p-3 pl-12 rounded-xl focus:ring-0 focus:border-[#D4AF37] focus:bg-white transition font-mono text-lg font-black text-gray-800 outline-none">
+                                        class="w-full border-2 border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 pl-12 rounded-xl focus:ring-0 focus:border-[#2596be] focus:bg-white transition font-mono text-lg font-black text-gray-800 dark:text-gray-200 outline-none">
                                 </div>
                             </div>
                             <div>
                                 <label
-                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Due Date & Time</label>
+                                    class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Due Date & Time</label>
                                 <input type="datetime-local" name="deadline" required
-                                    class="w-full border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-0 focus:border-[#D4AF37] focus:bg-white transition text-sm font-bold text-gray-700 outline-none">
+                                    class="w-full border-2 border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl focus:ring-0 focus:border-[#2596be] focus:bg-white transition text-sm font-bold text-gray-700 dark:text-gray-300 outline-none">
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="btn-modal-primary ripple-btn">Start Collecting</button>
                         <button type="button" onclick="closeModal('createFundModal')" class="btn-cancel">Cancel</button>
                     </div>
@@ -924,15 +924,15 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         Funds History</h3>
                 </div>
 
-                <div class="bg-white p-6 overflow-y-auto custom-scroll flex-grow">
+                <div class="bg-white dark:bg-gray-800 p-6 overflow-y-auto custom-scroll flex-grow">
                     @if (isset($fundsHistory) && $fundsHistory->count() > 0)
                         <div class="space-y-6">
                             @foreach ($fundsHistory as $fund)
                                 <div
-                                    class="border border-gray-200 rounded-2xl p-5 hover:border-yellow-200 transition hover:shadow-md bg-gray-50/30">
-                                    <div class="flex justify-between items-start mb-4 border-b border-gray-100 pb-2">
+                                    class="border border-gray-200 dark:border-gray-700 rounded-2xl p-5 hover:border-yellow-200 transition hover:shadow-md bg-gray-50/30">
+                                    <div class="flex justify-between items-start mb-4 border-b border-gray-100 dark:border-gray-700 pb-2">
                                         <div>
-                                            <h4 class="font-bold text-lg text-gray-800">{{ $fund->title }}</h4>
+                                            <h4 class="font-bold text-lg text-gray-800 dark:text-gray-200">{{ $fund->title }}</h4>
                                             <span class="text-xs text-gray-400 font-medium"><i
                                                     class="far fa-clock mr-1"></i>{{ \Carbon\Carbon::parse($fund->created_at)->format('d M, Y') }}</span>
                                         </div>
@@ -947,10 +947,10 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                 {{-- 🔒 Visibility Check: Member only sees own record --}}
                                                 @if ($myRole == 'leader' || $contrib->user_id == Auth::id())
                                                 <div
-                                                    class="flex justify-between items-center text-xs p-2.5 rounded-lg {{ $contrib->status == 'paid' ? 'bg-green-50/50 border border-green-100' : ($contrib->status == 'pending_approval' ? 'bg-yellow-50/50 border border-yellow-100' : 'bg-red-50/50 border border-red-100') }}">
+                                                    class="flex justify-between items-center text-xs p-2.5 rounded-lg {{ $contrib->status =='paid' ? 'bg-green-50/50 border border-green-100' : ($contrib->status == 'pending_approval' ? 'bg-yellow-50/50 border border-yellow-100' : 'bg-red-50/50 border border-red-100') }}">
 
                                                     {{-- اسم العضو والصورة --}}
-                                                    <span class="font-bold text-gray-700 flex items-center gap-2">
+                                                    <span class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
                                                         <img src="https://ui-avatars.com/api/?name={{ $contrib->user->name }}&background=random&size=24"
                                                             class="rounded-full w-5 h-5">
                                                         {{ $contrib->user->name }}
@@ -1017,7 +1017,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                         @else
                                                             {{-- 4. Unpaid وزرار الدفع --}}
                                                             <span
-                                                                class="text-red-500 font-bold mr-2 bg-white px-2 py-0.5 rounded shadow-sm border border-red-100">Unpaid</span>
+                                                                class="text-red-500 font-bold mr-2 bg-white dark:bg-gray-800 px-2 py-0.5 rounded shadow-sm border border-red-100">Unpaid</span>
 
                                                             @if ($myRole == 'leader')
                                                                 <div class="flex gap-1.5">
@@ -1047,7 +1047,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
                     @else
                         <div class="text-center py-12">
-                            <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                            <div class="w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-3">
                                 <i class="fas fa-wallet text-gray-400 text-2xl"></i>
                             </div>
                             <p class="text-gray-400 font-medium">No financial history recorded yet.</p>
@@ -1055,9 +1055,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     @endif
                 </div>
 
-                <div class="bg-gray-50 px-8 py-4 text-right border-t border-gray-200 flex-shrink-0">
+                <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 text-right border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
                     <button type="button" onclick="closeModal('fundsHistoryModal')"
-                        class="bg-white border border-gray-300 text-gray-700 py-2 px-6 rounded-xl font-bold hover:bg-gray-100 transition shadow-sm text-xs uppercase tracking-wide">Close
+                        class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2 px-6 rounded-xl font-bold hover:bg-gray-100 transition shadow-sm text-xs uppercase tracking-wide">Close
                         Log</button>
                 </div>
             </div>
@@ -1075,23 +1075,23 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         Unpaid Collections History</h3>
                 </div>
 
-                <div class="bg-white p-6 overflow-y-auto custom-scroll flex-grow">
+                <div class="bg-white dark:bg-gray-800 p-6 overflow-y-auto custom-scroll flex-grow">
                     <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest mb-4 border-b pb-2">Select an item to pay:</p>
                     
                     @if (isset($unpaidHistory) && $unpaidHistory->count() > 0)
                         <div class="space-y-3">
                             @foreach ($unpaidHistory as $contrib)
-                                <div class="group border border-gray-100 bg-gray-50/50 rounded-2xl p-4 hover:border-amber-200 hover:bg-amber-50/20 transition-all">
+                                <div class="group border border-gray-100 dark:border-gray-700 bg-gray-50/50 rounded-2xl p-4 hover:border-amber-200 hover:bg-amber-50/20 transition-all">
                                     <div class="flex justify-between items-start mb-2">
                                         <div>
-                                            <h4 class="font-black text-gray-800 text-sm group-hover:text-amber-700 transition-colors">{{ $contrib->fund->title }}</h4>
+                                            <h4 class="font-black text-gray-800 dark:text-gray-200 text-sm group-hover:text-amber-700 transition-colors">{{ $contrib->fund->title }}</h4>
                                             <span class="text-[10px] text-gray-400 font-bold block mt-0.5">
                                                 <i class="far fa-calendar-alt mr-1 text-amber-500"></i>
                                                 Due: {{ \Carbon\Carbon::parse($contrib->fund->deadline)->format('d M, Y') }}
                                             </span>
                                         </div>
                                         <div class="text-right">
-                                            <span class="text-xs font-black text-gray-900 block font-mono">{{ number_format($contrib->fund->amount_per_member, 2) }}</span>
+                                            <span class="text-xs font-black text-gray-900 dark:text-gray-100 block font-mono">{{ number_format($contrib->fund->amount_per_member, 2) }}</span>
                                             <span class="text-[9px] text-gray-400 font-bold uppercase tracking-tighter">EGP</span>
                                         </div>
                                     </div>
@@ -1127,15 +1127,15 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     @else
                         <div class="text-center py-8">
                             <i class="fas fa-check-circle text-green-400 text-4xl mb-3"></i>
-                            <p class="font-bold text-gray-800">All caught up!</p>
+                            <p class="font-bold text-gray-800 dark:text-gray-200">All caught up!</p>
                             <p class="text-xs text-gray-400 mt-1">You have no unpaid history items.</p>
                         </div>
                     @endif
                 </div>
 
-                <div class="bg-gray-50 px-8 py-4 text-right border-t border-gray-200 flex-shrink-0">
+                <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 text-right border-t border-gray-200 dark:border-gray-700 flex-shrink-0">
                     <button type="button" onclick="closeModal('myUnpaidHistoryModal')"
-                        class="bg-white border border-gray-300 text-gray-700 py-2.5 px-6 rounded-xl font-black hover:bg-gray-100 transition shadow-sm text-[11px] uppercase tracking-widest">Dismiss</button>
+                        class="bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 py-2.5 px-6 rounded-xl font-black hover:bg-gray-100 transition shadow-sm text-[11px] uppercase tracking-widest">Dismiss</button>
                 </div>
             </div>
         </div>
@@ -1169,28 +1169,28 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </p>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-4">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 space-y-4">
                         <div class="grid grid-cols-4 gap-4">
                             <div class="col-span-1">
-                                <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Week
+                                <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Week
                                     No.</label>
                                 <input type="number" name="week_number" required min="1" max="20" placeholder="1"
-                                    class="w-full border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-0 focus:border-blue-500 text-center font-bold text-lg transition outline-none">
+                                    class="w-full border-2 border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl focus:ring-0 focus:border-blue-500 text-center font-bold text-lg transition outline-none">
                             </div>
                             <div class="col-span-3">
                                 <label
-                                    class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Attachment
+                                    class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Attachment
                                     (Optional)</label>
                                 <input type="file" name="report_file"
-                                    class="block w-full text-xs text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition cursor-pointer border rounded-lg p-1.5 border-gray-200">
+                                    class="block w-full text-xs text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition cursor-pointer border rounded-lg p-1.5 border-gray-200 dark:border-gray-700">
                             </div>
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Report
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Report
                                 Date & Time</label>
                             <input type="datetime-local" name="report_date" required
-                                class="input-classic font-bold text-gray-800">
+                                class="input-classic font-bold text-gray-800 dark:text-gray-200">
                         </div>
 
                         <div>
@@ -1213,11 +1213,11 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             <label class="block text-xs font-bold uppercase tracking-wider mb-2 text-red-500">Challenges
                                 / Blockers</label>
                             <textarea name="challenges" rows="2" placeholder="e.g. Sensor not available in market..."
-                                class="w-full border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-0 focus:border-red-400 transition text-sm resize-none outline-none"></textarea>
+                                class="w-full border-2 border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl focus:ring-0 focus:border-red-400 transition text-sm resize-none outline-none"></textarea>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit"
                             class="bg-blue-600 hover:bg-blue-700 text-white py-2 px-6 rounded-xl font-bold shadow-lg transition transform hover:-translate-y-0.5 ripple-btn text-xs uppercase tracking-wider">Submit
                             Report</button>
@@ -1239,17 +1239,17 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     <input type="hidden" name="team_id" value="{{ $team->id ?? '' }}">
 
                     <div class="modal-header-gradient px-8 py-6 relative overflow-hidden rounded-t-[1.3rem]">
-                        <div class="absolute top-0 right-0 w-24 h-24 bg-[#D4AF37]/10 rounded-full blur-xl -mr-6 -mt-6">
+                        <div class="absolute top-0 right-0 w-24 h-24 bg-[#2596be]/10 rounded-full blur-xl -mr-6 -mt-6">
                         </div>
                         <h3 class="text-xl font-black text-[#FFD700] flex items-center gap-3 relative z-10">
                             <i class="fas fa-chalkboard-teacher shimmer-icon"></i> Request Supervision
                         </h3>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-5">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 space-y-5">
                         <div class="group">
                             <label
-                                class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#D4AF37] transition-colors">Meeting
+                                class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 group-focus-within:text-[#2596be] transition-colors">Meeting
                                 Topic</label>
                             <input type="text" name="topic" required placeholder="e.g. Reviewing Project Proposal"
                                 class="input-classic">
@@ -1257,7 +1257,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         <div class="group">
                             <label
-                                class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#D4AF37] transition-colors">Details</label>
+                                class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 group-focus-within:text-[#2596be] transition-colors">Details</label>
                             <textarea name="description" required rows="3"
                                 placeholder="Explain the reason (e.g. Discussing hardware issues...)"
                                 class="input-classic resize-none"></textarea>
@@ -1265,13 +1265,13 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         <div class="group">
                             <label
-                                class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 group-focus-within:text-[#D4AF37] transition-colors">Preferred
+                                class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2 group-focus-within:text-[#2596be] transition-colors">Preferred
                                 Date & Time</label>
                             <input type="datetime-local" name="meeting_date" required class="input-classic text-sm">
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Meeting
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Meeting
                                 Mode</label>
                             <div class="grid grid-cols-2 gap-3">
                                 <label class="cursor-pointer group relative">
@@ -1280,7 +1280,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                 peer-checked:border-blue-500 peer-checked:bg-blue-50 peer-checked:shadow-md
                                                 group-hover:border-blue-200">
                                         <div
-                                            class="text-xs font-bold text-gray-600 peer-checked:text-blue-700 flex items-center justify-center gap-2">
+                                            class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-blue-700 flex items-center justify-center gap-2">
                                             <i class="fas fa-video"></i> Online
                                         </div>
                                     </div>
@@ -1292,7 +1292,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                 peer-checked:border-purple-500 peer-checked:bg-purple-50 peer-checked:shadow-md
                                                 group-hover:border-purple-200">
                                         <div
-                                            class="text-xs font-bold text-gray-600 peer-checked:text-purple-700 flex items-center justify-center gap-2">
+                                            class="text-xs font-bold text-gray-600 dark:text-gray-400 peer-checked:text-purple-700 flex items-center justify-center gap-2">
                                             <i class="fas fa-university"></i> Offline
                                         </div>
                                     </div>
@@ -1301,7 +1301,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="btn-modal-primary ripple-btn">Send Request <i
                                 class="fas fa-paper-plane ml-1"></i></button>
                         <button type="button" onclick="closeModal('bookSupervisionModal')"
@@ -1327,20 +1327,20 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             Internal Meeting</h3>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-4">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 space-y-4">
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Topic</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Topic</label>
                             <input type="text" name="topic" required placeholder="e.g. Brainstorming Phase 1"
                                 class="input-classic font-bold">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Date & Time</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Date & Time</label>
                             <input type="datetime-local" name="meeting_date" required class="input-classic text-sm">
                         </div>
 
                         {{-- Mode --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Mode</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Mode</label>
                             <div class="grid grid-cols-2 gap-2">
                                 <label class="cursor-pointer">
                                     <input type="radio" name="mode" value="online" class="peer hidden" x-model="mode">
@@ -1358,15 +1358,15 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
 
                         <div x-show="mode == 'online'" x-transition>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Meeting Link</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Meeting Link</label>
                             <input type="url" name="meeting_link" placeholder="Zoom / Google Meet URL"
-                                class="w-full border rounded-xl p-2.5 text-sm bg-gray-50 focus:bg-white transition focus:ring-2 focus:ring-gray-300 outline-none">
+                                class="w-full border rounded-xl p-2.5 text-sm bg-gray-50 dark:bg-gray-900 focus:bg-white transition focus:ring-2 focus:ring-gray-300 outline-none">
                         </div>
 
                         <div x-show="mode == 'offline'" x-transition>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Location</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Location</label>
                             <select name="location_type"
-                                class="w-full border rounded-xl p-2.5 text-sm mb-2 bg-white outline-none"
+                                class="w-full border rounded-xl p-2.5 text-sm mb-2 bg-white dark:bg-gray-800 outline-none"
                                 x-model="locationType">
                                 <option value="college">🏛️ College Campus</option>
                                 <option value="other">🗺️ Other Place</option>
@@ -1374,16 +1374,16 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                             <div x-show="locationType == 'other'" x-transition>
                                 <input type="text" name="custom_location" placeholder="e.g. Co-working Space / Cafe"
-                                    class="w-full border rounded-xl p-2.5 text-sm bg-gray-50">
+                                    class="w-full border rounded-xl p-2.5 text-sm bg-gray-50 dark:bg-gray-900">
                             </div>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-4 flex justify-end gap-2 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 flex justify-end gap-2 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit"
                             class="bg-gray-800 text-white px-6 py-2 rounded-lg text-sm font-bold shadow-md hover:bg-black transition ripple-btn">Schedule</button>
                         <button type="button" onclick="closeModal('internalMeetingModal')"
-                            class="text-gray-500 px-4 py-2 text-sm hover:text-gray-700 font-bold">Cancel</button>
+                            class="text-gray-500 dark:text-gray-400 px-4 py-2 text-sm hover:text-gray-700 font-bold">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -1412,11 +1412,11 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             PRESENT.</p>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 min-h-[300px] flex flex-col">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 min-h-[300px] flex flex-col">
 
                         <!-- Selected Attendees List -->
                         <div class="mb-4">
-                            <p class="text-xs font-bold text-gray-500 mb-2 uppercase tracking-wider">Selected Attendees
+                            <p class="text-xs font-bold text-gray-500 dark:text-gray-400 mb-2 uppercase tracking-wider">Selected Attendees
                                 (<span x-text="selectedAttendees.length"></span>)</p>
                             <div class="flex flex-wrap gap-2">
                                 <template x-for="member in selectedAttendees" :key="member.id">
@@ -1438,17 +1438,17 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         <!-- Dropdown Search -->
                         <div class="relative mt-auto" @click.away="isOpen = false">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Search & Add Attendee</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Search & Add Attendee</label>
                             <div class="relative items-center">
                                 <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
                                 <input type="text" x-ref="searchInput" x-model="searchQuery" @focus="isOpen = true"
                                     @input="isOpen = true" placeholder="Type name or academic ID..."
-                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-green-500 outline-none bg-gray-50 focus:bg-white transition-colors">
+                                    class="w-full pl-10 pr-4 py-2.5 border border-gray-200 dark:border-gray-700 rounded-xl text-sm focus:ring-2 focus:ring-green-500 outline-none bg-gray-50 dark:bg-gray-900 focus:bg-white transition-colors">
                             </div>
 
                             <!-- Results Box (Drops UP) -->
                             <div x-show="isOpen && searchQuery.length > 0" x-transition
-                                class="absolute left-0 right-0 bottom-full mb-2 z-10 bg-white border border-gray-200 rounded-xl shadow-[0_-5px_15px_rgba(0,0,0,0.1)] max-h-60 overflow-y-auto custom-scroll">
+                                class="absolute left-0 right-0 bottom-full mb-2 z-10 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-[0_-5px_15px_rgba(0,0,0,0.1)] max-h-60 overflow-y-auto custom-scroll">
 
                                 <template x-if="filteredMembers.length > 0">
                                     <ul class="py-1">
@@ -1461,7 +1461,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                             class="w-8 h-8 rounded-full border group-hover:border-green-300">
                                                         <div class="flex flex-col">
                                                             <span
-                                                                class="text-sm font-bold text-gray-700 group-hover:text-green-800 transition-colors"
+                                                                class="text-sm font-bold text-gray-700 dark:text-gray-300 group-hover:text-green-800 transition-colors"
                                                                 x-text="member.name"></span>
                                                             <span class="text-[10px] text-gray-400 font-mono"
                                                                 x-text="member.academic || 'No ID'"></span>
@@ -1475,7 +1475,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                     </ul>
                                 </template>
                                 <template x-if="filteredMembers.length === 0">
-                                    <div class="px-4 py-3 text-sm text-gray-500 text-center">
+                                    <div class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400 text-center">
                                         No matching names or IDs found.
                                     </div>
                                 </template>
@@ -1484,12 +1484,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-4 flex justify-end gap-2 border-t border-gray-100 mt-auto">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 flex justify-end gap-2 border-t border-gray-100 dark:border-gray-700 mt-auto">
                         <button type="submit"
                             class="bg-green-600 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-green-700 transition ripple-btn">Save
                             Attendance</button>
                         <button type="button" @click="closeModal('markAttendanceModal')"
-                            class="text-gray-500 px-4 py-2 text-sm hover:text-gray-700 font-bold">Cancel</button>
+                            class="text-gray-500 dark:text-gray-400 px-4 py-2 text-sm hover:text-gray-700 font-bold">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -1504,7 +1504,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 <div class="modal-overlay" onclick="closeModal('supervisionHistoryModal')"></div>
                 <div class="modal-content !max-w-2xl flex flex-col max-h-[85vh]">
                     <div
-                        class="bg-gray-900 px-8 py-5 border-b border-[#D4AF37]/30 flex justify-between items-center rounded-t-[1.3rem] flex-shrink-0">
+                        class="bg-gray-900 px-8 py-5 border-b border-[#2596be]/30 flex justify-between items-center rounded-t-[1.3rem] flex-shrink-0">
                         <h3 class="text-lg font-black text-[#FFD700]"><i class="fas fa-history"></i> Supervision Log
                         </h3>
                         <button onclick="closeModal('supervisionHistoryModal')"
@@ -1512,7 +1512,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                 class="fas fa-times"></i></button>
                     </div>
 
-                    <div class="bg-white px-8 py-6 overflow-y-auto custom-scroll flex-grow">
+                    <div class="bg-white dark:bg-gray-800 px-8 py-6 overflow-y-auto custom-scroll flex-grow">
                         @php
                             $supervisionLogs = \App\Models\Meeting::where('team_id', $team->id)
                                 ->where('type', 'supervision')
@@ -1522,13 +1522,13 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         @forelse($supervisionLogs as $meet)
                             <div
-                                class="mb-4 border border-gray-100 rounded-xl p-4 hover:border-yellow-200 transition bg-gray-50/50 hover:shadow-md group">
+                                class="mb-4 border border-gray-100 dark:border-gray-700 rounded-xl p-4 hover:border-yellow-200 transition bg-gray-50/50 hover:shadow-md group">
                                 <div class="flex justify-between items-start">
                                     <div>
-                                        <h4 class="font-bold text-gray-800 text-sm group-hover:text-black transition">
+                                        <h4 class="font-bold text-gray-800 dark:text-gray-200 text-sm group-hover:text-black transition">
                                             {{ $meet->topic }}
                                         </h4>
-                                        <p class="text-xs text-gray-500 mt-1">
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">
                                             {{ $meet->description ?? 'No description' }}
                                         </p>
                                         <span class="text-[10px] text-gray-400 block mt-2 font-mono">
@@ -1537,7 +1537,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                         </span>
                                     </div>
                                     <span
-                                        class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider shadow-sm {{ $meet->status == 'confirmed' ? 'bg-green-100 text-green-700' : ($meet->status == 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-200 text-gray-600') }}">
+                                        class="text-[10px] font-bold px-2 py-1 rounded-lg uppercase tracking-wider shadow-sm {{ $meet->status =='confirmed' ? 'bg-green-100 text-green-700' : ($meet->status == 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-200 text-gray-600') }}">
                                         {{ ucfirst($meet->status) }}
                                     </span>
                                 </div>
@@ -1562,15 +1562,15 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 <div class="modal-overlay" onclick="closeModal('internalHistoryModal')"></div>
                 <div class="modal-content !max-w-2xl flex flex-col max-h-[85vh]">
                     <div
-                        class="bg-white px-8 py-5 border-b border-gray-200 flex justify-between items-center rounded-t-[1.3rem] flex-shrink-0">
-                        <h3 class="text-lg font-black text-gray-800"><i class="fas fa-users text-blue-600"></i>
+                        class="bg-white dark:bg-gray-800 px-8 py-5 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center rounded-t-[1.3rem] flex-shrink-0">
+                        <h3 class="text-lg font-black text-gray-800 dark:text-gray-200"><i class="fas fa-users text-blue-600"></i>
                             Internal Log</h3>
                         <button onclick="closeModal('internalHistoryModal')"
                             class="text-gray-400 hover:text-gray-600 transition transform hover:rotate-90"><i
                                 class="fas fa-times"></i></button>
                     </div>
 
-                    <div class="bg-white px-8 py-6 overflow-y-auto custom-scroll flex-grow">
+                    <div class="bg-white dark:bg-gray-800 px-8 py-6 overflow-y-auto custom-scroll flex-grow">
                         @php
                             $internalLogs = \App\Models\Meeting::where('team_id', $team->id)
                                 ->where('type', 'internal')
@@ -1580,10 +1580,10 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         @forelse($internalLogs as $meet)
                             <div
-                                class="mb-4 border border-gray-100 rounded-xl p-4 hover:border-blue-200 transition hover:shadow-md bg-gray-50/20">
+                                class="mb-4 border border-gray-100 dark:border-gray-700 rounded-xl p-4 hover:border-blue-200 transition hover:shadow-md bg-gray-50/20">
                                 <div class="flex justify-between items-start mb-3 gap-4">
                                     <div class="flex-grow">
-                                        <h4 class="font-bold text-gray-800 text-sm">{{ $meet->topic }}</h4>
+                                        <h4 class="font-bold text-gray-800 dark:text-gray-200 text-sm">{{ $meet->topic }}</h4>
                                         <span class="text-xs text-gray-400 block mt-1 font-mono">
                                             {{ \Carbon\Carbon::parse($meet->meeting_date)->format('d M, Y - h:i A') }}
                                             • {{ ucfirst($meet->mode) }}
@@ -1601,7 +1601,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                 <div class="flex flex-wrap gap-1">
                                     @foreach ($meet->attendances as $attendance)
                                         <span
-                                            class="text-[9px] px-2 py-0.5 rounded border font-bold {{ $attendance->is_present ? 'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-400 opacity-60' }}">
+                                            class="text-[9px] px-2 py-0.5 rounded border font-bold {{ $attendance->is_present ?'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-400 opacity-60' }}">
                                             {{ explode(' ', $attendance->user->name)[0] }}
                                         </span>
                                     @endforeach
@@ -1645,19 +1645,19 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </h3>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-5">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 space-y-5">
                         {{-- Caption --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Caption / Title</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Caption / Title</label>
                             <input type="text" name="caption" required placeholder="e.g. System Architecture v2"
                                 class="input-classic font-bold">
                         </div>
 
                         {{-- Category --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Category</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Category</label>
                             <select name="category"
-                                class="w-full border rounded-xl p-3 text-sm bg-white focus:ring-purple-500 focus:border-purple-500 transition outline-none">
+                                class="w-full border rounded-xl p-3 text-sm bg-white dark:bg-gray-800 focus:ring-purple-500 focus:border-purple-500 transition outline-none">
                                 <option value="prototype">🛠️ Prototype / Hardware</option>
                                 <option value="software">💻 Software / UI</option>
                                 <option value="diagram">📊 Diagram / ERD</option>
@@ -1668,13 +1668,13 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         {{-- Type Selector (Image vs Video) --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-2">Artifact Type</label>
-                            <div class="flex p-1 bg-gray-100 rounded-xl">
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-2">Artifact Type</label>
+                            <div class="flex p-1 bg-gray-100 dark:bg-gray-900 rounded-xl">
                                 <label class="flex-1 cursor-pointer">
                                     <input type="radio" name="type" value="image" class="peer hidden" checked
                                         onchange="toggleMediaType('image')">
                                     <div
-                                        class="text-center py-2 text-xs font-bold text-gray-500 rounded-lg peer-checked:bg-white peer-checked:text-purple-600 peer-checked:shadow-sm transition-all">
+                                        class="text-center py-2 text-xs font-bold text-gray-500 dark:text-gray-400 rounded-lg peer-checked:bg-white peer-checked:text-purple-600 peer-checked:shadow-sm transition-all">
                                         <i class="fas fa-image mr-1"></i> Image
                                     </div>
                                 </label>
@@ -1682,7 +1682,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                     <input type="radio" name="type" value="video" class="peer hidden"
                                         onchange="toggleMediaType('video')">
                                     <div
-                                        class="text-center py-2 text-xs font-bold text-gray-500 rounded-lg peer-checked:bg-white peer-checked:text-purple-600 peer-checked:shadow-sm transition-all">
+                                        class="text-center py-2 text-xs font-bold text-gray-500 dark:text-gray-400 rounded-lg peer-checked:bg-white peer-checked:text-purple-600 peer-checked:shadow-sm transition-all">
                                         <i class="fas fa-video mr-1"></i> Video Link
                                     </div>
                                 </label>
@@ -1691,13 +1691,13 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         {{-- INPUT: Image File --}}
                         <div id="imageUploadSection" class="transition-all duration-300">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Image File</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Image File</label>
                             <label
-                                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 rounded-xl cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition group bg-gray-50">
+                                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl cursor-pointer hover:bg-purple-50 hover:border-purple-300 transition group bg-gray-50 dark:bg-gray-900">
                                 <div class="flex flex-col items-center justify-center pt-5 pb-6">
                                     <i
                                         class="fas fa-cloud-upload-alt text-3xl text-gray-300 group-hover:text-purple-500 transition mb-2"></i>
-                                    <p class="text-xs text-gray-500">Click to upload image</p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">Click to upload image</p>
                                 </div>
                                 <input type="file" name="image" accept="image/*" class="hidden">
                             </label>
@@ -1705,7 +1705,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         {{-- INPUT: Video Link --}}
                         <div id="videoLinkSection" class="hidden transition-all duration-300">
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Video Link
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Video Link
                                 (YouTube/Drive)</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -1718,7 +1718,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-4 flex justify-end gap-2 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 flex justify-end gap-2 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit"
                             class="bg-purple-600 text-white px-6 py-2 rounded-xl text-sm font-bold shadow-md hover:bg-purple-700 transition ripple-btn">Upload
                             Asset</button>
@@ -1747,11 +1747,11 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </h3>
                     </div>
 
-                    <div class="bg-white px-8 pt-6 pb-6 space-y-5">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-6 pb-6 space-y-5">
                         {{-- Assign to All Button (Prominent) --}}
                         <div x-show="canSeeAllBtn">
                             <button type="button" @click="assignAllToTask()"
-                                :class="teamType === 'software' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-600 hover:bg-orange-700'"
+                                :class="teamType ==='software' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-orange-600 hover:bg-orange-700'"
                                 class="w-full text-white py-3 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg transition transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                                 <i class="fas fa-users-cog text-sm"></i>
                                 Assign to All <span x-text="teamType"></span> Team
@@ -1775,10 +1775,10 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
 
                             <div class="relative flex py-3 items-center">
-                                <div class="flex-grow border-t border-gray-100"></div>
+                                <div class="flex-grow border-t border-gray-100 dark:border-gray-700"></div>
                                 <span class="flex-shrink mx-4 text-[10px] font-bold text-gray-300 uppercase">OR SELECT
                                     INDIVIDUALLY</span>
-                                <div class="flex-grow border-t border-gray-100"></div>
+                                <div class="flex-grow border-t border-gray-100 dark:border-gray-700"></div>
                             </div>
                         </div>
 
@@ -1786,7 +1786,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Task
                                 Title</label>
                             <input type="text" name="title" required placeholder="e.g. Design Database Schema"
-                                class="input-classic font-bold border-2 border-gray-100">
+                                class="input-classic font-bold border-2 border-gray-100 dark:border-gray-700">
                         </div>
 
                         <div>
@@ -1794,7 +1794,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                 Member</label>
                             <select id="taskAssignUser"
                                 @change="addMemberToTask($event.target.value); $event.target.value = ''"
-                                class="w-full border-2 border-gray-100 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gray-200 outline-none transition bg-gray-50 font-bold">
+                                class="w-full border-2 border-gray-100 dark:border-gray-700 rounded-xl px-4 py-3 text-sm focus:ring-2 focus:ring-gray-200 outline-none transition bg-gray-50 dark:bg-gray-900 font-bold">
                                 <option value="">-- Choose a member --</option>
                                 {{-- JS Injected --}}
                             </select>
@@ -1805,12 +1805,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             <p class="text-[10px] font-bold text-gray-400 uppercase">Current Assignees:</p>
                             <template x-for="(m, index) in selectedTaskMembers" :key="m.id">
                                 <div
-                                    class="flex justify-between items-center bg-gray-50 border border-gray-100 rounded-xl p-3 animate-in fade-in slide-in-from-top-2">
+                                    class="flex justify-between items-center bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl p-3 animate-in fade-in slide-in-from-top-2">
                                     <div class="flex items-center gap-3">
-                                        <div class="w-8 h-8 rounded-full bg-white border border-gray-100 flex items-center justify-center text-[10px] font-black text-gray-400"
+                                        <div class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 flex items-center justify-center text-[10px] font-black text-gray-400"
                                             x-text="m.name.split(' ').map(n => n[0]).join('').substring(0,2)"></div>
                                         <div>
-                                            <p class="text-xs font-black text-gray-800" x-text="m.name"></p>
+                                            <p class="text-xs font-black text-gray-800 dark:text-gray-200" x-text="m.name"></p>
                                             <p class="text-[9px] text-gray-400 capitalize" x-text="m.tech"></p>
                                         </div>
                                     </div>
@@ -1823,7 +1823,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </template>
 
                             <template x-if="selectedTaskMembers.length === 0">
-                                <div class="text-center py-6 border-2 border-dashed border-gray-100 rounded-2xl">
+                                <div class="text-center py-6 border-2 border-dashed border-gray-100 dark:border-gray-700 rounded-2xl">
                                     <i class="fas fa-user-plus text-gray-200 text-3xl mb-1"></i>
                                     <p class="text-[10px] text-gray-400 font-bold uppercase">No members selected yet</p>
                                 </div>
@@ -1831,12 +1831,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         </div>
 
                         <div>
-                            <label class="block text-xs font-bold text-gray-500 mb-1">Due Date & Time</label>
+                            <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 mb-1">Due Date & Time</label>
                             <input type="datetime-local" name="deadline" required class="input-classic text-sm">
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-8 py-4 flex justify-end gap-2 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-4 flex justify-end gap-2 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit"
                             class="bg-gray-900 text-white px-6 py-2 rounded-xl text-sm font-bold hover:shadow-lg transition ripple-btn">Assign</button>
                         <button type="button" onclick="closeModal('addTaskModal')" class="btn-cancel">Cancel</button>
@@ -1869,17 +1869,17 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         <p class="text-green-100 text-xs mt-1" id="submitTaskTitle"></p>
                     </div>
 
-                    <div class="p-6 space-y-4 bg-white">
+                    <div class="p-6 space-y-4 bg-white dark:bg-gray-800">
 
                         {{-- 👆 2. أزرار التبديل (Tabs) --}}
-                        <div class="flex p-1 bg-gray-100 rounded-xl mb-4">
+                        <div class="flex p-1 bg-gray-100 dark:bg-gray-900 rounded-xl mb-4">
                             <button type="button" @click="type = 'file'"
-                                :class="{ 'bg-blue-600 text-white shadow-md shadow-blue-200': type === 'file', 'text-gray-500 hover:text-gray-700': type !== 'file' }"
+                                :class="{'bg-blue-600 text-white shadow-md shadow-blue-200': type === 'file', 'text-gray-500 hover:text-gray-700': type !== 'file' }"
                                 class="flex-1 py-3 text-xs font-black rounded-lg transition-all duration-200 uppercase tracking-widest">
                                 <i class="fas fa-file-pdf mr-1"></i> PDF / Archive
                             </button>
                             <button type="button" @click="type = 'link'"
-                                :class="{ 'bg-blue-600 text-white shadow-md shadow-blue-200': type === 'link', 'text-gray-500 hover:text-gray-700': type !== 'link' }"
+                                :class="{'bg-blue-600 text-white shadow-md shadow-blue-200': type === 'link', 'text-gray-500 hover:text-gray-700': type !== 'link' }"
                                 class="flex-1 py-3 text-xs font-black rounded-lg transition-all duration-200 uppercase tracking-widest">
                                 <i class="fas fa-link mr-1"></i> Submission Link
                             </button>
@@ -1887,9 +1887,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         {{-- 3. منطقة رفع الملف (تظهر فقط لما نختار File) --}}
                         <div x-show="type === 'file'" x-transition>
-                            <label class="block text-xs font-bold text-gray-700 mb-2">Upload Submission File (Max 1GB)</label>
+                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Upload Submission File (Max 1GB)</label>
                             <input type="file" name="submission_file" :required="type === 'file'"
-                                class="w-full text-xs text-gray-500 border rounded-lg p-2 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition shadow-sm">
+                                class="w-full text-xs text-gray-500 dark:text-gray-400 border rounded-lg p-2 cursor-pointer file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 transition shadow-sm">
                             <p class="text-[10px] text-gray-400 mt-2 italic flex items-center gap-1">
                                 <i class="fas fa-info-circle"></i> Supported: PDF, ZIP, RAR, Images, Docs.
                             </p>
@@ -1897,13 +1897,13 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         {{-- 4. منطقة اللينك (تظهر فقط لما نختار Link) --}}
                         <div x-show="type === 'link'" x-transition>
-                            <label class="block text-xs font-bold text-gray-700 mb-2">Submission Link (Drive/GitHub)</label>
+                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Submission Link (Drive/GitHub)</label>
                             <div class="relative">
                                 <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                     <i class="fas fa-link text-gray-400"></i>
                                 </div>
                                 <input type="url" name="link" :required="type === 'link'"
-                                    class="w-full pl-10 border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition text-sm outline-none"
+                                    class="w-full pl-10 border-2 border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:bg-white transition text-sm outline-none"
                                     placeholder="https://docs.google.com/...">
                             </div>
                         </div>
@@ -1912,14 +1912,14 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                         {{-- تعليق إضافي (مشترك للاثنين) --}}
                         <div>
-                            <label class="block text-xs font-bold text-gray-700 mb-2">Comment</label>
+                            <label class="block text-xs font-bold text-gray-700 dark:text-gray-300 mb-2">Comment</label>
                             <textarea name="submission_comment" rows="3"
-                                class="w-full border-2 border-gray-100 bg-gray-50 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white outline-none transition text-sm"
+                                class="w-full border-2 border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl focus:ring-2 focus:ring-green-500 focus:border-green-500 focus:bg-white outline-none transition text-sm"
                                 placeholder="Optional notes..."></textarea>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 px-6 py-4 flex justify-end gap-2 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 flex justify-end gap-2 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit"
                             class="px-6 py-2 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold shadow-lg transition ripple-btn">Submit</button>
                         <button type="button" onclick="closeModal('submitTaskModal')" class="btn-cancel">Cancel</button>
@@ -2170,7 +2170,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
     <div class="absolute inset-0 bg-gray-900/90 backdrop-blur-md" aria-hidden="true" onclick="closeWorkshopModal()"></div>
 
     <div id="addWorkshopModalContent"
-         class="relative w-full max-w-lg transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-indigo-600 scale-95 opacity-0 duration-300">
+         class="relative w-full max-w-lg transform rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all border-t-8 border-indigo-600 scale-95 opacity-0 duration-300">
 
         <form action="{{ route('workshops.store') }}" method="POST" onsubmit="handleAjaxFormSubmit(event)">
             @csrf
@@ -2178,51 +2178,51 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
             <div class="bg-indigo-50 px-8 py-6 rounded-t-xl border-b border-indigo-100 flex justify-between items-center">
                 <div class="flex items-center gap-3 text-indigo-700">
-                    <div class="p-2 bg-white rounded-full shadow-sm text-indigo-600 text-xl">
+                    <div class="p-2 bg-white dark:bg-gray-800 rounded-full shadow-sm text-indigo-600 text-xl">
                         <i class="fas fa-hammer"></i>
                     </div>
                     <h3 class="text-xl font-black">Plan New Workshop</h3>
                 </div>
 
-                <button type="button" onclick="closeWorkshopModal()" class="text-gray-500 hover:text-red-500 text-xl">
+                <button type="button" onclick="closeWorkshopModal()" class="text-gray-500 dark:text-gray-400 hover:text-red-500 text-xl">
                     <i class="fas fa-times"></i>
                 </button>
             </div>
 
-            <div class="p-8 space-y-5 bg-white">
+            <div class="p-8 space-y-5 bg-white dark:bg-gray-800">
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Workshop Title *</label>
+                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Workshop Title *</label>
                     <input type="text" name="title" required placeholder="e.g. Intro to PCB Design"
-                           class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                           class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Date *</label>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Date *</label>
                         <input type="date" name="workshop_date" required
-                               class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                               class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Time *</label>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Time *</label>
                         <input type="time" name="workshop_time" required
-                               class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                               class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
                     </div>
                 </div>
 
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Domain *</label>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Domain *</label>
                         <select name="domain" required
-                                class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                                class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
                             <option value="software">Software</option>
                             <option value="hardware">Hardware</option>
                             <option value="general">General</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Format *</label>
+                        <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Format *</label>
                         <select name="type" required
-                                class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                                class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
                             <option value="offline">Offline / On-Campus</option>
                             <option value="online">Online / GMeet</option>
                         </select>
@@ -2230,15 +2230,15 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 </div>
 
                 <div>
-                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-2">Location / Link</label>
+                    <label class="block text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Location / Link</label>
                     <input type="text" name="location_or_link" placeholder="Room D234 or Google Meet link"
-                           class="w-full border-2 border-gray-200 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
+                           class="w-full border-2 border-gray-200 dark:border-gray-700 rounded-xl p-3 text-sm focus:ring-2 focus:ring-indigo-500 transition">
                 </div>
             </div>
 
-            <div class="bg-gray-50 px-8 py-5 border-t border-gray-100 flex justify-end gap-3 rounded-b-xl">
+            <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 border-t border-gray-100 dark:border-gray-700 flex justify-end gap-3 rounded-b-xl">
                 <button type="button" onclick="closeWorkshopModal()"
-                        class="bg-white border-2 border-gray-200 text-gray-700 hover:bg-gray-50 px-6 py-2 rounded-xl font-bold transition">
+                        class="bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-50 px-6 py-2 rounded-xl font-bold transition">
                     Cancel
                 </button>
                 <button type="submit"
@@ -2257,12 +2257,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
      x-data="{ attendees: [], isLoading: false, searchQuery: '', get filtered() { const q = this.searchQuery.toLowerCase(); return q ? this.attendees.filter(a => a.name.toLowerCase().includes(q) || a.email.toLowerCase().includes(q)) : this.attendees; } }">
     <div class="absolute inset-0 bg-gray-900/90 backdrop-blur-md" onclick="closeAttendanceModal()"></div>
     <div id="attendanceWorkshopModalContent"
-         class="relative w-full max-w-2xl transform rounded-2xl bg-white text-left shadow-2xl transition-all border-t-8 border-indigo-600 flex flex-col max-h-[90vh] scale-95 opacity-0 duration-300">
+         class="relative w-full max-w-2xl transform rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all border-t-8 border-indigo-600 flex flex-col max-h-[90vh] scale-95 opacity-0 duration-300">
             
             <div class="bg-indigo-50 px-6 py-5 rounded-t-xl border-b border-indigo-100 shrink-0">
                 <div class="flex justify-between items-start mb-3">
                     <div class="flex items-center gap-3 text-indigo-700">
-                        <div class="p-2 bg-white rounded-full shadow-sm text-indigo-600 text-lg"><i class="fas fa-user-check"></i></div>
+                        <div class="p-2 bg-white dark:bg-gray-800 rounded-full shadow-sm text-indigo-600 text-lg"><i class="fas fa-user-check"></i></div>
                         <div>
                             <h3 class="text-lg font-black" id="attendanceWorkshopTitle">Update Attendance</h3>
                             <p class="text-[10px] text-indigo-500">Record participation marks and score per member.</p>
@@ -2276,7 +2276,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                 <div class="relative">
                     <i class="fas fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
                     <input type="text" x-model="searchQuery" placeholder="Search by name or email / academic number..."
-                        class="w-full pl-9 pr-4 py-2 rounded-xl border border-indigo-200 bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400">
+                        class="w-full pl-9 pr-4 py-2 rounded-xl border border-indigo-200 bg-white dark:bg-gray-800 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-400 placeholder-gray-400">
                 </div>
             </div>
 
@@ -2288,7 +2288,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     {{-- Loading --}}
                     <div x-show="isLoading" class="flex justify-center items-center py-12">
                         <div class="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-                        <span class="ml-3 text-sm text-gray-500">Loading members...</span>
+                        <span class="ml-3 text-sm text-gray-500 dark:text-gray-400">Loading members...</span>
                     </div>
 
                     {{-- Empty state --}}
@@ -2300,12 +2300,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     {{-- Members List --}}
                     <div x-show="!isLoading && filtered.length > 0" class="space-y-3">
                         <template x-for="(attendee, index) in filtered" :key="attendee.id">
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-2xl border border-gray-100 bg-gray-50 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all">
+                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 p-4 rounded-2xl border border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 hover:border-indigo-200 hover:bg-indigo-50/30 transition-all">
                                 {{-- Avatar + Name --}}
                                 <div class="flex items-center gap-3 w-full sm:w-2/5">
                                     <div class="w-9 h-9 rounded-xl bg-indigo-100 flex items-center justify-center text-xs font-black text-indigo-600 shrink-0" x-text="attendee.name.substring(0, 2).toUpperCase()"></div>
                                     <div class="overflow-hidden">
-                                        <p class="text-sm font-bold text-gray-800 truncate" x-text="attendee.name"></p>
+                                        <p class="text-sm font-bold text-gray-800 dark:text-gray-200 truncate" x-text="attendee.name"></p>
                                         <p class="text-[10px] text-gray-400 truncate" x-text="attendee.email"></p>
                                     </div>
                                 </div>
@@ -2315,9 +2315,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                                 {{-- Status --}}
                                 <div class="flex-1">
-                                    <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Status</label>
+                                    <label class="block text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Status</label>
                                     <select :name="'attendees[' + index + '][status]'" x-model="attendee.status"
-                                        class="w-full border border-gray-200 rounded-xl p-2 text-xs font-bold focus:ring-indigo-400 focus:border-indigo-400 bg-white"
+                                        class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-2 text-xs font-bold focus:ring-indigo-400 focus:border-indigo-400 bg-white dark:bg-gray-800"
                                         @change="attendee.status === 'absent' && (attendee.participation_score = 0)">
                                         <option value="pending">⏳ Pending</option>
                                         <option value="attended">✅ Present</option>
@@ -2328,19 +2328,19 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                                 {{-- Score --}}
                                 <div class="w-28">
-                                    <label class="block text-[9px] font-bold text-gray-500 uppercase tracking-wider mb-1">Score / 10</label>
+                                    <label class="block text-[9px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-1">Score / 10</label>
                                     <input type="number" :name="'attendees[' + index + '][participation_score]'" x-model="attendee.participation_score"
                                         min="0" max="10" step="0.5"
                                         :disabled="attendee.status === 'absent'"
-                                        :class="attendee.status === 'absent' ? 'bg-red-50 text-red-300 cursor-not-allowed' : 'bg-white text-indigo-700'"
-                                        class="w-full border border-gray-200 rounded-xl p-2 text-xs font-black text-center focus:ring-indigo-400 focus:border-indigo-400 transition">
+                                        :class="attendee.status ==='absent' ? 'bg-red-50 text-red-300 cursor-not-allowed' : 'bg-white text-indigo-700'"
+                                        class="w-full border border-gray-200 dark:border-gray-700 rounded-xl p-2 text-xs font-black text-center focus:ring-indigo-400 focus:border-indigo-400 transition">
                                 </div>
                             </div>
                         </template>
                     </div>
                 </div>
 
-                <div class="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-between items-center shrink-0 rounded-b-xl">
+                <div class="bg-gray-50 dark:bg-gray-900 px-6 py-4 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center shrink-0 rounded-b-xl">
                     <p class="text-xs text-gray-400 font-bold"><span x-text="attendees.length"></span> members total</p>
                     <button type="submit" 
                         :disabled="isLoading"
@@ -2475,12 +2475,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             <div class="modal-content !max-w-md border-t-8 border-red-600">
                 <form id="rejectTaskForm" method="POST" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
-                    <div class="bg-white px-8 pt-8 pb-6">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
                         <div class="flex items-center gap-4 text-red-600 mb-6">
                             <div class="p-3 bg-red-50 rounded-2xl shadow-sm"><i class="fas fa-times-circle text-2xl"></i></div>
                             <div>
-                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Reject Submission</h3>
-                                <p id="rejectModalDesc" class="text-xs text-gray-500 font-bold">Requires feedback & new deadline.</p>
+                                <h3 class="text-xl font-black text-gray-900 dark:text-gray-100 tracking-tight">Reject Submission</h3>
+                                <p id="rejectModalDesc" class="text-xs text-gray-500 dark:text-gray-400 font-bold">Requires feedback & new deadline.</p>
                             </div>
                         </div>
 
@@ -2501,7 +2501,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="bg-red-600 text-white font-black py-3 px-8 rounded-2xl text-xs uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-600/20 active:scale-95"> Confirm Rejection </button>
                         <button type="button" onclick="closeModal('rejectTaskModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
                     </div>
@@ -2517,18 +2517,18 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
             <div class="modal-content !max-w-md border-t-8 border-indigo-600">
                 <form id="uploadOnBehalfForm" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
                     @csrf
-                    <div class="bg-white px-8 pt-8 pb-6">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
                         <div class="flex items-center gap-4 text-indigo-600 mb-6">
                             <div class="p-3 bg-indigo-50 rounded-2xl shadow-sm"><i class="fas fa-upload text-2xl"></i></div>
                             <div>
-                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Upload for Member</h3>
-                                <p class="text-xs text-gray-500 font-bold">Assist member by uploading their work.</p>
+                                <h3 class="text-xl font-black text-gray-900 dark:text-gray-100 tracking-tight">Upload for Member</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">Assist member by uploading their work.</p>
                             </div>
                         </div>
 
                         <div class="space-y-4">
                             <div
-                                class="text-sm text-gray-500 mb-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 flex items-center gap-2">
+                                class="text-sm text-gray-500 dark:text-gray-400 mb-4 bg-indigo-50/50 p-4 rounded-xl border border-indigo-100 flex items-center gap-2">
                                 <i class="fas fa-user-check text-indigo-400"></i>
                                 <span>Target: <span id="uploadBehalfMemberName" class="font-black text-indigo-900"></span></span>
                             </div>
@@ -2544,7 +2544,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="bg-indigo-600 text-white font-black py-3 px-8 rounded-2xl text-xs uppercase tracking-widest hover:bg-indigo-700 transition shadow-lg shadow-indigo-600/20 active:scale-95"> Complete Upload </button>
                         <button type="button" onclick="closeModal('uploadOnBehalfModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
                     </div>
@@ -2564,12 +2564,12 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <input type="hidden" name="technical_role" id="bulkDeleteRole">
                     
-                    <div class="bg-white px-8 pt-8 pb-6">
+                    <div class="bg-white dark:bg-gray-800 px-8 pt-8 pb-6">
                         <div class="flex items-center gap-4 text-red-600 mb-6">
                             <div class="p-3 bg-red-50 rounded-2xl shadow-sm"><i class="fas fa-trash-alt text-2xl"></i></div>
                             <div>
-                                <h3 class="text-xl font-black text-gray-900 tracking-tight">Bulk Delete Tasks</h3>
-                                <p class="text-xs text-gray-500 font-bold">Remove a task from the whole sub-team.</p>
+                                <h3 class="text-xl font-black text-gray-900 dark:text-gray-100 tracking-tight">Bulk Delete Tasks</h3>
+                                <p class="text-xs text-gray-500 dark:text-gray-400 font-bold">Remove a task from the whole sub-team.</p>
                             </div>
                         </div>
 
@@ -2589,7 +2589,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-50 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100">
+                    <div class="bg-gray-50 dark:bg-gray-900 px-8 py-5 flex flex-row-reverse gap-3 border-t border-gray-100 dark:border-gray-700">
                         <button type="submit" class="bg-red-600 text-white font-black py-4 px-10 rounded-2xl text-xs uppercase tracking-widest hover:bg-red-700 transition shadow-lg shadow-red-600/20 active:scale-95"> Mass Delete Tasks </button>
                         <button type="button" onclick="closeModal('bulkDeleteModal')" class="btn-cancel font-black text-xs uppercase tracking-widest">Cancel</button>
                     </div>

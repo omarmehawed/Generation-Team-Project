@@ -11,16 +11,16 @@
                 <div class="fixed inset-0 z-10 overflow-y-auto">
                     <div class="flex min-h-full items-center justify-center p-6">
                         <div
-                            class="relative transform overflow-hidden rounded-[2.5rem] bg-white text-left shadow-2xl transition-all w-full max-w-2xl border border-slate-100 animate-premium">
+                            class="relative transform overflow-hidden rounded-[2.5rem] bg-white dark:bg-gray-800 text-left shadow-2xl transition-all w-full max-w-2xl border border-slate-100 animate-premium">
                             <div class="bg-slate-900 px-10 py-8 flex justify-between items-center relative overflow-hidden">
                                 <div class="absolute inset-0 bg-gradient-to-r from-slate-900 to-slate-800"></div>
                                 <div class="relative z-10">
                                     <h3 class="text-2xl font-black text-white uppercase tracking-tight">Squad Manifest</h3>
-                                    <p class="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mt-1">
+                                    <p class="text-[#2596be] text-[10px] font-black uppercase tracking-[0.3em] mt-1">
                                         Official Project Contributors</p>
                                 </div>
                                 <button onclick="document.getElementById('membersModal').classList.add('hidden')"
-                                    class="relative z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-[#D4AF37] hover:text-slate-900 transition-all flex items-center justify-center">
+                                    class="relative z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-[#2596be] hover:text-slate-900 transition-all flex items-center justify-center">
                                     <i class="fas fa-times"></i>
                                 </button>
                             </div>
@@ -28,16 +28,16 @@
                             <div class="p-10 space-y-6 max-h-[60vh] overflow-y-auto custom-scrollbar bg-slate-50">
                                 {{-- Leader --}}
                                 <div
-                                    class="flex items-center gap-6 p-6 bg-[#D4AF37]/10 rounded-[2rem] border-2 border-[#D4AF37]/20 shadow-xl shadow-yellow-50/50">
+                                    class="flex items-center gap-6 p-6 bg-[#2596be]/10 rounded-[2rem] border-2 border-[#2596be]/20 shadow-xl shadow-yellow-50/50">
                                     <div
-                                        class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#D4AF37] to-white flex items-center justify-center text-slate-900 text-2xl shadow-lg border border-white">
+                                        class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-[#2596be] to-white flex items-center justify-center text-slate-900 text-2xl shadow-lg border border-white">
                                         <i class="fas fa-crown"></i>
                                     </div>
                                     <div>
                                         <p class="font-black text-slate-900 text-lg tracking-tight">
                                             {{ $team->leader->name }}
                                         </p>
-                                        <p class="text-[10px] text-[#D4AF37] font-black uppercase tracking-[0.2em] mt-1">
+                                        <p class="text-[10px] text-[#2596be] font-black uppercase tracking-[0.2em] mt-1">
                                             Prime Leader</p>
                                         <p class="text-xs text-slate-400 mt-2 font-mono"><i
                                                 class="fas fa-envelope mr-1"></i> {{ $team->leader->email }}</p>
@@ -47,7 +47,7 @@
                                 {{-- Members --}}
                                 @foreach($team->members as $member)
                                     <div
-                                        class="flex items-center gap-6 p-6 bg-white rounded-[2rem] border border-slate-100 hover:bg-slate-900 hover:border-slate-800 hover:shadow-xl transition-all group duration-300">
+                                        class="flex items-center gap-6 p-6 bg-white dark:bg-gray-800 rounded-[2rem] border border-slate-100 hover:bg-slate-900 hover:border-slate-800 hover:shadow-xl transition-all group duration-300">
                                         <div
                                             class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 font-black text-xl shadow-sm group-hover:bg-slate-800 group-hover:text-white transition-all">
                                             {{ substr($member->user->name, 0, 1) }}
@@ -87,7 +87,7 @@
                                         </h4>
                                         <div class="space-y-3 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
                                             @forelse($team->members->where('auto_group', 'A') as $memberA)
-                                                <div class="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-blue-50 hover:shadow-md transition-shadow">
+                                                <div class="flex items-center gap-4 bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-blue-50 hover:shadow-md transition-shadow">
                                                     <div class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 font-bold flex items-center justify-center text-sm">
                                                         {{ substr($memberA->user->name, 0, 1) }}
                                                     </div>
@@ -115,7 +115,7 @@
                                         </h4>
                                         <div class="space-y-3 max-h-[40vh] overflow-y-auto custom-scrollbar pr-2">
                                             @forelse($team->members->where('auto_group', 'B') as $memberB)
-                                                <div class="flex items-center gap-4 bg-white p-3 rounded-2xl shadow-sm border border-purple-50 hover:shadow-md transition-shadow">
+                                                <div class="flex items-center gap-4 bg-white dark:bg-gray-800 p-3 rounded-2xl shadow-sm border border-purple-50 hover:shadow-md transition-shadow">
                                                     <div class="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 font-bold flex items-center justify-center text-sm">
                                                         {{ substr($memberB->user->name, 0, 1) }}
                                                     </div>
@@ -142,11 +142,11 @@
                     onclick="document.getElementById('supervisionHistoryModal').classList.add('hidden')"></div>
                 <div class="flex items-center justify-center min-h-screen p-6">
                     <div
-                        class="relative bg-white rounded-[3rem] shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200 animate-premium">
+                        class="relative bg-white dark:bg-gray-800 rounded-[3rem] shadow-2xl w-full max-w-5xl max-h-[85vh] flex flex-col overflow-hidden border border-slate-200 animate-premium">
                         <div class="bg-slate-900 p-10 border-b border-slate-800 flex justify-between items-center shrink-0">
                             <div>
                                 <h3 class="text-3xl font-black text-white uppercase tracking-tight">History Meeting Log</h3>
-                                <p class="text-[#D4AF37] text-[10px] font-black uppercase tracking-[0.3em] mt-2">Historic
+                                <p class="text-[#2596be] text-[10px] font-black uppercase tracking-[0.3em] mt-2">Historic
                                     interaction records</p>
                             </div>
                             <button onclick="document.getElementById('supervisionHistoryModal').classList.add('hidden')"
@@ -160,13 +160,13 @@
                                 {{-- التعديل هنا: لو نوع الميتنج مش سوبرفيجن، كمل ومتعرضوش --}}
 
                                 <div x-data="{ openDetails: false }"
-                                    class="mb-6 bg-white rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500">
+                                    class="mb-6 bg-white dark:bg-gray-800 rounded-[2.5rem] border border-slate-100 shadow-sm overflow-hidden hover:shadow-xl transition-all duration-500">
 
                                     <div class="p-8 flex justify-between items-center cursor-pointer group"
                                         @click="openDetails = !openDetails">
                                         <div class="flex items-center gap-6">
                                             <div
-                                                class="w-16 h-16 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-slate-50 {{ $meet->status == 'confirmed' || $meet->status == 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600' }}">
+                                                class="w-16 h-16 rounded-2xl flex items-center justify-center text-xl shadow-inner border border-slate-50 {{ $meet->status =='confirmed' || $meet->status == 'completed' ? 'bg-emerald-50 text-emerald-600' : 'bg-blue-50 text-blue-600' }}">
                                                 @if($meet->status == 'confirmed' || $meet->status == 'completed') <i
                                                 class="fas fa-check-double"></i> @else <i class="fas fa-info-circle"></i>
                                                     @endif
@@ -178,7 +178,7 @@
                                                 </h4>
                                                 <p
                                                     class="text-[11px] text-slate-400 font-black uppercase tracking-widest mt-2 font-mono">
-                                                    <i class="far fa-calendar-alt mr-1 text-[#D4AF37]"></i>
+                                                    <i class="far fa-calendar-alt mr-1 text-[#2596be]"></i>
                                                     {{ \Carbon\Carbon::parse($meet->meeting_date)->format('d F Y, h:i A') }}
                                                 </p>
                                             </div>
@@ -198,7 +198,7 @@
                                             <div class="mt-8 space-y-4">
                                                 <h5
                                                     class="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                                                    <span class="w-1 h-3 bg-[#D4AF37] rounded-full"></span> Modify Attendance
+                                                    <span class="w-1 h-3 bg-[#2596be] rounded-full"></span> Modify Attendance
                                                     Log
                                                 </h5>
 
@@ -210,7 +210,7 @@
                                                         @endphp
 
                                                         <div x-data="{ isEditing: false, currentStatus: {{ $hasAttended ? 1 : 0 }} }"
-                                                            class="bg-white rounded-2xl border border-slate-100 p-5 shadow-sm hover:border-[#D4AF37]/30 transition-all group/edit">
+                                                            class="bg-white dark:bg-gray-800 rounded-2xl border border-slate-100 p-5 shadow-sm hover:border-[#2596be]/30 transition-all group/edit">
 
                                                             <div x-show="!isEditing" class="flex items-center justify-between">
                                                                 <div class="flex items-center gap-4">
@@ -219,9 +219,9 @@
                                                                             {{ $member->user->name }}
                                                                         </p>
                                                                         <span class="text-[9px] font-black uppercase mt-1 block"
-                                                                            :class="currentStatus == 1 ? 'text-emerald-600' : 'text-red-500'">
+                                                                            :class="currentStatus == 1 ?'text-emerald-600' : 'text-red-500'">
                                                                             <i
-                                                                                :class="currentStatus == 1 ? 'fas fa-check' : 'fas fa-times'"></i>
+                                                                                :class="currentStatus == 1 ?'fas fa-check' : 'fas fa-times'"></i>
                                                                             <span
                                                                                 x-text="currentStatus == 1 ? 'Present' : 'Absent'"></span>
                                                                         </span>
@@ -290,7 +290,7 @@
                 <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-md" onclick="closeModal('endMeetingModal')">
                 </div>
                 <div
-                    class="bg-white rounded-[3rem] p-10 w-full max-w-lg relative z-10 shadow-2xl border border-slate-100 animate-premium">
+                    class="bg-white dark:bg-gray-800 rounded-[3rem] p-10 w-full max-w-lg relative z-10 shadow-2xl border border-slate-100 animate-premium">
                     <div class="text-center mb-8">
                         <h3 class="text-2xl font-black text-slate-900 uppercase tracking-tighter">Mission Debrief</h3>
                         <p class="text-[10px] text-slate-400 font-black uppercase tracking-[0.2em] mt-2">Finalize meeting
@@ -342,7 +342,7 @@
 
             {{-- 4.4 Back To Top Button --}}
             <button x-show="showScrollTop" x-transition.scale @click="window.scrollTo({top: 0, behavior: 'smooth'})"
-                class="fixed bottom-10 right-10 w-14 h-14 bg-slate-900 text-[#D4AF37] rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-50 border border-[#D4AF37]/30 hover:border-[#D4AF37] group">
+                class="fixed bottom-10 right-10 w-14 h-14 bg-slate-900 text-[#2596be] rounded-full shadow-2xl flex items-center justify-center hover:scale-110 transition-transform z-50 border border-[#2596be]/30 hover:border-[#2596be] group">
                 <i class="fas fa-arrow-up group-hover:animate-bounce"></i>
             </button>
 

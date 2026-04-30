@@ -31,12 +31,12 @@
         {{-- Header --}}
         <div class="flex justify-between items-center mb-10">
             <div>
-                <h1 class="text-3xl font-black text-gray-800 flex items-center gap-3">
+                <h1 class="text-3xl font-black text-gray-800 dark:text-gray-200 flex items-center gap-3">
                     <span class="p-3 bg-blue-100 rounded-2xl text-blue-600 shadow-sm"><i
                             class="fas fa-layer-group"></i></span>
                     My Subject Projects
                 </h1>
-                <p class="text-gray-500 mt-2 ml-1">Manage projects for your registered courses.</p>
+                <p class="text-gray-500 dark:text-gray-400 mt-2 ml-1">Manage projects for your registered courses.</p>
             </div>
         </div>
         {{-- ⚙️ لوحة التحكم الأكاديمي --}}
@@ -112,18 +112,18 @@
 
                 <a href="{{ route('subjects.manage', $course->id) }}" class="group block">
                     <div
-                        class="bg-white rounded-[2rem] border border-gray-100 shadow-lg p-6 relative overflow-hidden hover-lift h-full">
+                        class="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-lg p-6 relative overflow-hidden hover-lift h-full">
                         {{-- زخرفة خلفية --}}
                         <div
-                            class="absolute top-0 right-0 w-32 h-32 bg-{{ $course->color ?? 'blue' }}-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-60 transition group-hover:opacity-100">
+                            class="absolute top-0 right-0 w-32 h-32 bg-{{ $course->color ??'blue' }}-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-60 transition group-hover:opacity-100">
                         </div>
 
                         <div class="relative z-10">
                             {{-- الأيقونة والكود --}}
                             <div class="flex justify-between items-start mb-6">
                                 <div
-                                    class="w-14 h-14 rounded-2xl bg-{{ $course->color ?? 'blue' }}-100 text-{{ $course->color ?? 'blue' }}-600 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
-                                    <i class="{{ $course->icon_class ?? 'fas fa-book' }}"></i>
+                                    class="w-14 h-14 rounded-2xl bg-{{ $course->color ??'blue' }}-100 text-{{ $course->color ?? 'blue' }}-600 flex items-center justify-center text-2xl shadow-inner group-hover:scale-110 transition-transform">
+                                    <i class="{{ $course->icon_class ??'fas fa-book' }}"></i>
                                 </div>
                                 <span
                                     class="bg-gray-900 text-white text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
@@ -132,7 +132,7 @@
                             </div>
 
                             {{-- التفاصيل --}}
-                            <h3 class="text-xl font-black text-gray-800 mb-2 group-hover:text-blue-600 transition-colors">
+                            <h3 class="text-xl font-black text-gray-800 dark:text-gray-200 mb-2 group-hover:text-blue-600 transition-colors">
                                 {{ $course->name }}
                             </h3>
                             <p class="text-sm text-gray-400 mb-6 line-clamp-2">
@@ -143,14 +143,14 @@
                             <div class="flex items-center gap-4 pt-4 border-t border-gray-50">
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-users text-gray-300"></i>
-                                    <span class="text-xs font-bold text-gray-600">
+                                    <span class="text-xs font-bold text-gray-600 dark:text-gray-400">
                                         {{-- ✅ لو المشروع موجود عد التيمات، لو لأ اكتب 0 --}}
                                         {{ $project ? $project->teams->count() : 0 }} Teams
                                     </span>
                                 </div>
                                 <div class="flex items-center gap-2">
                                     <i class="fas fa-check-circle text-gray-300"></i>
-                                    <span class="text-xs font-bold text-gray-600">
+                                    <span class="text-xs font-bold text-gray-600 dark:text-gray-400">
                                         {{-- ✅ لو المشروع موجود عد التسليمات، لو لأ اكتب 0 --}}
                                         {{ $project ? $project->teams->where('status', 'submitted')->count() : 0 }}
                                         Submitted
@@ -163,11 +163,11 @@
             @empty
                 {{-- لو مفيش مواد --}}
                 <div
-                    class="col-span-full py-16 text-center bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
-                    <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    class="col-span-full py-16 text-center bg-gray-50 dark:bg-gray-900 rounded-[3rem] border-2 border-dashed border-gray-200 dark:border-gray-700">
+                    <div class="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                         <i class="fas fa-folder-open text-gray-300 text-4xl"></i>
                     </div>
-                    <h3 class="text-gray-800 font-bold text-lg">No Courses Found</h3>
+                    <h3 class="text-gray-800 dark:text-gray-200 font-bold text-lg">No Courses Found</h3>
                     <p class="text-gray-400 text-sm">You haven't been assigned to any subject projects yet.</p>
                 </div>
             @endforelse

@@ -53,8 +53,8 @@
                     <i class="fas fa-project-diagram text-2xl text-white"></i>
                 </div>
                 <div>
-                    <h1 class="text-3xl font-extrabold text-gray-900 tracking-tight">Project Proposals Review</h1>
-                    <p class="text-gray-500 font-medium flex items-center gap-2">
+                    <h1 class="text-3xl font-extrabold text-gray-900 dark:text-gray-100 tracking-tight">Project Proposals Review</h1>
+                    <p class="text-gray-500 dark:text-gray-400 font-medium flex items-center gap-2">
                         <span class="w-2 h-2 bg-amber-400 rounded-full animate-pulse"></span>
                         Review student ideas and assign Teaching Assistants
                     </p>
@@ -85,7 +85,7 @@
                                 class="fas fa-search text-gray-400 group-focus-within:text-[#175c53] hover:text-[#175c53] transition-colors cursor-pointer"></i>
                         </button>
                         <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
-                            class="block w-full p-4 pl-12 text-sm text-gray-700 bg-gray-50 border-none rounded-xl ring-1 ring-gray-200 focus:ring-2 focus:ring-[#175c53] focus:bg-white transition-all duration-300"
+                            class="block w-full p-4 pl-12 text-sm text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-900 border-none rounded-xl ring-1 ring-gray-200 focus:ring-2 focus:ring-[#175c53] focus:bg-white transition-all duration-300"
                             placeholder="Search by project title, team name or leader..." autocomplete="off">
                     </div>
                 </form>
@@ -94,7 +94,7 @@
                     {{-- فلتر السنة --}}
                     <form method="GET" class="w-full lg:w-auto">
                         <select name="year" onchange="this.form.submit()"
-                            class="w-full bg-gray-50 border-none ring-1 ring-gray-200 rounded-xl text-sm font-bold text-gray-600 p-4 focus:ring-2 focus:ring-[#175c53] transition-all cursor-pointer">
+                            class="w-full bg-gray-50 dark:bg-gray-900 border-none ring-1 ring-gray-200 rounded-xl text-sm font-bold text-gray-600 dark:text-gray-400 p-4 focus:ring-2 focus:ring-[#175c53] transition-all cursor-pointer">
                             <option value="all">📅 All Academic Years</option>
                             <option value="1" {{ request('year') == '1' ? 'selected' : '' }}>1st Year</option>
                             <option value="2" {{ request('year') == '2' ? 'selected' : '' }}>2nd Year</option>
@@ -107,21 +107,21 @@
         </div>
 
         {{-- Table Section --}}
-        <div class="glass-card rounded-3xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
+        <div class="glass-card rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700 flex flex-col">
             <div class="overflow-x-auto custom-scrollbar flex-1">
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-gray-50/50">
-                            <th class="px-8 py-5 text-xs font-black text-gray-500 uppercase tracking-wider">Project Identity
+                            <th class="px-8 py-5 text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Project Identity
                             </th>
-                            <th class="px-8 py-5 text-xs font-black text-gray-500 uppercase tracking-wider">Team Leader</th>
-                            <th class="px-8 py-5 text-xs font-black text-gray-500 uppercase tracking-wider">Documentation
+                            <th class="px-8 py-5 text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Team Leader</th>
+                            <th class="px-8 py-5 text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider">Documentation
                             </th>
-                            <th class="px-8 py-5 text-xs font-black text-gray-500 uppercase tracking-wider text-right">
+                            <th class="px-8 py-5 text-xs font-black text-gray-500 dark:text-gray-400 uppercase tracking-wider text-right">
                                 Decision Tool</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-gray-100 bg-white">
+                    <tbody class="divide-y divide-gray-100 bg-white dark:bg-gray-800">
                         @forelse($proposals as $team)
                             <tr class="hover:bg-[#175c53]/[0.02] transition-all duration-200 group">
 
@@ -129,7 +129,7 @@
                                 <td class="px-8 py-6">
                                     <div class="flex flex-col">
                                         <span
-                                            class="font-bold text-gray-900 text-lg group-hover:text-[#175c53] transition-colors">
+                                            class="font-bold text-gray-900 dark:text-gray-100 text-lg group-hover:text-[#175c53] transition-colors">
                                             {{ $team->proposal_title ?? 'Untitled Proposal' }}
                                         </span>
                                         <div class="flex items-center gap-2 mt-2">
@@ -158,7 +158,7 @@
                                         </div>
                                         <div class="flex flex-col">
                                             <span
-                                                class="text-sm font-bold text-gray-700">{{ $team->leader->name ?? 'Unknown Leader' }}</span>
+                                                class="text-sm font-bold text-gray-700 dark:text-gray-300">{{ $team->leader->name ?? 'Unknown Leader' }}</span>
                                             <span class="text-xs text-gray-400 tracking-tighter">Project Manager</span>
                                         </div>
                                     </div>
@@ -169,13 +169,13 @@
                                     @if ($team->proposal_file)
                                         {{-- 🔥 التعديل هنا: استخدام الراوت المباشر بدلاً من asset --}}
                                         <a href="{{ route('staff.proposal.view_file', $team->id) }}" target="_blank"
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-white border border-red-100 text-red-600 rounded-xl text-xs font-black hover:bg-red-50 hover:shadow-md hover:shadow-red-500/10 transition-all active:scale-95">
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border border-red-100 text-red-600 rounded-xl text-xs font-black hover:bg-red-50 hover:shadow-md hover:shadow-red-500/10 transition-all active:scale-95">
                                             <i class="fas fa-file-pdf text-lg"></i>
                                             <span>VIEW PROPOSAL</span>
                                         </a>
                                     @else
                                         <span
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-400 rounded-xl text-xs font-bold border border-dashed border-gray-200">
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-gray-50 dark:bg-gray-900 text-gray-400 rounded-xl text-xs font-bold border border-dashed border-gray-200 dark:border-gray-700">
                                             <i class="fas fa-exclamation-circle"></i> Missing File
                                         </span>
                                     @endif
@@ -188,7 +188,7 @@
                                             class="group/btn flex items-center gap-2 text-gray-400 hover:text-red-600 font-bold text-xs p-2 transition-all">
                                             <span class="hidden group-hover/btn:block">Reject</span>
                                             <div
-                                                class="w-8 h-8 rounded-lg border border-gray-200 flex items-center justify-center group-hover/btn:border-red-200 group-hover/btn:bg-red-50">
+                                                class="w-8 h-8 rounded-lg border border-gray-200 dark:border-gray-700 flex items-center justify-center group-hover/btn:border-red-200 group-hover/btn:bg-red-50">
                                                 <i class="fas fa-times"></i>
                                             </div>
                                         </button>
@@ -205,7 +205,7 @@
                             <tr>
                                 <td colspan="4" class="px-8 py-24 text-center">
                                     <div class="flex flex-col items-center justify-center space-y-4">
-                                        <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center">
+                                        <div class="w-20 h-20 bg-gray-50 dark:bg-gray-900 rounded-full flex items-center justify-center">
                                             <i class="fas fa-folder-open text-4xl text-gray-200"></i>
                                         </div>
                                         <p class="text-gray-400 font-medium text-lg">No pending proposals found at the
@@ -221,7 +221,7 @@
 
             {{-- 🔥 Pagination Links Section 🔥 --}}
             @if ($proposals->hasPages())
-                <div class="bg-gray-50 border-t border-gray-100 px-6 py-4">
+                <div class="bg-gray-50 dark:bg-gray-900 border-t border-gray-100 dark:border-gray-700 px-6 py-4">
                     {{ $proposals->links() }}
                 </div>
             @endif
@@ -233,7 +233,7 @@
             <div class="absolute inset-0 bg-gray-900/60 backdrop-blur-md transition-opacity"></div>
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div
-                    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+                    class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
                     <div class="bg-gradient-to-r from-[#175c53] to-[#247a6e] px-8 py-6">
                         <div class="flex justify-between items-center text-white">
                             <h3 class="font-black text-xl flex items-center gap-3">
@@ -254,7 +254,7 @@
                                 Supervisor (TA)</label>
                             <div class="relative">
                                 <select name="ta_id" required
-                                    class="w-full bg-gray-50 border-none ring-1 ring-gray-200 rounded-2xl p-4 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-[#175c53] transition-all appearance-none cursor-pointer">
+                                    class="w-full bg-gray-50 dark:bg-gray-900 border-none ring-1 ring-gray-200 rounded-2xl p-4 text-sm font-bold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-[#175c53] transition-all appearance-none cursor-pointer">
                                     <option value="">-- Choose Teaching Assistant --</option>
                                     @foreach ($tas as $ta)
                                         <option value="{{ $ta->id }}">👨‍🏫 {{ $ta->name }}</option>
@@ -287,7 +287,7 @@
             <div class="absolute inset-0 bg-red-900/20 backdrop-blur-md transition-opacity"></div>
             <div class="flex items-center justify-center min-h-screen p-4">
                 <div
-                    class="relative bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-red-50">
+                    class="relative bg-white dark:bg-gray-800 rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all border border-red-50">
                     <div class="bg-gradient-to-r from-red-600 to-rose-500 px-8 py-6">
                         <div class="flex justify-between items-center text-white">
                             <h3 class="font-black text-xl flex items-center gap-3">
@@ -307,7 +307,7 @@
                             <label class="block text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] mb-3">Reason
                                 for Rejection</label>
                             <textarea name="rejection_reason" required rows="4"
-                                class="w-full bg-red-50/30 border-none ring-1 ring-red-100 rounded-2xl p-4 text-sm font-bold text-gray-700 focus:ring-2 focus:ring-red-500 transition-all placeholder:text-gray-300 custom-scrollbar"
+                                class="w-full bg-red-50/30 border-none ring-1 ring-red-100 rounded-2xl p-4 text-sm font-bold text-gray-700 dark:text-gray-300 focus:ring-2 focus:ring-red-500 transition-all placeholder:text-gray-300 custom-scrollbar"
                                 placeholder="Please provide constructive feedback to the students..."></textarea>
                         </div>
 

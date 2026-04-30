@@ -40,7 +40,7 @@
                 <td style="border: 1px solid #000000; text-align: center;">{{ $member['name'] }}</td>
                 <td style="border: 1px solid #000000; text-align: center;">{{ $member['academic_id'] }}</td>
                 <td
-                    style="border: 1px solid #000000; text-align: center; color: {{ $member['position'] == 'Leader' ? '#D4AF37' : '#000000' }}; font-weight: {{ $member['position'] == 'Leader' ? 'bold' : 'normal' }}">
+                    style="border: 1px solid #000000; text-align: center; color: {{ $member['position'] == 'Leader' ? '#2596be' : '#000000' }}; font-weight: {{ $member['position'] == 'Leader' ? 'bold' : 'normal' }}">
                     {{ $member['position'] }}
                 </td>
                 <td style="border: 1px solid #000000; text-align: center;">{{ $member['year'] }}</td>

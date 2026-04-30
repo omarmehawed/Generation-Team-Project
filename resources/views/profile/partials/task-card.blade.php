@@ -14,7 +14,7 @@
     @if($task->submission_file)
         <div class="bg-black/30 rounded p-2 mb-3 flex items-center justify-between border border-gray-700">
             <div class="flex items-center gap-2 overflow-hidden">
-                <i class="fas fa-file-alt text-gray-500"></i>
+                <i class="fas fa-file-alt text-gray-500 dark:text-gray-400"></i>
                 <span class="text-xs text-gray-300 truncate">{{ basename($task->submission_file) }}</span>
             </div>
             <a href="{{ $task->submission_file }}" target="_blank" class="text-cyan-400 hover:text-cyan-300 text-xs">
@@ -24,7 +24,7 @@
     @elseif($task->submission_value)
         <div class="bg-black/30 rounded p-2 mb-3 flex items-center justify-between border border-gray-700">
             <div class="flex items-center gap-2 overflow-hidden">
-                <i class="fas fa-link text-gray-500"></i>
+                <i class="fas fa-link text-gray-500 dark:text-gray-400"></i>
                 <a href="{{ $task->submission_value }}" target="_blank"
                     class="text-xs text-cyan-400 hover:underline truncate">{{ $task->submission_value }}</a>
             </div>

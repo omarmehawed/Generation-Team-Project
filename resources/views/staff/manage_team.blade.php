@@ -18,7 +18,7 @@
         :root {
             --primary-dark: #0f172a;
             --primary-teal: #175c53;
-            --accent-gold: #D4AF37;
+            --accent-gold: #2596be;
             --accent-gold-light: #fcf6ba;
             --danger-red: #ef4444;
             --success-green: #10b981;
@@ -166,7 +166,7 @@
         {{-- <div x-show="loading" x-transition.opacity
             class="fixed inset-0 z-[9999] bg-slate-900/80 backdrop-blur-sm flex items-center justify-center">
             <div class="flex flex-col items-center">
-                <i class="fas fa-circle-notch fa-spin text-5xl text-[#D4AF37] mb-4"></i>
+                <i class="fas fa-circle-notch fa-spin text-5xl text-[#2596be] mb-4"></i>
                 <p class="text-white font-bold tracking-widest uppercase text-xs">Processing Request...</p>
             </div> --}}
             {{--
@@ -190,7 +190,7 @@
 
                 {{-- Ambient Light Effects --}}
                 <div
-                    class="absolute -top-32 -right-32 w-96 h-96 bg-[#D4AF37] opacity-10 rounded-full blur-[120px] group-hover:opacity-20 transition-opacity duration-1000">
+                    class="absolute -top-32 -right-32 w-96 h-96 bg-[#2596be] opacity-10 rounded-full blur-[120px] group-hover:opacity-20 transition-opacity duration-1000">
                 </div>
                 <div class="absolute bottom-0 left-0 w-80 h-80 bg-emerald-500 opacity-10 rounded-full blur-[100px]"></div>
 
@@ -201,11 +201,11 @@
                         <div class="flex-1 space-y-8 text-center lg:text-left">
                             <div class="flex flex-wrap items-center justify-center lg:justify-start gap-4">
                                 <span
-                                    class="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-[#D4AF37] backdrop-blur-md shadow-lg ring-1 ring-white/5">
+                                    class="px-5 py-2 rounded-full bg-white/5 border border-white/10 text-[10px] font-black uppercase tracking-[0.3em] text-[#2596be] backdrop-blur-md shadow-lg ring-1 ring-white/5">
                                     {{ $team->project_phase ?? 'Strategic Phase' }}
                                 </span>
                                 <div
-                                    class="hidden md:block h-px w-16 bg-gradient-to-r from-[#D4AF37] to-transparent opacity-50">
+                                    class="hidden md:block h-px w-16 bg-gradient-to-r from-[#2596be] to-transparent opacity-50">
                                 </div>
                                 <span
                                     class="text-xs font-bold text-gray-400 font-mono tracking-widest bg-black/20 px-3 py-1 rounded-lg">
@@ -219,7 +219,7 @@
                             </h1>
 
                             <p
-                                class="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed font-light border-l-4 border-[#D4AF37]/60 pl-6 py-2 bg-gradient-to-r from-white/5 to-transparent rounded-r-xl">
+                                class="text-lg md:text-xl text-gray-300 max-w-3xl leading-relaxed font-light border-l-4 border-[#2596be]/60 pl-6 py-2 bg-gradient-to-r from-white/5 to-transparent rounded-r-xl">
                                 "{{ $team->proposal_description }}"
                             </p>
 
@@ -229,7 +229,7 @@
                                 <div
                                     class="flex items-center gap-4 bg-white/5 p-3 pr-6 rounded-2xl border border-white/10 hover:bg-white/10 transition-all cursor-default backdrop-blur-sm">
                                     <div
-                                        class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#D4AF37] to-[#fcf6ba] flex items-center justify-center text-slate-900 shadow-lg shadow-yellow-900/20 transform hover:rotate-12 transition-transform duration-500">
+                                        class="w-12 h-12 rounded-xl bg-gradient-to-tr from-[#2596be] to-[#fcf6ba] flex items-center justify-center text-slate-900 shadow-lg shadow-yellow-900/20 transform hover:rotate-12 transition-transform duration-500">
                                         <i class="fas fa-crown text-xl"></i>
                                     </div>
                                     <div>
@@ -261,8 +261,8 @@
 
                                 {{-- Team Name --}}
                                 <div
-                                    class="flex items-center gap-3 bg-[#D4AF37]/10 px-6 py-3 rounded-2xl border border-[#D4AF37]/20">
-                                    <i class="fas fa-id-card text-[#D4AF37]"></i>
+                                    class="flex items-center gap-3 bg-[#2596be]/10 px-6 py-3 rounded-2xl border border-[#2596be]/20">
+                                    <i class="fas fa-id-card text-[#2596be]"></i>
                                     <span
                                         class="font-black text-xl text-white tracking-widest uppercase">{{ $team->name }}</span>
                                 </div>
@@ -272,7 +272,7 @@
                         {{-- Right Side: Action Buttons --}}
                         <div class="flex flex-col gap-5 w-full lg:w-80">
                             <a href="{{ route('staff.team.view_as', $team->id) }}" target="_blank"
-                                class="group relative overflow-hidden bg-white text-slate-900 px-8 py-6 rounded-2xl font-black shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:shadow-white/20 transition-all transform hover:-translate-y-1 text-center uppercase tracking-tighter border border-white">
+                                class="group relative overflow-hidden bg-white dark:bg-gray-800 text-slate-900 px-8 py-6 rounded-2xl font-black shadow-[0_20px_40px_rgba(0,0,0,0.2)] hover:shadow-white/20 transition-all transform hover:-translate-y-1 text-center uppercase tracking-tighter border border-white">
                                 <span class="relative z-10 flex items-center justify-center gap-3">
                                     <i class="fas fa-rocket text-xl text-emerald-600 group-hover:animate-pulse"></i> Live
                                     Simulation
@@ -306,7 +306,7 @@
                     <a href="#reports-section"
                         class="px-5 py-2.5 rounded-full text-[10px] font-black uppercase hover:bg-slate-900 hover:text-white transition-all text-slate-600 hover:shadow-lg">Reports</a>
                     <a href="#defense-section"
-                        class="px-5 py-2.5 rounded-full text-[10px] font-black uppercase hover:bg-[#D4AF37] hover:text-white transition-all text-slate-600 hover:shadow-lg">Defense</a>
+                        class="px-5 py-2.5 rounded-full text-[10px] font-black uppercase hover:bg-[#2596be] hover:text-white transition-all text-slate-600 hover:shadow-lg">Defense</a>
                     <a href="#meetings-section"
                         class="px-5 py-2.5 rounded-full text-[10px] font-black uppercase hover:bg-slate-900 hover:text-white transition-all text-slate-600 hover:shadow-lg">Meetings</a>
                     <a href="#artifacts-section"
@@ -327,15 +327,15 @@
                     {{-- A. Complaints Section --}}
                     <div id="issues-section" class="glass-card rounded-[2.5rem] overflow-hidden border-t-4 border-red-500">
                         <div
-                            class="px-8 py-6 flex flex-wrap justify-between items-center border-b border-gray-100 bg-red-50/40">
+                            class="px-8 py-6 flex flex-wrap justify-between items-center border-b border-gray-100 dark:border-gray-700 bg-red-50/40">
                             <div class="flex items-center gap-5">
                                 <div
-                                    class="w-14 h-14 bg-white rounded-2xl flex items-center justify-center text-red-600 shadow-md border border-red-100 animate-pulse">
+                                    class="w-14 h-14 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-red-600 shadow-md border border-red-100 animate-pulse">
                                     <i class="fas fa-shield-exclamation text-2xl"></i>
                                 </div>
                                 <div>
-                                    <h3 class="font-black text-gray-800 text-xl tracking-tight">Team Issues & Conflicts</h3>
-                                    <p class="text-xs text-gray-500 font-medium uppercase mt-1 tracking-wider">Internal Team
+                                    <h3 class="font-black text-gray-800 dark:text-gray-200 text-xl tracking-tight">Team Issues & Conflicts</h3>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400 font-medium uppercase mt-1 tracking-wider">Internal Team
                                         Feedback</p>
                                 </div>
                             </div>
@@ -348,7 +348,7 @@
                         <div class="overflow-x-auto custom-scrollbar max-h-[450px]">
                             <table class="w-full text-left border-collapse">
                                 <thead
-                                    class="sticky top-0 bg-gray-50/95 backdrop-blur-sm text-gray-400 text-[10px] uppercase font-black tracking-widest z-10 border-b border-gray-200">
+                                    class="sticky top-0 bg-gray-50/95 backdrop-blur-sm text-gray-400 text-[10px] uppercase font-black tracking-widest z-10 border-b border-gray-200 dark:border-gray-700">
                                     <tr>
                                         <th class="px-8 py-5">Originator</th>
                                         <th class="px-8 py-5">Target Member</th>
@@ -356,7 +356,7 @@
                                         <th class="px-8 py-5">Logged At</th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-50 bg-white">
+                                <tbody class="divide-y divide-gray-50 bg-white dark:bg-gray-800">
                                     @forelse($team->memberReports as $report)
                                         <tr class="hover:bg-red-50/30 transition-all duration-300 group">
                                             <td class="px-8 py-6">
@@ -366,7 +366,7 @@
                                                         {{ substr(\App\Models\User::find($report->reporter_id)->name, 0, 1) }}
                                                     </div>
                                                     <span
-                                                        class="font-bold text-gray-700 text-sm">{{ \App\Models\User::find($report->reporter_id)->name }}</span>
+                                                        class="font-bold text-gray-700 dark:text-gray-300 text-sm">{{ \App\Models\User::find($report->reporter_id)->name }}</span>
                                                 </div>
                                             </td>
                                             <td class="px-8 py-6">
@@ -378,7 +378,7 @@
                                             </td>
                                             <td class="px-8 py-6">
                                                 <p
-                                                    class="text-sm text-gray-600 italic leading-relaxed group-hover:text-red-900 transition-colors">
+                                                    class="text-sm text-gray-600 dark:text-gray-400 italic leading-relaxed group-hover:text-red-900 transition-colors">
                                                     "{{ Str::limit($report->complaint, 80) }}"
                                                 </p>
                                             </td>
@@ -394,7 +394,7 @@
                                                         class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mb-2">
                                                         <i class="fas fa-dove text-4xl text-emerald-500"></i>
                                                     </div>
-                                                    <p class="text-lg font-bold text-gray-600 uppercase tracking-widest">
+                                                    <p class="text-lg font-bold text-gray-600 dark:text-gray-400 uppercase tracking-widest">
                                                         Harmonious Environment</p>
                                                     <p class="text-xs text-gray-400">No conflicts reported at this time.</p>
                                                 </div>
@@ -408,14 +408,14 @@
 
                     {{-- B. Weekly Reports Table --}}
                     <div id="reports-section"
-                        class="glass-card rounded-[2.5rem] shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-500 relative bg-white">
+                        class="glass-card rounded-[2.5rem] shadow-sm overflow-hidden group hover:shadow-xl transition-all duration-500 relative bg-white dark:bg-gray-800">
                         {{-- Top Decorative Line --}}
                         <div
                             class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-500">
                         </div>
 
-                        <div class="px-8 py-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                            <h3 class="text-xl font-bold text-gray-800 flex items-center gap-3">
+                        <div class="px-8 py-6 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50">
+                            <h3 class="text-xl font-bold text-gray-800 dark:text-gray-200 flex items-center gap-3">
                                 <span
                                     class="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center shadow-sm"><i
                                         class="fas fa-clipboard-list"></i></span>
@@ -432,7 +432,7 @@
                         <div class="overflow-x-auto">
                             <table class="w-full">
                                 <thead
-                                    class="bg-gray-50/80 text-[11px] font-black text-gray-500 uppercase tracking-widest border-b border-gray-200">
+                                    class="bg-gray-50/80 text-[11px] font-black text-gray-500 dark:text-gray-400 uppercase tracking-widest border-b border-gray-200 dark:border-gray-700">
                                     <tr>
                                         <th class="px-8 py-5 text-left">Week</th>
                                         <th class="px-8 py-5 text-left">Date</th>
@@ -441,7 +441,7 @@
 
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-100 bg-white">
+                                <tbody class="divide-y divide-gray-100 bg-white dark:bg-gray-800">
                                     @forelse($team->reports as $report)
                                         <tr class="hover:bg-blue-50/20 transition-all duration-200 group">
                                             <td class="px-8 py-5">
@@ -449,15 +449,15 @@
                                                     <div
                                                         class="h-8 w-1 bg-blue-500 rounded-full group-hover:h-12 transition-all duration-300">
                                                     </div>
-                                                    <span class="font-black text-gray-700 text-sm">Week
+                                                    <span class="font-black text-gray-700 dark:text-gray-300 text-sm">Week
                                                         #{{ $report->week_number }}</span>
                                                 </div>
                                             </td>
-                                            <td class="px-8 py-5 text-xs font-bold text-gray-500">
+                                            <td class="px-8 py-5 text-xs font-bold text-gray-500 dark:text-gray-400">
                                                 {{ $report->report_date ? \Carbon\Carbon::parse($report->report_date)->format('M d') : '-' }}
                                             </td>
                                             <td class="px-8 py-5">
-                                                <p class="text-xs text-gray-600 w-48 truncate leading-relaxed group-hover:text-blue-900 transition-colors"
+                                                <p class="text-xs text-gray-600 dark:text-gray-400 w-48 truncate leading-relaxed group-hover:text-blue-900 transition-colors"
                                                     title="{{ $report->achievements }}">
                                                     {{ Str::limit($report->achievements, 50) }}
                                                 </p>
@@ -503,7 +503,7 @@
                             <div class="bg-slate-900 rounded-[2.8rem] p-8 relative overflow-hidden h-full">
                                 {{-- Background Effects --}}
                                 <div
-                                    class="absolute -top-10 -left-10 w-48 h-48 bg-[#D4AF37] opacity-10 rounded-full blur-[60px] group-hover:opacity-20 transition-opacity">
+                                    class="absolute -top-10 -left-10 w-48 h-48 bg-[#2596be] opacity-10 rounded-full blur-[60px] group-hover:opacity-20 transition-opacity">
                                 </div>
                                 <div
                                     class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-80">
@@ -515,15 +515,15 @@
 
                                 <div class="relative z-10 text-center">
                                     <h3
-                                        class="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4AF37] mb-8 flex items-center justify-center gap-2">
-                                        <span class="w-2 h-2 rounded-full bg-[#D4AF37] animate-ping"></span> Project
+                                        class="text-[10px] font-black uppercase tracking-[0.4em] text-[#2596be] mb-8 flex items-center justify-center gap-2">
+                                        <span class="w-2 h-2 rounded-full bg-[#2596be] animate-ping"></span> Project
                                         Discussion
                                     </h3>
 
                                     @if ($team->defense_date)
                                         <div class="space-y-6 animate-premium">
                                             <div
-                                                class="inline-block px-6 py-2 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.25)]">
+                                                class="inline-block px-6 py-2 rounded-full bg-[#2596be]/10 border border-[#2596be]/30 text-[#2596be] text-[10px] font-bold uppercase tracking-widest shadow-[0_0_20px_rgba(212,175,55,0.25)]">
                                                 <i class="fas fa-check-circle mr-1"></i> Scheduled & Verified
                                             </div>
 
@@ -541,7 +541,7 @@
                                                 <div
                                                     class="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:border-white/30 transition-colors group/item hover:bg-white/10">
                                                     <i
-                                                        class="far fa-clock mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
+                                                        class="far fa-clock mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#2596be]"></i>
                                                     <span class="text-xs font-mono text-white font-bold">
                                                         {{ \Carbon\Carbon::parse($team->defense_date)->format('h:i A') }}
                                                     </span>
@@ -550,7 +550,7 @@
                                                 <div
                                                     class="bg-white/5 backdrop-blur-md rounded-2xl p-4 border border-white/10 hover:border-white/30 transition-colors group/item hover:bg-white/10">
                                                     <i
-                                                        class="fas fa-map-marker-alt mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#D4AF37]"></i>
+                                                        class="fas fa-map-marker-alt mb-2 text-xl block group-hover/item:scale-110 transition-transform text-[#2596be]"></i>
                                                     <span class="text-[10px] text-white font-black truncate block uppercase">
                                                         {{ $team->defense_location }}
                                                     </span>
@@ -558,7 +558,7 @@
                                             </div>
 
                                             <button onclick="document.getElementById('defenseForm').classList.toggle('hidden')"
-                                                class="mt-6 text-[10px] font-black text-gray-500 hover:text-white uppercase tracking-widest transition-all hover:bg-white/5 py-3 px-4 rounded-xl w-full border border-transparent hover:border-white/10">
+                                                class="mt-6 text-[10px] font-black text-gray-500 dark:text-gray-400 hover:text-white uppercase tracking-widest transition-all hover:bg-white/5 py-3 px-4 rounded-xl w-full border border-transparent hover:border-white/10">
                                                 <i class="fas fa-edit mr-1"></i> Reschedule Event
                                             </button>
                                         </div>
@@ -591,25 +591,25 @@
                                     {{-- Schedule Form --}}
                                     <form id="defenseForm" action="{{ route('staff.team.defense', $team->id) }}"
                                         method="POST" @submit="loading = true"
-                                        class="{{ $team->defense_date ? 'hidden' : '' }} mt-10 pt-10 border-t border-white/5 space-y-5 animate-premium">
+                                        class="{{ $team->defense_date ?'hidden' : '' }} mt-10 pt-10 border-t border-white/5 space-y-5 animate-premium">
                                         @csrf
                                         <div class="text-left">
                                             <label
-                                                class="text-[9px] uppercase text-gray-500 font-black mb-2 block ml-2 tracking-widest">Discussion
+                                                class="text-[9px] uppercase text-gray-500 dark:text-gray-400 font-black mb-2 block ml-2 tracking-widest">Discussion
                                                 Date</label>
                                             <input type="datetime-local" name="defense_date" required
-                                                class="w-full bg-black/40 border border-slate-700 text-white text-xs rounded-xl p-4 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all font-mono hover:bg-black/60 placeholder-gray-600">
+                                                class="w-full bg-black/40 border border-slate-700 text-white text-xs rounded-xl p-4 focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be] outline-none transition-all font-mono hover:bg-black/60 placeholder-gray-600">
                                         </div>
                                         <div class="text-left">
                                             <label
-                                                class="text-[9px] uppercase text-gray-500 font-black mb-2 block ml-2 tracking-widest">Location
+                                                class="text-[9px] uppercase text-gray-500 dark:text-gray-400 font-black mb-2 block ml-2 tracking-widest">Location
                                                 / Hall</label>
                                             <input type="text" name="defense_location" placeholder="ex: Main Hall, Room 303"
                                                 required
-                                                class="w-full bg-black/40 border border-slate-700 text-white text-xs rounded-xl p-4 focus:ring-2 focus:ring-[#D4AF37] focus:border-[#D4AF37] outline-none transition-all hover:bg-black/60 placeholder-gray-600">
+                                                class="w-full bg-black/40 border border-slate-700 text-white text-xs rounded-xl p-4 focus:ring-2 focus:ring-[#2596be] focus:border-[#2596be] outline-none transition-all hover:bg-black/60 placeholder-gray-600">
                                         </div>
                                         <button type="submit"
-                                            class="w-full bg-gradient-to-r from-[#D4AF37] via-[#fcf6ba] to-[#b38728] text-slate-900 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl transform hover:scale-[1.03] active:scale-95 transition-all hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]">
+                                            class="w-full bg-gradient-to-r from-[#2596be] via-[#fcf6ba] to-[#b38728] text-slate-900 py-4 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-2xl transform hover:scale-[1.03] active:scale-95 transition-all hover:shadow-[0_0_20px_rgba(212,175,55,0.4)]">
                                             Confirm Schedule
                                         </button>
                                     </form>
@@ -663,19 +663,19 @@
                         @endphp
 
                         <div
-                            class="glass-card rounded-[2.5rem] p-8 border-l-4 border-blue-500 bg-white shadow-sm hover:shadow-md transition-shadow">
+                            class="glass-card rounded-[2.5rem] p-8 border-l-4 border-blue-500 bg-white dark:bg-gray-800 shadow-sm hover:shadow-md transition-shadow">
                             <h4
-                                class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-100 pb-2">
+                                class="text-xs font-black text-gray-400 uppercase tracking-widest mb-6 border-b border-gray-100 dark:border-gray-700 pb-2">
                                 Execution Metrics</h4>
 
                             <div class="space-y-8">
                                 {{-- Reliability Meter --}}
                                 <div>
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-xs font-bold text-gray-600">Team Reliability</span>
+                                        <span class="text-xs font-bold text-gray-600 dark:text-gray-400">Team Reliability</span>
                                         <span class="text-xs font-black {{ $reliabilityColor }}">{{ $reliability }}%</span>
                                     </div>
-                                    <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                                    <div class="w-full bg-gray-100 dark:bg-gray-900 h-2 rounded-full overflow-hidden">
                                         <div class="bg-gradient-to-r {{ $reliabilityBarColor }} h-full shadow-lg transition-all duration-1000 ease-out"
                                             style="width: {{ $reliability }}%"></div>
                                     </div>
@@ -685,10 +685,10 @@
                                 {{-- Completion Meter --}}
                                 <div>
                                     <div class="flex justify-between items-center mb-2">
-                                        <span class="text-xs font-bold text-gray-600">Phase Completion</span>
+                                        <span class="text-xs font-bold text-gray-600 dark:text-gray-400">Phase Completion</span>
                                         <span class="text-xs font-black text-blue-600">{{ $completion }}%</span>
                                     </div>
-                                    <div class="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                                    <div class="w-full bg-gray-100 dark:bg-gray-900 h-2 rounded-full overflow-hidden">
                                         <div class="bg-gradient-to-r from-blue-500 to-indigo-500 h-full shadow-lg shadow-blue-200 transition-all duration-1000 ease-out"
                                             style="width: {{ $completion }}%"></div>
                                     </div>
@@ -716,7 +716,7 @@
 
                 {{-- 3.A: Meetings List --}}
                 <div class="space-y-8">
-                    <div class="flex justify-between items-end border-b border-gray-200 pb-4">
+                    <div class="flex justify-between items-end border-b border-gray-200 dark:border-gray-700 pb-4">
                         <div>
                             <h3 class="text-3xl font-black text-slate-900 flex items-center gap-4 tracking-tight">
                                 <span
@@ -799,14 +799,14 @@
                                                 <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-2">Secure
                                                     Meeting URL (Zoom/Teams)</label>
                                                 <input type="url" name="meeting_link" placeholder="https://..." required
-                                                    class="w-full bg-white border border-slate-200 rounded-xl p-4 text-xs focus:ring-4 focus:ring-orange-100 focus:border-orange-400 outline-none transition-all shadow-sm group-hover/input:border-orange-300">
+                                                    class="w-full bg-white dark:bg-gray-800 border border-slate-200 rounded-xl p-4 text-xs focus:ring-4 focus:ring-orange-100 focus:border-orange-400 outline-none transition-all shadow-sm group-hover/input:border-orange-300">
                                             </div>
                                         @else
                                             <div class="relative group/input">
                                                 <label class="text-[10px] font-black text-slate-400 uppercase mb-2 block ml-2">On-Site
                                                     Logistics (Room/Hall)</label>
                                                 <input type="text" name="location" placeholder="e.g. Executive Suite 402" required
-                                                    class="w-full bg-white border border-slate-200 rounded-xl p-4 text-xs focus:ring-4 focus:ring-orange-100 focus:border-orange-400 outline-none transition-all shadow-sm group-hover/input:border-orange-300">
+                                                    class="w-full bg-white dark:bg-gray-800 border border-slate-200 rounded-xl p-4 text-xs focus:ring-4 focus:ring-orange-100 focus:border-orange-400 outline-none transition-all shadow-sm group-hover/input:border-orange-300">
                                             </div>
                                         @endif
 
@@ -816,7 +816,7 @@
                                                 <i class="fas fa-check"></i> Authorize
                                             </button>
                                             <button type="submit" name="status" value="rejected" formnovalidate
-                                                class="flex-1 bg-white border border-red-100 text-red-500 hover:bg-red-50 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2">
+                                                class="flex-1 bg-white dark:bg-gray-800 border border-red-100 text-red-500 hover:bg-red-50 py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all flex items-center justify-center gap-2">
                                                 <i class="fas fa-times"></i> Decline
                                             </button>
                                         </div>
@@ -884,7 +884,7 @@
                                                             {{ $member->user->name }}
                                                             @if($member->auto_group)
                                                                 <span
-                                                                    class="text-[8px] px-1.5 py-0.5 rounded border {{ $member->auto_group == 'A' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200' }}">
+                                                                    class="text-[8px] px-1.5 py-0.5 rounded border {{ $member->auto_group =='A' ? 'bg-blue-50 text-blue-600 border-blue-200' : 'bg-purple-50 text-purple-600 border-purple-200' }}">
                                                                     Grp {{ $member->auto_group }}
                                                                 </span>
                                                             @endif
@@ -909,7 +909,7 @@
                                         </div>
 
                                         <button type="submit"
-                                            class="w-full bg-white border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl hover:shadow-emerald-200 flex items-center justify-center gap-3 group/submit">
+                                            class="w-full bg-white dark:bg-gray-800 border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white py-4 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all shadow-xl hover:shadow-emerald-200 flex items-center justify-center gap-3 group/submit">
                                             <i class="fas fa-shield-check group-hover/submit:scale-110 transition-transform"></i>
                                             Finalize & Synchronize Records
                                         </button>
@@ -935,7 +935,7 @@
                 <div class="space-y-8" id="artifacts-section">
                     <div class="flex items-center gap-4 mb-2">
                         <span
-                            class="w-12 h-12 rounded-2xl bg-[#D4AF37] text-slate-900 flex items-center justify-center shadow-xl shadow-yellow-200/50">
+                            class="w-12 h-12 rounded-2xl bg-[#2596be] text-slate-900 flex items-center justify-center shadow-xl shadow-yellow-200/50">
                             <i class="fas fa-gem text-xl"></i>
                         </span>
                         <h3 class="text-3xl font-black text-slate-900 tracking-tight">Project Artifacts</h3>
@@ -944,7 +944,7 @@
                     @if ($team->final_book_file || $team->presentation_file || $team->defense_video_link)
                         <div
                             class="glass-card rounded-[3rem] p-2 bg-gradient-to-br from-white to-gray-50 animate-premium delay-300 shadow-2xl ring-1 ring-slate-900/5">
-                            <div class="bg-white rounded-[2.8rem] overflow-hidden relative">
+                            <div class="bg-white dark:bg-gray-800 rounded-[2.8rem] overflow-hidden relative">
                                 <div class="bg-slate-900 px-10 py-12 relative overflow-hidden">
                                     <div class="absolute top-0 right-0 p-4 opacity-10 rotate-12">
                                         <i class="fas fa-graduation-cap text-9xl text-white"></i>
@@ -962,7 +962,7 @@
                                         </div>
                                         @if ($team->is_fully_submitted)
                                             <div
-                                                class="bg-[#D4AF37]/20 text-[#D4AF37] border border-[#D4AF37]/30 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest backdrop-blur-md shadow-2xl animate-pulse">
+                                                class="bg-[#2596be]/20 text-[#2596be] border border-[#2596be]/30 px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest backdrop-blur-md shadow-2xl animate-pulse">
                                                 <i class="fas fa-lock-alt mr-2"></i> Integrity Sealed
                                             </div>
                                         @endif
@@ -977,7 +977,7 @@
                                             class="group flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-emerald-100 transition-all duration-500 hover:-translate-y-1">
                                             <div class="flex items-center gap-6">
                                                 <div
-                                                    class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-emerald-600 text-3xl shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform">
+                                                    class="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-emerald-600 text-3xl shadow-sm group-hover:scale-110 group-hover:rotate-6 transition-transform">
                                                     <i class="fas fa-book"></i>
                                                 </div>
                                                 <div>
@@ -1003,7 +1003,7 @@
                                             class="group flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-orange-100 transition-all duration-500 hover:-translate-y-1">
                                             <div class="flex items-center gap-6">
                                                 <div
-                                                    class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-orange-600 text-3xl shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform">
+                                                    class="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-orange-600 text-3xl shadow-sm group-hover:scale-110 group-hover:-rotate-6 transition-transform">
                                                     <i class="fas fa-presentation-screen"></i>
                                                 </div>
                                                 <div>
@@ -1028,7 +1028,7 @@
                                             class="group flex items-center justify-between p-6 bg-slate-50 rounded-3xl border border-slate-100 hover:bg-white hover:shadow-2xl hover:shadow-red-100 transition-all duration-500 hover:-translate-y-1">
                                             <div class="flex items-center gap-6">
                                                 <div
-                                                    class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center text-red-600 text-3xl shadow-sm group-hover:scale-110 transition-transform">
+                                                    class="w-16 h-16 bg-white dark:bg-gray-800 rounded-2xl flex items-center justify-center text-red-600 text-3xl shadow-sm group-hover:scale-110 transition-transform">
                                                     <i class="fab fa-youtube"></i>
                                                 </div>
                                                 <div>
@@ -1053,7 +1053,7 @@
                         <div
                             class="glass-card rounded-[3rem] p-20 text-center border-2 border-dashed border-slate-300 hover:border-slate-400 transition-colors">
                             <div
-                                class="w-24 h-24 bg-white rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-slate-200">
+                                class="w-24 h-24 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-8 shadow-xl text-slate-200">
                                 <i class="fas fa-treasure-chest text-5xl"></i>
                             </div>
                             <h4 class="text-slate-800 font-black text-2xl mb-3 tracking-tighter">Vault is Empty</h4>
@@ -1065,13 +1065,13 @@
 
                     {{-- 🏆 PROJECT GRADING CARD --}}
                     <div
-                        class="bg-white rounded-[2.5rem] shadow-xl p-8 relative overflow-hidden border border-gray-100 mt-6 transform hover:scale-[1.02] transition-transform duration-300 ring-4 ring-purple-500/5">
+                        class="bg-white dark:bg-gray-800 rounded-[2.5rem] shadow-xl p-8 relative overflow-hidden border border-gray-100 dark:border-gray-700 mt-6 transform hover:scale-[1.02] transition-transform duration-300 ring-4 ring-purple-500/5">
                         <div class="absolute top-0 right-0 p-4 opacity-5 pointer-events-none">
                             <i class="fas fa-award text-8xl text-purple-600"></i>
                         </div>
 
                         <h3
-                            class="text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-3 text-gray-800 border-b border-gray-100 pb-3">
+                            class="text-sm font-bold uppercase tracking-widest mb-6 flex items-center gap-3 text-gray-800 dark:text-gray-200 border-b border-gray-100 dark:border-gray-700 pb-3">
                             <i class="fas fa-award text-purple-600 text-lg"></i> Final Evaluation
                         </h3>
 
@@ -1105,7 +1105,7 @@
 
                                 <div class="flex items-end justify-center gap-1 mb-2">
                                     <span
-                                        class="text-6xl font-black text-gray-800 tracking-tighter">{{ $team->project_score }}</span>
+                                        class="text-6xl font-black text-gray-800 dark:text-gray-200 tracking-tighter">{{ $team->project_score }}</span>
                                     <span class="text-gray-400 text-lg font-bold mb-2">/
                                         {{ $team->project_max_score }}</span>
                                 </div>
@@ -1142,23 +1142,23 @@
                         @endif
 
                         <form id="gradingForm" action="{{ route('staff.team.grade', $team->id) }}" method="POST"
-                            class="{{ $team->project_score ? 'hidden' : 'hidden' }} mt-4 pt-4 border-t border-gray-100 animate-premium bg-gray-50/50 p-6 rounded-2xl"
+                            class="{{ $team->project_score ?'hidden' : 'hidden' }} mt-4 pt-4 border-t border-gray-100 animate-premium bg-gray-50/50 p-6 rounded-2xl"
                             @submit="loading = true">
                             @csrf
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <div>
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Score
+                                    <label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase block mb-1">Score
                                         Obtained</label>
                                     <input type="number" step="0.5" name="project_score" placeholder="e.g. 120" required
                                         value="{{ $team->project_score }}"
-                                        class="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm focus:ring-purple-500 focus:border-purple-500 font-bold text-gray-700 outline-none shadow-sm">
+                                        class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl p-3 text-sm focus:ring-purple-500 focus:border-purple-500 font-bold text-gray-700 dark:text-gray-300 outline-none shadow-sm">
                                 </div>
                                 <div>
-                                    <label class="text-[10px] font-bold text-gray-500 uppercase block mb-1">Max
+                                    <label class="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase block mb-1">Max
                                         Score</label>
                                     <input type="number" step="1" name="project_max_score" placeholder="e.g. 150" required
                                         value="{{ $team->project_max_score ?? 100 }}"
-                                        class="w-full bg-white border border-gray-300 rounded-xl p-3 text-sm focus:ring-purple-500 focus:border-purple-500 font-bold text-gray-500 outline-none shadow-sm">
+                                        class="w-full bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-xl p-3 text-sm focus:ring-purple-500 focus:border-purple-500 font-bold text-gray-500 dark:text-gray-400 outline-none shadow-sm">
                                 </div>
                             </div>
 

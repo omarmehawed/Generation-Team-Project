@@ -7,42 +7,7 @@
     {{-- دي اللي بتعمل الحركات الناعمة أول ما الصفحة تفتح --}}
     {{-- ========================================== --}}
     <style>
-        /* =========================================
-                                           1. شاشة التحميل (Preloader) - مقتبس من Graduation
-                                           ========================================= */
-        #royal-preloader {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f0f0f;
-            /* لون الخلفية الغامق */
-            z-index: 99999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
-        }
 
-        /* الدائرة الذهبية */
-        .loader-spinner {
-            width: 60px;
-            height: 60px;
-            border: 3px solid rgba(212, 175, 55, 0.3);
-            border-radius: 50%;
-            border-top-color: #D4AF37;
-            animation: spin 1s ease-in-out infinite;
-            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
-        }
-
-        /* حركة الدوران */
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
 
         /* النص الذهبي اللامع */
         .text-gold-gradient {
@@ -125,27 +90,19 @@
             pointer-events: none;
         }
     </style>
-    {{-- 🔥 شاشة التحميل (Preloader) 🔥 --}}
-    <div id="royal-preloader">
-        <div class="loader-spinner mb-4"></div>
-        <h2 class="text-gold-gradient text-xl tracking-[0.3em] font-bold uppercase animate-pulse">
-            Loading Subject Project <br>
-            Devloped by Omar Mehawed
-            <span style="font-size: 0.8em; opacity: 0.8;">Please Wait...</span>
-        </h2>
-    </div>
+
 
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 min-h-screen">
 
         {{-- 🧭 2. شريط التنقل (Breadcrumb) --}}
         {{-- ده عشان يعرف الطالب هو واقف فين في الموقع --}}
-        <nav class="flex mb-6 text-gray-500 text-sm font-medium fade-in-up" aria-label="Breadcrumb">
+        <nav class="flex mb-6 text-gray-500 dark:text-gray-400 text-sm font-medium fade-in-up" aria-label="Breadcrumb">
             <ol class="inline-flex items-center space-x-2">
                 <li class="inline-flex items-center">
                     <a href="{{ route('projects.index') }}"
                         class="hover:text-[#266963] transition-colors flex items-center gap-2">
-                        <div class="p-1 bg-white rounded-md shadow-sm"><i class="fas fa-home"></i></div> Projects
+                        <div class="p-1 bg-white dark:bg-gray-800 rounded-md shadow-sm"><i class="fas fa-home"></i></div> Projects
                     </a>
                 </li>
                 <li><i class="fas fa-chevron-right text-gray-300 text-xs"></i></li>
@@ -163,7 +120,7 @@
             class="relative bg-gradient-to-br from-[#1A4D48] to-[#266963] rounded-[2rem] shadow-xl overflow-hidden mb-10 text-white fade-in-up delay-100">
             {{-- شوية دوائر وزخارف في الخلفية --}}
             <div
-                class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
+                class="absolute top-0 right-0 w-64 h-64 bg-white dark:bg-gray-800 opacity-5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none">
             </div>
             <div
                 class="absolute bottom-0 left-0 w-40 h-40 bg-yellow-400 opacity-10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none">
@@ -268,7 +225,7 @@
 
                 {{-- كارت الإنشاء --}}
                 <div
-                    class="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-xl hover-scale group cursor-pointer relative overflow-hidden text-center">
+                    class="bg-white dark:bg-gray-800 p-10 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-xl hover-scale group cursor-pointer relative overflow-hidden text-center">
                     <div
                         class="absolute top-0 right-0 bg-[#266963]/5 w-40 h-40 rounded-bl-full -mr-0 -mt-0 transition-all group-hover:bg-[#266963]/10">
                     </div>
@@ -278,8 +235,8 @@
                         <i class="fas fa-rocket text-4xl text-white"></i>
                     </div>
 
-                    <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Create New Team</h3>
-                    <p class="text-gray-500 mb-8 text-sm">Lead the way! Form your squad and start the journey.</p>
+                    <h3 class="text-2xl font-extrabold text-gray-800 dark:text-gray-200 mb-2">Create New Team</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-8 text-sm">Lead the way! Form your squad and start the journey.</p>
 
                     {{-- زرار يفتح مودال الإنشاء --}}
                     <button onclick="openModal('createTeamModal')"
@@ -290,7 +247,7 @@
 
                 {{-- كارت الانضمام --}}
                 <div
-                    class="bg-white p-10 rounded-[2rem] border border-gray-100 shadow-xl hover-scale group cursor-pointer relative overflow-hidden text-center">
+                    class="bg-white dark:bg-gray-800 p-10 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-xl hover-scale group cursor-pointer relative overflow-hidden text-center">
                     <div
                         class="absolute top-0 left-0 bg-blue-50 w-40 h-40 rounded-br-full -ml-0 -mt-0 transition-all group-hover:bg-blue-100">
                     </div>
@@ -300,8 +257,8 @@
                         <i class="fas fa-handshake text-4xl text-white"></i>
                     </div>
 
-                    <h3 class="text-2xl font-extrabold text-gray-800 mb-2">Join Existing Team</h3>
-                    <p class="text-gray-500 mb-8 text-sm">Have a code? Enter it and collaborate instantly.</p>
+                    <h3 class="text-2xl font-extrabold text-gray-800 dark:text-gray-200 mb-2">Join Existing Team</h3>
+                    <p class="text-gray-500 dark:text-gray-400 mb-8 text-sm">Have a code? Enter it and collaborate instantly.</p>
 
                     {{-- زرار يفتح مودال الانضمام --}}
                     <button onclick="openModal('joinTeamModal')"
@@ -320,25 +277,25 @@
 
                     {{-- كارت معلومات التيم والكود --}}
                     <div
-                        class="bg-white rounded-[2rem] border border-gray-100 shadow-lg p-6 text-center relative overflow-hidden group">
+                        class="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-lg p-6 text-center relative overflow-hidden group">
                         {{-- خط ملون فوق --}}
                         <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-[#266963] to-green-400"></div>
 
                         <div
                             class="w-24 h-24 bg-gradient-to-br from-[#266963] to-green-600 rounded-full p-1 mx-auto mb-4 shadow-xl group-hover:scale-105 transition-transform">
-                            <div class="w-full h-full bg-white rounded-full flex items-center justify-center">
+                            <div class="w-full h-full bg-white dark:bg-gray-800 rounded-full flex items-center justify-center">
                                 <i class="fas fa-users text-4xl text-[#266963]"></i>
                             </div>
                         </div>
-                        <h2 class="text-2xl font-extrabold text-gray-800 mb-1">{{ $myTeam->name }}</h2>
+                        <h2 class="text-2xl font-extrabold text-gray-800 dark:text-gray-200 mb-1">{{ $myTeam->name }}</h2>
                         <span class="text-[10px] text-gray-400 font-bold tracking-widest uppercase">Team Name</span>
 
                         <div
-                            class="bg-gray-50 rounded-2xl p-4 border-2 border-dashed border-gray-200 mt-6 group hover:border-[#266963] transition-colors relative">
+                            class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 border-2 border-dashed border-gray-200 dark:border-gray-700 mt-6 group hover:border-[#266963] transition-colors relative">
                             <p class="text-[10px] text-gray-400 uppercase font-bold mb-1">Access Code</p>
                             <div class="flex items-center justify-center gap-3">
                                 <span
-                                    class="text-3xl font-mono font-bold text-gray-800 tracking-widest select-all">{{ $myTeam->code }}</span>
+                                    class="text-3xl font-mono font-bold text-gray-800 dark:text-gray-200 tracking-widest select-all">{{ $myTeam->code }}</span>
                                 <button onclick="navigator.clipboard.writeText('{{ $myTeam->code }}'); alert('Code Copied!')"
                                     class="text-gray-400 hover:text-[#266963] transition-colors p-2 rounded-full hover:bg-white hover:shadow-sm">
                                     <i class="far fa-copy text-lg"></i>
@@ -348,18 +305,18 @@
                     </div>
 
                     {{-- كارت دوري في التيم (My Role) --}}
-                    <div class="bg-white rounded-[2rem] border border-gray-100 shadow-lg p-6">
+                    <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-lg p-6">
                         <h3 class="text-xs font-bold text-gray-400 uppercase mb-4 tracking-wider border-b pb-2">My Role &
                             Actions</h3>
                         @php $myRole = $myTeam->members->where('user_id', auth()->id())->first()->role; @endphp
 
-                        <div class="flex justify-between items-center mb-6 bg-gray-50 p-3 rounded-xl">
+                        <div class="flex justify-between items-center mb-6 bg-gray-50 dark:bg-gray-900 p-3 rounded-xl">
                             <div class="flex items-center gap-3">
                                 <div
-                                    class="w-10 h-10 rounded-full flex items-center justify-center {{ $myRole == 'leader' ? 'bg-yellow-100 text-yellow-600' : 'bg-blue-100 text-blue-600' }}">
-                                    <i class="fas {{ $myRole == 'leader' ? 'fa-crown' : 'fa-user' }}"></i>
+                                    class="w-10 h-10 rounded-full flex items-center justify-center {{ $myRole =='leader' ? 'bg-yellow-100 text-yellow-600' : 'bg-blue-100 text-blue-600' }}">
+                                    <i class="fas {{ $myRole =='leader' ? 'fa-crown' : 'fa-user' }}"></i>
                                 </div>
-                                <span class="font-bold text-gray-700 capitalize text-sm">{{ ucfirst($myRole) }}</span>
+                                <span class="font-bold text-gray-700 dark:text-gray-300 capitalize text-sm">{{ ucfirst($myRole) }}</span>
                             </div>
                             @if($myRole == 'leader')
                                 <span
@@ -384,7 +341,7 @@
 
                                     {{-- خلفية ديكور --}}
                                     <div
-                                        class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10 blur-2xl group-hover:opacity-20 transition">
+                                        class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white dark:bg-gray-800 opacity-10 blur-2xl group-hover:opacity-20 transition">
                                     </div>
 
                                     <div class="relative z-10 text-center">
@@ -416,12 +373,12 @@
                             @else
                                 {{-- ⏳ لم يتم التحديد --}}
                                 <div
-                                    class="rounded-[2rem] border-2 border-dashed border-gray-200 bg-white p-6 text-center group hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300 mt-6">
+                                    class="rounded-[2rem] border-2 border-dashed border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-6 text-center group hover:border-indigo-300 hover:bg-indigo-50/30 transition-all duration-300 mt-6">
                                     <div
-                                        class="w-12 h-12 bg-gray-50 rounded-xl shadow-sm flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                                        class="w-12 h-12 bg-gray-50 dark:bg-gray-900 rounded-xl shadow-sm flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
                                         <i class="fas fa-hourglass-half text-indigo-300 text-xl animate-pulse"></i>
                                     </div>
-                                    <h4 class="text-gray-800 font-bold text-sm">Schedule Pending</h4>
+                                    <h4 class="text-gray-800 dark:text-gray-200 font-bold text-sm">Schedule Pending</h4>
                                     <p class="text-gray-400 text-[10px] mt-1">
                                         Defense date not set yet.
                                     </p>
@@ -435,10 +392,10 @@
                 <div class="lg:col-span-2 space-y-8">
 
                     {{-- 6. جدول الأعضاء --}}
-                    <div class="bg-white rounded-[2rem] border border-gray-100 shadow-lg overflow-hidden hover-scale">
+                    <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-lg overflow-hidden hover-scale">
                         <div
-                            class="px-8 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 backdrop-blur-sm">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-3">
+                            class="px-8 py-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 backdrop-blur-sm">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-3">
                                 <div class="p-2 bg-[#266963]/10 rounded-lg text-[#266963]"><i class="fas fa-users-cog"></i>
                                 </div>
                                 Team Members
@@ -453,8 +410,8 @@
                             @endif
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm text-left text-gray-500">
-                                <thead class="text-xs text-gray-400 uppercase bg-gray-50 border-b">
+                            <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+                                <thead class="text-xs text-gray-400 uppercase bg-gray-50 dark:bg-gray-900 border-b">
                                     <tr>
                                         <th class="px-8 py-4">Student</th>
                                         <th class="px-8 py-4">Role</th>
@@ -463,9 +420,9 @@
                                 </thead>
                                 <tbody class="divide-y divide-gray-50">
                                     @foreach($myTeam->members as $member)
-                                        <tr class="bg-white hover:bg-gray-50/80 transition-colors">
+                                        <tr class="bg-white dark:bg-gray-800 hover:bg-gray-50/80 transition-colors">
                                             <td
-                                                class="px-8 py-4 font-medium text-gray-900 whitespace-nowrap flex items-center gap-4">
+                                                class="px-8 py-4 font-medium text-gray-900 dark:text-gray-100 whitespace-nowrap flex items-center gap-4">
                                                 <img class="w-10 h-10 rounded-full border-2 border-white shadow-sm"
                                                     src="https://ui-avatars.com/api/?name={{ $member->user->name }}&background=random&color=fff">
                                                 <div>
@@ -505,7 +462,7 @@
                                                     @if($member->user_id != auth()->id())
                                                         <button
                                                             onclick="openReportModal('{{ $member->user_id }}', '{{ $member->user->name }}')"
-                                                            class="w-8 h-8 rounded-full bg-gray-50 text-gray-400 hover:bg-gray-800 hover:text-white transition flex items-center justify-center shadow-sm"
+                                                            class="w-8 h-8 rounded-full bg-gray-50 dark:bg-gray-900 text-gray-400 hover:bg-gray-800 hover:text-white transition flex items-center justify-center shadow-sm"
                                                             title="Report">
                                                             <i class="fas fa-flag text-xs"></i>
                                                         </button>
@@ -520,10 +477,10 @@
                     </div>
 
                     {{-- 7. قسم التاسكات --}}
-                    <div class="bg-white rounded-[2rem] border border-gray-100 shadow-lg overflow-hidden hover-scale">
+                    <div class="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-lg overflow-hidden hover-scale">
                         <div
-                            class="px-8 py-5 border-b border-gray-100 flex justify-between items-center bg-gray-50/50 backdrop-blur-sm">
-                            <h3 class="font-bold text-gray-800 flex items-center gap-3">
+                            class="px-8 py-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-gray-50/50 backdrop-blur-sm">
+                            <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-3">
                                 <div class="p-2 bg-orange-100 rounded-lg text-orange-500"><i class="fas fa-tasks"></i></div>
                                 Project Tasks
                             </h3>
@@ -537,18 +494,18 @@
                                         class="absolute -inset-0.5 bg-gradient-to-r from-[#266963] to-green-400 rounded-2xl opacity-20 group-hover:opacity-40 transition duration-1000 group-hover:duration-200 animate-tilt">
                                     </div>
                                     <div
-                                        class="relative flex flex-col md:flex-row gap-3 bg-white p-4 rounded-xl items-center border border-gray-100">
+                                        class="relative flex flex-col md:flex-row gap-3 bg-white dark:bg-gray-800 p-4 rounded-xl items-center border border-gray-100 dark:border-gray-700">
                                         @csrf
                                         <input type="hidden" name="team_id" value="{{ $myTeam->id }}">
                                         <div class="flex-1 w-full">
                                             <input type="text" name="title" placeholder="✍️ Add a new task..." required
-                                                class="w-full bg-gray-50 border-0 rounded-xl text-gray-900 text-sm focus:ring-2 focus:ring-[#266963] transition-all p-3 shadow-inner">
+                                                class="w-full bg-gray-50 dark:bg-gray-900 border-0 rounded-xl text-gray-900 dark:text-gray-100 text-sm focus:ring-2 focus:ring-[#266963] transition-all p-3 shadow-inner">
                                         </div>
                                         <div class="flex gap-2 w-full md:w-auto">
                                             <input type="date" name="deadline"
-                                                class="bg-gray-50 border-0 rounded-xl text-sm text-gray-600 focus:ring-[#266963]">
+                                                class="bg-gray-50 dark:bg-gray-900 border-0 rounded-xl text-sm text-gray-600 dark:text-gray-400 focus:ring-[#266963]">
                                             <select name="user_id"
-                                                class="bg-gray-50 border-0 rounded-xl text-sm focus:ring-[#266963] w-32">
+                                                class="bg-gray-50 dark:bg-gray-900 border-0 rounded-xl text-sm focus:ring-[#266963] w-32">
                                                 @foreach($myTeam->members as $member)
                                                     <option value="{{ $member->user->id }}">
                                                         {{ \Illuminate\Support\Str::limit($member->user->name, 10) }}
@@ -598,29 +555,29 @@
                                                                 </div>
                                                             @else
                                                                 <div
-                                                                    class="w-8 h-8 rounded-full border-2 border-gray-200 text-gray-300 flex items-center justify-center">
+                                                                    class="w-8 h-8 rounded-full border-2 border-gray-200 dark:border-gray-700 text-gray-300 flex items-center justify-center">
                                                                     <i class="fas fa-circle text-[8px]"></i>
                                                                 </div>
                                                             @endif
                                                         </div>
 
                                                         <div>
-                                                            <p class="font-bold text-gray-800 text-base flex items-center gap-2">
+                                                            <p class="font-bold text-gray-800 dark:text-gray-200 text-base flex items-center gap-2">
                                                                 {{ $task->title }}
                                                                 @if($isOverdue) <span
                                                                     class="bg-red-100 text-red-600 text-[9px] px-2 py-0.5 rounded-md font-black tracking-wider border border-red-200">OVERDUE</span>
                                                                 @endif
                                                             </p>
-                                                            <div class="flex flex-wrap items-center gap-4 mt-2 text-xs text-gray-500">
+                                                            <div class="flex flex-wrap items-center gap-4 mt-2 text-xs text-gray-500 dark:text-gray-400">
                                                                 <div
-                                                                    class="flex items-center gap-1.5 bg-white px-2 py-1 rounded-md border border-gray-100 shadow-sm">
+                                                                    class="flex items-center gap-1.5 bg-white dark:bg-gray-800 px-2 py-1 rounded-md border border-gray-100 dark:border-gray-700 shadow-sm">
                                                                     <img class="w-4 h-4 rounded-full"
                                                                         src="https://ui-avatars.com/api/?name={{ $task->user->name }}&background=random">
                                                                     <span class="font-bold">{{ $task->user->name }}</span>
                                                                 </div>
                                                                 @if($task->deadline)
                                                                     <span
-                                                                        class="flex items-center gap-1 {{ $isOverdue ? 'text-red-500 font-bold' : '' }}">
+                                                                        class="flex items-center gap-1 {{ $isOverdue ?'text-red-500 font-bold' : '' }}">
                                                                         <i class="far fa-clock"></i>
                                                                         {{ \Carbon\Carbon::parse($task->deadline)->format('M d') }}
                                                                     </span>
@@ -636,12 +593,12 @@
 
                                                             <a href="{{ $task->submission_type == 'link' ? $task->submission_value : $task->submission_file }}"
                                                                 target="_blank"
-                                                                class="w-8 h-8 rounded-full bg-white border border-gray-200 text-[#266963] flex items-center justify-center hover:bg-[#266963] hover:text-white transition shadow-sm"
+                                                                class="w-8 h-8 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-[#266963] flex items-center justify-center hover:bg-[#266963] hover:text-white transition shadow-sm"
                                                                 title="{{ $task->submission_type == 'link' ? 'Open Link' : 'Download File' }}">
 
                                                                 {{-- تغيير الأيقونة حسب النوع --}}
                                                                 <i
-                                                                    class="{{ $task->submission_type == 'link' ? 'fas fa-link' : 'fas fa-file-download' }}"></i>
+                                                                    class="{{ $task->submission_type =='link' ? 'fas fa-link' : 'fas fa-file-download' }}"></i>
                                                             </a>
 
                                                         @endif
@@ -659,7 +616,7 @@
                                                         {{-- زر التسليم --}}
                                                         @if((auth()->id() == $task->user_id || $myRole == 'leader') && ($task->status == 'pending' || $task->status == 'rejected'))
                                                             <button onclick="openSubmitModal('{{ $task->id }}', '{{ $task->title }}')"
-                                                                class="px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md transition-transform hover:-translate-y-0.5 {{ $isOverdue ? 'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-700' }}">
+                                                                class="px-4 py-2 rounded-lg text-xs font-bold text-white shadow-md transition-transform hover:-translate-y-0.5 {{ $isOverdue ?'bg-red-500 hover:bg-red-600' : 'bg-blue-600 hover:bg-blue-700' }}">
                                                                 {{ $isOverdue ? 'Submit Late' : ($task->status == 'rejected' ? 'Resubmit' : 'Submit') }}
                                                             </button>
                                                         @endif
@@ -679,10 +636,10 @@
                                 @empty
                                     <div class="text-center py-12">
                                         <div
-                                            class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                            class="w-16 h-16 bg-gray-100 dark:bg-gray-900 rounded-full flex items-center justify-center mx-auto mb-4">
                                             <i class="fas fa-clipboard-list text-gray-300 text-3xl"></i>
                                         </div>
-                                        <p class="text-gray-500 font-medium">No tasks yet.</p>
+                                        <p class="text-gray-500 dark:text-gray-400 font-medium">No tasks yet.</p>
                                         <p class="text-gray-400 text-xs">Start by assigning work to your team.</p>
                                     </div>
                                 @endforelse
@@ -693,19 +650,19 @@
                     {{-- 8. كارت التسليم النهائي --}}
                     @if(isset($myTeam) && $myTeam)
                         <div
-                            class="bg-white rounded-[2rem] border border-gray-100 shadow-xl p-8 relative overflow-hidden group hover-scale">
+                            class="bg-white dark:bg-gray-800 rounded-[2rem] border border-gray-100 dark:border-gray-700 shadow-xl p-8 relative overflow-hidden group hover-scale">
                             <div
                                 class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-gray-100 to-gray-50 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
                             </div>
 
-                            <h3 class="text-sm font-extrabold text-gray-900 uppercase mb-6 flex items-center gap-2 relative z-10">
+                            <h3 class="text-sm font-extrabold text-gray-900 dark:text-gray-100 uppercase mb-6 flex items-center gap-2 relative z-10">
                                 <span class="w-2 h-6 bg-[#266963] rounded-full"></span> Final Submission
                             </h3>
 
                             @if($myTeam && ($myTeam->status == 'submitted' || $myTeam->status == 'graded'))
                                 <div class="text-center py-6 bg-green-50/50 rounded-2xl border border-green-100 relative z-10">
                                     <div
-                                        class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-bounce">
+                                        class="w-20 h-20 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg animate-bounce">
                                         <i class="fas fa-check-circle text-green-500 text-4xl"></i>
                                     </div>
                                     <h4 class="text-green-800 font-bold text-2xl mb-1">Project Submitted!</h4>
@@ -719,14 +676,14 @@
                                         @endif
                                         @if($myTeam->submission_path)
                                             <a href="{{ $myTeam->submission_path }}" target="_blank"
-                                                class="px-5 py-2.5 bg-white text-[#266963] border border-[#266963] rounded-xl text-sm font-bold hover:bg-[#266963] hover:text-white transition shadow-lg"><i
+                                                class="px-5 py-2.5 bg-white dark:bg-gray-800 text-[#266963] border border-[#266963] rounded-xl text-sm font-bold hover:bg-[#266963] hover:text-white transition shadow-lg"><i
                                                     class="fas fa-download mr-2"></i> File</a>
                                         @endif
                                     </div>
 
                                     @if($myTeam->grade)
                                         <div class="mt-8 pt-6 border-t border-dashed border-green-200">
-                                            <p class="text-xs text-gray-500 font-bold uppercase tracking-widest">Final Grade</p>
+                                            <p class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-widest">Final Grade</p>
                                             <div class="flex justify-center items-end gap-1 mt-2">
                                                 <span class="text-5xl font-black text-[#266963]">{{ $myTeam->grade }}</span>
                                                 <span class="text-xl text-gray-400 font-medium mb-2">/ 100</span>
@@ -753,33 +710,33 @@
                                             <label class="cursor-pointer">
                                                 <input type="radio" name="submission_type" value="link" class="peer hidden" x-model="type">
                                                 <div
-                                                    class="p-4 rounded-xl border-2 border-gray-100 text-center peer-checked:border-[#266963] peer-checked:bg-[#266963]/5 transition-all hover:border-gray-200">
-                                                    <i class="fab fa-github text-2xl mb-2 text-gray-700 peer-checked:text-[#266963]"></i>
-                                                    <p class="text-sm font-bold text-gray-700 peer-checked:text-[#266963]">Github Link</p>
+                                                    class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-[#266963] peer-checked:bg-[#266963]/5 transition-all hover:border-gray-200">
+                                                    <i class="fab fa-github text-2xl mb-2 text-gray-700 dark:text-gray-300 peer-checked:text-[#266963]"></i>
+                                                    <p class="text-sm font-bold text-gray-700 dark:text-gray-300 peer-checked:text-[#266963]">Github Link</p>
                                                 </div>
                                             </label>
                                             <label class="cursor-pointer">
                                                 <input type="radio" name="submission_type" value="file" class="peer hidden" x-model="type">
                                                 <div
-                                                    class="p-4 rounded-xl border-2 border-gray-100 text-center peer-checked:border-[#266963] peer-checked:bg-[#266963]/5 transition-all hover:border-gray-200">
+                                                    class="p-4 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-[#266963] peer-checked:bg-[#266963]/5 transition-all hover:border-gray-200">
                                                     <i
-                                                        class="fas fa-file-archive text-2xl mb-2 text-gray-700 peer-checked:text-[#266963]"></i>
-                                                    <p class="text-sm font-bold text-gray-700 peer-checked:text-[#266963]">Upload File</p>
+                                                        class="fas fa-file-archive text-2xl mb-2 text-gray-700 dark:text-gray-300 peer-checked:text-[#266963]"></i>
+                                                    <p class="text-sm font-bold text-gray-700 dark:text-gray-300 peer-checked:text-[#266963]">Upload File</p>
                                                 </div>
                                             </label>
                                         </div>
 
                                         <div x-show="type === 'link'" x-transition class="mb-4">
                                             <input type="url" name="link" placeholder="https://github.com/username/project"
-                                                class="w-full border-gray-300 rounded-xl p-3 focus:ring-[#266963] focus:border-[#266963] shadow-sm">
+                                                class="w-full border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-[#266963] focus:border-[#266963] shadow-sm">
                                         </div>
                                         <div x-show="type === 'file'" x-transition class="mb-4">
                                             <input type="file" name="project_file"
-                                                class="block w-full text-sm text-gray-500 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#266963]/10 file:text-[#266963] hover:file:bg-[#266963]/20 transition cursor-pointer border rounded-xl">
+                                                class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2.5 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#266963]/10 file:text-[#266963] hover:file:bg-[#266963]/20 transition cursor-pointer border rounded-xl">
                                         </div>
 
                                         <textarea name="comment" rows="3" placeholder="Add any notes for the doctor (Optional)..."
-                                            class="w-full border-gray-300 rounded-xl p-3 focus:ring-[#266963] focus:border-[#266963] shadow-sm mb-6"></textarea>
+                                            class="w-full border-gray-300 dark:border-gray-600 rounded-xl p-3 focus:ring-[#266963] focus:border-[#266963] shadow-sm mb-6"></textarea>
 
                                         <button type="submit"
                                             class="w-full bg-gradient-to-r from-[#266963] to-[#1e524d] hover:from-[#1e524d] hover:to-[#163C38] text-white font-bold py-4 rounded-xl shadow-lg transition-all transform hover:-translate-y-1"
@@ -788,11 +745,11 @@
                                         </button>
                                     </form>
                                 @else
-                                    <div class="text-center py-10 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                                    <div class="text-center py-10 bg-gray-50 dark:bg-gray-900 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700">
                                         <div class="animate-spin-slow inline-block mb-3">
                                             <i class="fas fa-circle-notch text-gray-300 text-3xl"></i>
                                         </div>
-                                        <p class="text-gray-600 font-bold">Waiting for Submission</p>
+                                        <p class="text-gray-600 dark:text-gray-400 font-bold">Waiting for Submission</p>
                                         <p class="text-xs text-gray-400 mt-1">Only the Team Leader can submit.</p>
                                     </div>
                                 @endif

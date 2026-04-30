@@ -12,7 +12,7 @@
             {{-- 🌟 Header Section --}}
             <div class="flex flex-col md:flex-row justify-between items-end gap-4">
                 <div>
-                    <h1 class="text-3xl font-extrabold tracking-tight text-black flex items-center gap-3">
+                    <h1 class="text-3xl font-extrabold tracking-tight text-black dark:text-white flex items-center gap-3">
                         <span class="bg-white/20 p-2 rounded-xl backdrop-blur-md border border-white/10">🚀</span>
                         Teams Database Management
                     </h1>
@@ -22,13 +22,13 @@
             </div>
 
             {{-- 🎛️ Control Panel (Filters) --}}
-            <div class="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-gray-200 sticky top-4 z-30">
+            <div class="bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 sticky top-4 z-30">
                 <form action="{{ route('admin.teams.index') }}" method="GET"
                     class="flex flex-col xl:flex-row gap-4 items-end">
 
                     {{-- 🔍 Search Bar --}}
                     <div class="w-full xl:flex-1">
-                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Search</label>
+                        <label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase ml-1">Search</label>
                         <div class="relative mt-1">
                             <button type="submit" class="absolute left-3 top-[14px] z-10 flex items-center justify-center">
                                 <i
@@ -36,15 +36,15 @@
                             </button>
                             <input type="search" enterkeyhint="search" name="search" value="{{ request('search') }}"
                                 placeholder="Team Name, Leader, or Member Name..."
-                                class="w-full pl-10 pr-4 py-3 bg-gray-50 border-transparent rounded-xl focus:ring-2 focus:ring-[#175c53] focus:bg-white transition outline-none font-bold text-gray-700">
+                                class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border-transparent rounded-xl focus:ring-2 focus:ring-[#175c53] focus:bg-white transition outline-none font-bold text-gray-700 dark:text-gray-300">
                         </div>
                     </div>
 
                     {{-- 🎓 Project Type Filter --}}
                     <div class="w-full md:w-48">
-                        <label class="text-xs font-bold text-gray-500 uppercase ml-1">Project Type</label>
+                        <label class="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase ml-1">Project Type</label>
                         <select name="type" onchange="this.form.submit()"
-                            class="w-full mt-1 py-3 px-4 bg-gray-50 border-transparent rounded-xl cursor-pointer font-bold text-gray-600 focus:ring-2 focus:ring-[#175c53] hover:bg-gray-100 transition">
+                            class="w-full mt-1 py-3 px-4 bg-gray-50 dark:bg-gray-900 border-transparent rounded-xl cursor-pointer font-bold text-gray-600 dark:text-gray-400 focus:ring-2 focus:ring-[#175c53] hover:bg-gray-100 transition">
                             <option value="">📂 All Types</option>
                             <option value="graduation" {{ request('type') == 'graduation' ? 'selected' : '' }}>🎓 Graduation
                                 Projects</option>
@@ -55,17 +55,17 @@
 
                     {{-- 📅 Date Range Filter --}}
                     <div
-                        class="flex flex-col sm:flex-row items-center gap-2 bg-gray-50 p-1.5 rounded-xl border border-gray-200 flex-1 xl:flex-none w-full sm:w-auto">
+                        class="flex flex-col sm:flex-row items-center gap-2 bg-gray-50 dark:bg-gray-900 p-1.5 rounded-xl border border-gray-200 dark:border-gray-700 flex-1 xl:flex-none w-full sm:w-auto">
                         <div class="w-full sm:w-auto">
                             <label class="text-[9px] font-bold text-gray-400 uppercase block pl-1">From</label>
                             <input type="date" name="date_from" value="{{ request('date_from') }}"
-                                class="bg-transparent border-none w-full sm:w-auto text-xs font-bold text-gray-700 focus:ring-0 p-1">
+                                class="bg-transparent border-none w-full sm:w-auto text-xs font-bold text-gray-700 dark:text-gray-300 focus:ring-0 p-1">
                         </div>
                         <div class="hidden sm:block h-8 w-px bg-gray-300"></div>
                         <div class="w-full sm:w-auto">
                             <label class="text-[9px] font-bold text-gray-400 uppercase block pl-1">To</label>
                             <input type="date" name="date_to" value="{{ request('date_to') }}"
-                                class="bg-transparent border-none w-full sm:w-auto text-xs font-bold text-gray-700 focus:ring-0 p-1">
+                                class="bg-transparent border-none w-full sm:w-auto text-xs font-bold text-gray-700 dark:text-gray-300 focus:ring-0 p-1">
                         </div>
                     </div>
 
@@ -89,11 +89,11 @@
             </div>
 
             {{-- 📋 Teams Table --}}
-            <div class="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+            <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
                 <div class="overflow-x-auto custom-scrollbar">
                     <table class="w-full text-left border-collapse">
                         <thead>
-                            <tr class="bg-gray-50/50 border-b border-gray-100">
+                            <tr class="bg-gray-50/50 border-b border-gray-100 dark:border-gray-700">
                                 <th class="px-6 py-5 text-xs font-black text-gray-400 uppercase tracking-wider">Team Name
                                 </th>
                                 {{-- 🔥 العمود الجديد: Subject / Type --}}
@@ -115,9 +115,9 @@
                                     {{-- 1. Team Name & Code --}}
                                     <td class="px-6 py-4">
                                         <div class="flex flex-col">
-                                            <span class="font-bold text-gray-800 text-base">{{ $team->name }}</span>
+                                            <span class="font-bold text-gray-800 dark:text-gray-200 text-base">{{ $team->name }}</span>
                                             <span
-                                                class="text-xs text-gray-400 font-mono bg-gray-100 px-2 py-0.5 rounded w-fit mt-1">#{{ $team->code }}</span>
+                                                class="text-xs text-gray-400 font-mono bg-gray-100 dark:bg-gray-900 px-2 py-0.5 rounded w-fit mt-1">#{{ $team->code }}</span>
                                         </div>
                                     </td>
 
@@ -132,7 +132,7 @@
                                                 </span>
 
                                                 @if ($team->proposal_title)
-                                                    <span class="font-bold text-gray-800 text-sm mt-2 flex items-center gap-2"
+                                                    <span class="font-bold text-gray-800 dark:text-gray-200 text-sm mt-2 flex items-center gap-2"
                                                         title="Project Title">
                                                         <i class="fas fa-lightbulb text-yellow-500 text-xs"></i>
                                                         {{ Str::limit($team->proposal_title, 30) }}
@@ -155,7 +155,7 @@
                                                 {{-- اسم المادة --}}
                                                 @if ($team->project && $team->project->course)
                                                     <span class="font-bold text-[#175c53] text-sm mt-2 flex items-center gap-2">
-                                                        <i class="{{ $team->project->course->icon_class ?? 'fas fa-book' }}"></i>
+                                                        <i class="{{ $team->project->course->icon_class ??'fas fa-book' }}"></i>
                                                         {{ $team->project->course->name }}
                                                     </span>
                                                     {{-- كود المادة --}}
@@ -173,13 +173,13 @@
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div
-                                                class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-200 to-gray-300 flex items-center justify-center text-gray-700 font-bold shadow-sm">
+                                                class="w-10 h-10 rounded-full bg-gradient-to-tr from-gray-200 to-gray-300 flex items-center justify-center text-gray-700 dark:text-gray-300 font-bold shadow-sm">
                                                 {{ substr($team->leader->name ?? '?', 0, 1) }}
                                             </div>
                                             <div class="flex flex-col">
                                                 <span
-                                                    class="text-sm font-bold text-gray-800">{{ $team->leader->name ?? 'Deleted User' }}</span>
-                                                <span class="text-[10px] text-gray-500">{{ $team->leader->email ?? '' }}</span>
+                                                    class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $team->leader->name ?? 'Deleted User' }}</span>
+                                                <span class="text-[10px] text-gray-500 dark:text-gray-400">{{ $team->leader->email ?? '' }}</span>
                                             </div>
                                         </div>
                                     </td>
@@ -189,7 +189,7 @@
                                         <button type="button"
                                             data-members="{{ json_encode($team->members->load('user'), JSON_HEX_APOS | JSON_HEX_QUOT) }}"
                                             onclick="openMembersModal(JSON.parse(this.getAttribute('data-members')), '{{ $team->name }}', '{{ $team->id }}')"
-                                            class="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-100 hover:border-[#175c53] text-gray-600 hover:text-[#175c53] rounded-xl font-bold text-xs transition-all shadow-sm hover:shadow-md">
+                                            class="inline-flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 hover:border-[#175c53] text-gray-600 dark:text-gray-400 hover:text-[#175c53] rounded-xl font-bold text-xs transition-all shadow-sm hover:shadow-md">
                                             <i class="fas fa-users"></i>
                                             <span>{{ $team->members->count() }} Members</span>
                                         </button>
@@ -198,7 +198,7 @@
                                     {{-- 5. Created At --}}
                                     <td class="px-6 py-4 text-center">
                                         <span
-                                            class="text-xs font-bold text-gray-500">{{ $team->created_at->format('Y-m-d') }}</span>
+                                            class="text-xs font-bold text-gray-500 dark:text-gray-400">{{ $team->created_at->format('Y-m-d') }}</span>
                                         <span
                                             class="block text-[10px] text-gray-400">{{ $team->created_at->format('h:i A') }}</span>
                                     </td>
@@ -232,7 +232,7 @@
                 </div>
 
                 {{-- Pagination --}}
-                <div class="px-6 py-4 border-t border-gray-100">
+                <div class="px-6 py-4 border-t border-gray-100 dark:border-gray-700">
                     {{ $teams->withQueryString()->links() }}
                 </div>
             </div>
@@ -247,18 +247,18 @@
 
             <div class="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
                 <div
-                    class="relative transform overflow-hidden rounded-2xl bg-white text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100">
+                    class="relative transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg border border-gray-100 dark:border-gray-700">
 
                     {{-- Header --}}
-                    <div class="bg-gray-50 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-100">
-                        <h3 class="text-lg font-black text-gray-900" id="modalTeamName">Team Members</h3>
+                    <div class="bg-gray-50 dark:bg-gray-900 px-4 py-3 sm:px-6 flex justify-between items-center border-b border-gray-100 dark:border-gray-700">
+                        <h3 class="text-lg font-black text-gray-900 dark:text-gray-100" id="modalTeamName">Team Members</h3>
                         <button type="button" onclick="closeMembersModal()" class="text-gray-400 hover:text-gray-500">
                             <i class="fas fa-times text-xl"></i>
                         </button>
                     </div>
 
                     {{-- Body --}}
-                    <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
+                    <div class="bg-white dark:bg-gray-800 px-4 pt-5 pb-4 sm:p-6 sm:pb-4 max-h-[60vh] overflow-y-auto custom-scrollbar">
                         <div id="membersList" class="space-y-3">
                             {{-- JS will populate this --}}
                         </div>
@@ -289,7 +289,7 @@
 
                     let roleBadge = member.role === 'leader' ?
                         '<span class="text-[10px] bg-yellow-100 text-yellow-800 px-2 py-0.5 rounded-full font-bold ml-2">Leader 👑</span>' :
-                        '<span class="text-[10px] bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-bold ml-2">Member</span>';
+                        '<span class="text-[10px] bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 px-2 py-0.5 rounded-full font-bold ml-2">Member</span>';
 
                     // رابط الحذف
                     let deleteUrl =
@@ -318,16 +318,16 @@
                     }
 
                     contentHtml += `
-                                    <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
+                                    <div class="flex items-center justify-between p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:border-gray-200 hover:shadow-sm transition bg-gray-50/50">
                                         <div class="flex items-center gap-3">
-                                            <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-600 font-bold shadow-sm">
+                                            <div class="w-10 h-10 rounded-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 flex items-center justify-center text-gray-600 dark:text-gray-400 font-bold shadow-sm">
                                                 ${user.name.charAt(0).toUpperCase()}
                                             </div>
                                             <div>
-                                                <p class="text-sm font-bold text-gray-800 flex items-center">
+                                                <p class="text-sm font-bold text-gray-800 dark:text-gray-200 flex items-center">
                                                     ${user.name} ${roleBadge}
                                                 </p>
-                                                <p class="text-xs text-gray-500">${user.email}</p>
+                                                <p class="text-xs text-gray-500 dark:text-gray-400">${user.email}</p>
                                             </div>
                                         </div>
                                         ${deleteBtn}

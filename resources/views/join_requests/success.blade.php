@@ -83,7 +83,7 @@
 
             {{-- Branding Footer --}}
             <div class="mt-8 pt-6 border-t border-gray-700/30">
-                <p class="text-xs text-gray-500 font-tech tracking-widest uppercase">Generation Team © {{ date('Y') }}
+                <p class="text-xs text-gray-500 dark:text-gray-400 font-tech tracking-widest uppercase">Generation Team © {{ date('Y') }}
                 </p>
             </div>
         </div>

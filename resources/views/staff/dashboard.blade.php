@@ -79,14 +79,14 @@
         <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
             <div>
                 <h1 class="text-3xl md:text-4xl font-black text-slate-800">
-                    Dashboard <span class="text-[#D4AF37]">.</span>
+                    Dashboard <span class="text-[#2596be]">.</span>
                 </h1>
                 <p class="text-slate-500 font-bold mt-2">
                     Welcome back, <span class="text-[#175c53]">Dr. {{ Auth::user()->name }}</span>
                 </p>
             </div>
-            <div class="bg-white px-5 py-2 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-2">
-                <i class="far fa-calendar-alt text-[#D4AF37]"></i>
+            <div class="bg-white dark:bg-gray-800 px-5 py-2 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-2">
+                <i class="far fa-calendar-alt text-[#2596be]"></i>
                 <span
                     class="text-xs font-black text-slate-600 uppercase">{{ \Carbon\Carbon::now()->format('l, d M Y') }}</span>
             </div>
@@ -118,13 +118,13 @@
                 </div>
                 <div class="relative z-10">
                     <div
-                        class="w-12 h-12 bg-[#D4AF37] text-white rounded-xl flex items-center justify-center mb-3 shadow-lg shadow-yellow-500/30">
+                        class="w-12 h-12 bg-[#2596be] text-white rounded-xl flex items-center justify-center mb-3 shadow-lg shadow-yellow-500/30">
                         <i class="fas fa-file-signature text-xl"></i>
                     </div>
                     <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">New Proposals</p>
                     <h3 class="text-3xl font-black text-slate-800 mt-1">{{ $stats['pending_proposals'] }}</h3>
                     <a href="{{ route('staff.proposals') }}"
-                        class="text-[10px] font-bold text-[#D4AF37] mt-1 hover:underline">Review Now &rarr;</a>
+                        class="text-[10px] font-bold text-[#2596be] mt-1 hover:underline">Review Now &rarr;</a>
                 </div>
             </div>
 
@@ -256,7 +256,7 @@
                                 class="flex items-center justify-between p-4 bg-slate-50 rounded-2xl border border-slate-100 hover:border-slate-300 transition">
                                 <div class="flex items-center gap-4">
                                     <div
-                                        class="flex flex-col items-center justify-center w-12 h-12 bg-white rounded-xl shadow-sm">
+                                        class="flex flex-col items-center justify-center w-12 h-12 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
                                         <span
                                             class="text-[9px] font-black text-slate-400 uppercase">{{ \Carbon\Carbon::parse($meeting->meeting_date)->format('M') }}</span>
                                         <span
@@ -286,19 +286,19 @@
                 <div
                     class="bg-gradient-to-br from-slate-900 to-slate-800 rounded-[2.5rem] p-8 text-white shadow-2xl relative overflow-hidden">
                     <div
-                        class="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37] opacity-10 rounded-full blur-3xl -mr-10 -mt-10">
+                        class="absolute top-0 right-0 w-40 h-40 bg-[#2596be] opacity-10 rounded-full blur-3xl -mr-10 -mt-10">
                     </div>
                     <h3 class="text-lg font-black mb-6 flex items-center gap-3 relative z-10">
-                        <i class="fas fa-calendar-star text-[#D4AF37]"></i> Upcoming Defenses
+                        <i class="fas fa-calendar-star text-[#2596be]"></i> Upcoming Defenses
                     </h3>
                     <div class="space-y-6 relative z-10">
                         @forelse($upcoming_defenses as $team)
-                            <div class="relative pl-6 border-l-2 border-white/10 hover:border-[#D4AF37] transition group">
+                            <div class="relative pl-6 border-l-2 border-white/10 hover:border-[#2596be] transition group">
                                 <span
-                                    class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-slate-700 group-hover:bg-[#D4AF37] transition"></span>
+                                    class="absolute -left-[5px] top-0 w-2.5 h-2.5 rounded-full bg-slate-700 group-hover:bg-[#2596be] transition"></span>
                                 <h4 class="font-bold text-sm">{{ $team->name }}</h4>
                                 <p class="text-xs text-slate-400 mt-1 mb-2">{{ $team->proposal_title }}</p>
-                                <div class="flex items-center gap-3 text-xs font-mono text-[#D4AF37]">
+                                <div class="flex items-center gap-3 text-xs font-mono text-[#2596be]">
                                     <span><i class="far fa-clock"></i>
                                         {{ \Carbon\Carbon::parse($team->defense_date)->format('d M, H:i') }}</span>
                                     <span><i class="fas fa-map-marker-alt"></i> {{ $team->defense_location }}</span>
@@ -334,7 +334,7 @@
                                 <h4 class="font-bold text-slate-800 text-sm mb-1">{{ $meeting->topic }}</h4>
                                 <div class="flex items-center justify-between mt-2">
                                     <span
-                                        class="text-xs text-slate-500 font-medium bg-white px-2 py-1 rounded-md border border-slate-200">{{ $meeting->team->name }}</span>
+                                        class="text-xs text-slate-500 font-medium bg-white dark:bg-gray-800 px-2 py-1 rounded-md border border-slate-200">{{ $meeting->team->name }}</span>
                                     @if ($meeting->status == 'pending')
                                         <a href="{{ route('staff.team.view', $meeting->team_id) }}#meetings-section"
                                             class="text-[10px] font-bold text-white bg-blue-600 px-3 py-1 rounded-full hover:bg-blue-700">Accept</a>

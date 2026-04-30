@@ -34,7 +34,7 @@
                         @php $answers = $joinRequest->answers; @endphp
 
                         @if($answers)
-                            <div class="bg-gray-50 p-3 rounded h-96 overflow-y-auto">
+                            <div class="bg-gray-50 dark:bg-gray-900 p-3 rounded h-96 overflow-y-auto">
                                 @foreach($answers as $key => $value)
                                     @if(is_array($value))
                                         <p class="mb-1"><strong>{{ ucwords(str_replace('_', ' ', $key)) }}:</strong></p>
