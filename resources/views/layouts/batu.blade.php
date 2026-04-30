@@ -586,7 +586,7 @@
     </div>
 
     <!-- Mobile Bottom Navigation (Facebook Style) -->
-    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full dark:bg-gray-900/95 bg-white/95 backdrop-blur-md border-t dark:border-gray-800 border-gray-100 dark:border-gray-700 z-50 shadow-[0_-8px_20px_rgba(0,0,0,0.08)] flex items-center justify-between px-1 pb-safe transition-all duration-300 transform" style="height: 70px;">
+    <nav id="mobile-bottom-nav" class="md:hidden fixed bottom-0 left-0 w-full dark:bg-gray-900/95 bg-white/95 backdrop-blur-md border-t border-gray-100 dark:border-gray-700 z-50 shadow-[0_-8px_20px_rgba(0,0,0,0.08)] flex items-center justify-between px-1 pb-safe transition-all duration-300 transform" style="height: 70px;">
         
         @php
             $user = auth()->user();

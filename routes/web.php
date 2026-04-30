@@ -314,7 +314,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     // Wallet System
-    Route::prefix('wallet')->group(function () {
+    Route::middleware(['auth'])->prefix('wallet')->group(function () {
         Route::get('/', [App\Http\Controllers\WalletController::class, 'index'])->name('wallet.index');
         Route::get('/search', [App\Http\Controllers\WalletController::class, 'search'])->name('wallet.search');
         Route::get('/search-member', [App\Http\Controllers\WalletController::class, 'searchMember'])->name('wallet.search_member');
@@ -548,6 +548,7 @@ Route::get('/fix-images', function () {
     
     // 2. Check files
     $files = [];
+    $photos = [];
     if (is_dir($path)) {
         try {
             $files = scandir($path); 

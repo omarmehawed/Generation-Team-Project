@@ -18,266 +18,206 @@ class WeeklyEvaluationSystemController extends Controller
         $userId = Auth::id();
         if (!$userId) return redirect()->route('login');
         
-        $myMember = TeamMember::where('user_id', $userId)->where('team_id', $team->id)->first();
+        $myMember = TeamMember::where('user_id', '=', $userId)->where('team_id', '=', $team->id)->first();
         if (!$myMember) return redirect()->back();
 
-        $myRole = $myMember->role;
-        $technicalRole = strtolower($myMember->technical_role ?? 'general');
-        $isSubLeader = $myMember->is_sub_leader;
-        $isLeader = $myRole === 'leader';
-        $isGeneralVice = $myRole === 'vice_leader' && $technicalRole === 'general';
-        $isSoftwareVice = $myRole === 'vice_leader' && $technicalRole === 'software';
-        $isHardwareVice = $myRole === 'vice_leader' && $technicalRole === 'hardware';
+        // 1. Determine Roles & Permissions
+        $viewRole = $this->determineViewRole($myMember);
 
-        // Map internal role names to the view's expected $viewRole
-        if ($myRole === 'leader') {
-            $viewRole = 'leader';
-        } elseif ($myRole === 'vice_leader') {
-            $viewRole = $technicalRole === 'general' ? 'general_vice_leader' : ($technicalRole . '_vice_leader');
-        } elseif ($isSubLeader) {
-            $viewRole = 'sub_leader';
-        } else {
-            $viewRole = 'member';
-        }
-
-        // Shared Data: Periods
-        $allPeriods = WeeklyEvaluationPeriod::where('team_id', $team->id)->orderBy('week_number', 'desc')->get();
-        
-        // Determine Current Period
-        $periodId = $request->query('period_id');
-        if ($periodId) {
-            $currentPeriod = WeeklyEvaluationPeriod::where('team_id', $team->id)->find($periodId);
-        } else {
-            $currentPeriod = WeeklyEvaluationPeriod::where('team_id', $team->id)->where('status', 'open')->first() 
-                            ?? WeeklyEvaluationPeriod::where('team_id', $team->id)->orderBy('week_number', 'desc')->first();
-        }
-
-        // Dashboard Date Range
+        // 2. Periods & Dates
+        $allPeriods = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->orderBy('week_number', 'desc')->get();
+        $currentPeriod = $this->resolveCurrentPeriod($request, $team);
         $startDate = $currentPeriod ? $currentPeriod->start_date->startOfDay() : now()->subDays(7)->startOfDay();
         $endDate   = $currentPeriod ? ($currentPeriod->end_date ? $currentPeriod->end_date->endOfDay() : now()->endOfDay()) : now()->endOfDay();
 
-        // 1. Fetch ALL relevant items
-        $allMembers = TeamMember::with('user')->where('team_id', $team->id)->get();
+        // 3. Members Filtering
+        $allMembers = TeamMember::with('user')->where('team_id', '=', $team->id)->get();
+        $visibility = $this->getFilteredMembers($allMembers, $myMember, $viewRole, $request);
+        
+        // 4. Workshops & Meetings
+        $workshops = $this->getWorkshops($team, $viewRole, $startDate, $endDate);
+        $meetings = $this->getMeetings($team, $viewRole, $myMember, $startDate, $endDate);
 
-        // Unique team numbers + technical role pairs for the filter dropdown
-        $uniqueTeams = $allMembers->whereNotNull('team_number')
-            ->map(function($m) {
-                return [
-                    'number' => $m->team_number,
-                    'role' => strtolower($m->technical_role ?? 'general'),
-                    'label' => 'Team ' . $m->team_number . ' ' . ucfirst($m->technical_role ?? 'General')
-                ];
-            })
-            ->unique(fn($item) => $item['number'] . '-' . $item['role'])
-            ->sort(function($a, $b) {
-                if ($a['number'] === $b['number']) return strcmp($a['role'], $b['role']);
-                return $a['number'] <=> $b['number'];
-            })
-            ->values();
+        // 5. Tasks
+        $tasks = $this->getGroupedTasks($team, $viewRole, $visibility['allRegularMembers'], $startDate, $endDate);
 
-        // 2. Filter Lists based on Role Visibility Rules
-        if ($isLeader) {
+        // 6. Stats & Records
+        $completedCount = $currentPeriod ? WeeklyEvaluationRecord::where('evaluation_period_id', '=', $currentPeriod->id)->count() : 0;
+        $stats = [
+            'members_count' => $visibility['allRegularMembers']->count(),
+            'sub_leaders_count' => $visibility['allSubLeaders']->count(),
+            'pending_reviews' => max(0, ($visibility['allRegularMembers']->count() + $visibility['allSubLeaders']->count() + (($myMember->role === 'leader') ? $visibility['allViceLeaders']->count() : 0)) - $completedCount),
+            'completed_this_week' => $completedCount,
+        ];
+
+        $existingRecords = $currentPeriod ? WeeklyEvaluationRecord::with('subItems')->where('evaluation_period_id', '=', $currentPeriod->id)->get()->keyBy('evaluatee_id') : collect();
+
+        // Data for filters/modals
+        $uniqueTeams = $this->getUniqueTeamNumbers($allMembers);
+        $unassignedMembersFormatted = $this->formatUnassignedMembers($allMembers);
+        $searchableMembers = $allMembers->where('user_id', '!=', $userId);
+
+        return view('evaluation.index', array_merge($visibility, compact(
+            'team', 'allPeriods', 'currentPeriod', 'workshops', 'tasks', 'meetings',
+            'viewRole', 'stats', 'myMember', 'existingRecords', 'unassignedMembersFormatted', 'searchableMembers',
+            'uniqueTeams'
+        ), [
+            'currentSearch' => $request->query('search'),
+            'currentTeamFilter' => $request->query('team_filter'),
+            'isLeader' => $myMember->role === 'leader',
+            'isGeneralVice' => $viewRole === 'general_vice_leader',
+            'isSoftwareVice' => $viewRole === 'software_vice_leader',
+            'isHardwareVice' => $viewRole === 'hardware_vice_leader',
+            'isSubLeader' => (bool)$myMember->is_sub_leader,
+            'myRole' => $myMember->role,
+            'allMembers' => $allMembers
+        ]));
+    }
+
+    private function determineViewRole($myMember)
+    {
+        $role = $myMember->role;
+        $tech = strtolower($myMember->technical_role ?? 'general');
+        if ($role === 'leader') return 'leader';
+        if ($role === 'vice_leader') return $tech === 'general' ? 'general_vice_leader' : ($tech . '_vice_leader');
+        if ($myMember->is_sub_leader) return 'sub_leader';
+        return 'member';
+    }
+
+    private function resolveCurrentPeriod($request, $team)
+    {
+        $periodId = $request->query('period_id');
+        if ($periodId) return WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->find($periodId);
+        return WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->where('status', '=', 'open')->first() 
+               ?? WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->orderBy('week_number', 'desc')->first();
+    }
+
+    private function getFilteredMembers($allMembers, $myMember, $viewRole, $request)
+    {
+        $role = $myMember->role;
+        $tech = strtolower($myMember->technical_role ?? 'general');
+
+        if ($role === 'leader' || $viewRole === 'general_vice_leader') {
             $allViceLeaders = $allMembers->where('role', 'vice_leader');
             $allSubLeaders = $allMembers->where('is_sub_leader', true);
             $allRegularMembers = $allMembers->where('role', 'member')->where('is_sub_leader', false);
-        } elseif ($isGeneralVice) {
-            $allViceLeaders = collect();
-            $allSubLeaders = $allMembers->where('is_sub_leader', true);
-            $allRegularMembers = $allMembers->where('role', 'member')->where('is_sub_leader', false);
-        } elseif ($isSoftwareVice || $isHardwareVice) {
-            $domain = $isSoftwareVice ? 'software' : 'hardware';
+        } elseif ($viewRole === 'software_vice_leader' || $viewRole === 'hardware_vice_leader') {
+            $domain = $viewRole === 'software_vice_leader' ? 'software' : 'hardware';
             $allViceLeaders = collect();
             $allSubLeaders = $allMembers->where('is_sub_leader', true)->filter(fn($m) => strtolower($m->technical_role) === $domain);
             $allRegularMembers = $allMembers->where('role', 'member')->where('is_sub_leader', false)->filter(fn($m) => strtolower($m->technical_role) === $domain);
-        } elseif ($isSubLeader) {
+        } elseif ($myMember->is_sub_leader) {
             $allViceLeaders = collect();
             $allSubLeaders = collect();
             $allRegularMembers = $allMembers->where('role', 'member')
-                                 ->where('team_number', $myMember->team_number)
-                                 ->filter(fn($m) => strtolower($m->technical_role ?? 'general') === strtolower($myMember->technical_role ?? 'general'))
+                                 ->where('team_number', '=', $myMember->team_number)
+                                 ->filter(fn($m) => strtolower($m->technical_role ?? 'general') === $tech)
                                  ->where('id', '!=', $myMember->id);
         } else {
-            $allViceLeaders = collect();
-            $allSubLeaders = collect();
-            $allRegularMembers = collect();
+            return ['allViceLeaders' => collect(), 'allSubLeaders' => collect(), 'allRegularMembers' => collect(), 'viceLeaders' => collect(), 'subLeaders' => collect(), 'members' => collect()];
         }
 
-        // Apply Search & Team Filter
-        $currentSearch = $request->query('search');
-        $currentTeamFilter = $request->query('team_filter');
-
-        $filterClosure = function($m) use ($currentSearch, $currentTeamFilter) {
-            $match = true;
-            if ($currentSearch) {
-                $q = strtolower($currentSearch);
-                $userName = strtolower($m->user->name ?? '');
-                $userEmail = strtolower($m->user->email ?? '');
-                $userUniEmail = strtolower($m->user->university_email ?? '');
-                
-                $match = str_contains($userName, $q) || 
-                         str_contains($userEmail, $q) || 
-                         str_contains($userUniEmail, $q);
-            }
-            if ($match && $currentTeamFilter) {
-                if (str_contains($currentTeamFilter, '-')) {
-                    [$tNumber, $tRole] = explode('-', $currentTeamFilter);
-                    $match = (string)$m->team_number === (string)$tNumber && strtolower($m->technical_role ?? 'general') === strtolower($tRole);
-                } else {
-                    $match = (string)$m->team_number === (string)$currentTeamFilter;
+        // Search & Filter
+        $search = $request->query('search');
+        $teamFilter = $request->query('team_filter');
+        if ($search || $teamFilter) {
+            $closure = function($m) use ($search, $teamFilter) {
+                if ($search) {
+                    $q = strtolower($search);
+                    if (!str_contains(strtolower($m->user->name ?? ''), $q) && !str_contains(strtolower($m->user->email ?? ''), $q)) return false;
                 }
-            }
-            return $match;
-        };
-
-        if ($currentSearch || $currentTeamFilter) {
-            $allRegularMembers = $allRegularMembers->filter($filterClosure);
-            $allSubLeaders = $allSubLeaders->filter($filterClosure);
-            $allViceLeaders = $allViceLeaders->filter($filterClosure);
+                if ($teamFilter) {
+                    if (str_contains($teamFilter, '-')) {
+                        [$num, $r] = explode('-', $teamFilter);
+                        if ((string)$m->team_number !== (string)$num || strtolower($m->technical_role ?? 'general') !== strtolower($r)) return false;
+                    } elseif ((string)$m->team_number !== (string)$teamFilter) return false;
+                }
+                return true;
+            };
+            $allRegularMembers = $allRegularMembers->filter($closure);
+            $allSubLeaders = $allSubLeaders->filter($closure);
+            $allViceLeaders = $allViceLeaders->filter($closure);
         }
 
-        // Final filtering for Vice/Sub/Members based on domain if needed
-        if ($viewRole === 'software_vice_leader') {
-            $allSubLeaders = $allSubLeaders->filter(fn($m) => strtolower($m->technical_role) === 'software');
-            $allRegularMembers = $allRegularMembers->filter(fn($m) => strtolower($m->technical_role) === 'software');
-        } elseif ($viewRole === 'hardware_vice_leader') {
-            $allSubLeaders = $allSubLeaders->filter(fn($m) => strtolower($m->technical_role) === 'hardware');
-            $allRegularMembers = $allRegularMembers->filter(fn($m) => strtolower($m->technical_role) === 'hardware');
-        }
+        return [
+            'allViceLeaders' => $allViceLeaders,
+            'allSubLeaders' => $allSubLeaders,
+            'allRegularMembers' => $allRegularMembers,
+            'viceLeaders' => $this->paginateCollection($allViceLeaders, 10, 'viceleaders_page'),
+            'subLeaders' => $this->paginateCollection($allSubLeaders, 10, 'subleaders_page'),
+            'members' => $this->paginateCollection($allRegularMembers, 15, 'members_page'),
+        ];
+    }
 
-        // 3. Paginate Collections
-        $members = $this->paginateCollection($allRegularMembers, 15, 'members_page');
-        $subLeaders = $this->paginateCollection($allSubLeaders, 10, 'subleaders_page');
-        $viceLeaders = $this->paginateCollection($allViceLeaders, 10, 'viceleaders_page');
+    private function getWorkshops($team, $viewRole, $start, $end)
+    {
+        $query = \App\Models\Workshop::where('team_id', '=', $team->id)->whereBetween('workshop_date', [$start, $end])->orderBy('workshop_date', 'asc');
+        $workshops = $query->get();
+        if ($viewRole === 'software_vice_leader') $workshops = $workshops->filter(fn($w) => strtolower($w->technical_role ?? $w->domain) === 'software');
+        if ($viewRole === 'hardware_vice_leader') $workshops = $workshops->filter(fn($w) => strtolower($w->technical_role ?? $w->domain) === 'hardware');
+        return $this->paginateCollection($workshops, 10, 'workshops_page');
+    }
 
-        // Other filters
-        $searchableMembers = $allMembers->where('user_id', '!=', $userId);
-        $unassignedMembers = $allMembers->filter(fn($m) => is_null($m->team_number) && !$m->is_sub_leader && $m->role === 'member');
-        $unassignedMembersFormatted = $unassignedMembers->map(fn($m) => [
-            'id' => $m->id,
-            'name' => $m->user->name ?? 'Unknown',
-            'email' => $m->user->email ?? '',
-            'academic_number' => explode('@', $m->user->email ?? '')[0] ?? '',
-            'avatar' => ($m->user?->profile_photo_url) ?? 'https://ui-avatars.com/api/?name=' . urlencode($m->user->name ?? 'U') . '&background=6366f1&color=fff&bold=true',
-            'technical_role' => strtolower($m->technical_role ?? 'general'),
-            'member_tech' => strtoupper($m->technical_role ?? 'general'),
-        ])->values();
-
-        // 4. Workshops Pagination
-        $allWorkshops = \App\Models\Workshop::where('team_id', $team->id)
-            ->whereBetween('workshop_date', [$startDate, $endDate])
-            ->orderBy('workshop_date', 'asc')
-            ->get();
-        if ($viewRole === 'software_vice_leader') {
-            $allWorkshops = $allWorkshops->filter(fn($w) => strtolower($w->technical_role ?? $w->domain) === 'software');
-        } elseif ($viewRole === 'hardware_vice_leader') {
-            $allWorkshops = $allWorkshops->filter(fn($w) => strtolower($w->technical_role ?? $w->domain) === 'hardware');
-        }
-        $workshops = $this->paginateCollection($allWorkshops, 10, 'workshops_page');
-
-        // 5. Meetings
-        $meetingsQuery = \App\Models\Meeting::where('team_id', $team->id)
-            ->whereBetween('meeting_date', [$startDate, $endDate]);
+    private function getMeetings($team, $viewRole, $myMember, $start, $end)
+    {
+        $q = \App\Models\Meeting::where('team_id', '=', $team->id)->whereBetween('meeting_date', [$start, $end]);
         if ($viewRole === 'software_vice_leader' || $viewRole === 'hardware_vice_leader') {
-            $domainType = $viewRole === 'software_vice_leader' ? 'software' : 'hardware';
-            $meetingsQuery->where(function($q) use ($domainType) { $q->whereNull('domain')->orWhere('domain', $domainType); });
+            $domain = ($viewRole === 'software_vice_leader') ? 'software' : 'hardware';
+            $q->where(fn($sub) => $sub->whereNull('domain')->orWhere('domain', '=', $domain));
         } elseif ($viewRole === 'sub_leader' || $viewRole === 'member') {
-            $meetingsQuery->where(function($q) use ($myMember, $technicalRole) {
-                // Should see:
-                // 1. General meetings (null domain, null team)
-                // 2. Domain-wide meetings (correct domain, null team)
-                // 3. Team-specific meetings (null domain, correct team)
-                // 4. Specific Team+Domain meetings (correct domain, correct team)
-                $q->where(function($subQ) use ($technicalRole) {
-                    $subQ->whereNull('domain')->orWhere('domain', $technicalRole);
-                })->where(function($subQ) use ($myMember) {
-                    $subQ->whereNull('team_number')->orWhere('team_number', $myMember->team_number);
-                });
-            });
+            $tech = strtolower($myMember->technical_role ?? 'general');
+            $q->where(fn($sub) => $sub->whereNull('domain')->orWhere('domain', '=', $tech))
+              ->where(fn($sub) => $sub->whereNull('team_number')->orWhere('team_number', '=', $myMember->team_number));
         }
-        $meetings = $meetingsQuery->get();
+        return $q->get();
+    }
 
-        // 6. Tasks (Grouped logic + Pagination)
-        $tasksQuery = \App\Models\Task::with(['user.teamMemberships' => function($q) use ($team) {
-                $q->where('team_id', $team->id);
-            }])
-            ->where('team_id', $team->id)
-            ->where(function($q) use ($startDate, $endDate) {
-                $q->whereBetween('deadline', [$startDate, $endDate])
-                  ->orWhereBetween('submitted_at', [$startDate, $endDate])
-                  ->orWhereBetween('created_at', [$startDate, $endDate]);
-            });
+    private function getGroupedTasks($team, $viewRole, $allRegularMembers, $start, $end)
+    {
+        $q = \App\Models\Task::with(['user.teamMemberships' => fn($m) => $m->where('team_id', '=', $team->id)])
+            ->where('team_id', '=', $team->id)
+            ->where(fn($sub) => $sub->whereBetween('deadline', [$start, $end])->orWhereBetween('submitted_at', [$start, $end])->orWhereBetween('created_at', [$start, $end]));
         
         if ($viewRole === 'software_vice_leader' || $viewRole === 'hardware_vice_leader') {
-            $domainType = ($viewRole === 'software_vice_leader') ? 'software' : 'hardware';
-            $tasksQuery->whereHas('user.teamMemberships', function($q) use ($team, $domainType) {
-                $q->where('team_id', $team->id)->where('technical_role', $domainType);
-            });
+            $domain = ($viewRole === 'software_vice_leader') ? 'software' : 'hardware';
+            $q->whereHas('user.teamMemberships', fn($sub) => $sub->where('team_id', '=', $team->id)->where('technical_role', '=', $domain));
         } elseif ($viewRole === 'sub_leader') {
-             // For sub-leaders, we only show tasks related to their team members
-             $myTeamIds = $allRegularMembers->pluck('user_id');
-             $tasksQuery->whereIn('user_id', $myTeamIds);
+            $q->whereIn('user_id', $allRegularMembers->pluck('user_id'));
         }
-        
-        $rawTasks = $tasksQuery->get();
-        
-        $groupedTasksCollection = $rawTasks->groupBy(function($t) use ($team) {
+
+        $grouped = $q->get()->groupBy(function($t) use ($team) {
             $m = $t->user ? $t->user->teamMemberships->first() : null;
-            $techStr = strtolower($m->technical_role ?? 'general');
-            return $t->title . '|' . ($t->deadline ? (is_string($t->deadline) ? $t->deadline : $t->deadline->toDateString()) : 'no-date') . '|' . $techStr;
-        })->map(function($group) use ($team) {
+            return $t->title . '|' . ($t->deadline ? (is_string($t->deadline) ? $t->deadline : $t->deadline->toDateString()) : 'no-date') . '|' . strtolower($m->technical_role ?? 'general');
+        })->map(function($group) {
+            /** @var \Illuminate\Support\Collection $group */
             $first = $group->first();
-            $m = $first->user ? $first->user->teamMemberships->first() : null;
+            $m = ($first && $first->user) ? $first->user->teamMemberships->first() : null;
             return (object)[
-                'title' => $first->title,
-                'deadline' => $first->deadline,
+                'title' => $first->title ?? 'Untitled Task',
+                'deadline' => $first->deadline ?? null,
                 'technical_role' => $m->technical_role ?? 'general',
-                'status' => $group->every(fn($t) => $t->status === 'approved') ? 'approved' : 
-                           ($group->contains(fn($t) => $t->status === 'rejected') ? 'rejected' : 'pending'),
+                'status' => $group->every(fn($t) => $t->status === 'approved') ? 'approved' : ($group->contains(fn($t) => $t->status === 'rejected') ? 'rejected' : 'pending'),
                 'members' => $group->map(fn($t) => $t->user->name ?? 'Unknown')->unique()->values(),
             ];
         })->values();
 
-        $tasks = $this->paginateCollection($groupedTasksCollection, 10, 'tasks_page');
-
-        // 7. Stats calculation
-        $completedCount = $currentPeriod ? WeeklyEvaluationRecord::where('evaluation_period_id', $currentPeriod->id)->count() : 0;
-        $stats = [
-            'members_count' => $allRegularMembers->count(),
-            'sub_leaders_count' => $allSubLeaders->count(),
-            'pending_reviews' => max(0, ($allRegularMembers->count() + $allSubLeaders->count() + ($viewRole === 'leader' ? $allViceLeaders->count() : 0)) - $completedCount),
-            'completed_this_week' => $completedCount,
-        ];
-
-        $softwareMembers = $allMembers->filter(fn($m) => strtolower($m->technical_role) === 'software');
-        $hardwareMembers = $allMembers->filter(fn($m) => strtolower($m->technical_role) === 'hardware');
-        $softwareStats = [
-            'members_count' => $softwareMembers->where('role', 'member')->where('is_sub_leader', false)->count(),
-            'sub_leaders_count' => $softwareMembers->where('is_sub_leader', true)->count(),
-        ];
-        $hardwareStats = [
-            'members_count' => $hardwareMembers->where('role', 'member')->where('is_sub_leader', false)->count(),
-            'sub_leaders_count' => $hardwareMembers->where('is_sub_leader', true)->count(),
-        ];
-
-        // 8. Existing Records
-        $existingRecords = collect();
-        if ($currentPeriod) {
-            $existingRecords = WeeklyEvaluationRecord::with('subItems')
-                ->where('evaluation_period_id', $currentPeriod->id)
-                ->get()
-                ->keyBy('evaluatee_id');
-        }
-
-        $isLeader = $myRole === 'leader';
-        $isGeneralVice = $viewRole === 'general_vice_leader';
-
-        return view('evaluation.index', compact(
-            'team', 'allPeriods', 'currentPeriod', 'members', 'subLeaders', 'viceLeaders', 'workshops', 'tasks', 'meetings',
-            'viewRole', 'stats', 'softwareStats', 'hardwareStats', 'isLeader', 'isGeneralVice', 'isSoftwareVice', 'isHardwareVice',
-            'isSubLeader', 'myMember', 'myRole', 'allMembers', 'existingRecords', 'unassignedMembersFormatted', 'searchableMembers',
-            'uniqueTeams', 'currentSearch', 'currentTeamFilter'
-        ));
+        return $this->paginateCollection($grouped, 10, 'tasks_page');
     }
+
+    private function getUniqueTeamNumbers($members)
+    {
+        return $members->whereNotNull('team_number')->map(fn($m) => [
+            'number' => $m->team_number, 'role' => strtolower($m->technical_role ?? 'general'), 'label' => 'Team ' . $m->team_number . ' ' . ucfirst($m->technical_role ?? 'General')
+        ])->unique(fn($i) => $i['number'] . '-' . $i['role'])->sort(fn($a, $b) => ($a['number'] === $b['number']) ? strcmp($a['role'], $b['role']) : ($a['number'] <=> $b['number']))->values();
+    }
+
+    private function formatUnassignedMembers($members)
+    {
+        return $members->filter(fn($m) => is_null($m->team_number) && !$m->is_sub_leader && $m->role === 'member')->map(fn($m) => [
+            'id' => $m->id, 'name' => $m->user->name ?? 'Unknown', 'email' => $m->user->email ?? '', 'technical_role' => strtolower($m->technical_role ?? 'general'),
+        ])->values();
+    }
+
 
     private function paginateCollection($items, $perPage, $pageName)
     {
@@ -303,24 +243,24 @@ class WeeklyEvaluationSystemController extends Controller
             'technical_role.required' => 'The technical domain (Software/Hardware) is required.',
         ]);
 
-        $member = TeamMember::findOrFail($request->member_id);
+        $member = TeamMember::findOrFail($request->input('member_id'));
         
         if ($member->team_id != $team->id) {
             return back()->with('error', 'Unauthorized action.');
         }
 
         // ONE MEMBER, ONE SUB-TEAM RULE:
-        if ($member->team_number && $member->team_number != $request->team_number) {
+        if ($member->team_number && $member->team_number != $request->input('team_number')) {
             return back()->with('error', "This member is already assigned to Team #{$member->team_number}. They cannot belong to multiple teams.");
         }
 
         $member->update([
             'is_sub_leader' => true,
-            'team_number' => $request->team_number,
-            'technical_role' => $request->technical_role,
+            'team_number' => $request->input('team_number'),
+            'technical_role' => $request->input('technical_role'),
         ]);
 
-        return back()->with('success', "Member '{$member->user->name}' assigned as {$request->technical_role} Sub Leader for Team #{$request->team_number}.");
+        return back()->with('success', "Member '{$member->user->name}' assigned as {$request->input('technical_role')} Sub Leader for Team #{$request->input('team_number')}.");
     }
 
     public function assignMember(Request $request, Team $team)
@@ -331,10 +271,10 @@ class WeeklyEvaluationSystemController extends Controller
         ]);
 
         $userId = Auth::id();
-        $myMember = TeamMember::where('team_id', $team->id)->where('user_id', $userId)->firstOrFail();
+        $myMember = TeamMember::where('team_id', '=', $team->id)->where('user_id', '=', $userId)->firstOrFail();
         
         // Determine the target team number
-        $teamNumber = $request->team_number;
+        $teamNumber = $request->input('team_number');
         if ($myMember->is_sub_leader) {
             $teamNumber = $myMember->team_number;
         }
@@ -343,12 +283,12 @@ class WeeklyEvaluationSystemController extends Controller
             return back()->with('error', 'Please select a team number for assignment.');
         }
 
-        $member = TeamMember::where('team_id', $team->id)->findOrFail($request->member_id);
+        $member = TeamMember::where('team_id', '=', $team->id)->findOrFail($request->input('member_id'));
         
         // Find the sub-leader for this team number to set as parent_id
-        $subLeader = TeamMember::where('team_id', $team->id)
-            ->where('team_number', $teamNumber)
-            ->where('is_sub_leader', true)
+        $subLeader = TeamMember::where('team_id', '=', $team->id)
+            ->where('team_number', '=', $teamNumber)
+            ->where('is_sub_leader', '=', true)
             ->first();
 
         $member->update([
@@ -365,7 +305,7 @@ class WeeklyEvaluationSystemController extends Controller
             'member_id' => 'required|exists:team_members,id',
         ]);
 
-        $member = TeamMember::where('team_id', $team->id)->findOrFail($request->member_id);
+        $member = TeamMember::where('team_id', '=', $team->id)->findOrFail($request->input('member_id'));
         
         if ($member->role !== 'sub_leader' && !$member->is_sub_leader) {
             return back()->with('error', 'This member is not a sub-leader.');
@@ -384,10 +324,10 @@ class WeeklyEvaluationSystemController extends Controller
         // Find OR CREATE the selected evaluation period
         $periodId = $request->query('period_id');
         if ($periodId) {
-            $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->findOrFail($periodId);
+            $period = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->findOrFail($periodId);
         } else {
-             $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->where('status', 'open')->first()
-                    ?? WeeklyEvaluationPeriod::where('team_id', $team->id)->orderBy('week_number', 'desc')->first();
+            $period = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->where('status', '=', 'open')->first()
+                    ?? WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->orderBy('week_number', 'desc')->first();
         }
 
         if (!$period) {
@@ -395,16 +335,16 @@ class WeeklyEvaluationSystemController extends Controller
         }
 
         $userId = Auth::id();
-        $evaluator = TeamMember::where('team_id', $team->id)->where('user_id', $userId)->firstOrFail();
+        $evaluator = TeamMember::where('team_id', '=', $team->id)->where('user_id', '=', $userId)->firstOrFail();
 
-        $taskScore    = (float) ($request->task_score    ?? 0);
-        $workshopScore = (float) ($request->workshop_score ?? 0);
-        $meetingScore  = (float) ($request->meeting_score  ?? 0);
+        $taskScore    = (float) ($request->input('task_score')    ?? 0);
+        $workshopScore = (float) ($request->input('workshop_score') ?? 0);
+        $meetingScore  = (float) ($request->input('meeting_score')  ?? 0);
         
         // Dynamic Denominator Calculation
-        $hasTasks = (bool)$request->has_tasks;
-        $hasWorkshops = (bool)$request->has_workshops;
-        $hasMeetings = (bool)$request->has_meetings;
+        $hasTasks = (bool)$request->input('has_tasks');
+        $hasWorkshops = (bool)$request->input('has_workshops');
+        $hasMeetings = (bool)$request->input('has_meetings');
         
         $possibleScore = 0;
         if ($hasTasks) $possibleScore += 10;
@@ -425,7 +365,7 @@ class WeeklyEvaluationSystemController extends Controller
         $record = WeeklyEvaluationRecord::updateOrCreate(
             [
                 'evaluation_period_id' => $period->id,
-                'evaluatee_id' => $request->evaluatee_id,
+                'evaluatee_id' => $request->input('evaluatee_id'),
             ],
             [
                 'evaluator_id'        => $evaluator->id,
@@ -435,16 +375,16 @@ class WeeklyEvaluationSystemController extends Controller
                 'total_overall_score' => $totalScore,
                 'total_possible_score' => $possibleScore,
                 'active_categories'   => $activeCategoriesStr,
-                'general_notes'       => $request->general_notes,
-                'evaluation_type'     => $request->evaluation_type,
+                'general_notes'       => $request->input('general_notes'),
+                'evaluation_type'     => $request->input('evaluation_type'),
             ]
         );
 
         // Store sub-items if provided
-        if ($request->has('sub_items') && is_array($request->sub_items)) {
+        if ($request->has('sub_items') && is_array($request->input('sub_items'))) {
             // Delete old sub items first
-            WeeklyEvaluationSubItem::where('weekly_evaluation_record_id', $record->id)->delete();
-            foreach ($request->sub_items as $item) {
+            WeeklyEvaluationSubItem::where('weekly_evaluation_record_id', '=', $record->id)->delete();
+            foreach ($request->input('sub_items') as $item) {
                 WeeklyEvaluationSubItem::create([
                     'weekly_evaluation_record_id' => $record->id,
                     'source_type' => $item['type'],
@@ -461,13 +401,13 @@ class WeeklyEvaluationSystemController extends Controller
     public function completeWeek(Request $request, Team $team)
     {
         $userId = Auth::id();
-        $myMember = TeamMember::where('team_id', $team->id)->where('user_id', $userId)->firstOrFail();
+        $myMember = TeamMember::where('team_id', '=', $team->id)->where('user_id', '=', $userId)->firstOrFail();
 
         if (!in_array($myMember->role, ['leader', 'vice_leader'])) {
             return back()->with('error', 'Unauthorized: Only Leaders and Vice Leaders can complete a week.');
         }
 
-        $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->where('status', 'open')->first();
+        $period = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->where('status', '=', 'open')->first();
 
         if (!$period) {
             return back()->with('info', 'No open evaluation period found.');
@@ -485,7 +425,7 @@ class WeeklyEvaluationSystemController extends Controller
     public function export(Request $request, Team $team)
     {
         $userId = Auth::id();
-        $myMember = TeamMember::where('team_id', $team->id)->where('user_id', $userId)->firstOrFail();
+        $myMember = TeamMember::where('team_id', '=', $team->id)->where('user_id', '=', $userId)->firstOrFail();
 
         if (!in_array($myMember->role, ['leader', 'vice_leader'])) {
             return back()->with('error', 'Unauthorized.');
@@ -494,10 +434,10 @@ class WeeklyEvaluationSystemController extends Controller
         // Determine current period for context
         $periodId = $request->query('period_id');
         if ($periodId && $periodId !== 'null') {
-            $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->find($periodId);
+            $period = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->find($periodId);
         } else {
-            $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->where('status', 'open')->first() 
-                      ?? WeeklyEvaluationPeriod::where('team_id', $team->id)->orderBy('week_number', 'desc')->first();
+            $period = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->where('status', '=', 'open')->first() 
+                      ?? WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->orderBy('week_number', 'desc')->first();
         }
 
         if (!$period) {
@@ -505,7 +445,7 @@ class WeeklyEvaluationSystemController extends Controller
         }
 
         // 1. Fetch ALL members associated with this project
-        $allMembers = TeamMember::with('user')->where('team_id', $team->id)->get();
+        $allMembers = TeamMember::with('user')->where('team_id', '=', $team->id)->get();
 
         // 2. Filter members based on role visibility (Matching the index logic)
         $myRole = $myMember->role;
@@ -525,7 +465,7 @@ class WeeklyEvaluationSystemController extends Controller
         }
 
         // 3. Fetch existing records for this period to populate scores
-        $records = WeeklyEvaluationRecord::where('evaluation_period_id', $period->id)
+        $records = WeeklyEvaluationRecord::where('evaluation_period_id', '=', $period->id)
             ->get()
             ->keyBy('evaluatee_id');
 
@@ -582,13 +522,13 @@ class WeeklyEvaluationSystemController extends Controller
         ]);
 
         // Close all other open periods for this team
-        WeeklyEvaluationPeriod::where('team_id', $team->id)->where('status', 'open')->update(['status' => 'closed']);
+        WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->where('status', '=', 'open')->update(['status' => 'closed']);
 
         WeeklyEvaluationPeriod::create([
             'team_id' => $team->id,
-            'week_number' => $request->week_number,
-            'start_date' => $request->start_date,
-            'end_date' => $request->end_date,
+            'week_number' => $request->input('week_number'),
+            'start_date' => $request->input('start_date'),
+            'end_date' => $request->input('end_date'),
             'status' => 'open',
         ]);
 
@@ -599,10 +539,10 @@ class WeeklyEvaluationSystemController extends Controller
     {
         $periodId = request()->query('period_id');
         if ($periodId && $periodId !== 'null' && $periodId !== '') {
-            $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->find($periodId);
+            $period = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->find($periodId);
         } else {
-            $period = WeeklyEvaluationPeriod::where('team_id', $team->id)->where('status', 'open')->first()
-                   ?? WeeklyEvaluationPeriod::where('team_id', $team->id)->orderBy('week_number', 'desc')->first();
+            $period = WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->where('status', '=', 'open')->first()
+                   ?? WeeklyEvaluationPeriod::where('team_id', '=', $team->id)->orderBy('week_number', 'desc')->first();
         }
 
         if (!$period) return response()->json(['error' => 'No period found'], 404);
@@ -621,8 +561,8 @@ class WeeklyEvaluationSystemController extends Controller
         // - Tasks due during this week
         // - Tasks submitted/updated/approved during this week
         // - AND ANY unfinished tasks assigned before this week (ongoing work)
-        $tasks = \App\Models\Task::where('user_id', $userId)
-            ->where('team_id', $team->id)
+        $tasks = \App\Models\Task::where('user_id', '=', $userId)
+            ->where('team_id', '=', $team->id)
             ->where(function($q) use ($startDate, $endDate) {
                 // STRICT FILTERING: Only tasks created or due in this week
                 $q->whereBetween('created_at', [$startDate, $endDate])
@@ -661,16 +601,16 @@ class WeeklyEvaluationSystemController extends Controller
 
         // 3. COLLECT WORKSHOPS
         $techRole = strtolower($member->technical_role ?? 'general');
-        $workshops = \App\Models\Workshop::where('team_id', $team->id)
+        $workshops = \App\Models\Workshop::where('team_id', '=', $team->id)
             ->whereBetween('workshop_date', [$startDate->toDateString(), $endDate->toDateString()])
             ->when($techRole !== 'general', function($q) use ($techRole) {
                 return $q->where(function($sub) use ($techRole) {
-                    $sub->where('domain', 'general')->orWhere('domain', $techRole);
+                    $sub->where('domain', '=', 'general')->orWhere('domain', '=', $techRole);
                 });
             })
             ->get();
 
-        $workshopAttendances = \App\Models\WorkshopAttendee::where('user_id', $userId)
+        $workshopAttendances = \App\Models\WorkshopAttendee::where('user_id', '=', $userId)
             ->whereIn('workshop_id', $workshops->pluck('id'))
             ->get()
             ->keyBy('workshop_id');
@@ -687,11 +627,11 @@ class WeeklyEvaluationSystemController extends Controller
         }
 
         // 4. COLLECT MEETINGS: All team meetings in that week
-        $meetings = \App\Models\Meeting::where('team_id', $team->id)
+        $meetings = \App\Models\Meeting::where('team_id', '=', $team->id)
             ->whereBetween('meeting_date', [$startDate, $endDate])
             ->get();
 
-        $meetingAttendances = \App\Models\MeetingAttendance::where('user_id', $userId)
+        $meetingAttendances = \App\Models\MeetingAttendance::where('user_id', '=', $userId)
             ->whereIn('meeting_id', $meetings->pluck('id'))
             ->get()
             ->keyBy('meeting_id');
