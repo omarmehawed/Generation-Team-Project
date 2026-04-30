@@ -576,5 +576,3 @@ Route::get('/fix-images', function () {
 });
 
 Route::post('/evaluation/team/{team}/assign-sub-leader', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'assignSubLeader'])->name('evaluation.assign-sub-leader');
-
-require __DIR__ . '/creativa.php';
