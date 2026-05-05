@@ -295,7 +295,7 @@ class JoinRequestController extends Controller
     }
 
     /**
-     * Admin: Store User and Link.
+     * Admin: Store User and Link
      */
     public function storeUser(Request $request, $id)
     {
