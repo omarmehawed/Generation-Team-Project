@@ -314,7 +314,7 @@ class JoinRequestController extends Controller
             'name' => $joinRequest->full_name,
             'email' => $validated['email'],
             'password' => Hash::make($validated['password']),
-            'national_id' => $joinRequest->national_id,
+            'national_id' => substr($joinRequest->national_id, 0, 14),
             'phone_number' => $joinRequest->phone_number,
             'whatsapp_number' => $joinRequest->whatsapp_number, // [NEW] Sync WhatsApp
             'date_of_birth' => $joinRequest->date_of_birth, // [NEW] Sync DOB
