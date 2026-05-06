@@ -47,11 +47,11 @@ class JoinRequestController extends Controller
             return redirect('/')->with('error', 'نعتذر، باب الانضمام مغلق حالياً. يرجى المتابعة لاحقاً.');
         }
 
-        $questions = \App\Models\JoinRequestQuestion::where('is_active', true)
+        $questions = \App\Models\JoinRequestQuestion::where('is_active', '=', true, 'and')
             ->where(function($q) {
-                $q->whereNull('archive_id')
+                $q->whereNull('archive_id', 'and')
                   ->orWhereHas('archive', function($aq) {
-                      $aq->where('is_active', true);
+                      $aq->where('is_active', true, 'and');
                   });
             })
             ->orderBy('order_priority')
@@ -89,8 +89,8 @@ class JoinRequestController extends Controller
             return response()->json(['exists' => false]);
         }
         
-        $existsInRequests = JoinRequest::where('national_id', $nid)->exists();
-        $existsInUsers = User::where('national_id', $nid)->exists();
+        $existsInRequests = JoinRequest::where('national_id', '=', $nid, 'and')->exists();
+        $existsInUsers = User::where('national_id', '=', $nid, 'and')->exists();
         
         return response()->json([
             'exists' => $existsInRequests || $existsInUsers
@@ -106,7 +106,7 @@ class JoinRequestController extends Controller
             'academic_id' => 'required|string|max:20'
         ]);
 
-        $joinRequest = JoinRequest::where('academic_id', $request->academic_id)->first();
+        $joinRequest = JoinRequest::where('academic_id', '=', $request->input('academic_id'), 'and')->first();
 
         if (!$joinRequest) {
             return response()->json([
@@ -153,11 +153,11 @@ class JoinRequestController extends Controller
         ];
 
         // 2. Fetch Active Questions for dynamic validation
-        $questions = \App\Models\JoinRequestQuestion::where('is_active', true)
+        $questions = \App\Models\JoinRequestQuestion::where('is_active', '=', true, 'and')
             ->where(function($q) {
-                $q->whereNull('archive_id')
+                $q->whereNull('archive_id', 'and')
                   ->orWhereHas('archive', function($aq) {
-                      $aq->where('is_active', true);
+                      $aq->where('is_active', true, 'and');
                   });
             })
             ->get();
@@ -188,11 +188,8 @@ class JoinRequestController extends Controller
         ]);
 
         // 3. Custom Duplicate Check
-        $existingRequest = JoinRequest::where('national_id', $validated['national_id'])
-                                        ->orWhere('academic_id', $validated['academic_id'])
-                                        ->first();
-
-        $existingUser = \App\Models\User::where('national_id', $validated['national_id'])->first();
+        $existingRequest = JoinRequest::where('national_id', '=', $request->national_id, 'and')->first();
+        $existingUser = User::where('national_id', '=', $request->national_id, 'and')->first();
 
         if ($existingRequest || $existingUser) {
             return back()->withInput()->with('error', 'بياناتك مسجلة بالفعل في النظام.')->with('error_title', 'عفواً! لقد قمت بالتسجيل مسبقاً.');
@@ -242,13 +239,13 @@ class JoinRequestController extends Controller
                 $q->where('full_name', 'like', "%{$search}%")
                   ->orWhere('phone_number', 'like', "%{$search}%")
                   ->orWhere('national_id', 'like', "%{$search}%")
-                  ->orWhere('academic_id', 'like', "%{$search}%"); // Added Academic ID search
+                  ->orWhere('academic_id', 'like', "%{$search}%");
             });
         }
 
         // 2. Filters
         if ($request->has('status') && $request->filled('status')) {
-            $query->where('status', $request->input('status')); // pending, approved, rejected
+            $query->where('status', $request->input('status'));
         }
 
         if ($request->has('date') && $request->filled('date')) {
@@ -256,10 +253,9 @@ class JoinRequestController extends Controller
         }
 
         // 3. Sorting
-        $sortColumn = $request->input('sort_by', 'created_at'); // Default sort
+        $sortColumn = $request->input('sort_by', 'created_at');
         $sortDirection = $request->input('sort_order', 'desc');
 
-        // Allow sorting only on specific columns
         $allowedSorts = ['full_name', 'status', 'created_at'];
         if (in_array($sortColumn, $allowedSorts)) {
             $query->orderBy($sortColumn, $sortDirection);
@@ -271,10 +267,10 @@ class JoinRequestController extends Controller
         $requests = $query->paginate(10)->withQueryString();
 
         // 5. Analytics Dashboard Metrics
-        $totalCount = JoinRequest::count();
-        $pendingCount = JoinRequest::where('status', 'pending')->count();
-        $approvedCount = JoinRequest::where('status', 'approved')->count();
-        $rejectedCount = JoinRequest::where('status', 'rejected')->count();
+        $totalCount = JoinRequest::count('*');
+        $pendingCount = JoinRequest::where('status', '=', 'pending', 'and')->count('*');
+        $approvedCount = JoinRequest::where('status', '=', 'approved', 'and')->count('*');
+        $rejectedCount = JoinRequest::where('status', '=', 'rejected', 'and')->count('*');
 
         $joinRequestEnabled = \App\Models\Setting::get('join_request_enabled', 'on');
         $questions = \App\Models\JoinRequestQuestion::all();
@@ -285,7 +281,7 @@ class JoinRequestController extends Controller
     /**
      * Admin: Show Approve Form.
      */
-    public function approve($id)
+    public function show(int $id)
     {
         if (!Auth::user()->canManageJoinRequests()) {
             abort(403);
@@ -297,7 +293,7 @@ class JoinRequestController extends Controller
     /**
      * Admin: Store User and Link
      */
-    public function storeUser(Request $request, $id)
+    public function storeUser(Request $request, int $id)
     {
         if (!Auth::user()->canManageJoinRequests()) {
             abort(403);
@@ -354,7 +350,7 @@ class JoinRequestController extends Controller
     /**
      * Admin: Reject Request.
      */
-    public function reject($id)
+    public function reject(int $id)
     {
         if (!Auth::user()->canManageJoinRequests()) {
             abort(403);

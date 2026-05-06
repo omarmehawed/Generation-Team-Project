@@ -5,9 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
+use Illuminate\Database\Eloquent\SoftDeletes;
+
 class FundContribution extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     // الحقول القابلة للتعبئة (بما فيها طريقة الدفع والصورة اللي ضفناهم مؤخراً)
     protected $fillable = [
@@ -31,7 +33,7 @@ class FundContribution extends Model
     // 1. علاقة العضو (User)
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class)->withTrashed();
     }
 
     // 2. العلاقة اللي كانت ناقصة (Fund)

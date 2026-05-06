@@ -1927,7 +1927,7 @@
                                             <a href="{{ route('profile.show', $contrib->user_id) }}" class="flex items-center gap-3 group/profile">
                                                 <x-user-avatar :user="$contrib->user" size="w-9 h-9" />
                                                 <div>
-                                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover/profile:text-[#AA8A26] transition-colors">{{ $contrib->user->name }}
+                                                    <p class="text-xs font-bold text-gray-800 dark:text-gray-200 group-hover/profile:text-[#AA8A26] transition-colors">{{ $contrib->user->name ?? 'Deleted User' }}
                                                     </p>
 
                                                     {{-- 🔥 عرض الديون القديمة (الفضيحة) --}}
@@ -1999,9 +1999,9 @@
                                                             <button
                                                                 onclick="openReviewModal({{ json_encode([
                                                                     'id' => $contrib->id,
-                                                                    'member_name' => $contrib->user->name,
+                                                                    'member_name' => $contrib->user->name ?? 'Deleted User',
                                                                     'fund_name' => $activeFund->title,
-                                                                    'member_balance' => $contrib->user->wallet_balance,
+                                                                    'member_balance' => $contrib->user->wallet_balance ?? 0,
                                                                     'payment_method' => $contrib->payment_method,
                                                                     'amount' => $contrib->amount ?? $activeFund->amount_per_member,
                                                                     'active_fund_amount' => $activeFund->amount_per_member,
@@ -2165,8 +2165,8 @@
                                                             @endif
 
                                                             {{-- 1. Force Current Fund --}}
-                                                            @if($myRole == 'leader' && $contrib->user->wallet_balance >= $activeFund->amount_per_member)
-                                                                <form action="{{ route('final_project.forceWalletPayment') }}" method="POST" onsubmit="return confirmAction(event, 'Force Wallet Payment: Deduct {{ number_format($activeFund->amount_per_member, 2) }} EGP from {{ $contrib->user->name }}\'s wallet?', () => { handleAjaxFormSubmit({preventDefault: () => {}, target: event.target.closest('form')}); })">
+                                                            @if($myRole == 'leader' && optional($contrib->user)->wallet_balance >= $activeFund->amount_per_member)
+                                                                <form action="{{ route('final_project.forceWalletPayment') }}" method="POST" onsubmit="return confirmAction(event, 'Force Wallet Payment: Deduct {{ number_format($activeFund->amount_per_member, 2) }} EGP from {{ addslashes($contrib->user->name ?? 'Deleted User') }}\'s wallet?', () => { handleAjaxFormSubmit({preventDefault: () => {}, target: event.target.closest('form')}); })">
                                                                     @csrf
                                                                     <input type="hidden" name="contribution_id" value="{{ $contrib->id }}">
                                                                     <button type="submit" class="text-[9px] bg-gray-900 text-white px-2 py-1 rounded-lg hover:bg-black transition font-bold shadow-sm flex items-center gap-1 whitespace-nowrap">
@@ -2174,7 +2174,7 @@
                                                                     </button>
                                                                 </form>
                                                             @elseif($myRole == 'leader')
-                                                                <span class="text-[8px] text-red-400 font-bold uppercase tracking-tighter" title="Member balance: {{ number_format($contrib->user->wallet_balance, 2) }} EGP">Low Balance (Active)</span>
+                                                                <span class="text-[8px] text-red-400 font-bold uppercase tracking-tighter" title="Member balance: {{ number_format($contrib->user->wallet_balance ?? 0, 2) }} EGP">Low Balance (Active)</span>
                                                             @endif
 
                                                             {{-- 2. Force Settle Old Debts --}}

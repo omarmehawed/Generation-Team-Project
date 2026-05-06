@@ -54,24 +54,41 @@ class TeamMember extends Model
         static::saved(function ($teamMember) {
             // Only assign funds if the member is active
             if (!in_array($teamMember->status, ['pending', 'rejected'])) {
-                $funds = \App\Models\ProjectFund::where('team_id', $teamMember->team_id)->get();
+                // 1. Restore any soft-deleted contributions for this user in this team
+                $trashed = \App\Models\FundContribution::onlyTrashed()
+                    ->where('user_id', '=', $teamMember->user_id)
+                    ->whereHas('fund', function($q) use ($teamMember) {
+                        $q->where('team_id', '=', $teamMember->team_id);
+                    })->get();
+                
+                foreach ($trashed as $t) {
+                    $t->restore();
+                }
+
+                // 2. Assign any new funds they missed while they were gone (or initially)
+                $funds = \App\Models\ProjectFund::where('team_id', '=', $teamMember->team_id)->get();
                 foreach ($funds as $fund) {
-                    \App\Models\FundContribution::firstOrCreate([
-                        'fund_id' => $fund->id,
-                        'user_id' => $teamMember->user_id,
-                    ], [
-                        'status' => 'pending'
-                    ]);
+                    $exists = \App\Models\FundContribution::where('fund_id', '=', $fund->id)
+                                ->where('user_id', '=', $teamMember->user_id)
+                                ->exists();
+                    if (!$exists) {
+                        \App\Models\FundContribution::create([
+                            'fund_id' => $fund->id,
+                            'user_id' => $teamMember->user_id,
+                            'status' => 'pending'
+                        ]);
+                    }
                 }
             }
         });
 
         static::deleted(function ($teamMember) {
-            // Delete unpaid fund contributions when the user is removed from the team
-            \App\Models\FundContribution::where('user_id', $teamMember->user_id)
-                ->whereIn('status', ['pending', 'pending_approval'])
+            // Soft delete unpaid fund contributions when the user is removed from the team
+            // (Paid ones remain to keep team collected amounts accurate)
+            \App\Models\FundContribution::where('user_id', '=', $teamMember->user_id)
+                ->where('status', '!=', 'paid')
                 ->whereHas('fund', function($q) use ($teamMember) {
-                    $q->where('team_id', $teamMember->team_id);
+                    $q->where('team_id', '=', $teamMember->team_id);
                 })->delete();
         });
     }
