@@ -834,7 +834,7 @@ class FinalProjectController extends Controller
             'technical_role' => 'required|in:general,software,hardware', // التخصص التقني
             'extra_role' => 'nullable|in:none,presentation,reports,marketing,project_book', // المسؤوليات الإضافية
             'permissions' => 'nullable|array',
-            'permissions.*' => 'string|in:view_team_funds,wallet_management,deposit_requests',
+            'permissions.*' => 'string|in:view_team_funds,wallet_management,deposit_requests,manage_forms',
             'can_manage_components' => 'nullable|boolean',
             'can_manage_expenses'   => 'nullable|boolean',
             'can_access_join_requests' => 'nullable|boolean',

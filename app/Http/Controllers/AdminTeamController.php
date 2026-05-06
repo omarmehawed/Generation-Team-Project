@@ -61,9 +61,12 @@ class AdminTeamController extends Controller
     public function removeMember($team_id, $user_id)
     {
         // حذف العضو
-        TeamMember::where('team_id', $team_id)
+        $memberToDelete = TeamMember::where('team_id', $team_id)
             ->where('user_id', $user_id)
-            ->delete();
+            ->first();
+        if ($memberToDelete) {
+            $memberToDelete->delete();
+        }
 
         if (request()->ajax()) {
             return response()->json([

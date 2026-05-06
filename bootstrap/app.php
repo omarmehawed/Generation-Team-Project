@@ -32,6 +32,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'permission' => \App\Http\Middleware\CheckPermission::class, // دلوقتي هيلاقيه صح
             'role' => \App\Http\Middleware\CheckRole::class,             // وده كمان
             'isAdmin' => \App\Http\Middleware\CheckRole::class,
+            'can_manage_forms' => \App\Http\Middleware\CheckFormAccess::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

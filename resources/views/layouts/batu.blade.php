@@ -522,6 +522,25 @@
                         <span>Quizzes</span>
                     </a>
                 </li>
+                
+                {{-- Forms System Links --}}
+                <li>
+                    <a href="{{ route('forms.member.index') }}"
+                        class="sidebar-link {{ request()->routeIs('forms.member.*') ? 'active' : '' }}">
+                        <i class="fas fa-tasks text-[#2596be]"></i>
+                        <span>Forms</span>
+                    </a>
+                </li>
+                @if(auth()->user()->canManageForms())
+                    <li>
+                        <a href="{{ route('forms.manage.index') }}"
+                            class="sidebar-link {{ request()->routeIs('forms.manage.*') ? 'active' : '' }}">
+                            <i class="fas fa-file-alt text-[#2596be]"></i>
+                            <span>Manage Forms</span>
+                            <span class="inline-flex items-center justify-center px-1.5 py-0.5 ms-2 text-[10px] font-bold text-blue-800 bg-blue-100 rounded border border-blue-200">Admin</span>
+                        </a>
+                    </li>
+                @endif
                 @if(auth()->check() && auth()->user()->hasPermission('manage_quizzes'))
                     <li>
                         <a href="{{ route('admin.quizzes.index') }}"
@@ -730,12 +749,24 @@
                         </a>
                     @endif
 
+                    @if(auth()->user()->canManageForms())
+                        <a href="{{ route('forms.manage.index') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-blue-50 transition-colors {{ request()->routeIs('forms.manage.*') ? 'text-blue-700 bg-blue-50' : '' }}">
+                            <i class="fas fa-file-alt w-10 text-blue-700 text-lg"></i>
+                            <span class="flex-1">Manage Forms</span>
+                        </a>
+                    @endif
+
                     @if($canSeeEval)
                         <a href="{{ route('evaluation.index', $myTeamId) }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-indigo-50 transition-colors {{ request()->routeIs('evaluation.*') ? 'text-indigo-600 bg-indigo-50' : '' }}">
                             <i class="fas fa-clipboard-check w-10 text-indigo-500 text-lg"></i>
                             <span class="flex-1">Weekly Eval</span>
                         </a>
                     @endif
+
+                    <a href="{{ route('forms.member.index') }}" class="flex items-center px-5 py-3.5 text-sm font-bold text-gray-700 dark:text-gray-300 hover:bg-blue-50 transition-colors {{ request()->routeIs('forms.member.*') ? 'text-[#2596be] bg-blue-50' : '' }}">
+                        <i class="fas fa-tasks w-10 text-[#2596be] text-lg"></i>
+                        <span class="flex-1">Forms</span>
+                    </a>
                 </div>
             </div>
         </div>

@@ -298,10 +298,10 @@
                                         </div>
                                         <div class="flex-1">
                                             <p class="text-sm font-bold" style="color: var(--text-main)">
-                                                {{ $notification->data['title'] }}
+                                                {{ $notification->data['title'] ?? 'Notification' }}
                                             </p>
                                             <p class="text-xs mt-1 leading-relaxed" style="color: var(--text-muted)">
-                                                {{ $notification->data['body'] }}
+                                                {{ $notification->data['body'] ?? ($notification->data['message'] ?? '') }}
                                             </p>
                                             <p class="text-[10px] mt-2 opacity-70" style="color: var(--text-muted)">
                                                 {{ $notification->created_at->diffForHumans() }}

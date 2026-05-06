@@ -241,6 +241,26 @@
                                     </div>
                                 </label>
 
+                                {{-- New Permission: Manage Forms --}}
+                                <label class="cursor-pointer group relative">
+                                    <input type="checkbox" name="permissions[]" value="manage_forms"
+                                        class="peer sr-only">
+                                    <div
+                                        class="p-4 rounded-xl bg-white dark:bg-gray-800 border-2 border-gray-100 dark:border-gray-700 peer-checked:border-purple-500 peer-checked:bg-purple-50 hover:shadow-md transition-all duration-200 flex items-center gap-3">
+                                        <div
+                                            class="w-10 h-10 rounded-lg bg-purple-100 text-purple-600 flex items-center justify-center peer-checked:bg-purple-500 peer-checked:text-white transition-colors">
+                                            <i class="fas fa-file-alt"></i>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="block font-bold text-gray-700 dark:text-gray-300 peer-checked:text-purple-700">Manage
+                                                Forms</span>
+                                            <span class="text-[10px] text-gray-400 font-medium">Create & edit custom
+                                                forms</span>
+                                        </div>
+                                    </div>
+                                </label>
+
                                 {{-- New Permission: Teams Database --}}
                                 <label class="cursor-pointer group relative">
                                     <input type="checkbox" name="permissions[]" value="manage_teams_db"
@@ -616,6 +636,13 @@
                                 <input type="checkbox" name="permissions[]" value="view_defense"
                                     class="rounded text-blue-600 focus:ring-blue-500">
                                 <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Time table Defence</span>
+                            </label>
+
+                            <label
+                                class="flex items-center gap-2 cursor-pointer hover:bg-gray-100 p-1 rounded transition">
+                                <input type="checkbox" name="permissions[]" value="manage_forms"
+                                    class="rounded text-blue-600 focus:ring-blue-500">
+                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Manage Forms</span>
                             </label>
 
                             {{-- New Permission: Teams Database (Bulk) --}}

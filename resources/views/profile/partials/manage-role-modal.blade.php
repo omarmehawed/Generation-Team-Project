@@ -236,6 +236,22 @@
                                         <span class="text-[10px] text-gray-500 dark:text-gray-400">Allow this member to create and manage quizzes</span>
                                     </div>
                                 </label>
+
+                                <div class="h-px bg-gray-200"></div>
+
+                                {{-- Forms Management Permission --}}
+                                <label class="flex items-center gap-3 cursor-pointer group">
+                                    <div class="relative flex items-center">
+                                        <input type="checkbox" name="permissions[]" value="manage_forms" class="peer sr-only" {{ $userPermissions->contains('manage_forms') ? 'checked' : '' }}>
+                                        <div class="h-5 w-5 rounded border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 peer-checked:bg-teal-600 peer-checked:border-teal-600 transition-all flex items-center justify-center group-hover:border-teal-600">
+                                            <i class="fas fa-check text-white text-[10px] opacity-0 peer-checked:opacity-100 transition-opacity"></i>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span class="text-sm font-bold text-gray-800 dark:text-gray-200 group-hover:text-teal-600 transition-colors">Manage Forms Access</span>
+                                        <span class="text-[10px] text-gray-500 dark:text-gray-400">Allow this member to create and manage forms</span>
+                                    </div>
+                                </label>
                             </div>
                         </div>
 

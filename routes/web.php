@@ -577,3 +577,31 @@ Route::get('/fix-images', function () {
 });
 
 Route::post('/evaluation/team/{team}/assign-sub-leader', [App\Http\Controllers\WeeklyEvaluationSystemController::class, 'assignSubLeader'])->name('evaluation.assign-sub-leader');
+
+// ====================================================
+// 📝 Advanced Internal Forms System
+// ====================================================
+
+Route::middleware(['auth'])->prefix('forms')->name('forms.')->group(function () {
+    
+    // Member Routes
+    Route::prefix('member')->name('member.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\FormResponseController::class, 'index'])->name('index');
+        Route::get('/{form}', [\App\Http\Controllers\FormResponseController::class, 'show'])->name('show');
+        Route::post('/{form}', [\App\Http\Controllers\FormResponseController::class, 'store'])->name('store');
+    });
+
+    // Admin/Leader Routes
+    Route::middleware(['can_manage_forms'])->prefix('manage')->name('manage.')->group(function () {
+        Route::get('/', [\App\Http\Controllers\FormBuilderController::class, 'index'])->name('index');
+        Route::get('/create', [\App\Http\Controllers\FormBuilderController::class, 'create'])->name('create');
+        Route::post('/', [\App\Http\Controllers\FormBuilderController::class, 'store'])->name('store');
+        Route::get('/{form}/edit', [\App\Http\Controllers\FormBuilderController::class, 'edit'])->name('edit');
+        Route::put('/{form}', [\App\Http\Controllers\FormBuilderController::class, 'update'])->name('update');
+        Route::delete('/{form}', [\App\Http\Controllers\FormBuilderController::class, 'destroy'])->name('destroy');
+        Route::post('/{form}/toggle-status', [\App\Http\Controllers\FormBuilderController::class, 'toggleStatus'])->name('toggle-status');
+        
+        Route::get('/{form}/analytics', [\App\Http\Controllers\FormAnalyticsController::class, 'show'])->name('analytics');
+        Route::get('/response/{response}', [\App\Http\Controllers\FormAnalyticsController::class, 'viewResponse'])->name('response.show');
+    });
+});

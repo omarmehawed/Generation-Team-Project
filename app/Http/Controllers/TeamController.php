@@ -213,9 +213,12 @@ class TeamController extends Controller
         }
 
         // 3. حذف الطالب المغادر من التيم
-        \App\Models\TeamMember::where('team_id', $team->id)
+        $memberToDelete = \App\Models\TeamMember::where('team_id', $team->id)
             ->where('user_id', $user->id)
-            ->delete();
+            ->first();
+        if ($memberToDelete) {
+            $memberToDelete->delete();
+        }
 
         return redirect()->route('projects.index')->with('success', 'You have left the team successfully.');
     }
@@ -268,9 +271,12 @@ class TeamController extends Controller
         }
 
         // حذف العضو من الجدول
-        TeamMember::where('team_id', $team->id)
+        $memberToDelete = TeamMember::where('team_id', $team->id)
             ->where('user_id', $request->user_id)
-            ->delete();
+            ->first();
+        if ($memberToDelete) {
+            $memberToDelete->delete();
+        }
 
         // (اختياري) حذف المهام المسندة للعضو ده في التيم عشان متبقاش معلقة
         Task::where('team_id', $team->id)->where('user_id', $request->user_id)->delete();

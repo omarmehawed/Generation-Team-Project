@@ -144,6 +144,33 @@ class User extends Authenticatable
     }
 
     // العلاقات القديمة زي ما هي
+    public function canManageForms()
+    {
+        // 1. System Owner Bypass
+        if ($this->email === '2420823@batechu.com') {
+            return true;
+        }
+
+        // 2. Global Admin Bypass
+        if ($this->role === 'admin') {
+            return true;
+        }
+
+        // 3. Explicit permission
+        if (!empty($this->permissions) && in_array('manage_forms', $this->permissions)) {
+            return true;
+        }
+
+        // 4. Team Leader Bypass
+        $isLeader = \App\Models\TeamMember::where('user_id', $this->id)->where('role', 'leader')->exists();
+        if ($isLeader) {
+            return true;
+        }
+
+        return false;
+    }
+
+    // العلاقات القديمة زي ما هي
     public function courses()
     {
         return $this->belongsToMany(Course::class, 'course_user', 'user_id', 'course_id');

@@ -49,4 +49,30 @@ class TeamMember extends Model
         'can_manage_quizzes' => 'boolean',
     ];
 
+    protected static function booted()
+    {
+        static::saved(function ($teamMember) {
+            // Only assign funds if the member is active
+            if (!in_array($teamMember->status, ['pending', 'rejected'])) {
+                $funds = \App\Models\ProjectFund::where('team_id', $teamMember->team_id)->get();
+                foreach ($funds as $fund) {
+                    \App\Models\FundContribution::firstOrCreate([
+                        'fund_id' => $fund->id,
+                        'user_id' => $teamMember->user_id,
+                    ], [
+                        'status' => 'pending'
+                    ]);
+                }
+            }
+        });
+
+        static::deleted(function ($teamMember) {
+            // Delete unpaid fund contributions when the user is removed from the team
+            \App\Models\FundContribution::where('user_id', $teamMember->user_id)
+                ->whereIn('status', ['pending', 'pending_approval'])
+                ->whereHas('fund', function($q) use ($teamMember) {
+                    $q->where('team_id', $teamMember->team_id);
+                })->delete();
+        });
+    }
 }
