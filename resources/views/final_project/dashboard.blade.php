@@ -857,11 +857,11 @@
                                 <div class="flex items-center justify-between bg-gray-50 dark:bg-gray-900 p-3 rounded-xl border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
                                     <div class="flex items-center gap-3">
                                         <div class="relative">
-                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($req->user->name) }}&background=EBF8FF&color=3182CE&bold=true" class="w-10 h-10 rounded-full border border-blue-200">
+                                            <img src="https://ui-avatars.com/api/?name={{ urlencode($req->user->name ?? 'Deleted User') }}&background=EBF8FF&color=3182CE&bold=true" class="w-10 h-10 rounded-full border border-blue-200">
                                             <span class="absolute bottom-0 right-0 w-3 h-3 bg-yellow-400 border-2 border-white rounded-full" title="Pending"></span>
                                         </div>
                                         <div>
-                                            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ \Illuminate\Support\Str::limit($req->user->name, 15) }}</h4>
+                                            <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ \Illuminate\Support\Str::limit($req->user->name ?? 'Deleted User', 15) }}</h4>
                                             <p class="text-[10px] text-gray-400">{{ $req->created_at->diffForHumans(null, true) }}</p>
                                         </div>
                                     </div>
@@ -968,7 +968,7 @@
                                 @foreach ($displayMembers as $member)
                                         @php
                                             $mName = str_replace("'", "\\'", strtolower($member->user->name));
-                                            $mID = strtolower($member->user->email ? explode('@', $member->user->email)[0] : '');
+                                            $mID = strtolower(optional($member->user)->email ? explode('@', $member->user->email)[0] : '');
                                         @endphp
                                         <tr class="group transition-all duration-300 hover:-translate-y-1"
                                             x-show="searchMember === '' || '{{ $mName }}'.includes(searchMember.toLowerCase()) || '{{ $mID }}'.includes(searchMember.toLowerCase())">
@@ -988,7 +988,7 @@
                                                     </div>
                                                     <div>
                                                         <div class="text-base font-bold text-gray-800 dark:text-gray-200 group-hover:text-yellow-800 transition-colors">
-                                                            {{ $member->user->name }}
+                                                            {{ $member->user->name ?? 'Deleted User' }}
                                                         </div>
                                                         <div class="text-[10px] uppercase font-black tracking-tighter {{ $member->technical_role =='software' ? 'text-blue-500' : ($member->technical_role == 'hardware' ? 'text-orange-500' : 'text-gray-400') }}">
                                                             {{ $member->technical_role ?? 'General' }}
@@ -998,7 +998,7 @@
                                             </td>
                                             <td class="bg-white dark:bg-gray-800 group-hover:bg-yellow-50/30 border-y border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
                                                 <div class="text-sm font-bold text-gray-700 dark:text-gray-300 font-mono bg-gray-50 dark:bg-gray-900 px-3 py-1.5 rounded-lg inline-block border border-gray-200 dark:border-gray-700 shadow-sm">
-                                                    {{ $member->user->email ? explode('@', $member->user->email)[0] : 'N/A' }}
+                                                    {{ optional($member->user)->email ? explode('@', $member->user->email)[0] : 'N/A' }}
                                                 </div>
                                             </td>
                                             <td class="bg-white dark:bg-gray-800 group-hover:bg-yellow-50/30 border-y border-gray-100 dark:border-gray-700 group-hover:border-yellow-200 shadow-sm group-hover:shadow-md px-6 py-4">
@@ -1040,7 +1040,7 @@
                                                         </form>
                                                     @endif
                                                     
-                                                    <button onclick="openReportModal('{{ $member->user_id }}', '{{ $member->user->name }}')"
+                                                    <button onclick="openReportModal('{{ $member->user_id }}', '{{ addslashes($member->user->name ?? 'Deleted User') }}')"
                                                         class="w-8 h-8 rounded-full bg-gray-100 dark:bg-gray-900 text-gray-500 dark:text-gray-400 hover:bg-gray-800 hover:text-white transition flex items-center justify-center shadow-sm transform hover:scale-110"
                                                         title="Report">
                                                         <i class="fas fa-flag text-xs"></i>
@@ -1432,11 +1432,11 @@
                             @foreach ($softMembers as $member)
                                 @php 
                                     $memberTasks = $team->tasks->where('user_id', $member->user_id);
-                                    $academicId = explode('@', $member->user->university_email ?? $member->user->email)[0];
+                                    $academicId = explode('@', optional($member->user)->university_email ?? optional($member->user)->email ?? 'deleted@example.com')[0];
                                 @endphp
                                 <div
                                     x-show="taskSearchQuery === '' || 
-                                           '{{ strtolower($member->user->name) }}'.includes(taskSearchQuery.toLowerCase()) || 
+                                           '{{ strtolower($member->user->name ?? 'Deleted User') }}'.includes(taskSearchQuery.toLowerCase()) || 
                                            '{{ $academicId }}'.includes(taskSearchQuery)"
                                     x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 transform scale-95"
@@ -1444,9 +1444,9 @@
                                     class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-blue-100 shadow-sm hover:shadow-md transition">
                                     <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-50">
                                         <img class="w-8 h-8 rounded-full"
-                                            src="https://ui-avatars.com/api/?name={{ $member->user->name }}">
+                                            src="https://ui-avatars.com/api/?name={{ urlencode($member->user->name ?? 'Deleted User') }}">
                                         <div>
-                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ $member->user->name }}</p>
+                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ $member->user->name ?? 'Deleted User' }}</p>
                                             <span
                                                 class="text-[9px] bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">{{ ucfirst($member->role) }}</span>
                                         </div>
@@ -1515,11 +1515,11 @@
                             @foreach ($hardMembers as $member)
                                 @php 
                                     $memberTasks = $team->tasks->where('user_id', $member->user_id);
-                                    $academicId = explode('@', $member->user->university_email ?? $member->user->email)[0];
+                                    $academicId = explode('@', optional($member->user)->university_email ?? optional($member->user)->email ?? 'deleted@example.com')[0];
                                 @endphp
                                 <div
                                     x-show="taskSearchQuery === '' || 
-                                           '{{ strtolower($member->user->name) }}'.includes(taskSearchQuery.toLowerCase()) || 
+                                           '{{ strtolower($member->user->name ?? 'Deleted User') }}'.includes(taskSearchQuery.toLowerCase()) || 
                                            '{{ $academicId }}'.includes(taskSearchQuery)"
                                     x-transition:enter="transition ease-out duration-300"
                                     x-transition:enter-start="opacity-0 transform scale-95"
@@ -1527,9 +1527,9 @@
                                     class="bg-white dark:bg-gray-800 rounded-xl p-4 border border-orange-100 shadow-sm hover:shadow-md transition">
                                     <div class="flex items-center gap-3 mb-3 pb-3 border-b border-gray-50">
                                         <img class="w-8 h-8 rounded-full"
-                                            src="https://ui-avatars.com/api/?name={{ $member->user->name }}">
+                                            src="https://ui-avatars.com/api/?name={{ urlencode($member->user->name ?? 'Deleted User') }}">
                                         <div>
-                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ $member->user->name }}</p>
+                                            <p class="text-xs font-bold text-gray-800 dark:text-gray-200">{{ $member->user->name ?? 'Deleted User' }}</p>
                                             <span
                                                 class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded">{{ ucfirst($member->role) }}</span>
                                         </div>
@@ -1590,8 +1590,8 @@
                                             <div class="p-4 rounded-xl bg-gray-50/50 border border-gray-100 dark:border-gray-700">
                                                 <div class="flex justify-between items-start mb-3">
                                                     <div class="flex items-center gap-2">
-                                                        <img class="w-6 h-6 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($t->user->name) }}">
-                                                        <span class="text-xs font-bold text-gray-700 dark:text-gray-300">{{ $t->user->name }}</span>
+                                                        <img class="w-6 h-6 rounded-full" src="https://ui-avatars.com/api/?name={{ urlencode($t->user->name ?? 'Deleted User') }}">
+                                                        <span class="text-xs font-bold text-gray-700 dark:text-gray-300">{{ $t->user->name ?? 'Deleted User' }}</span>
                                                     </div>
                                                     <span class="text-[10px] text-gray-400">{{ $t->graded_at ? $t->graded_at->format('M d, H:i') : '' }}</span>
                                                 </div>
@@ -1962,9 +1962,9 @@
                                                                     <button
                                                                         onclick="openReviewModal({{ json_encode([
                                                                             'id' => $hPending->id,
-                                                                            'member_name' => $hPending->user->name,
+                                                                            'member_name' => $hPending->user->name ?? 'Deleted User',
                                                                             'fund_name' => $hPending->fund->title,
-                                                                            'member_balance' => $hPending->user->wallet_balance,
+                                                                            'member_balance' => $hPending->user->wallet_balance ?? 0,
                                                                             'payment_method' => $hPending->payment_method,
                                                                             'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
                                                                             'active_fund_amount' => $hPending->fund->amount_per_member,
@@ -2020,9 +2020,9 @@
                                                                 <button
                                                                     onclick="openReviewModal({{ json_encode([
                                                                         'id' => $hPending->id,
-                                                                        'member_name' => $hPending->user->name,
+                                                                        'member_name' => $hPending->user->name ?? 'Deleted User',
                                                                         'fund_name' => $hPending->fund->title,
-                                                                        'member_balance' => $hPending->user->wallet_balance,
+                                                                        'member_balance' => $hPending->user->wallet_balance ?? 0,
                                                                         'payment_method' => $hPending->payment_method,
                                                                         'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
                                                                         'active_fund_amount' => $hPending->fund->amount_per_member,
@@ -2074,9 +2074,9 @@
                                                                 <button
                                                                     onclick="openReviewModal({{ json_encode([
                                                                         'id' => $hPending->id,
-                                                                        'member_name' => $hPending->user->name,
+                                                                        'member_name' => $hPending->user->name ?? 'Deleted User',
                                                                         'fund_name' => $hPending->fund->title,
-                                                                        'member_balance' => $hPending->user->wallet_balance,
+                                                                        'member_balance' => $hPending->user->wallet_balance ?? 0,
                                                                         'payment_method' => $hPending->payment_method,
                                                                         'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
                                                                         'active_fund_amount' => $hPending->fund->amount_per_member,
@@ -2146,9 +2146,9 @@
                                                                     <button
                                                                         onclick="openReviewModal({{ json_encode([
                                                                             'id' => $hPending->id,
-                                                                            'member_name' => $hPending->user->name,
+                                                                            'member_name' => $hPending->user->name ?? 'Deleted User',
                                                                             'fund_name' => $hPending->fund->title,
-                                                                            'member_balance' => $hPending->user->wallet_balance,
+                                                                            'member_balance' => $hPending->user->wallet_balance ?? 0,
                                                                             'payment_method' => $hPending->payment_method,
                                                                             'amount' => $hPending->amount ?? $hPending->fund->amount_per_member,
                                                                             'active_fund_amount' => $hPending->fund->amount_per_member,
@@ -3705,11 +3705,11 @@
                                 <label class="flex items-center justify-between p-3 border border-gray-100 dark:border-gray-700 hover:border-indigo-300 rounded-xl cursor-pointer transition bg-white dark:bg-gray-800 hover:bg-indigo-50 group">
                                     <div class="flex items-center gap-3">
                                         <div class="h-10 w-10 rounded-full bg-gray-100 dark:bg-gray-900 flex items-center justify-center text-xs font-black text-gray-500 dark:text-gray-400 group-hover:text-indigo-600 group-hover:bg-white border border-transparent group-hover:border-indigo-200 transition">
-                                            {{ substr($avMember->user->name, 0, 2) }}
+                                            {{ substr($avMember->user->name ?? 'Deleted User', 0, 2) }}
                                         </div>
                                         <div>
-                                            <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $avMember->user->name }}</p>
-                                            <p class="text-[10px] text-gray-400">{{ $avMember->user->email }} - Level {{ $avMember->user->academic_year ?? '1' }}</p>
+                                            <p class="text-sm font-bold text-gray-800 dark:text-gray-200">{{ $avMember->user->name ?? 'Deleted User' }}</p>
+                                            <p class="text-[10px] text-gray-400">{{ optional($avMember->user)->email ?? 'N/A' }} - Level {{ optional($avMember->user)->academic_year ?? '1' }}</p>
                                         </div>
                                     </div>
                                     <input type="checkbox" name="member_ids[]" value="{{ $avMember->id }}" class="w-5 h-5 text-indigo-600 border-gray-300 dark:border-gray-600 rounded focus:ring-indigo-500">
@@ -3878,8 +3878,8 @@
         $membersData = (isset($team) && $team)
             ? $team->members->map(function ($m) {
                 return [
-                    'id' => $m->user->id, 
-                    'name' => $m->user->name, 
+                    'id' => $m->user_id, 
+                    'name' => $m->user->name ?? 'Deleted User', 
                     'tech' => strtolower($m->technical_role ?? ''),
                     'is_sub_leader' => (bool)$m->is_sub_leader
                 ];

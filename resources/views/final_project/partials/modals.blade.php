@@ -536,7 +536,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                     <option value="" disabled selected>-- Select a member --</option>
                                     @foreach ($team->members as $member)
                                         @if ($member->user_id != auth()->id())
-                                            <option value="{{ $member->user_id }}">{{ $member->user->name }}</option>
+                                            <option value="{{ $member->user_id }}">{{ $member->user->name ?? 'Deleted User' }}</option>
                                         @endif
                                     @endforeach
                                 </select>
@@ -951,9 +951,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
                                                     {{-- اسم العضو والصورة --}}
                                                     <span class="font-bold text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                                                        <img src="https://ui-avatars.com/api/?name={{ $contrib->user->name }}&background=random&size=24"
+                                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($contrib->user->name ?? 'Deleted User') }}&background=random&size=24"
                                                             class="rounded-full w-5 h-5">
-                                                        {{ $contrib->user->name }}
+                                                        {{ $contrib->user->name ?? 'Deleted User' }}
                                                     </span>
 
                                                     {{-- حالة الدفع والتفاصيل --}}
@@ -987,8 +987,8 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                                                     <button
                                                                         onclick="closeModal('fundsHistoryModal'); openReviewModal({{ json_encode([
                                                                             'id' => $contrib->id,
-                                                                            'member_name' => $contrib->user->name,
-                                                                            'member_balance' => $contrib->user->wallet_balance,
+                                                                            'member_name' => $contrib->user->name ?? 'Deleted User',
+                                                                            'member_balance' => $contrib->user->wallet_balance ?? 0,
                                                                             'payment_method' => $contrib->payment_method,
                                                                             'amount' => $contrib->amount ?? $fund->amount_per_member,
                                                                             'active_fund_amount' => $fund->amount_per_member,
@@ -1024,8 +1024,8 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
 
 
                                                                     {{-- Leader Force-Pay History from Wallet --}}
-                                                                    @if($contrib->user->wallet_balance >= $fund->amount_per_member)
-                                                                        <form action="{{ route('final_project.forceWalletPayment') }}" method="POST" class="inline" onsubmit="return confirmAction(event, 'Force Wallet Payment: Deduct {{ number_format($fund->amount_per_member, 2) }} EGP from {{ $contrib->user->name }}\'s wallet for historical debt?')">
+                                                                    @if(optional($contrib->user)->wallet_balance >= $fund->amount_per_member)
+                                                                        <form action="{{ route('final_project.forceWalletPayment') }}" method="POST" class="inline" onsubmit="return confirmAction(event, 'Force Wallet Payment: Deduct {{ number_format($fund->amount_per_member, 2) }} EGP from {{ addslashes($contrib->user->name ?? 'Deleted User') }}\'s wallet for historical debt?')">
                                                                             @csrf
                                                                             <input type="hidden" name="contribution_id" value="{{ $contrib->id }}">
                                                                             <button type="submit" class="bg-amber-600 text-white px-3 py-1 rounded-lg shadow-sm hover:bg-amber-700 transition text-[10px] uppercase font-bold flex items-center gap-1" title="Deduct from Wallet">
@@ -1602,7 +1602,7 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                                     @foreach ($meet->attendances as $attendance)
                                         <span
                                             class="text-[9px] px-2 py-0.5 rounded border font-bold {{ $attendance->is_present ?'bg-green-50 border-green-200 text-green-700' : 'bg-red-50 border-red-200 text-red-400 opacity-60' }}">
-                                            {{ explode(' ', $attendance->user->name)[0] }}
+                                            {{ explode(' ', $attendance->user->name ?? 'Deleted User')[0] }}
                                         </span>
                                     @endforeach
                                 </div>
@@ -1943,9 +1943,9 @@ Status: PRODUCTION READY & DOCTOR REVIEW APPROVED
                         @foreach($team->members as $member)
                                                                                               {
                                 id: {{ $member->user_id }},
-                                name: "{!! addslashes($member->user->name) !!}",
-                                academic: "{{ explode('@', $member->user->university_email ?? $member->user->email)[0] }}",
-                                avatar: "https://ui-avatars.com/api/?name={{ urlencode($member->user->name) }}&background=E5E7EB"
+                                name: "{!! addslashes($member->user->name ?? 'Deleted User') !!}",
+                                academic: "{{ explode('@', optional($member->user)->university_email ?? optional($member->user)->email ?? 'deleted@example.com')[0] }}",
+                                avatar: "https://ui-avatars.com/api/?name={{ urlencode($member->user->name ?? 'Deleted User') }}&background=E5E7EB"
                             },
                         @endforeach
                     @endif
