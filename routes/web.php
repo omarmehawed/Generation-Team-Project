@@ -324,6 +324,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/requests/submit', [App\Http\Controllers\WalletController::class, 'submitDepositRequest'])->name('wallet.request.submit');
         Route::get('/requests/all', [App\Http\Controllers\WalletController::class, 'getDepositRequests'])->name('wallet.requests.all');
         Route::post('/requests/{id}/process', [App\Http\Controllers\WalletController::class, 'processDepositRequest'])->name('wallet.requests.process');
+        Route::post('/requests/{id}/update', [App\Http\Controllers\WalletController::class, 'updateDepositRequest'])->name('wallet.request.update');
     });
 
 

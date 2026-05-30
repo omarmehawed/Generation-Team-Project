@@ -22,10 +22,13 @@ class WalletDepositRequest extends Model
         'processed_by',
         'processed_at',
         'rejection_reason',
+        'is_edited',
+        'old_values',
     ];
 
     protected $appends = [
         'screenshot_url',
+        'old_screenshot_url',
     ];
 
     public function getScreenshotUrlAttribute()
@@ -37,10 +40,21 @@ class WalletDepositRequest extends Model
         return \Illuminate\Support\Facades\Storage::disk('r2')->url($this->screenshot_path);
     }
 
+    public function getOldScreenshotUrlAttribute()
+    {
+        if (empty($this->old_values['screenshot_path'])) return null;
+        if (str_starts_with($this->old_values['screenshot_path'], 'http')) {
+            return $this->old_values['screenshot_path'];
+        }
+        return \Illuminate\Support\Facades\Storage::disk('r2')->url($this->old_values['screenshot_path']);
+    }
+
     protected $casts = [
         'transfer_date' => 'date',
         'processed_at' => 'datetime',
         'amount' => 'decimal:2',
+        'is_edited' => 'boolean',
+        'old_values' => 'array',
     ];
 
     public function user()

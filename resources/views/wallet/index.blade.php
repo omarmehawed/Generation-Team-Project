@@ -517,9 +517,13 @@
                                     <p class="text-[10px] text-amber-600/70 font-medium">Waiting for admin review...</p>
                                 </div>
                             </div>
-                            <div class="text-right">
+                            <div class="text-right flex flex-col items-end">
                                 <p class="text-sm font-black text-amber-600">+{{ number_format($req->amount, 2) }} EGP</p>
-                                <p class="text-[10px] text-gray-400">{{ $req->created_at->diffForHumans() }}</p>
+                                <p class="text-[10px] text-gray-400 mb-2">{{ $req->created_at->diffForHumans() }}</p>
+                                <button onclick="openEditDepositRequestModal({{ $req->id }}, {{ json_encode($req) }})" 
+                                    class="text-[10px] font-bold text-blue-500 hover:text-blue-700 bg-blue-50 hover:bg-blue-100 px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1">
+                                    <i class="fas fa-edit"></i> Edit Request
+                                </button>
                             </div>
                         </div>
                     @endforeach

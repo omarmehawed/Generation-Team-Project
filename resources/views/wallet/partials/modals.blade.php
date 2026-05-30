@@ -115,6 +115,134 @@
     </div>
 </div>
 
+{{-- Edit Deposit Request Modal --}}
+<div id="editDepositRequestModal" class="fixed inset-0 z-[100] flex items-end md:items-center justify-center p-4 sm:p-6"
+    x-cloak style="display: none;" x-data="editDepositRequestApp()">
+    <div class="fixed inset-0 bg-gray-900/60 backdrop-blur-sm transition-opacity" onclick="closeEditDepositRequestModal()">
+    </div>
+
+    <div
+        class="bg-white dark:bg-gray-800 rounded-t-3xl md:rounded-2xl shadow-2xl w-full max-w-lg relative z-10 p-6 md:p-8 border-t md:border border-gray-200 dark:border-gray-700 transform transition-all">
+        <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200 flex items-center gap-2">
+            <i class="fas fa-edit text-blue-500"></i> Edit Deposit Request
+        </h3>
+
+        <form :action="`/wallet/requests/${request.id}/update`" method="POST" enctype="multipart/form-data" onsubmit="handleAjaxFormSubmit(event)">
+            @csrf
+            
+            <div class="mb-5">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Payment
+                    Method</label>
+                <div class="grid grid-cols-3 gap-3">
+                    <label class="cursor-pointer group">
+                        <input type="radio" name="payment_method" value="cash" class="peer hidden"
+                            x-model="request.payment_method">
+                        <div
+                            class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-amber-500 peer-checked:bg-amber-50 transition-all group-hover:bg-gray-50">
+                            <i
+                                class="fas fa-money-bill-wave text-lg mb-1 block text-gray-400 group-hover:text-amber-500 peer-checked:text-amber-500"></i>
+                            <p
+                                class="text-[10px] font-bold text-gray-600 dark:text-gray-400 peer-checked:text-amber-600">
+                                Cash</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer group">
+                        <input type="radio" name="payment_method" value="vodafone_cash" class="peer hidden"
+                            x-model="request.payment_method">
+                        <div
+                            class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-red-500 peer-checked:bg-red-50 transition-all group-hover:bg-gray-50">
+                            <i
+                                class="fas fa-mobile-alt text-lg mb-1 block text-gray-400 group-hover:text-red-500 peer-checked:text-red-500"></i>
+                            <p
+                                class="text-[10px] font-bold text-gray-600 dark:text-gray-400 peer-checked:text-red-600">
+                                V. Cash</p>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer group">
+                        <input type="radio" name="payment_method" value="instapay" class="peer hidden" x-model="request.payment_method">
+                        <div
+                            class="p-3 rounded-xl border-2 border-gray-100 dark:border-gray-700 text-center peer-checked:border-purple-500 peer-checked:bg-purple-50 transition-all group-hover:bg-gray-50">
+                            <i
+                                class="fas fa-university text-lg mb-1 block text-gray-400 group-hover:text-purple-500 peer-checked:text-purple-500"></i>
+                            <p
+                                class="text-[10px] font-bold text-gray-600 dark:text-gray-400 peer-checked:text-purple-600">
+                                InstaPay</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-5">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Amount (EGP)</label>
+                <div class="relative">
+                    <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 font-bold">£</span>
+                    <input type="number" name="amount" step="0.01" min="1" required x-model="request.amount"
+                        class="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200"
+                        placeholder="0.00">
+                </div>
+            </div>
+
+            {{-- Cash Specific --}}
+            <div x-show="request.payment_method === 'cash'" class="mb-5">
+                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Notes</label>
+                <textarea name="notes" rows="2" x-model="request.notes"
+                    class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm"
+                    placeholder="e.g., I handed the money to the leader at university."></textarea>
+            </div>
+
+            {{-- Transfer Specific --}}
+            <div x-show="request.payment_method !== 'cash'" class="space-y-4 mb-5">
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Transfer Phone
+                        Number</label>
+                    <input type="text" name="phone_number" :required="request.payment_method !== 'cash'" x-model="request.phone_number"
+                        class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm"
+                        placeholder="01XXXXXXXXX">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Transfer
+                            Date</label>
+                        <input type="date" name="transfer_date" :required="request.payment_method !== 'cash'" 
+                            :value="request.transfer_date ? request.transfer_date.split('T')[0] : ''"
+                            @change="request.transfer_date = $event.target.value"
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Transfer
+                            Time</label>
+                        <input type="time" name="transfer_time" :required="request.payment_method !== 'cash'" x-model="request.transfer_time"
+                            class="w-full px-4 py-3 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-amber-500 outline-none text-gray-800 dark:text-gray-200 text-sm">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Upload
+                        New Screenshot (Optional)</label>
+                    <div x-show="request.screenshot_url" class="mb-2">
+                        <span class="text-[10px] text-gray-500 block mb-1">Current Screenshot:</span>
+                        <a :href="request.screenshot_url" target="_blank" class="block w-20 h-20 rounded border border-gray-200 overflow-hidden relative group">
+                           <img :src="request.screenshot_url" class="w-full h-full object-cover">
+                           <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+                               <i class="fas fa-external-link-alt text-white"></i>
+                           </div>
+                        </a>
+                    </div>
+                    <input type="file" name="screenshot" :required="request.payment_method !== 'cash' && !request.screenshot_url"
+                        class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-100 file:text-blue-700 hover:file:bg-blue-200">
+                </div>
+            </div>
+
+            <div class="flex gap-4 mt-8">
+                <button type="button" onclick="closeEditDepositRequestModal()"
+                    class="flex-1 py-3 bg-gray-100 dark:bg-gray-900 hover:bg-gray-200 text-gray-700 dark:text-gray-300 rounded-xl font-bold text-sm transition-colors">Cancel</button>
+                <button type="submit"
+                    class="flex-1 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-blue-500/20 transition-transform active:scale-95">Update
+                    Request</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 {{-- Deposit Requests List Modal (For Leaders) --}}
 <div id="depositRequestsListModal" class="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6" x-cloak
     style="display: none;" x-data="depositRequestsListApp()">
@@ -192,6 +320,12 @@
                                         :class="req.payment_method ==='cash' ? 'bg-amber-100 text-amber-700' : (req.payment_method === 'vodafone_cash' ? 'bg-red-100 text-red-700' : 'bg-purple-100 text-purple-700')"
                                         x-text="req.payment_method.replace('_', ' ')"></span>
                                 </div>
+                                <template x-if="req.is_edited">
+                                    <div class="flex flex-col items-center justify-center">
+                                        <span class="px-2 py-0.5 bg-yellow-100 text-yellow-700 rounded text-[10px] font-bold uppercase tracking-wider mb-1"><i class="fas fa-pencil-alt"></i> Edited</span>
+                                        <button @click="viewEdit(req)" class="text-[10px] font-bold text-blue-500 hover:text-blue-700 underline">View Edit</button>
+                                    </div>
+                                </template>
                                 <button @click="viewDetails(req)"
                                     class="px-4 py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl text-xs font-bold transition-transform active:scale-95 shadow-md">View
                                     Details</button>
@@ -298,6 +432,101 @@
                         </template>
                     </div>
                 </form>
+            </div>
+        </template>
+    </div>
+</div>
+
+{{-- View Edit Request Modal (For Leaders) --}}
+<div id="viewEditDepositRequestModal" class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6" x-cloak
+    style="display: none;" x-data="viewEditRequestApp()">
+    <div class="fixed inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity" onclick="closeViewEditModal()"></div>
+
+    <div
+        class="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-2xl relative z-10 p-6 md:p-8 border border-gray-200 dark:border-gray-700 transform transition-all max-h-[90vh] overflow-y-auto">
+        <h3 class="text-xl font-bold mb-6 text-gray-800 dark:text-gray-200 flex items-center gap-2">
+            <i class="fas fa-history text-amber-500"></i> Request Change Log
+        </h3>
+
+        <template x-if="request && request.old_values">
+            <div class="space-y-6">
+                {{-- Data Changes --}}
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+                    <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 border-b border-gray-200 pb-2">Data Changes</h4>
+                    
+                    <template x-if="request.old_values.amount != request.amount">
+                        <div class="flex items-center gap-4 mb-3 text-sm">
+                            <span class="w-24 text-gray-500 font-bold">Amount:</span>
+                            <span class="text-red-500 line-through" x-text="request.old_values.amount + ' EGP'"></span>
+                            <i class="fas fa-arrow-right text-gray-400"></i>
+                            <span class="text-green-600 font-bold" x-text="request.amount + ' EGP'"></span>
+                        </div>
+                    </template>
+                    
+                    <template x-if="request.old_values.transfer_time != request.transfer_time || request.old_values.transfer_date != request.transfer_date">
+                        <div class="flex items-center gap-4 mb-3 text-sm">
+                            <span class="w-24 text-gray-500 font-bold">Date/Time:</span>
+                            <span class="text-red-500 line-through" x-text="(request.old_values.transfer_date || 'N/A') + ' ' + (request.old_values.transfer_time || '')"></span>
+                            <i class="fas fa-arrow-right text-gray-400"></i>
+                            <span class="text-green-600 font-bold" x-text="(request.transfer_date || 'N/A') + ' ' + (request.transfer_time || '')"></span>
+                        </div>
+                    </template>
+
+                    <template x-if="request.old_values.notes != request.notes">
+                        <div class="mb-3 text-sm">
+                            <span class="w-24 text-gray-500 font-bold block mb-1">Notes:</span>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-2 bg-red-50 text-red-700 rounded border border-red-100" x-text="request.old_values.notes || 'N/A'"></div>
+                                <div class="p-2 bg-green-50 text-green-700 rounded border border-green-100" x-text="request.notes || 'N/A'"></div>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                {{-- Screenshot Comparison --}}
+                <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl p-4 border border-gray-100 dark:border-gray-700">
+                    <h4 class="text-sm font-bold text-gray-700 dark:text-gray-300 mb-4 border-b border-gray-200 pb-2">Screenshot Comparison</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <span class="text-xs font-bold text-gray-400 block mb-2 text-center uppercase">Before (Original)</span>
+                            <template x-if="request.old_screenshot_url">
+                                <a :href="request.old_screenshot_url" target="_blank" class="block rounded-lg overflow-hidden border border-red-200 relative group">
+                                    <img :src="request.old_screenshot_url" class="w-full h-48 object-cover">
+                                    <div class="absolute inset-0 bg-red-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <i class="fas fa-external-link-alt text-white text-2xl"></i>
+                                    </div>
+                                </a>
+                            </template>
+                            <template x-if="!request.old_screenshot_url">
+                                <div class="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 italic">No Screenshot</div>
+                            </template>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold text-green-600 block mb-2 text-center uppercase">After (Current)</span>
+                            <template x-if="request.screenshot_url">
+                                <a :href="request.screenshot_url" target="_blank" class="block rounded-lg overflow-hidden border border-green-200 relative group">
+                                    <img :src="request.screenshot_url" class="w-full h-48 object-cover">
+                                    <div class="absolute inset-0 bg-green-900/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                        <i class="fas fa-external-link-alt text-white text-2xl"></i>
+                                    </div>
+                                </a>
+                            </template>
+                            <template x-if="!request.screenshot_url">
+                                <div class="w-full h-48 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 italic">No Screenshot</div>
+                            </template>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center pt-4 border-t border-gray-200 dark:border-gray-700">
+                    <button type="button" onclick="closeViewEditModal()"
+                        class="px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-xl font-bold text-sm transition-colors">Close</button>
+                    
+                    <button type="button" @click="closeAndOpenDetails()"
+                        class="px-6 py-2.5 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-bold text-sm shadow-lg shadow-indigo-500/20 transition-colors">
+                        Go To Process Action
+                    </button>
+                </div>
             </div>
         </template>
     </div>
@@ -437,6 +666,16 @@
         document.body.style.overflow = '';
     };
 
+    window.openEditDepositRequestModal = function (id, requestData) {
+        document.getElementById('editDepositRequestModal').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        window.dispatchEvent(new CustomEvent('edit-request', { detail: requestData }));
+    };
+    window.closeEditDepositRequestModal = function () {
+        document.getElementById('editDepositRequestModal').style.display = 'none';
+        document.body.style.overflow = '';
+    };
+
     window.openDepositRequestsModal = function () {
         document.getElementById('depositRequestsListModal').style.display = 'flex';
         document.body.style.overflow = 'hidden';
@@ -450,6 +689,15 @@
 
     window.closeDetailsModal = function () {
         document.getElementById('requestDetailsModal').style.display = 'none';
+    };
+
+    window.openViewEditModal = function (req) {
+        document.getElementById('viewEditDepositRequestModal').style.display = 'flex';
+        window.dispatchEvent(new CustomEvent('show-view-edit', { detail: req }));
+    };
+
+    window.closeViewEditModal = function () {
+        document.getElementById('viewEditDepositRequestModal').style.display = 'none';
     };
 
     window.openBulkModal = function () {
@@ -533,6 +781,31 @@
         }
     }
 
+    function editDepositRequestApp() {
+        return {
+            request: {
+                id: null,
+                payment_method: 'cash',
+                amount: '',
+                notes: '',
+                phone_number: '',
+                transfer_date: '',
+                transfer_time: '',
+                screenshot_url: null
+            },
+            init() {
+                window.addEventListener('edit-request', (e) => {
+                    // Deep copy to avoid mutating Original before save
+                    this.request = JSON.parse(JSON.stringify(e.detail));
+                    // Fix date format if needed
+                    if(this.request.transfer_date) {
+                        this.request.transfer_date = this.request.transfer_date.split('T')[0];
+                    }
+                });
+            }
+        }
+    }
+
     function depositRequestsListApp() {
         return {
             loading: false,
@@ -567,6 +840,9 @@
             viewDetails(req) {
                 window.dispatchEvent(new CustomEvent('show-request-details', { detail: req }));
                 document.getElementById('requestDetailsModal').style.display = 'flex';
+            },
+            viewEdit(req) {
+                window.openViewEditModal(req);
             }
         }
     }
@@ -580,6 +856,24 @@
                     this.request = e.detail;
                     this.action = 'idle';
                 });
+            }
+        }
+    }
+
+    function viewEditRequestApp() {
+        return {
+            request: null,
+            init() {
+                window.addEventListener('show-view-edit', (e) => {
+                    this.request = e.detail;
+                });
+            },
+            closeAndOpenDetails() {
+                window.closeViewEditModal();
+                if(this.request) {
+                    window.dispatchEvent(new CustomEvent('show-request-details', { detail: this.request }));
+                    document.getElementById('requestDetailsModal').style.display = 'flex';
+                }
             }
         }
     }

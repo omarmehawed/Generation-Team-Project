@@ -382,6 +382,75 @@ class WalletController extends Controller
     }
 
     /**
+     * Update a pending deposit request (Member Side).
+     */
+    public function updateDepositRequest(Request $request, $id)
+    {
+        $depositRequest = WalletDepositRequest::where('id', $id)->where('user_id', Auth::id())->firstOrFail();
+
+        if ($depositRequest->status !== 'pending') {
+            if ($request->ajax()) {
+                return response()->json(['success' => false, 'message' => 'Only pending requests can be edited.'], 422);
+            }
+            return back()->with('error', 'Only pending requests can be edited.');
+        }
+
+        $request->validate([
+            'payment_method' => 'required|in:cash,vodafone_cash,instapay',
+            'amount' => 'required|numeric|min:1',
+            'notes' => 'required_if:payment_method,cash|nullable|string',
+            'phone_number' => 'required_if:payment_method,vodafone_cash,instapay|nullable|string',
+            'transfer_date' => 'required_if:payment_method,vodafone_cash,instapay|nullable|date',
+            'transfer_time' => 'required_if:payment_method,vodafone_cash,instapay|nullable',
+            'screenshot' => 'nullable|image|max:10240',
+        ]);
+
+        $data = $request->only(['payment_method', 'amount', 'notes', 'phone_number', 'transfer_date', 'transfer_time']);
+
+        // Capture old values on first edit
+        if (is_null($depositRequest->old_values)) {
+            $depositRequest->old_values = [
+                'amount' => $depositRequest->amount,
+                'payment_method' => $depositRequest->payment_method,
+                'notes' => $depositRequest->notes,
+                'phone_number' => $depositRequest->phone_number,
+                'transfer_date' => $depositRequest->transfer_date ? $depositRequest->transfer_date->format('Y-m-d') : null,
+                'transfer_time' => $depositRequest->transfer_time,
+                'screenshot_path' => $depositRequest->screenshot_path,
+            ];
+        }
+        $data['is_edited'] = true;
+        $data['old_values'] = $depositRequest->old_values;
+
+        // Check if screenshot is required due to missing old one and changed payment method
+        if (in_array($request->payment_method, ['vodafone_cash', 'instapay']) && !$depositRequest->screenshot_path && !$request->hasFile('screenshot')) {
+            return back()->withErrors(['screenshot' => 'The screenshot is required.']);
+        }
+
+        if ($request->hasFile('screenshot')) {
+            // REMOVED deletion logic to keep old screenshot for audit trail
+            $path = $request->file('screenshot')->store('wallet/screenshots', 'r2');
+            $data['screenshot_path'] = Storage::disk('r2')->url($path);
+        } else if ($request->payment_method === 'cash') {
+            $data['screenshot_path'] = null; // Clear if changed to cash
+        }
+
+        $depositRequest->update($data);
+
+        $message = 'Deposit request updated successfully!';
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'redirect' => route('wallet.index')
+            ]);
+        }
+
+        return back()->with('success', $message);
+    }
+
+    /**
      * Get all pending deposit requests (Leader/Authorized Side).
      */
     public function getDepositRequests()
