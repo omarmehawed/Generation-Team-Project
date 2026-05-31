@@ -63,6 +63,8 @@ class User extends Authenticatable
         'wallet_balance', // [NEW] Wallet System
         'google_id', // [NEW] Google OAuth
         'google_email', // [NEW] Track Google Account
+        'gender', // [NEW] Onboarding
+        'profile_completed', // [NEW] Onboarding
     ];
 
     protected $hidden = [
@@ -77,6 +79,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'permissions' => 'array',
             'wallet_balance' => 'float',
+            'profile_completed' => 'boolean',
         ];
     }
 

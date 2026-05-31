@@ -20,6 +20,7 @@ use App\Http\Controllers\StaffController;
 use App\Http\Controllers\AdminUserController;
 use App\Http\Controllers\JoinRequestController;
 use App\Http\Controllers\Auth\GoogleLoginController;
+use App\Http\Controllers\ProfileCompletionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -84,6 +85,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', function () {
         return redirect()->route('projects.index');
     })->name('dashboard');
+    
+    // Profile Completion (Onboarding)
+    Route::get('/profile/complete', [ProfileCompletionController::class, 'index'])->name('profile.complete.index')->withoutMiddleware('verified');
+    Route::post('/profile/complete', [ProfileCompletionController::class, 'store'])->name('profile.complete.store')->withoutMiddleware('verified');
     
     // New Detailed Profile Routes
     Route::get('/profile/{id?}', [ProfileController::class, 'show'])->name('profile.show');

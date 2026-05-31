@@ -272,6 +272,7 @@
                                 <th class="px-4 md:px-6 py-4 text-right">Balance After</th>
                                 <th class="px-4 md:px-6 py-4 text-center hidden md:table-cell">Admin</th>
                                 <th class="px-4 md:px-6 py-4 text-right whitespace-nowrap">Date</th>
+                                <th class="px-4 md:px-6 py-4 text-center whitespace-nowrap">Receipt</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -326,6 +327,31 @@
                                     <td class="px-4 md:px-6 py-4 text-right text-xs text-gray-400 whitespace-nowrap">
                                         {{ $txn->created_at->format('M d, H:i') }}
                                     </td>
+                                    @if($txn->depositRequest && $txn->depositRequest->screenshot_path)
+                                        @php
+                                            $dr = $txn->depositRequest;
+                                            $feeDataAdmin = [
+                                                'amount'         => $dr->amount,
+                                                'payment_method' => $dr->payment_method,
+                                                'phone_number'   => $dr->phone_number,
+                                                'transfer_date'  => $dr->transfer_date ? $dr->transfer_date->format('Y-m-d') : null,
+                                                'transfer_time'  => $dr->transfer_time,
+                                                'screenshot_url' => $dr->screenshot_url,
+                                                'submitted_at'   => $dr->created_at->format('M d, Y \a\t H:i'),
+                                                'approved_at'    => $dr->processed_at ? $dr->processed_at->format('F j, Y \a\t H:i') : null,
+                                                'approved_by'    => $dr->processor->name ?? ($txn->admin->name ?? 'Leader'),
+                                            ];
+                                        @endphp
+                                        <td class="px-4 md:px-6 py-4 text-center">
+                                            <button
+                                                onclick="openFeeDetailsModal({{ json_encode($feeDataAdmin) }})"
+                                                class="text-[10px] font-bold text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-3 py-1.5 rounded-lg flex items-center gap-1 transition-colors mx-auto">
+                                                <i class="fas fa-receipt"></i> Fee Details
+                                            </button>
+                                        </td>
+                                    @else
+                                        <td></td>
+                                    @endif
                                 </tr>
                             @empty
                                 <tr>
@@ -581,10 +607,25 @@
                                                     {{ $txn->type }}
                                                 </span>
                                                 @if($txn->depositRequest && $txn->depositRequest->screenshot_path)
-                                                    <a href="{{ $txn->depositRequest->screenshot_path }}" target="_blank"
-                                                        class="text-[10px] font-bold text-blue-500 hover:text-blue-600 flex items-center gap-1 bg-blue-50 px-2 py-0.5 rounded">
-                                                        <i class="fas fa-image"></i> View Receipt
-                                                    </a>
+                                                    @php
+                                                        $dr = $txn->depositRequest;
+                                                        $feeData = [
+                                                            'amount'         => $dr->amount,
+                                                            'payment_method' => $dr->payment_method,
+                                                            'phone_number'   => $dr->phone_number,
+                                                            'transfer_date'  => $dr->transfer_date ? $dr->transfer_date->format('Y-m-d') : null,
+                                                            'transfer_time'  => $dr->transfer_time,
+                                                            'screenshot_url' => $dr->screenshot_url,
+                                                            'submitted_at'   => $dr->created_at->format('M d, Y \a\t H:i'),
+                                                            'approved_at'    => $dr->processed_at ? $dr->processed_at->format('F j, Y \a\t H:i') : null,
+                                                            'approved_by'    => $dr->processor->name ?? ($txn->admin->name ?? 'Leader'),
+                                                        ];
+                                                    @endphp
+                                                    <button
+                                                        onclick="openFeeDetailsModal({{ json_encode($feeData) }})"
+                                                        class="text-[10px] font-bold text-emerald-600 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 px-2 py-0.5 rounded flex items-center gap-1 transition-colors">
+                                                        <i class="fas fa-receipt"></i> Fee Details
+                                                    </button>
                                                 @endif
                                             </div>
                                         </div>

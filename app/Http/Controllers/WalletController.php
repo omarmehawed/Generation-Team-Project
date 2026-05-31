@@ -29,7 +29,7 @@ class WalletController extends Controller
         $pendingCount = 0;
 
         if ($hasManagement) {
-            $query = WalletTransaction::with(['user', 'admin'])->latest();
+            $query = WalletTransaction::with(['user', 'admin', 'depositRequest.processor'])->latest();
 
             if ($request->filled('search')) {
                 $search = $request->search;
@@ -68,7 +68,7 @@ class WalletController extends Controller
             return view('wallet.index', compact('transactions', 'totalBalance', 'hasManagement', 'pendingCount'));
         } else {
             // Normal member view: Unified History
-            $transactions = WalletTransaction::with(['admin', 'depositRequest'])
+            $transactions = WalletTransaction::with(['admin', 'depositRequest.processor'])
                 ->where('user_id', $user->id)
                 ->latest()
                 ->get();

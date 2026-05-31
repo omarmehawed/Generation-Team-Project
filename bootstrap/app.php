@@ -25,7 +25,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Global Security Headers (HSTS, CSP, etc.)
         $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
-        $middleware->web(append: [\App\Http\Middleware\ActiveQuizGuard::class]);
+        $middleware->web(append: [
+            \App\Http\Middleware\ActiveQuizGuard::class,
+            \App\Http\Middleware\EnsureProfileCompleted::class,
+        ]);
 
         // 👇 ضيف السطر ده عشان السيستم يفهم كلمة permission
         $middleware->alias([

@@ -215,6 +215,20 @@
                             </div>
                         </div>
 
+                        {{-- Gender --}}
+                        <div>
+                            <label class="block text-gray-500 dark:text-gray-400 text-[10px] uppercase font-bold mb-1 tracking-wider">Gender</label>
+                            <div class="flex items-center gap-2 text-gray-800 dark:text-gray-200 font-medium">
+                                @if($user->gender === 'male')
+                                    <i class="fas fa-male text-indigo-500 text-lg"></i> Male
+                                @elseif($user->gender === 'female')
+                                    <i class="fas fa-female text-pink-500 text-lg"></i> Female
+                                @else
+                                    <i class="fas fa-user text-gray-400 text-sm"></i> Not set
+                                @endif
+                            </div>
+                        </div>
+
                         {{-- WhatsApp --}}
                         <div>
                             <label class="block text-gray-500 dark:text-gray-400 text-[10px] uppercase font-bold mb-1 tracking-wider">WhatsApp</label>
