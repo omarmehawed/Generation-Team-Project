@@ -523,6 +523,62 @@
                     <p class="text-gray-400 mt-2 max-w-2xl text-lg font-light leading-relaxed">
                         Build the future with precision. Manage your team, track tasks, and deliver excellence.
                     </p>
+
+                    {{-- Gender Distribution VS-Bar (Leader-Only) --}}
+                    @php
+                        $isTeamLeaderCheck = $team && $team->members->where('user_id', auth()->id())->first()?->role === 'leader';
+                    @endphp
+                    @if($isTeamLeaderCheck)
+                        @php
+                            $maleCount = 0;
+                            $femaleCount = 0;
+                            $notSetCount = 0;
+                            foreach($team->members as $member) {
+                                if ($member->user && $member->user->gender === 'male') $maleCount++;
+                                elseif ($member->user && $member->user->gender === 'female') $femaleCount++;
+                                elseif ($member->user) $notSetCount++;
+                            }
+                            $totalMembers = $maleCount + $femaleCount + $notSetCount;
+                            $malePercent = $totalMembers > 0 ? round(($maleCount / $totalMembers) * 100) : 0;
+                            $femalePercent = $totalMembers > 0 ? round(($femaleCount / $totalMembers) * 100) : 0;
+                            $notSetPercent = $totalMembers > 0 ? round(($notSetCount / $totalMembers) * 100) : 0;
+                        @endphp
+                        @if($totalMembers > 0)
+                        <div class="mt-6 w-full bg-white/5 backdrop-blur-md border border-white/10 rounded-2xl p-4 shadow-2xl relative overflow-hidden group/vs">
+                            {{-- Glow effect behind the bar --}}
+                            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-transparent to-pink-500/10 opacity-0 group-hover/vs:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                            
+                            <div class="flex justify-between items-end mb-3 relative z-10 flex-wrap gap-2">
+                                <span class="text-xs font-black text-blue-400 tracking-wider uppercase drop-shadow-md">
+                                    <i class="fas fa-mars mr-1 opacity-70"></i> {{ $malePercent }}% Male ({{ $maleCount }} Users)
+                                </span>
+                                
+                                @if($notSetCount > 0)
+                                    <button type="button" onclick="openModal('incompleteProfileModal')" class="text-[10px] text-yellow-400 font-black uppercase tracking-wider bg-yellow-400/10 hover:bg-yellow-400/20 px-3 py-1 rounded-full border border-yellow-500/30 transition-colors cursor-pointer flex items-center gap-1">
+                                        <i class="fas fa-exclamation-triangle"></i> {{ $notSetPercent }}% Not Set ({{ $notSetCount }} User{{ $notSetCount > 1 ? 's' : '' }})
+                                    </button>
+                                @else
+                                    <span class="text-[9px] text-gray-500 font-black uppercase tracking-[0.3em] bg-black/50 px-2 py-0.5 rounded-full border border-gray-800">
+                                        VS
+                                    </span>
+                                @endif
+
+                                <span class="text-xs font-black text-pink-400 tracking-wider uppercase drop-shadow-md">
+                                    Female {{ $femalePercent }}% ({{ $femaleCount }} Users) <i class="fas fa-venus ml-1 opacity-70"></i>
+                                </span>
+                            </div>
+                            
+                            {{-- TikTok Style Slim VS Bar with 3 segments --}}
+                            <div class="h-1.5 w-full bg-gray-900 rounded-full overflow-hidden flex shadow-inner relative z-10">
+                                <div class="h-full bg-gradient-to-r from-blue-600 to-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.8)] transition-all duration-1000 ease-out" style="width: {{ $malePercent }}%;"></div>
+                                <div class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 shadow-[0_0_10px_rgba(234,179,8,0.8)] transition-all duration-1000 ease-out" style="width: {{ $notSetPercent }}%;"></div>
+                                <div class="h-full bg-gradient-to-l from-pink-600 to-pink-400 shadow-[0_0_10px_rgba(236,72,153,0.8)] transition-all duration-1000 ease-out" style="width: {{ $femalePercent }}%;"></div>
+                            </div>
+                        </div>
+
+                        {{-- Modal was moved to the bottom of the document to avoid tilt-effect stacking context traps --}}
+                        @endif
+                    @endif
                 </div>
 
                 @if ($team)
@@ -3735,6 +3791,56 @@
         // Lock scrolling
         document.body.style.overflow = 'hidden';
     </script>
+    @endif
+
+    {{-- Incomplete Profiles Modal (Extracted to Bottom to Prevent Stacking Context Traps) --}}
+    @php
+        $isTeamLeaderCheck = $team && $team->members->where('user_id', auth()->id())->first()?->role === 'leader';
+    @endphp
+    @if($isTeamLeaderCheck)
+    <div id="incompleteProfileModal" class="fixed inset-0 z-[999999] hidden items-center justify-center">
+        <div class="custom-glass-modal bg-[#0f0f0f] rounded-[2rem] border-2 border-yellow-500/40 shadow-[0_0_80px_rgba(234,179,8,0.3)] w-[90%] max-w-md relative overflow-hidden" id="incompleteProfileModalContent" style="animation: modalPopIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);">
+            
+            {{-- Decorative Header --}}
+            <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-yellow-300 via-yellow-500 to-yellow-600"></div>
+            <div class="absolute -top-32 -right-32 w-64 h-64 bg-yellow-500/10 rounded-full blur-[80px] pointer-events-none"></div>
+            <div class="absolute -bottom-32 -left-32 w-64 h-64 bg-yellow-500/5 rounded-full blur-[80px] pointer-events-none"></div>
+
+            <div class="p-8">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-4 relative z-10">
+                        <div class="w-12 h-12 rounded-2xl bg-yellow-500/10 border border-yellow-500/30 flex items-center justify-center text-yellow-500 shadow-inner">
+                            <i class="fas fa-exclamation-triangle text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-white tracking-tight">Incomplete Profiles</h3>
+                            <p class="text-xs font-bold text-yellow-500/70 uppercase tracking-widest mt-1">Pending Updates</p>
+                        </div>
+                    </div>
+                    <button onclick="closeModal('incompleteProfileModal')" class="text-gray-500 hover:text-white transition-colors bg-gray-800 hover:bg-gray-700 w-8 h-8 rounded-full flex items-center justify-center relative z-10">
+                        <i class="fas fa-times text-sm"></i>
+                    </button>
+                </div>
+
+                <div class="space-y-3 max-h-[50vh] overflow-y-auto custom-scroll pr-2 relative z-10">
+                    @foreach($team->members as $member)
+                        @if($member->user && !$member->user->profile_completed)
+                            <div class="bg-black/60 border border-gray-700/50 rounded-xl p-4 flex items-center gap-4 hover:border-yellow-500/50 hover:bg-black/80 transition-all duration-300 shadow-inner group">
+                                <div class="w-12 h-12 rounded-full bg-gray-800 border-2 border-yellow-500/20 overflow-hidden flex-shrink-0 group-hover:border-yellow-500/50 transition-colors">
+                                    <img src="{{ $member->user->profile_photo_path ?: 'https://ui-avatars.com/api/?name='.urlencode($member->user->name).'&background=1f2937&color=FBBF24&bold=true' }}" class="w-full h-full object-cover" onerror="this.onerror=null; this.src='https://ui-avatars.com/api/?name={{ urlencode($member->user->name) }}&background=1f2937&color=FBBF24&bold=true';" />
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="text-base font-bold text-gray-100 truncate tracking-tight">{{ $member->user->name }}</h4>
+                                    <p class="text-[11px] text-gray-400 font-mono truncate mt-0.5 tracking-wider">{{ $member->user->email }}</p>
+                                </div>
+                                <span class="bg-red-500/20 text-red-400 text-[9px] font-black uppercase tracking-[0.2em] px-2.5 py-1.5 rounded-lg border border-red-500/30 shrink-0 shadow-[0_0_10px_rgba(239,68,68,0.2)]">Action Required</span>
+                            </div>
+                        @endif
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </div>
     @endif
 
 @endsection
