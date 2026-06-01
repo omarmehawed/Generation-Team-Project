@@ -37,7 +37,17 @@
                 @forelse($forms as $form)
                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-800/50 transition">
                         <td class="px-6 py-4">
-                            <div class="font-bold text-gray-900 dark:text-gray-100 text-lg">{{ $form->title }}</div>
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="font-bold text-gray-900 dark:text-gray-100 text-lg">{{ $form->title }}</span>
+                                @if($form->is_required)
+                                    <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"><i class="fas fa-lock mr-0.5"></i> Required</span>
+                                @endif
+                                @if($form->target_gender === 'male')
+                                    <span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"><i class="fas fa-mars mr-0.5"></i> Male Only</span>
+                                @elseif($form->target_gender === 'female')
+                                    <span class="bg-pink-100 text-pink-700 text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider"><i class="fas fa-venus mr-0.5"></i> Female Only</span>
+                                @endif
+                            </div>
                             <div class="text-xs text-gray-500 mt-1">{{ Str::limit($form->description, 50) }}</div>
                         </td>
                         <td class="px-6 py-4">

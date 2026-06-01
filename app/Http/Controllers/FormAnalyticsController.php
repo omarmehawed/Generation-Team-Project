@@ -22,6 +22,29 @@ class FormAnalyticsController extends Controller
         // Calculate basic stats
         $totalResponses = $form->responses->count();
 
+        // Calculate eligible members and pending members
+        $submittedUserIds = $form->responses->pluck('user_id')->toArray();
+        
+        $eligibleUsersQuery = \App\Models\User::whereNotIn('role', ['admin', 'ta'])
+            ->with('teamMemberships.team');
+            
+        if ($form->target_gender === 'male') {
+            $eligibleUsersQuery->where('gender', 'male');
+        } elseif ($form->target_gender === 'female') {
+            $eligibleUsersQuery->where('gender', 'female');
+        }
+
+        $eligibleUsers = $eligibleUsersQuery->get();
+        $totalEligible = $eligibleUsers->count();
+        
+        $pendingUsers = $eligibleUsers->filter(function($user) use ($submittedUserIds) {
+            return !in_array($user->id, $submittedUserIds);
+        })->values();
+        
+        $totalPending = $pendingUsers->count();
+        $eligibleSubmitted = $totalEligible - $totalPending;
+        $completionRate = $totalEligible > 0 ? round(($eligibleSubmitted / $totalEligible) * 100) : 0;
+
         // Generate data for charts
         $chartData = [];
         foreach ($form->questions as $q) {
@@ -47,7 +70,7 @@ class FormAnalyticsController extends Controller
             }
         }
 
-        return view('forms.manage.analytics', compact('form', 'logs', 'totalResponses', 'chartData'));
+        return view('forms.manage.analytics', compact('form', 'logs', 'totalResponses', 'chartData', 'totalEligible', 'totalPending', 'completionRate', 'pendingUsers', 'eligibleSubmitted'));
     }
 
     public function viewResponse(\App\Models\FormResponse $response)

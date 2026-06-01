@@ -30,9 +30,14 @@
                 <div class="p-6 flex-grow">
                     <div class="flex justify-between items-start mb-4">
                         <h3 class="font-bold text-xl text-gray-900 dark:text-gray-100 line-clamp-2">{{ $form->title }}</h3>
-                        @if($existingResponse)
-                            <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider shrink-0"><i class="fas fa-check mr-1"></i> Submitted</span>
-                        @endif
+                        <div class="flex flex-col items-end gap-1 shrink-0">
+                            @if($form->is_required && !$existingResponse)
+                                <span class="bg-amber-100 text-amber-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"><i class="fas fa-lock mr-1"></i> Required</span>
+                            @endif
+                            @if($existingResponse)
+                                <span class="bg-green-100 text-green-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"><i class="fas fa-check mr-1"></i> Submitted</span>
+                            @endif
+                        </div>
                     </div>
                     
                     <p class="text-gray-500 text-sm line-clamp-3 mb-4">{{ $form->description ?? 'No description provided.' }}</p>

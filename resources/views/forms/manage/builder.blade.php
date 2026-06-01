@@ -53,6 +53,34 @@
                     <span class="ml-3 text-sm font-medium text-gray-700">Allow Response Editing</span>
                 </label>
             </div>
+
+            <div>
+                <label class="block text-sm font-medium text-gray-700 mb-2"><i class="fas fa-users text-gray-400 mr-1"></i> Target Audience</label>
+                <select x-model="form.target_gender" class="w-full rounded-lg border-gray-300 focus:ring-[#2596be] focus:border-[#2596be]">
+                    <option value="all">Everyone</option>
+                    <option value="male">Male Only</option>
+                    <option value="female">Female Only</option>
+                </select>
+            </div>
+
+            <div class="flex items-center gap-3 pt-8">
+                <label class="relative inline-flex items-center cursor-pointer">
+                    <input type="checkbox" x-model="form.is_required" class="sr-only peer">
+                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-500"></div>
+                    <span class="ml-3 text-sm font-medium text-gray-700">Required Form <span class="text-xs text-gray-400">(Mandatory for students)</span></span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Required Form Info Banner -->
+        <div x-show="form.is_required" x-transition class="mt-4 bg-amber-50 border border-amber-200 rounded-xl p-3 text-sm text-amber-700 flex items-start gap-2" style="display: none;">
+            <i class="fas fa-exclamation-triangle mt-0.5"></i>
+            <div>
+                <strong>Mandatory Form:</strong> Students matching the target audience will be <strong>blocked from accessing the platform</strong> until they complete this form.
+                <span x-show="form.target_gender === 'male'" class="block mt-1 text-xs">→ Only <strong>Male</strong> students will be forced to complete this form.</span>
+                <span x-show="form.target_gender === 'female'" class="block mt-1 text-xs">→ Only <strong>Female</strong> students will be forced to complete this form.</span>
+                <span x-show="form.target_gender === 'all'" class="block mt-1 text-xs">→ <strong>All</strong> students will be forced to complete this form.</span>
+            </div>
         </div>
     </div>
 
@@ -178,6 +206,8 @@ function formBuilder() {
             description: {!! isset($form) ? json_encode($form->description) : "''" !!},
             deadline: {!! isset($form) && $form->deadline ? json_encode($form->deadline->format('Y-m-d\TH:i')) : "''" !!},
             allow_edit_response: {{ isset($form) && $form->allow_edit_response ? 'true' : 'false' }},
+            is_required: {{ isset($form) && $form->is_required ? 'true' : 'false' }},
+            target_gender: {!! isset($form) ? json_encode($form->target_gender) : "'all'" !!},
             is_active: true
         },
         questions: {!! isset($form) ? json_encode($form->questions) : "[{ id: 'new_' + Date.now(), title: '', type: 'multiple_choice', options: ['Option 1'], is_required: false }]" !!},
@@ -268,6 +298,8 @@ function formBuilder() {
                 description: this.form.description,
                 deadline: this.form.deadline || null,
                 allow_edit_response: this.form.allow_edit_response,
+                is_required: this.form.is_required,
+                target_gender: this.form.target_gender,
                 is_active: this.form.is_active,
                 questions: this.questions.map(q => ({
                     id: String(q.id).startsWith('new_') ? null : q.id,

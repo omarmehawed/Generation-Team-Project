@@ -90,6 +90,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/complete', [ProfileCompletionController::class, 'index'])->name('profile.complete.index')->withoutMiddleware('verified');
     Route::post('/profile/complete', [ProfileCompletionController::class, 'store'])->name('profile.complete.store')->withoutMiddleware('verified');
     
+    // Mandatory Form Routes (exempt from mandatory form middleware to prevent loops)
+    Route::prefix('forms/mandatory')->name('forms.mandatory.')->group(function () {
+        Route::get('/{form}', [\App\Http\Controllers\FormResponseController::class, 'showMandatory'])->name('show');
+        Route::post('/{form}', [\App\Http\Controllers\FormResponseController::class, 'storeMandatory'])->name('store');
+    });
+    
     // New Detailed Profile Routes
     Route::get('/profile/{id?}', [ProfileController::class, 'show'])->name('profile.show');
     Route::post('/profile/update-details', [ProfileController::class, 'updateDetails'])->name('profile.update_details');
@@ -247,7 +253,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/final-project/gallery/delete/{id}', [FinalProjectController::class, 'deleteGallery'])->name('final_project.deleteGallery');
 
             Route::post('/final-project/{id}/request-review', [FinalProjectController::class, 'requestPreDefense'])->name('final_project.request_review');
-            // phpinfo route removed for security reasons
+            
+
             Route::post('/final-project/{id}/submit-final', [FinalProjectController::class, 'submitFinalProject'])
                 ->name('final_project.submit_final');
 

@@ -28,6 +28,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->web(append: [
             \App\Http\Middleware\ActiveQuizGuard::class,
             \App\Http\Middleware\EnsureProfileCompleted::class,
+            \App\Http\Middleware\EnsureMandatoryFormsCompleted::class,
         ]);
 
         // 👇 ضيف السطر ده عشان السيستم يفهم كلمة permission
