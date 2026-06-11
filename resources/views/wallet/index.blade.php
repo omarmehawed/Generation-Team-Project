@@ -223,6 +223,8 @@
                             <option value="deposit" {{ request('type') == 'deposit' ? 'selected' : '' }}>Deposit</option>
                             <option value="withdrawal" {{ request('type') == 'withdrawal' ? 'selected' : '' }}>Withdrawal
                             </option>
+                            <option value="rejected" {{ request('type') == 'rejected' ? 'selected' : '' }}>Rejected
+                            </option>
                         </select>
                         <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none text-gray-500 dark:text-gray-400">
                             <i class="fas fa-chevron-down text-xs"></i>
@@ -304,6 +306,11 @@
                                                 class="inline-flex items-center px-2.5 py-1 bg-green-50 text-green-700 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide border border-green-100">
                                                 <i class="fas fa-arrow-down mr-1.5"></i> Deposit
                                             </span>
+                                        @elseif($txn->type == 'rejected')
+                                            <span
+                                                class="inline-flex items-center px-2.5 py-1 bg-orange-50 text-orange-700 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide border border-orange-100">
+                                                <i class="fas fa-ban mr-1.5"></i> Rejected
+                                            </span>
                                         @else
                                             <span
                                                 class="inline-flex items-center px-2.5 py-1 bg-red-50 text-red-700 rounded-lg text-[10px] md:text-xs font-bold uppercase tracking-wide border border-red-100">
@@ -311,8 +318,8 @@
                                             </span>
                                         @endif
                                     </td>
-                                    <td class="px-4 md:px-6 py-4 text-right font-bold text-gray-800 dark:text-gray-200">
-                                        {{ $txn->type == 'deposit' ? '+' : '-' }} {{ number_format($txn->amount, 2) }} EGP
+                                    <td class="px-4 md:px-6 py-4 text-right font-bold {{ $txn->type == 'rejected' ? 'text-orange-500 line-through' : 'text-gray-800 dark:text-gray-200' }}">
+                                        {{ $txn->type == 'deposit' ? '+' : ($txn->type == 'rejected' ? '+' : '-') }} {{ number_format($txn->amount, 2) }} EGP
                                     </td>
                                     <td
                                         class="px-4 md:px-6 py-4 text-right font-mono font-bold text-sm md:text-base whitespace-nowrap text-gray-600 dark:text-gray-400">
@@ -340,6 +347,8 @@
                                                 'submitted_at'   => $dr->created_at->format('M d, Y \a\t H:i'),
                                                 'approved_at'    => $dr->processed_at ? $dr->processed_at->format('F j, Y \a\t H:i') : null,
                                                 'approved_by'    => $dr->processor->name ?? ($txn->admin->name ?? 'Leader'),
+                                                'status'         => $dr->status,
+                                                'rejection_reason' => $dr->rejection_reason,
                                             ];
                                         @endphp
                                         <td class="px-4 md:px-6 py-4 text-center">
@@ -592,19 +601,25 @@
                                             'w-10 h-10 rounded-xl flex items-center justify-center text-sm',
                                             'bg-green-50 text-green-600' => $txn->type == 'deposit',
                                             'bg-red-50 text-red-600' => $txn->type == 'withdrawal',
+                                            'bg-orange-50 text-orange-600' => $txn->type == 'rejected',
                                         ])>
                                             <i @class([
                                                 'fas fa-plus' => $txn->type == 'deposit',
                                                 'fas fa-minus' => $txn->type == 'withdrawal',
+                                                'fas fa-ban' => $txn->type == 'rejected',
                                             ])></i>
                                         </div>
                                         <div>
                                             <p class="text-sm font-bold text-gray-800 dark:text-gray-200">
-                                                {{ $txn->notes ?? ($txn->type == 'deposit' ? 'Direct Deposit' : 'Direct Withdrawal') }}
+                                                {{ $txn->notes ?? ($txn->type == 'deposit' ? 'Direct Deposit' : ($txn->type == 'rejected' ? 'Deposit Request Rejected' : 'Direct Withdrawal')) }}
                                             </p>
                                             <div class="flex items-center gap-2 mt-0.5">
-                                                <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400">
-                                                    {{ $txn->type }}
+                                                <span @class([
+                                                    'text-[10px] font-bold uppercase tracking-wider',
+                                                    'text-gray-400' => $txn->type != 'rejected',
+                                                    'text-orange-500' => $txn->type == 'rejected',
+                                                ])>
+                                                    {{ $txn->type == 'rejected' ? '⛔ Rejected' : $txn->type }}
                                                 </span>
                                                 @if($txn->depositRequest && $txn->depositRequest->screenshot_path)
                                                     @php
@@ -619,6 +634,8 @@
                                                             'submitted_at'   => $dr->created_at->format('M d, Y \a\t H:i'),
                                                             'approved_at'    => $dr->processed_at ? $dr->processed_at->format('F j, Y \a\t H:i') : null,
                                                             'approved_by'    => $dr->processor->name ?? ($txn->admin->name ?? 'Leader'),
+                                                            'status'         => $dr->status,
+                                                            'rejection_reason' => $dr->rejection_reason,
                                                         ];
                                                     @endphp
                                                     <button
@@ -646,8 +663,9 @@
                                     'px-6 py-5 text-right font-black text-sm',
                                     'text-green-500' => $txn->type == 'deposit',
                                     'text-red-500' => $txn->type == 'withdrawal',
+                                    'text-orange-500 line-through' => $txn->type == 'rejected',
                                 ])>
-                                    {{ $txn->type == 'deposit' ? '+' : '-' }}{{ number_format($txn->amount, 2) }}
+                                    {{ $txn->type == 'deposit' ? '+' : ($txn->type == 'rejected' ? '+' : '-') }}{{ number_format($txn->amount, 2) }}
                                 </td>
                                 <td class="px-6 py-5 text-right font-mono font-bold text-gray-700 dark:text-gray-300">
                                     {{ number_format($txn->balance_after, 2) }}

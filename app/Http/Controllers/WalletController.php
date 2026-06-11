@@ -564,6 +564,24 @@ class WalletController extends Controller
                 'rejection_reason' => $request->rejection_reason,
             ]);
 
+            // Log the rejected transaction so it appears in history
+            $targetUser = $depositRequest->user;
+            $methodName = str_replace('_', ' ', strtoupper($depositRequest->payment_method));
+            $rejNotes = "Rejected deposit via {$methodName}";
+            if ($request->rejection_reason) {
+                $rejNotes .= " — Reason: " . $request->rejection_reason;
+            }
+
+            WalletTransaction::create([
+                'user_id' => $targetUser->id,
+                'admin_id' => Auth::id(),
+                'type' => 'rejected',
+                'amount' => $depositRequest->amount,
+                'balance_after' => $targetUser->wallet_balance,
+                'notes' => $rejNotes,
+                'deposit_request_id' => $depositRequest->id,
+            ]);
+
             // Notify User
             $depositRequest->user->notify(new BatuNotification([
                 'title' => '❌ Deposit Rejected',

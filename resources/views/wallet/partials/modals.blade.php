@@ -1185,16 +1185,17 @@
                 </a>
             </div>
 
-            {{-- ④ Approval Stamp --}}
+            {{-- ④ Approval / Rejection Stamp --}}
             <div id="fd-approval-section"
-                 class="rounded-2xl border-2 border-emerald-200 dark:border-emerald-700 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-4 shadow-sm">
+                 class="rounded-2xl border-2 p-4 shadow-sm">
                 <div class="flex items-start gap-3">
-                    <div class="w-9 h-9 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md shadow-emerald-500/30">
-                        <i class="fas fa-check text-white text-sm"></i>
+                    <div id="fd-stamp-icon" class="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 shadow-md">
+                        <i id="fd-stamp-icon-i" class="text-white text-sm"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Official Approval</p>
-                        <p id="fd-approval-text" class="text-sm font-bold text-emerald-800 dark:text-emerald-300 leading-snug"></p>
+                        <p id="fd-stamp-label" class="text-[10px] font-black uppercase tracking-widest mb-1"></p>
+                        <p id="fd-approval-text" class="text-sm font-bold leading-snug"></p>
+                        <p id="fd-rejection-reason" class="text-sm font-medium mt-1 leading-snug" style="display:none"></p>
                         <p id="fd-no-approval-text" class="text-sm text-gray-400 italic" style="display:none">Approval timestamp not recorded.</p>
                     </div>
                 </div>
@@ -1254,16 +1255,61 @@
             ssSection.style.display = 'none';
         }
 
-        // --- Approval stamp
+        // --- Approval / Rejection stamp
+        const approvalSection = document.getElementById('fd-approval-section');
+        const stampIcon       = document.getElementById('fd-stamp-icon');
+        const stampIconI      = document.getElementById('fd-stamp-icon-i');
+        const stampLabel      = document.getElementById('fd-stamp-label');
         const approvalText    = document.getElementById('fd-approval-text');
+        const rejectionReason = document.getElementById('fd-rejection-reason');
         const noApprovalText  = document.getElementById('fd-no-approval-text');
-        if (data.approved_at) {
-            approvalText.textContent   = '🟢 Accepted by ' + (data.approved_by || 'Leader') + ' on ' + data.approved_at;
-            approvalText.style.display = 'block';
-            noApprovalText.style.display = 'none';
+
+        const isRejected = data.status === 'rejected';
+
+        if (isRejected) {
+            // Red / rejected styling
+            approvalSection.className = 'rounded-2xl border-2 border-red-200 dark:border-red-700 bg-gradient-to-br from-red-50 to-orange-50 dark:from-red-900/20 dark:to-orange-900/20 p-4 shadow-sm';
+            stampIcon.className = 'w-9 h-9 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md shadow-red-500/30';
+            stampIconI.className = 'fas fa-times text-white text-sm';
+            stampLabel.className = 'text-[10px] font-black text-red-600 uppercase tracking-widest mb-1';
+            stampLabel.textContent = 'Rejected';
+            approvalText.className = 'text-sm font-bold text-red-800 dark:text-red-300 leading-snug';
+
+            if (data.approved_at) {
+                approvalText.textContent = '🔴 Rejected by ' + (data.approved_by || 'Leader') + ' on ' + data.approved_at;
+                approvalText.style.display = 'block';
+                noApprovalText.style.display = 'none';
+            } else {
+                approvalText.style.display = 'none';
+                noApprovalText.style.display = 'block';
+            }
+
+            // Show rejection reason if available
+            if (data.rejection_reason) {
+                rejectionReason.textContent = '💬 Reason: ' + data.rejection_reason;
+                rejectionReason.className = 'text-sm font-medium text-red-600 dark:text-red-400 mt-1 leading-snug';
+                rejectionReason.style.display = 'block';
+            } else {
+                rejectionReason.style.display = 'none';
+            }
         } else {
-            approvalText.style.display    = 'none';
-            noApprovalText.style.display  = 'block';
+            // Green / accepted styling
+            approvalSection.className = 'rounded-2xl border-2 border-emerald-200 dark:border-emerald-700 bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 p-4 shadow-sm';
+            stampIcon.className = 'w-9 h-9 bg-emerald-500 rounded-full flex items-center justify-center flex-shrink-0 shadow-md shadow-emerald-500/30';
+            stampIconI.className = 'fas fa-check text-white text-sm';
+            stampLabel.className = 'text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1';
+            stampLabel.textContent = 'Official Approval';
+            approvalText.className = 'text-sm font-bold text-emerald-800 dark:text-emerald-300 leading-snug';
+            rejectionReason.style.display = 'none';
+
+            if (data.approved_at) {
+                approvalText.textContent = '🟢 Accepted by ' + (data.approved_by || 'Leader') + ' on ' + data.approved_at;
+                approvalText.style.display = 'block';
+                noApprovalText.style.display = 'none';
+            } else {
+                approvalText.style.display = 'none';
+                noApprovalText.style.display = 'block';
+            }
         }
 
         document.getElementById('feeDetailsModal').style.display = 'flex';
