@@ -41,7 +41,8 @@ class MembersExport implements FromCollection, WithHeadings, WithMapping
             'whatsapp_number' => 'WhatsApp Number',
             'national_id' => 'National ID',
             'address' => 'Address',
-            'role' => 'Role'
+            'role' => 'Role',
+            'profile_photo_url' => 'Profile Image URL'
         ];
         
         $headings = [];
@@ -71,6 +72,8 @@ class MembersExport implements FromCollection, WithHeadings, WithMapping
                 $row[] = $member->user->address ?? 'N/A';
             } elseif ($col === 'role') {
                 $row[] = ucfirst(str_replace('_', ' ', $member->role));
+            } elseif ($col === 'profile_photo_url') {
+                $row[] = isset($member->user) ? url($member->user->profile_photo_url) : 'N/A';
             } else {
                 $row[] = 'N/A';
             }

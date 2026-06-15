@@ -4319,7 +4319,7 @@
             <div class="space-y-3 mb-8">
                 <label class="font-bold text-gray-700 dark:text-gray-300 block mb-2">Select Columns to Export:</label>
                 <div class="grid grid-cols-2 gap-3">
-                    <template x-for="item in [{id: 'name', label: 'Name'}, {id: 'academic_number', label: 'Academic Number'}, {id: 'national_id', label: 'National ID'}, {id: 'email', label: 'Email'}, {id: 'phone_number', label: 'Phone Number'}, {id: 'whatsapp_number', label: 'WhatsApp Number'}, {id: 'address', label: 'Address'}, {id: 'role', label: 'Role'}]">
+                    <template x-for="item in [{id: 'name', label: 'Name'}, {id: 'academic_number', label: 'Academic Number'}, {id: 'national_id', label: 'National ID'}, {id: 'email', label: 'Email'}, {id: 'phone_number', label: 'Phone Number'}, {id: 'whatsapp_number', label: 'WhatsApp Number'}, {id: 'address', label: 'Address'}, {id: 'role', label: 'Role'}, {id: 'profile_photo_url', label: 'Profile Image URL'}]">
                         <label class="flex items-center gap-2 cursor-pointer group bg-gray-50 dark:bg-gray-900 p-2 rounded-lg border border-gray-100 dark:border-gray-700 hover:border-green-200 transition-colors">
                             <input type="checkbox" name="columns[]" :value="item.id" x-model="columns" class="w-4 h-4 text-green-500 bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 rounded focus:ring-green-500">
                             <span class="text-sm font-semibold text-gray-600 dark:text-gray-400 group-hover:text-gray-900 transition truncate" x-text="item.label" :title="item.label"></span>
