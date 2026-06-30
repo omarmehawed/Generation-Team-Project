@@ -73,13 +73,19 @@
             {{-- Users with Balance Mode --}}
             <div x-show="balanceMode" x-transition class="mb-8">
                 <div class="bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden border border-gray-100 dark:border-gray-700">
-                    <div class="px-8 py-6 border-b border-gray-50 bg-amber-50/30 flex justify-between items-center text-sm md:text-base">
+                    <div class="px-8 py-6 border-b border-gray-50 bg-amber-50/30 flex flex-wrap justify-between items-center gap-4 text-sm md:text-base">
                         <h3 class="font-bold text-gray-800 dark:text-gray-200 flex items-center gap-2">
                             <i class="fas fa-coins text-amber-500"></i> Active Balances
                         </h3>
-                        <div class="text-right">
-                            <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Pooled</p>
-                            <p class="text-lg md:text-xl font-black text-amber-600" x-text="activeUsersTotal.toLocaleString() + ' EGP'"></p>
+                        <div class="flex items-center gap-4">
+                            <a href="{{ route('wallet.export_active_balances') }}"
+                                class="inline-flex items-center gap-2 px-4 py-2 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-bold text-xs shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5 active:translate-y-0">
+                                <i class="fas fa-file-excel"></i> Export to Excel
+                            </a>
+                            <div class="text-right">
+                                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Pooled</p>
+                                <p class="text-lg md:text-xl font-black text-amber-600" x-text="activeUsersTotal.toLocaleString() + ' EGP'"></p>
+                            </div>
                         </div>
                     </div>
 

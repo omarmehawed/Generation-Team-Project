@@ -605,6 +605,35 @@ class WalletController extends Controller
     }
 
     /**
+     * Export Active Balances to Excel (.xlsx).
+     */
+    public function exportActiveBalances(Request $request)
+    {
+        $this->authorizeAccess();
+
+        $user = Auth::user();
+        $isGlobalAdmin = $user->hasPermission('wallet_management');
+
+        $query = User::where('wallet_balance', '>', 0);
+
+        if (!$isGlobalAdmin) {
+            $teamMemberIds = \App\Models\TeamMember::whereIn('team_id', function($q) use ($user) {
+                $q->select('id')->from('teams')->where('leader_id', $user->id);
+            })->pluck('user_id');
+            $query->whereIn('id', $teamMemberIds);
+        }
+
+        $users = $query->get();
+
+        $filename = 'Active_Balance_Report_' . now()->format('Y-m-d_His') . '.xlsx';
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\ActiveBalanceExport($users),
+            $filename
+        );
+    }
+
+    /**
      * Restrict access to specific emails.
      */
     private function authorizeAccess()
