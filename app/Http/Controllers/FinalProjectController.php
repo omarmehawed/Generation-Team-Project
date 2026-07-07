@@ -1641,6 +1641,134 @@ class FinalProjectController extends Controller
         return back()->with('success', 'Successfully deducted ' . number_format($amount, 2) . ' EGP from ' . $user->name . '\'s wallet.');
     }
 
+    /**
+     * Bulk deduct fund amount from all eligible members' wallets.
+     */
+    public function bulkWalletDeduct(Request $request)
+    {
+        $request->validate([
+            'fund_id' => 'required|exists:project_funds,id',
+        ]);
+
+        $fund = ProjectFund::with('team.members.user', 'contributions')->findOrFail($request->fund_id);
+        $team = $fund->team;
+
+        // Authorization: Leader only
+        if (Auth::id() != $team->leader_id) {
+            if ($request->ajax()) return response()->json(['success' => false, 'message' => 'Unauthorized: Only Team Leader can perform bulk deductions.'], 403);
+            return back()->with('error', 'Unauthorized: Only Team Leader can perform bulk deductions.');
+        }
+
+        $amount = $fund->amount_per_member;
+        $deducted = 0;
+        $skippedInsufficient = 0;
+        $skippedAlreadyPaid = 0;
+        $totalCollected = 0;
+        $errors = 0;
+        $deductedNames = [];
+        $skippedNames = [];
+
+        foreach ($fund->contributions as $contrib) {
+            // Skip already paid
+            if ($contrib->status === 'paid') {
+                $skippedAlreadyPaid++;
+                continue;
+            }
+
+            $user = $contrib->user;
+            if (!$user) {
+                $errors++;
+                continue;
+            }
+
+            // Skip insufficient balance
+            if ($user->wallet_balance < $amount) {
+                $skippedInsufficient++;
+                $skippedNames[] = $user->name;
+                continue;
+            }
+
+            // Process this member in its own transaction
+            try {
+                DB::transaction(function () use ($user, $contrib, $amount, $fund, $team) {
+                    // Deduct from wallet
+                    $user->decrement('wallet_balance', $amount);
+
+                    // Log wallet transaction
+                    \App\Models\WalletTransaction::create([
+                        'user_id'       => $user->id,
+                        'admin_id'      => Auth::id(),
+                        'type'          => 'withdrawal',
+                        'amount'        => $amount,
+                        'balance_after' => $user->wallet_balance,
+                        'notes'         => "Bulk Fund Deduction: " . $fund->title,
+                    ]);
+
+                    // Mark contribution as paid
+                    $contrib->update([
+                        'status'         => 'paid',
+                        'paid_at'        => now(),
+                        'payment_method' => 'wallet',
+                        'notes'          => 'Bulk deducted by Leader',
+                    ]);
+
+                    // Activity log
+                    ActivityLogger::log(
+                        action: 'fund_bulk_wallet_deduct',
+                        description: "Bulk deducted " . number_format($amount) . " EGP from {$user->name}'s wallet for '{$fund->title}'",
+                        subject: $contrib,
+                        teamId: $team->id,
+                        targetUserId: $user->id,
+                        properties: [
+                            'amount'     => $amount,
+                            'method'     => 'wallet',
+                            'fund_title' => $fund->title,
+                        ]
+                    );
+                });
+
+                // Notify member (outside transaction to avoid blocking)
+                $user->notify(new BatuNotification([
+                    'title'      => '💰 Wallet Auto-Deduction',
+                    'message'    => number_format($amount, 2) . ' EGP has been deducted from your wallet for "' . $fund->title . '" fund collection.',
+                    'icon'       => 'fas fa-wallet',
+                    'color'      => 'text-amber-500',
+                    'action_url' => route('final_project.dashboard', $team->id) . '#budget-section',
+                    'type'       => 'info',
+                ]));
+
+                $deducted++;
+                $totalCollected += $amount;
+                $deductedNames[] = $user->name;
+
+            } catch (\Throwable $e) {
+                \Illuminate\Support\Facades\Log::error("Bulk fund deduction failed for user {$user->id}: " . $e->getMessage());
+                $errors++;
+            }
+        }
+
+        $summary = [
+            'total_members'         => $fund->contributions->count(),
+            'deducted'              => $deducted,
+            'skipped_already_paid'  => $skippedAlreadyPaid,
+            'skipped_insufficient'  => $skippedInsufficient,
+            'errors'                => $errors,
+            'total_collected'       => $totalCollected,
+            'deducted_names'        => $deductedNames,
+            'skipped_names'         => $skippedNames,
+        ];
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success'  => true,
+                'message'  => "Bulk deduction complete: {$deducted} deducted, {$skippedInsufficient} skipped (insufficient), {$skippedAlreadyPaid} already paid.",
+                'summary'  => $summary,
+                'redirect' => back()->getTargetUrl(),
+            ]);
+        }
+
+        return back()->with('success', "Bulk deduction complete: {$deducted} deducted, {$skippedInsufficient} skipped.");
+    }
 
     public function updatePaymentSettings(Request $request, Team $team)
     {

@@ -1895,26 +1895,32 @@
                                 <span>Fund Collection</span>
                                 <i class="fas fa-chevron-down text-sm text-[#AA8A26] transition-transform duration-300 ml-1" :class="expanded ?'rotate-180' : ''"></i>
                             </h3>
-                            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
+                            <div class="grid grid-cols-3 sm:flex sm:flex-wrap gap-2 w-full sm:w-auto">
                                 {{-- زرار الهستوري --}}
                                 @if ($fundsHistory->count() > 0)
                                     <button @click.stop onclick="openModal('fundsHistoryModal')"
-                                        class="flex-1 sm:flex-none text-[10px] bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition whitespace-nowrap"><i
+                                        class="text-[10px] bg-gray-100 dark:bg-gray-900 text-gray-600 dark:text-gray-400 px-3 py-2 rounded-xl font-bold hover:bg-gray-200 transition whitespace-nowrap flex items-center justify-center gap-1.5"><i
                                             class="fas fa-history"></i> History</button>
                                 @endif
 
                                 @if ($myRole == 'leader')
                                     <button @click.stop onclick="openModal('paymentSettingsModal')"
-                                        class="flex-1 sm:flex-none text-[10px] bg-gray-800 text-white px-3 py-2 rounded-xl font-bold hover:bg-black transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                        class="text-[10px] bg-gray-800 text-white px-3 py-2 rounded-xl font-bold hover:bg-black transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
                                         <i class="fas fa-cog text-xs"></i>
                                     </button>
                                     <button @click.stop onclick="openModal('exportFundModal')"
-                                        class="flex-1 sm:flex-none text-[10px] bg-green-500 text-white px-3 py-2 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
+                                        class="text-[10px] bg-green-500 text-white px-3 py-2 rounded-xl font-bold hover:bg-green-600 transition flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap">
                                         <i class="fas fa-file-excel text-xs"></i> Export
                                     </button>
                                     <button @click.stop onclick="openModal('createFundModal')"
-                                        class="flex-1 sm:flex-none text-[10px] bg-black text-[#FFD700] px-3 py-2 rounded-xl font-bold shadow-md hover:bg-gray-900 transition whitespace-nowrap"><i
+                                        class="text-[10px] bg-black text-[#FFD700] px-3 py-2 rounded-xl font-bold shadow-md hover:bg-gray-900 transition whitespace-nowrap flex items-center justify-center gap-1.5"><i
                                             class="fas fa-bullhorn"></i> Request</button>
+                                    @if(isset($activeFund) && $activeFund)
+                                    <button @click.stop onclick="confirmBulkWalletDeduct()"
+                                        class="col-span-3 sm:col-span-1 text-[10px] bg-amber-500 text-white px-3 py-2 rounded-xl font-bold hover:bg-amber-600 transition flex items-center justify-center gap-1.5 shadow-md whitespace-nowrap">
+                                        <i class="fas fa-wallet text-xs"></i> Deduct From Wallets
+                                    </button>
+                                    @endif
                                 @endif
                             </div>
                         </div>
@@ -3575,6 +3581,123 @@
             document.getElementById('rejection_reason_input').required = true;
         }
     </script>
+
+    {{-- Bulk Wallet Deduct Script --}}
+    @if(isset($activeFund) && $activeFund && $myRole == 'leader')
+    <script>
+        function confirmBulkWalletDeduct() {
+            Swal.fire({
+                title: '<i class="fas fa-wallet text-amber-500"></i> Deduct From Wallets',
+                html: `
+                    <div class="text-left text-sm space-y-3 mt-2">
+                        <p class="text-gray-600">This will automatically deduct <strong class="text-amber-600">{{ number_format($activeFund->amount_per_member, 2) }} EGP</strong> from all members who have sufficient wallet balance.</p>
+                        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs space-y-1">
+                            <p class="flex items-center gap-2"><i class="fas fa-check-circle text-green-500"></i> Members with enough balance will be marked as <strong>Paid</strong></p>
+                            <p class="flex items-center gap-2"><i class="fas fa-forward text-gray-400"></i> Members with insufficient balance will be <strong>skipped</strong></p>
+                            <p class="flex items-center gap-2"><i class="fas fa-shield-alt text-blue-500"></i> Already paid members are <strong>never double-charged</strong></p>
+                        </div>
+                        <p class="text-gray-400 text-xs italic">Fund: "{{ $activeFund->title }}"</p>
+                    </div>
+                `,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#f59e0b',
+                cancelButtonColor: '#6b7280',
+                confirmButtonText: '<i class="fas fa-bolt"></i> Yes, Deduct Now',
+                cancelButtonText: 'Cancel',
+                customClass: {
+                    popup: 'rounded-2xl',
+                    confirmButton: 'rounded-xl font-bold',
+                    cancelButton: 'rounded-xl font-bold',
+                },
+                showLoaderOnConfirm: true,
+                preConfirm: () => {
+                    return fetch('{{ route("final_project.bulkWalletDeduct") }}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                            'X-Requested-With': 'XMLHttpRequest',
+                            'Accept': 'application/json',
+                        },
+                        body: JSON.stringify({ fund_id: {{ $activeFund->id }} })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(data => {
+                                throw new Error(data.message || 'Server error');
+                            });
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        Swal.showValidationMessage(error.message);
+                    });
+                },
+                allowOutsideClick: () => !Swal.isLoading()
+            }).then((result) => {
+                if (result.isConfirmed && result.value && result.value.summary) {
+                    const s = result.value.summary;
+
+                    let deductedList = '';
+                    if (s.deducted_names && s.deducted_names.length > 0) {
+                        deductedList = s.deducted_names.map(n => `<span class="inline-block bg-green-50 text-green-700 text-[10px] font-bold px-2 py-0.5 rounded-full border border-green-100 m-0.5">${n}</span>`).join('');
+                    }
+
+                    let skippedList = '';
+                    if (s.skipped_names && s.skipped_names.length > 0) {
+                        skippedList = s.skipped_names.map(n => `<span class="inline-block bg-red-50 text-red-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-red-100 m-0.5">${n}</span>`).join('');
+                    }
+
+                    Swal.fire({
+                        title: '<i class="fas fa-check-circle text-green-500"></i> Deduction Complete',
+                        html: `
+                            <div class="text-left text-sm space-y-4 mt-3">
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div class="bg-gray-50 rounded-xl p-3 text-center">
+                                        <p class="text-[10px] text-gray-400 uppercase font-bold tracking-wider">Total Members</p>
+                                        <p class="text-2xl font-black text-gray-800">${s.total_members}</p>
+                                    </div>
+                                    <div class="bg-green-50 rounded-xl p-3 text-center border border-green-100">
+                                        <p class="text-[10px] text-green-600 uppercase font-bold tracking-wider">Deducted</p>
+                                        <p class="text-2xl font-black text-green-600">${s.deducted}</p>
+                                    </div>
+                                    <div class="bg-amber-50 rounded-xl p-3 text-center border border-amber-100">
+                                        <p class="text-[10px] text-amber-600 uppercase font-bold tracking-wider">Insufficient</p>
+                                        <p class="text-2xl font-black text-amber-600">${s.skipped_insufficient}</p>
+                                    </div>
+                                    <div class="bg-blue-50 rounded-xl p-3 text-center border border-blue-100">
+                                        <p class="text-[10px] text-blue-600 uppercase font-bold tracking-wider">Already Paid</p>
+                                        <p class="text-2xl font-black text-blue-600">${s.skipped_already_paid}</p>
+                                    </div>
+                                </div>
+                                <div class="bg-gradient-to-r from-amber-50 to-yellow-50 rounded-xl p-4 text-center border border-amber-200">
+                                    <p class="text-[10px] text-amber-700 uppercase font-bold tracking-widest mb-1">Total Collected</p>
+                                    <p class="text-3xl font-black text-amber-600">${s.total_collected.toLocaleString()} <span class="text-sm">EGP</span></p>
+                                </div>
+                                ${deductedList ? `<div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><i class="fas fa-check text-green-500"></i> Successfully Deducted</p><div class="flex flex-wrap">${deductedList}</div></div>` : ''}
+                                ${skippedList ? `<div><p class="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-1"><i class="fas fa-forward text-red-400"></i> Skipped (Insufficient Balance)</p><div class="flex flex-wrap">${skippedList}</div></div>` : ''}
+                                ${s.errors > 0 ? `<p class="text-xs text-red-500 font-bold"><i class="fas fa-exclamation-triangle"></i> ${s.errors} error(s) occurred — check logs for details.</p>` : ''}
+                            </div>
+                        `,
+                        icon: null,
+                        confirmButtonColor: '#1f2937',
+                        confirmButtonText: 'Done',
+                        customClass: {
+                            popup: 'rounded-2xl',
+                            confirmButton: 'rounded-xl font-bold',
+                        },
+                        width: '480px',
+                    }).then(() => {
+                        if (result.value.redirect) {
+                            window.location.href = result.value.redirect;
+                        }
+                    });
+                }
+            });
+        }
+    </script>
+    @endif
 
     {{-- Export Fund Modal --}}
     <div id="exportFundModal" class="modal fixed inset-0 z-[100] hidden">
