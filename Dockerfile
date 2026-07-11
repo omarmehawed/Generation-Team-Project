@@ -4,8 +4,8 @@ FROM php:8.3-cli
 # تسطيب المكتبات الأساسية اللي لارافل بيحتاجها
 RUN apt-get update -y && apt-get install -y unzip curl default-mysql-client
 
-# تسطيب إضافة الداتابيز الخاصة بـ MySQL عشان نربط بـ Aiven
-RUN docker-php-ext-install pdo pdo_mysql
+# تسطيب إضافات الداتابيز وإضافة التقويم (calendar) المطلوبة
+RUN docker-php-ext-install pdo pdo_mysql calendar
 
 # تحميل Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
