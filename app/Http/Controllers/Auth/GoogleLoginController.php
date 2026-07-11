@@ -12,20 +12,23 @@ class GoogleLoginController extends Controller
 {
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        // 👇 ضفنا stateless هنا
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     public function handleGoogleCallback()
     {
-        try {
-            $googleUser = Socialite::driver('google')->user();
+        // 👇 عملنا كومنت للـ try و catch عشان نفضح الإيرور
+        // try {
+            
+            // 👇 ضفنا stateless هنا كمان
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             if (Auth::check()) {
                 // Link account
                 /** @var \App\Models\User $user */
                 $user = Auth::user();
                 
-                // Check if this google account is already linked to someone else
                 $existingUser = User::where('google_id', $googleUser->getId())
                                      ->where('id', '!=', $user->id)
                                      ->first();
@@ -46,13 +49,15 @@ class GoogleLoginController extends Controller
                     Auth::login($user);
                     return redirect()->intended('/dashboard');
                 } else {
+                    // 🚨 لو الإيميل مش مربوط في الداتابيز، كودك طبيعي هيرجعك هنا!
                     return redirect()->route('login')->with('error', 'No account linked to this Google account. Please login with your credentials and link your account from your profile first.');
                 }
             }
-        } catch (\Exception $e) {
-            $redirectRoute = Auth::check() ? 'profile.show' : 'login';
-            return redirect()->route($redirectRoute)->with('error', 'An error occurred during Google authentication. Please try again.');
-        }
+            
+        // } catch (\Exception $e) {
+        //     $redirectRoute = Auth::check() ? 'profile.show' : 'login';
+        //     return redirect()->route($redirectRoute)->with('error', 'An error occurred: ' . $e->getMessage());
+        // }
     }
 
     public function unlinkGoogle(Request $request)
