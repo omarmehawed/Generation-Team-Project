@@ -22,5 +22,5 @@ RUN composer install --no-dev --optimize-autoloader
 # إعطاء صلاحيات للكتابة في مجلدات التخزين (مهم جداً للارافل)
 RUN chmod -R 775 storage bootstrap/cache
 
-# أمر التشغيل: عمل المايجريشن أوتوماتيك وبعدين تشغيل السيرفر
+# أمر التشغيل: عمل المايجريشن أوتوماتيك بعدين تشغيل السيرفر
 CMD php artisan migrate --force && php -S 0.0.0.0:$PORT -t public
