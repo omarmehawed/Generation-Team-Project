@@ -333,6 +333,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/search-member', [App\Http\Controllers\WalletController::class, 'searchMember'])->name('wallet.search_member');
         Route::get('/active-balances', [App\Http\Controllers\WalletController::class, 'activeBalances'])->name('wallet.active_balances');
         Route::get('/active-balances/export', [App\Http\Controllers\WalletController::class, 'exportActiveBalances'])->name('wallet.export_active_balances');
+        Route::get('/export-history', [App\Http\Controllers\WalletController::class, 'exportWalletHistory'])->name('wallet.export_history');
         Route::post('/transact', [App\Http\Controllers\WalletController::class, 'transact'])->name('wallet.transact');
         Route::post('/bulk-transact', [App\Http\Controllers\WalletController::class, 'bulkTransact'])->name('wallet.bulk_transact');
         Route::post('/requests/submit', [App\Http\Controllers\WalletController::class, 'submitDepositRequest'])->name('wallet.request.submit');

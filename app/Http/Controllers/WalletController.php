@@ -605,6 +605,107 @@ class WalletController extends Controller
     }
 
     /**
+     * Export comprehensive Wallet Transaction History to Excel (.xlsx).
+     */
+    public function exportWalletHistory(Request $request)
+    {
+        $this->authorizeAccess();
+
+        $user = Auth::user();
+        $isGlobalAdmin = $user->hasPermission('wallet_management');
+
+        // Determine scoped user IDs
+        if (!$isGlobalAdmin) {
+            $teamIds = \App\Models\Team::where('leader_id', $user->id)->pluck('id');
+            $teamMemberIds = \App\Models\TeamMember::whereIn('team_id', $teamIds)->pluck('user_id')->unique();
+        } else {
+            // Global admin: all users who are team members
+            $teamMemberIds = \App\Models\TeamMember::pluck('user_id')->unique();
+        }
+
+        // Fetch ALL transactions for those users, chronologically
+        $transactions = WalletTransaction::with(['user', 'admin', 'depositRequest.processor'])
+            ->whereIn('user_id', $teamMemberIds)
+            ->orderBy('user_id')
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        // Build the team/role map for each user
+        $memberTeamMap = [];
+
+        if (!$isGlobalAdmin) {
+            // Leader scope: show role within the leader's team(s)
+            $teamMembers = \App\Models\TeamMember::with('team')
+                ->whereIn('team_id', $teamIds)
+                ->get();
+
+            foreach ($teamMembers as $tm) {
+                $role = $this->resolveRole($tm);
+                $memberTeamMap[$tm->user_id] = [
+                    'team_name' => $tm->team->name ?? 'N/A',
+                    'role' => $role,
+                ];
+            }
+
+            // Also include the leader themselves if they have transactions
+            foreach ($teamIds as $teamId) {
+                $team = \App\Models\Team::find($teamId);
+                if ($team && !isset($memberTeamMap[$team->leader_id])) {
+                    $memberTeamMap[$team->leader_id] = [
+                        'team_name' => $team->name,
+                        'role' => 'Leader',
+                    ];
+                }
+            }
+        } else {
+            // Global admin: collect all team memberships
+            $allTeamMembers = \App\Models\TeamMember::with('team')->get();
+
+            foreach ($allTeamMembers as $tm) {
+                $role = $this->resolveRole($tm);
+                if (isset($memberTeamMap[$tm->user_id])) {
+                    // User is in multiple teams — concatenate
+                    $existingTeam = $memberTeamMap[$tm->user_id]['team_name'];
+                    $newTeam = $tm->team->name ?? 'N/A';
+                    if (!str_contains($existingTeam, $newTeam)) {
+                        $memberTeamMap[$tm->user_id]['team_name'] .= ', ' . $newTeam;
+                        $memberTeamMap[$tm->user_id]['role'] .= ', ' . $role;
+                    }
+                } else {
+                    $memberTeamMap[$tm->user_id] = [
+                        'team_name' => $tm->team->name ?? 'N/A',
+                        'role' => $role,
+                    ];
+                }
+            }
+        }
+
+        $filename = 'Wallet_History_Export_' . now()->format('Y-m-d_His') . '.xlsx';
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new \App\Exports\WalletHistoryExport($transactions, $memberTeamMap),
+            $filename
+        );
+    }
+
+    /**
+     * Resolve the human-readable role for a TeamMember record.
+     */
+    private function resolveRole(\App\Models\TeamMember $tm): string
+    {
+        if ($tm->is_vice_leader) {
+            return 'Vice Leader';
+        }
+        if ($tm->is_sub_leader) {
+            return 'Sub Leader';
+        }
+        if ($tm->role && $tm->role !== 'member') {
+            return ucfirst($tm->role);
+        }
+        return 'Member';
+    }
+
+    /**
      * Export Active Balances to Excel (.xlsx).
      */
     public function exportActiveBalances(Request $request)

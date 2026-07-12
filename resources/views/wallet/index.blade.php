@@ -43,6 +43,12 @@
                             class="flex-1 sm:flex-none px-4 py-2.5 rounded-xl font-bold text-xs md:text-sm shadow-sm transition-all flex items-center justify-center gap-2">
                             <i class="fas fa-filter"></i> <span x-text="balanceMode ? 'All Users' : 'Active Balances'"></span>
                         </button>
+
+                        {{-- Export Wallet System --}}
+                        <a href="{{ route('wallet.export_history') }}"
+                            class="flex-1 sm:flex-none px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl font-bold text-xs md:text-sm shadow-lg shadow-emerald-500/20 transition-all hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                            <i class="fas fa-file-excel"></i> Export Wallet System
+                        </a>
                     </div>
 
                     {{-- Search Box --}}
